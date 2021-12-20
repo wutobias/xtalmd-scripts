@@ -1,0 +1,98 @@
+{
+    "N-Ac,N'Me-Ala" : {
+        
+        "FORCEFIELD" : [
+
+            {
+                "XTAL_ENERGY" : "energy.xvg",
+                "XTAL_CELL"   : "energy.xvg",
+                "GAS_ENERGY"  : "energy.xvg",
+                "NAME" : "ff99SB",
+                "UNITCELLS_A" : 4,
+                "UNITCELLS_B" : 4,
+                "UNITCELLS_C" : 4,
+                "MOLS_PER_CELL" : 2
+            },
+            {
+                "XTAL_ENERGY" : "energy.xvg",
+                "XTAL_CELL"   : "energy.xvg",
+                "GAS_ENERGY"  : "energy.xvg",
+                "NAME" : "GAFF",
+                "UNITCELLS_A" : 4,
+                "UNITCELLS_B" : 4,
+                "UNITCELLS_C" : 4,
+                "MOLS_PER_CELL" : 2
+
+            },
+            {
+                "XTAL_ENERGY" : "energy.xvg",
+                "XTAL_CELL"   : "energy.xvg",
+                "GAS_ENERGY"  : "energy.xvg",
+                "NAME" : "Parsley",
+                "UNITCELLS_A" : 4,
+                "UNITCELLS_B" : 4,
+                "UNITCELLS_C" : 4,
+                "MOLS_PER_CELL" : 2
+            }
+
+        ],
+
+        "EXPT" : {
+
+            "CIF" : "1101307.cif",
+            "SUBLIMATION_ENTHALPY" : "42.42",
+            "SUBLIMATION_ENTHALPY_ERROR" : "42.42"
+
+        }
+
+    },
+
+    "Adipamide" : {
+        
+        "FORCEFIELD" : [
+
+            {
+                "XTAL_ENERGY" : "energy.xvg",
+                "XTAL_CELL"   : "energy.xvg",
+                "GAS_ENERGY"  : "energy.xvg",
+                "NAME" : "ff99SB",
+                "UNITCELLS_A" : 4,
+                "UNITCELLS_B" : 4,
+                "UNITCELLS_C" : 4,
+                "MOLS_PER_CELL" : 2
+            },
+            {
+                "XTAL_ENERGY" : "energy.xvg",
+                "XTAL_CELL"   : "energy.xvg",
+                "GAS_ENERGY"  : "energy.xvg",
+                "NAME" : "GAFF",
+                "UNITCELLS_A" : 4,
+                "UNITCELLS_B" : 4,
+                "UNITCELLS_C" : 4,
+                "MOLS_PER_CELL" : 2
+
+            },
+            {
+                "XTAL_ENERGY" : "energy.xvg",
+                "XTAL_CELL"   : "energy.xvg",
+                "GAS_ENERGY"  : "energy.xvg",
+                "NAME" : "Parsley",
+                "UNITCELLS_A" : 4,
+                "UNITCELLS_B" : 4,
+                "UNITCELLS_C" : 4,
+                "MOLS_PER_CELL" : 2
+            }
+
+        ],
+
+        "EXPT" : {
+
+            "CIF" : "1101307.cif",
+            "SUBLIMATION_ENTHALPY" : "42.42",
+            "SUBLIMATION_ENTHALPY_ERROR" : "42.42"
+
+        }
+
+    }
+
+}
