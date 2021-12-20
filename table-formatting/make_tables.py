@@ -339,10 +339,14 @@ def main():
 
             ### Write sublimation enthalpy
             ### ==========================
-            sublimation_energy_mean  = np.mean(xtal_energy_data["Potential"])
+            num_molecules_total      = force_field_dicts["UNITCELLS_A"]
+            num_molecules_total     *= force_field_dicts["UNITCELLS_B"]
+            num_molecules_total     *= force_field_dicts["UNITCELLS_C"]
+            num_molecules_total     *= force_field_dicts["MOLS_PER_CELL"]
+            sublimation_energy_mean  = np.mean(xtal_energy_data["Potential"]/num_molecules_total)
             sublimation_energy_mean -= np.mean(gas_energy_data["Potential"])
             ### Error propgation
-            sublimation_energy_std   = np.var(xtal_energy_data["Potential"])
+            sublimation_energy_std   = np.var(xtal_energy_data["Potential"]/num_molecules_total)
             sublimation_energy_std  += np.var(gas_energy_data["Potential"])
             sublimation_energy_std   = np.sqrt(sublimation_energy_std)
             worksheet.write(
