@@ -1,0 +1,93 @@
+####################################################################### 
+# 
+# This file contains crystal structure data downloaded from the 
+# Cambridge Structural Database (CSD) hosted by the Cambridge 
+# Crystallographic Data Centre (CCDC).
+# 
+# Full information about CCDC data access policies and citation 
+# guidelines are available at http://www.ccdc.cam.ac.uk/access/V1 
+# 
+# Audit and citation data items may have been added by the CCDC. 
+# Please retain this information to preserve the provenance of 
+# this file and to allow appropriate attribution of the data. 
+# 
+#######################################################################
+
+data_MALOAM
+#This CIF has been generated from an entry in the Cambridge Structural Database
+_database_code_depnum_ccdc_archive 'CCDC 1209222'
+_database_code_CSD               MALOAM
+loop_
+_citation_id
+_citation_doi
+_citation_year
+1 10.1039/j19700000179 1970
+_audit_creation_method           'Created from the CSD'
+_audit_update_record             
+;
+2021-12-21 downloaded from the CCDC.
+;
+_database_code_NBS               515944
+_chemical_formula_moiety         'C3 H6 N2 O2'
+_chemical_name_systematic        Malonamide
+_chemical_absolute_configuration unk
+_diffrn_ambient_temperature      295
+_exptl_crystal_density_diffrn    1.428
+#These two values have been output from a single CSD field.
+_refine_ls_R_factor_gt           0.05
+_refine_ls_wR_factor_gt          0.05
+_diffrn_radiation_probe          x-ray
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,1/2-y,1/2+z
+_cell_length_a                   13.07(2)
+_cell_length_b                   9.45(2)
+_cell_length_c                   8.04(2)
+_cell_angle_alpha                90
+_cell_angle_beta                 73.0(2)
+_cell_angle_gamma                90
+_cell_volume                     949.642
+_chemical_melting_point          170deg.C
+_cell_formula_units_Z            8
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.60040 0.37920 0.28060
+C2 C 0.69390 0.34130 0.12660
+C6 C 0.49780 0.37240 0.23220
+H7 H 0.47200 0.56800 0.26700
+H8 H 0.38700 0.49500 0.20300
+H9 H 0.61700 0.47800 0.31200
+H10 H 0.59600 0.31200 0.37200
+H11 H 0.76300 0.21900 0.25100
+H12 H 0.83500 0.23400 0.05500
+N1 N 0.44620 0.49160 0.23490
+N2 N 0.76850 0.25820 0.15350
+O2 O 0.69990 0.39100 -0.01880
+O4 O 0.46570 0.25740 0.19280
+C3 C -0.00200 0.38530 0.27960
+C4 C 0.09750 0.38210 0.12750
+C5 C 0.19270 0.34570 0.19040
+H1 H -0.03300 0.57000 0.25000
+H2 H -0.10200 0.51500 0.42300
+H3 H 0.08800 0.31200 0.04400
+H4 H 0.11600 0.47800 0.07200
+H5 H 0.32900 0.25000 0.12500
+H6 H 0.25800 0.22600 0.00000
+N3 N -0.04790 0.50910 0.32540
+N4 N 0.26620 0.26040 0.09300
+O1 O -0.03670 0.27390 0.35760
+O3 O 0.20030 0.39680 0.32850
+
+#END

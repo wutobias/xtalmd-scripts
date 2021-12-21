@@ -238,6 +238,50 @@ def make_supercell(
 
     return replicated_mol_list
 
+def equalize_rdmols(mol_list):
+
+    N_mol = len(mol_list)
+
+    smiles_list = [Chem.MolToSmiles(mol, isomericSmiles=True) for mol in mol_list]
+    smiles_list_unique = set(smiles_list)
+    smiles_list_unique = list(smiles_list_unique)
+
+    rdmol_list_unique  = list()
+    unique_mapping     = dict()
+    for smiles_unique_idx, smiles_unique in enumerate(smiles_list_unique):
+        found_unique = False
+        for mol_idx in range(N_mol):
+            mol    = mol_list[mol_idx]
+            smiles = smiles_list[mol_idx]
+            if smiles == smiles_unique:
+                if not found_unique:
+                    rdmol_list_unique.append(mol)
+                    found_unique = True
+                else:
+                    unique_mapping[mol_idx] = smiles_unique_idx
+
+    for mol_idx in unique_mapping:
+        ### This is the molecule that holds the correct coordinates
+        mol_1 = mol_list[mol_idx]
+        ### This is the molecule that holds the correct names, ordering, etc...
+        mol_2 = copy.deepcopy(rdmol_list_unique[unique_mapping[mol_idx]])
+        match = mol_1.GetSubstructMatch(mol_2)
+        conf_1     = mol_1.GetConformer(0)
+        conf_pos_1 = conf_1.GetPositions()
+        conf_2     = mol_2.GetConformer(0)
+        conf_pos_2 = conf_2.GetPositions()
+        for mol2_idx, mol1_idx in enumerate(match):
+
+            pos = conf_pos_1[mol1_idx]
+            conf_2.SetAtomPosition(
+                mol2_idx,
+                Point3D(*pos)
+            )
+
+        mol_list[mol_idx] = mol_2
+
+    return mol_list
+
 def main():
 
     args = parse_arguments()
@@ -258,6 +302,8 @@ def main():
         args.b_min_max[0], args.b_min_max[1],
         args.c_min_max[0], args.c_min_max[1],
         )
+
+    replicated_mol_list = equalize_rdmols(replicated_mol_list)
 
     N_mol = len(replicated_mol_list)
     for mol_idx in range(N_mol):
