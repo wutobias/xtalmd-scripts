@@ -37,13 +37,14 @@ def parse_data(file_path, file_format=None):
             for line in fopen:
                 line = line.lstrip().rstrip().split()
                 if line[0].startswith("#"):
+                    if len(line) < 3:
+                        continue
+                    if line[1] == "gmx" and\
+                        line[2] == "energy" and\
+                        "-nmol" in " ".join(line):
+                        nmol_index = line.index("-nmol")
+                        data_dict["nmol"] = int(line[nmol_index + 1])
                     continue
-                elif line[0] == "gmx" and\
-                   line[1] == "energy" and\
-                   "-nmol" in " ".join(line):
-                   nmol_index = line.index("-nmol")
-                   data_dict["nmol"] = int(line[nmol_index + 1])
-                   
                 elif line[0].startswith("@"):
                     if len(line) < 4:
                         continue
@@ -352,12 +353,12 @@ def main():
             ### the field "Potential" has been corrected for the
             ### number of molecules.
             if "nmol" in xtal_energy_data:
-                num_molecules_total = 1. 
-            
-            num_molecules_total      = force_field_dicts["UNITCELLS_A"]
-            num_molecules_total     *= force_field_dicts["UNITCELLS_B"]
-            num_molecules_total     *= force_field_dicts["UNITCELLS_C"]
-            num_molecules_total     *= force_field_dicts["MOLS_PER_CELL"]
+                num_molecules_total = 1.
+            else:
+                num_molecules_total      = force_field_dicts["UNITCELLS_A"]
+                num_molecules_total     *= force_field_dicts["UNITCELLS_B"]
+                num_molecules_total     *= force_field_dicts["UNITCELLS_C"]
+                num_molecules_total     *= force_field_dicts["MOLS_PER_CELL"]
             sublimation_energy_mean  = np.mean(xtal_energy_data["Potential"]/num_molecules_total)
             sublimation_energy_mean -= np.mean(gas_energy_data["Potential"])
             sublimation_energy_mean *= _KJ_2_KCAL
