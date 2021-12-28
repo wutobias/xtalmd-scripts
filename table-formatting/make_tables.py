@@ -27,7 +27,6 @@ def parse_data(file_path, file_format=None):
         file_format = file_format.replace(".","")
 
     if file_format.lower() == "xvg":
-        file_path = "./energy.xvg"
 
         data_dict   = dict()
         legend_list = list()
