@@ -8,6 +8,9 @@ import json
 from collections import OrderedDict
 import gemmi
 
+_KJ_2_KCAL = 1./4.184
+_NM_2_ANG  = 10.
+
 def parse_arguments():
 
     parser = argparse.ArgumentParser(
@@ -35,6 +38,12 @@ def parse_data(file_path, file_format=None):
                 line = line.lstrip().rstrip().split()
                 if line[0].startswith("#"):
                     continue
+                elif line[0] == "gmx" and\
+                   line[1] == "energy" and\
+                   "-nmol" in " ".join(line):
+                   nmol_index = line.index("-nmol")
+                   data_dict["nmol"] = int(line[nmol_index + 1])
+                   
                 elif line[0].startswith("@"):
                     if len(line) < 4:
                         continue
@@ -225,21 +234,21 @@ def main():
                 xtal_cell_data["Box-XX"],
                 xtal_cell_data["Box-YX"],
                 xtal_cell_data["Box-ZX"]
-                )).T
+                )).T * _NM_2_ANG
             a_len = np.linalg.norm(a, axis=1)
 
             b = np.stack((
                 xtal_cell_data["Box-YX"],
                 xtal_cell_data["Box-YY"],
                 xtal_cell_data["Box-ZY"]
-                )).T
+                )).T * _NM_2_ANG
             b_len = np.linalg.norm(b, axis=1)
 
             c = np.stack((
                 xtal_cell_data["Box-ZX"],
                 xtal_cell_data["Box-ZY"],
                 xtal_cell_data["Box-ZZ"]
-                )).T
+                )).T * _NM_2_ANG
             c_len = np.linalg.norm(c, axis=1)
             
             a = (a.T / a_len).T
@@ -338,16 +347,25 @@ def main():
 
             ### Write sublimation enthalpy
             ### ==========================
+            
+            ### If we have "nmol" in xtal_energy_data, it means we
+            ### the field "Potential" has been corrected for the
+            ### number of molecules.
+            if "nmol" in xtal_energy_data:
+                num_molecules_total = 1. 
+            
             num_molecules_total      = force_field_dicts["UNITCELLS_A"]
             num_molecules_total     *= force_field_dicts["UNITCELLS_B"]
             num_molecules_total     *= force_field_dicts["UNITCELLS_C"]
             num_molecules_total     *= force_field_dicts["MOLS_PER_CELL"]
             sublimation_energy_mean  = np.mean(xtal_energy_data["Potential"]/num_molecules_total)
             sublimation_energy_mean -= np.mean(gas_energy_data["Potential"])
+            sublimation_energy_mean *= _KJ_2_KCAL
             ### Error propgation
             sublimation_energy_std   = np.var(xtal_energy_data["Potential"]/num_molecules_total)
             sublimation_energy_std  += np.var(gas_energy_data["Potential"])
             sublimation_energy_std   = np.sqrt(sublimation_energy_std)
+            sublimation_energy_std  *= _KJ_2_KCAL
             worksheet.write(
                 labels_dict_row["Sublimation Energy"],
                 1 + force_field_idx * 2,
@@ -389,9 +407,9 @@ def main():
             header_format_2
         )
 
-        expt_dict             = input_list[crystal_name]["EXPT"]
-        doc                   = gemmi.cif.read(expt_dict["CIF"])[0]
-        strc                  = gemmi.make_small_structure_from_block(doc)
+        expt_dict = input_list[crystal_name]["EXPT"]
+        doc       = gemmi.cif.read(expt_dict["CIF"])[0]
+        strc      = gemmi.make_small_structure_from_block(doc)
 
         worksheet.write(
             labels_dict_row["a"],
