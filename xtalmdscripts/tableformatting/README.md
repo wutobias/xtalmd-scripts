@@ -31,6 +31,8 @@ variables:
 
 	- MOLS_PER_CELL: Number of molecules per unit cell.
 
+	- TEMPERATURE: Temperature used during xtal MD simulation.
+
 - EXPT: This is a list containing data from experiments
 
 	- CIF: cif file
