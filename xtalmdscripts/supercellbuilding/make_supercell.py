@@ -278,6 +278,13 @@ def equalize_rdmols(mol_list):
                 Point3D(*pos)
             )
 
+        N_atoms = mol_1.GetNumAtoms()
+        for atm_idx in range(N_atoms):
+            atom = mol_2.GetAtomWithIdx(atm_idx)
+            atom.SetMonomerInfo(
+                mol_1.GetAtomWithIdx(atm_idx).GetMonomerInfo()
+                )
+
         mol_list[mol_idx] = mol_2
 
     return mol_list
