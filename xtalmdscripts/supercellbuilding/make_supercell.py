@@ -218,7 +218,8 @@ def make_supercell(
         mol = replicated_mol_list[mol_idx]
         mi  = Chem.AtomPDBResidueInfo()
         mi.SetResidueName('MOL')
-        mi.SetResidueNumber(mol_identifies[mol_idx])
+        #mi.SetResidueNumber(mol_identifies[mol_idx] + 1)
+        mi.SetResidueNumber(mol_idx + 1)
         mi.SetOccupancy(1.0)
         mi.SetTempFactor(0.0)
         mi.SetChainId(f"{string.ascii_uppercase[mol_identifies[mol_idx]]}")
