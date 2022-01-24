@@ -290,29 +290,31 @@ def equalize_rdmols(mol_list):
 
     return mol_list
 
-def main():
-
-    args = parse_arguments()
-
-    a_len = np.max(args.a_min_max) - np.min(args.a_min_max) + 1.
-    b_len = np.max(args.b_min_max) - np.min(args.b_min_max) + 1.
-    c_len = np.max(args.c_min_max) - np.min(args.c_min_max) + 1.
-
-    doc  = gemmi.cif.read(args.input)[0]
-    strc = gemmi.make_small_structure_from_block(doc)
+def generate_replicated_mol_list(
+    strc, 
+    a_min_max,
+    b_min_max,
+    c_min_max):
 
     atom_crds_ortho, atom_num = make_P1(strc)
     replicated_mol_list = make_supercell(
         strc,
         atom_crds_ortho, 
         atom_num,
-        args.a_min_max[0], args.a_min_max[1],
-        args.b_min_max[0], args.b_min_max[1],
-        args.c_min_max[0], args.c_min_max[1],
+        a_min_max[0], a_min_max[1],
+        b_min_max[0], b_min_max[1],
+        c_min_max[0], c_min_max[1],
         )
 
     replicated_mol_list = equalize_rdmols(replicated_mol_list)
 
+    return replicated_mol_list    
+
+def get_pdb_block(
+    replicated_mol_list, 
+    strc_write):
+
+    ### Combine all rdmols in a single big rdmol
     N_mol = len(replicated_mol_list)
     for mol_idx in range(N_mol):
         mol = replicated_mol_list[mol_idx]
@@ -320,6 +322,33 @@ def main():
             mol_new = mol
         else:
             mol_new = Chem.CombineMols(mol_new, mol)
+
+    header     = strc_write.make_pdb_headers()
+    crds_block = Chem.MolToPDBBlock(mol_new)
+    pdb_block  = header + crds_block
+
+    return pdb_block
+
+
+def main():
+
+    args = parse_arguments()
+
+    doc  = gemmi.cif.read(args.input)[0]
+    strc = gemmi.make_small_structure_from_block(doc)
+
+    ### Build the supercell as a set of rdkit molecules
+    replicated_mol_list = generate_replicated_mol_list(
+        strc,
+        args.a_min_max,
+        args.b_min_max,
+        args.c_min_max
+        )
+
+    ### Write pdb file
+    a_len = np.max(args.a_min_max) - np.min(args.a_min_max) + 1.
+    b_len = np.max(args.b_min_max) - np.min(args.b_min_max) + 1.
+    c_len = np.max(args.c_min_max) - np.min(args.c_min_max) + 1.
 
     strc_write               = gemmi.Structure()
     strc_write.spacegroup_hm = strc.spacegroup_hm
@@ -332,12 +361,13 @@ def main():
         strc.cell.gamma
     )
 
-    header     = strc_write.make_pdb_headers()
-    crds_block = Chem.MolToPDBBlock(mol_new)
+    pdb_block = get_pdb_block(replicated_mol_list, strc_write)
     with open(args.output, "w") as fopen:
-        fopen.write(header)
-        fopen.write(crds_block)
+        fopen.write(pdb_block)
 
+    ### Generate list of unique smiles for unique
+    ### molecules in UC
+    atom_crds_ortho, atom_num = make_P1(strc)
     unitcell_mol_list = make_supercell(
         strc,
         atom_crds_ortho, 
@@ -351,6 +381,7 @@ def main():
     smiles_list = set(smiles_list)
     smiles_list = list(smiles_list)
 
+    ### Output final summary
     print(f"""
 Summary:
 ========
