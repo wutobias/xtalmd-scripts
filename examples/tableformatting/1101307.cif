@@ -1,0 +1,88 @@
+####################################################################### 
+# 
+# This file contains crystal structure data downloaded from the 
+# Cambridge Structural Database (CSD) hosted by the Cambridge 
+# Crystallographic Data Centre (CCDC).
+# 
+# Full information about CCDC data access policies and citation 
+# guidelines are available at http://www.ccdc.cam.ac.uk/access/V1 
+# 
+# Audit and citation data items may have been added by the CCDC. 
+# Please retain this information to preserve the provenance of 
+# this file and to allow appropriate attribution of the data. 
+# 
+#######################################################################
+
+data_ADIPAM10
+#This CIF has been generated from an entry in the Cambridge Structural Database
+_database_code_depnum_ccdc_archive 'CCDC 1101307'
+_database_code_CSD               ADIPAM10
+loop_
+_citation_id
+_citation_doi
+_citation_year
+1 10.1107/S0365110X6600152X 1966
+_audit_creation_method           'Created from the CSD'
+_audit_update_record             
+;
+2021-12-03 downloaded from the CCDC.
+;
+_database_code_NBS               500753
+_chemical_formula_moiety         'C6 H12 N2 O2'
+_chemical_name_systematic        Adipamide
+_chemical_absolute_configuration unk
+_diffrn_ambient_temperature      295
+_exptl_crystal_density_diffrn    1.355
+#These two values have been output from a single CSD field.
+_refine_ls_R_factor_gt           0.088
+_refine_ls_wR_factor_gt          0.088
+_diffrn_radiation_probe          x-ray
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,1/2-y,1/2+z
+_cell_length_a                   6.890(10)
+_cell_length_b                   5.150(10)
+_cell_length_c                   10.670(10)
+_cell_angle_alpha                90
+_cell_angle_beta                 111.0
+_cell_angle_gamma                90
+_cell_volume                     353.462
+_cell_formula_units_Z            2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C -0.41690 0.02670 0.47070
+C2 C -0.35160 -0.22450 0.42490
+C3 C -0.19880 -0.19230 0.35620
+H1 H -0.28640 0.08760 0.54330
+H2 H -0.47430 0.10450 0.39300
+H3 H -0.29240 -0.28820 0.49200
+H4 H -0.46550 -0.27240 0.36470
+H5 H -0.04700 -0.31200 0.29300
+H6 H -0.13800 -0.58480 0.33380
+N1 N -0.11700 -0.41080 0.33060
+O1 O -0.15580 0.02310 0.32440
+C1B C -0.58310 -0.02670 0.52930
+C2B C -0.64840 0.22450 0.57510
+H1B H -0.71360 -0.08760 0.45670
+H2B H -0.52570 -0.10450 0.60700
+C3B C -0.80120 0.19230 0.64380
+H3B H -0.70760 0.28820 0.50800
+H4B H -0.53450 0.27240 0.63530
+N1B N -0.88300 0.41080 0.66940
+O1B O -0.84420 -0.02310 0.67560
+H5B H -0.95300 0.31200 0.70700
+H6B H -0.86200 0.58480 0.66620
+
+#END
