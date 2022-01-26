@@ -239,7 +239,7 @@ def make_supercell(
 
     return replicated_mol_list
 
-def equalize_rdmols(mol_list):
+def get_unique_mapping(mol_list):
 
     N_mol = len(mol_list)
 
@@ -260,6 +260,12 @@ def equalize_rdmols(mol_list):
                     found_unique = True
                 else:
                     unique_mapping[mol_idx] = smiles_unique_idx
+
+    return unique_mapping
+
+def equalize_rdmols(mol_list):
+
+    unique_mapping = get_unique_mapping(mol_list)
 
     for mol_idx in unique_mapping:
         ### This is the molecule that holds the correct coordinates
@@ -337,7 +343,8 @@ def main():
     doc  = gemmi.cif.read(args.input)[0]
     strc = gemmi.make_small_structure_from_block(doc)
 
-    ### Build the supercell as a set of rdkit molecules
+    ### Build the supercell as a set of rdkit molecule objects
+    ### ======================================================
     replicated_mol_list = generate_replicated_mol_list(
         strc,
         args.a_min_max,
@@ -346,6 +353,7 @@ def main():
         )
 
     ### Write pdb file
+    ### ==============
     a_len = np.max(args.a_min_max) - np.min(args.a_min_max) + 1.
     b_len = np.max(args.b_min_max) - np.min(args.b_min_max) + 1.
     c_len = np.max(args.c_min_max) - np.min(args.c_min_max) + 1.
@@ -367,6 +375,7 @@ def main():
 
     ### Generate list of unique smiles for unique
     ### molecules in UC
+    ### =========================================
     atom_crds_ortho, atom_num = make_P1(strc)
     unitcell_mol_list = make_supercell(
         strc,
@@ -382,6 +391,7 @@ def main():
     smiles_list = list(smiles_list)
 
     ### Output final summary
+    ### ====================
     print(f"""
 Summary:
 ========
