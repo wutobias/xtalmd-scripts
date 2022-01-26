@@ -217,8 +217,8 @@ def make_supercell(
     for mol_idx in range(N_mol):
         mol = replicated_mol_list[mol_idx]
         mi  = Chem.AtomPDBResidueInfo()
-        mi.SetResidueName('MOL')
-        #mi.SetResidueNumber(mol_identifies[mol_idx] + 1)
+        mi.SetIsHeteroAtom(True)
+        mi.SetResidueName(f'M{mol_identifies[mol_idx]}')
         mi.SetResidueNumber(mol_idx + 1)
         mi.SetOccupancy(1.0)
         mi.SetTempFactor(0.0)
@@ -232,12 +232,15 @@ def make_supercell(
                 atom_counts_dict[atomic_num] = 1
             else:
                 atom_counts_dict[atomic_num] += 1
-            mi.SetName(f"{atomic_ele[0]}{atom_counts_dict[atomic_num]}".ljust(4))
+            mi.SetName(
+                f"{atomic_ele[0]}{atom_counts_dict[atomic_num]}".ljust(4)
+                )
             atom.SetMonomerInfo(mi)
 
         replicated_mol_list[mol_idx] = mol
 
     return replicated_mol_list
+
 
 def get_unique_mapping(mol_list):
 
@@ -263,7 +266,10 @@ def get_unique_mapping(mol_list):
 
     return unique_mapping
 
+
 def equalize_rdmols(mol_list):
+
+    import copy
 
     unique_mapping = get_unique_mapping(mol_list)
 
@@ -288,9 +294,11 @@ def equalize_rdmols(mol_list):
         N_atoms = mol_1.GetNumAtoms()
         for atm_idx in range(N_atoms):
             atom = mol_2.GetAtomWithIdx(atm_idx)
-            atom.SetMonomerInfo(
+            mi   = copy.copy(
                 mol_1.GetAtomWithIdx(atm_idx).GetMonomerInfo()
                 )
+            mi.SetResidueName(f'M{unique_mapping[mol_idx]}')
+            atom.SetMonomerInfo(mi)
 
         mol_list[mol_idx] = mol_2
 
