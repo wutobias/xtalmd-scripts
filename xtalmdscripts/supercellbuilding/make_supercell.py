@@ -339,13 +339,20 @@ def get_pdb_block(
 
     return pdb_block
 
+def parse_cif(cif_path):
+
+    import gemmi
+
+    doc  = gemmi.cif.read(cif_path)[0]
+    strc = gemmi.make_small_structure_from_block(doc)
+
+    return strc
 
 def main():
 
     args = parse_arguments()
 
-    doc  = gemmi.cif.read(args.input)[0]
-    strc = gemmi.make_small_structure_from_block(doc)
+    strc = parse_cif(args.input)
 
     ### Build the supercell as a set of rdkit molecule objects
     ### ======================================================
