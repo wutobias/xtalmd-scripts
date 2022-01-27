@@ -1,8 +1,8 @@
 #!/use/bin/env python3
 
 import gemmi
-from .supercellbuilding import make_supercell
-from .supercellbuilding import get_unique_mapping
+from xtalmdscripts.supercellbuilding import make_supercell
+from xtalmdscripts.supercellbuilding import get_unique_mapping
 import openmm
 from openmm import unit
 from openmm import app
