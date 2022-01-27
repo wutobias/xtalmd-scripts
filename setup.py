@@ -17,6 +17,7 @@ in the group of Mike Gilson at UC San Diego.',
         'console_scripts': [
             'make_supercell = xtalmdscripts.supercellbuilding.make_supercell:entry_point',
             'make_tables    = xtalmdscripts.tableformatting.make_tables:entry_point',
+            'build_system   = xtalmdscripts.buildsystem.build_system:entry_point',
             ]
         },
     )
