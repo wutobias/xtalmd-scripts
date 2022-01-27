@@ -12,7 +12,7 @@ in the group of Mike Gilson at UC San Diego.',
     license='MIT',
     platforms=['Linux'],
     zip_safe=False,
-    packages=["xtalmdscripts"],
+    packages=find_packages(),
     entry_points={
         'console_scripts': [
             'make_supercell = xtalmdscripts.supercellbuilding.make_supercell:entry_point',
