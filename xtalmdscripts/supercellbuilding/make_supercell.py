@@ -218,11 +218,11 @@ def make_supercell(
         mol = replicated_mol_list[mol_idx]
         mi  = Chem.AtomPDBResidueInfo()
         mi.SetIsHeteroAtom(True)
-        mi.SetResidueName(f'M{mol_identifies[mol_idx]}')
-        mi.SetResidueNumber(mol_idx + 1)
+        mi.SetResidueName(f'M{mol_identifies[mol_idx]}'.ljust(3))
+        mi.SetResidueNumber(mol_identifies[mol_idx] + 1)
         mi.SetOccupancy(1.0)
         mi.SetTempFactor(0.0)
-        mi.SetChainId(f"{string.ascii_uppercase[mol_identifies[mol_idx]]}")
+        #mi.SetChainId(f"{string.ascii_uppercase[mol_identifies[mol_idx]]}")
         
         atom_counts_dict = dict()
         for atom in mol.GetAtoms():
@@ -264,14 +264,14 @@ def get_unique_mapping(mol_list):
                 else:
                     unique_mapping[mol_idx] = smiles_unique_idx
 
-    return unique_mapping
+    return unique_mapping, rdmol_list_unique
 
 
 def equalize_rdmols(mol_list):
 
     import copy
 
-    unique_mapping = get_unique_mapping(mol_list)
+    unique_mapping, rdmol_list_unique = get_unique_mapping(mol_list)
 
     for mol_idx in unique_mapping:
         ### This is the molecule that holds the correct coordinates
@@ -294,10 +294,8 @@ def equalize_rdmols(mol_list):
         N_atoms = mol_1.GetNumAtoms()
         for atm_idx in range(N_atoms):
             atom = mol_2.GetAtomWithIdx(atm_idx)
-            mi   = copy.copy(
-                mol_1.GetAtomWithIdx(atm_idx).GetMonomerInfo()
-                )
-            mi.SetResidueName(f'M{unique_mapping[mol_idx]}')
+            mi   = mol_1.GetAtomWithIdx(atm_idx).GetMonomerInfo()
+            mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
             atom.SetMonomerInfo(mi)
 
         mol_list[mol_idx] = mol_2
@@ -329,13 +327,11 @@ def get_pdb_block(
     strc_write):
 
     ### Combine all rdmols in a single big rdmol
-    N_mol = len(replicated_mol_list)
+    N_mol   = len(replicated_mol_list)
+    mol_new = Chem.Mol()
     for mol_idx in range(N_mol):
-        mol = replicated_mol_list[mol_idx]
-        if mol_idx == 0:
-            mol_new = mol
-        else:
-            mol_new = Chem.CombineMols(mol_new, mol)
+        mol = copy.deepcopy(replicated_mol_list[mol_idx])
+        mol_new = Chem.CombineMols(mol_new, mol)
 
     header     = strc_write.make_pdb_headers()
     crds_block = Chem.MolToPDBBlock(mol_new)
