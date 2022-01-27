@@ -11,7 +11,67 @@ import numpy as np
 from pkg_resources import resource_filename
 
 oplsaa_xml_builder_path = resource_filename("xtalmdscripts.data", "oplsaa/build_xml.sh")
-cgenff_dir_path         = resource_filename("xtalmdscripts.data", "cgenff/")
+
+
+def parse_arguments():
+
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Python script for building openmm xml files for xtal md simulations with different force fields."
+        )
+
+    parser.add_argument(
+        '--input', 
+        "-i", 
+        type=str, 
+        help="Input cif file", 
+        required=True
+        )
+
+    parser.add_argument(
+        '--output', 
+        "-o", 
+        type=str, 
+        help="output xml file", 
+        required=True
+        )
+
+    parser.add_argument(
+        '--forcefield', 
+        "-ff", 
+        type=str, 
+        help="force field name",
+        choices=[
+            "Gaff1", 
+            "Gaff2", 
+            "Parsley",
+            "Sage",
+            "Cgenff",
+            "Oplsaa"
+            ],
+        required=True
+        )
+
+    parser.add_argument(
+        '--nbcutoff', 
+        "-nb", 
+        type=float, 
+        help="nonbonded cutoff distance in nm", 
+        default="0.8",
+        required=False
+        )
+
+    parser.add_argument(
+        '--toppar', 
+        "-tp", 
+        type=str, 
+        help="path to topology and parameter files for charm", 
+        required=False
+        )
+
+    return parser.parse_args()
+
 
 def OPLS_LJ(system):
 
@@ -51,58 +111,6 @@ def OPLS_LJ(system):
             nonbonded_force.setExceptionParameters(i, p1, p2, q, sig14, eps)
     system.addForce(lorentz)
     return system
-
-
-def parse_arguments():
-
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        description="Python script for building openmm xml files for xtal md simulations with different force fields."
-        )
-
-    parser.add_argument(
-        '--input', 
-        "-i", 
-        type=str, 
-        help="Input cif file", 
-        required=True
-        )
-
-    parser.add_argument(
-        '--output', 
-        "-o", 
-        type=str, 
-        help="output xml file", 
-        required=True
-        )
-
-    parser.add_argument(
-        '--forcefield', 
-        "-ff", 
-        type=str, 
-        help="force field name",
-        choices=[
-        	"Gaff1", 
-        	"Gaff2", 
-        	"Parsley",
-        	"Sage",
-        	"Cgenff",
-        	"Oplsaa"
-        	],
-        required=True
-        )
-
-    parser.add_argument(
-        '--nbcutoff', 
-        "-nb", 
-        type=float, 
-        help="nonbonded cutoff distance in nm", 
-        default="0.8",
-        required=False
-        )
-
-    return parser.parse_args()
 
 
 def build_system_gaff(
@@ -173,7 +181,7 @@ def build_system_off(
 def build_system_cgenff(
     replicated_mol_list,
     pdb_path,
-    version="all36_cgenff"):
+    toppar_dir_path):
 
     import subprocess
     import parmed as pmd
@@ -182,12 +190,10 @@ def build_system_cgenff(
     from simtk.openmm.app import ForceField
     from simtk.openmm.app import PDBFile, CharmmPsfFile, CharmmParameterSet
 
-    toppar_dir = f"{oplsaa_xml_builder_path}/toppar_c36_jul21"
-
-    ### topology
-    rtf_path = f"{toppar_dir}/top_{version}.rtf"
-    ### parameters
-    prm_path = f"{toppar_dir}/par_{version}.prm"
+    ### cgenff topology
+    rtf_path = f"{toppar_dir_path}/top_all36_cgenff.rtf"
+    ### cgenff parameters
+    prm_path = f"{toppar_dir_path}/par_all36_cgenff.prm"
 
     unique_mapping, rdmol_list_unique  = make_supercell.get_unique_mapping(replicated_mol_list)
     unique_mol_idxs = set(unique_mapping.values())
@@ -195,7 +201,7 @@ def build_system_cgenff(
 
     ### number replicatations necessary to build
     ### the the replicated mol list from the unique list
-    N_unique_replicates = len(replicated_mol_list)/len(unique_mol_idxs)
+    N_unique_replicates = int(len(replicated_mol_list)/len(unique_mol_idxs))
     assert (len(replicated_mol_list) % len(unique_mol_idxs)) == 0
 
     ### This is the parmed.Structure instance that will
@@ -203,24 +209,27 @@ def build_system_cgenff(
     psf_pmd = pmd.Structure()
     ### Stores the path to all charmm str, topology and parameter files.
     params_path_list = [
-        f'{toppar_dir}/top_all36_prot.rtf',
-        f'{toppar_dir}/par_all36m_prot.prm',
-        f'{toppar_dir}/top_all36_na.rtf',
-        f'{toppar_dir}/par_all36_na.prm',
-        f'{toppar_dir}/top_all36_carb.rtf',
-        f'{toppar_dir}/par_all36_carb.prm',
-        f'{toppar_dir}/top_all36_lipid.rtf',
-        f'{toppar_dir}/par_all36_lipid.prm',
-        f'{toppar_dir}/top_all36_cgenff.rtf',
-        f'{toppar_dir}/par_all36_cgenff.prm',
+        f'{toppar_dir_path}/top_all36_prot.rtf',
+        f'{toppar_dir_path}/par_all36m_prot.prm',
+        f'{toppar_dir_path}/top_all36_na.rtf',
+        f'{toppar_dir_path}/par_all36_na.prm',
+        f'{toppar_dir_path}/top_all36_carb.rtf',
+        f'{toppar_dir_path}/par_all36_carb.prm',
+        f'{toppar_dir_path}/top_all36_lipid.rtf',
+        f'{toppar_dir_path}/par_all36_lipid.prm',
+        f'{toppar_dir_path}/top_all36_cgenff.rtf',
+        f'{toppar_dir_path}/par_all36_cgenff.prm',
     ]
     for mol_idx in unique_mol_idxs:
 
         mol = rdmol_list_unique[mol_idx]
 
+        mi = mol.GetAtomWithIdx(0).GetMonomerInfo()
+        resname = mi.GetResidueName()
+
         pdb_path_monomer = f"./mol_{mol_idx}.pdb"
 
-        with open(pdb_path_monomer, "r") as fopen:
+        with open(pdb_path_monomer, "w") as fopen:
             fopen.write(
                 Chem.MolToPDBBlock(mol)
                 )
@@ -238,8 +247,10 @@ def build_system_cgenff(
             "obabel",
             "-ipdb",
             f"./mol_{mol_idx}.pdb",
+            "--title",
+            resname,
             "-omol2",
-            mol2_path_monomer,
+            f"-O{mol2_path_monomer}",
             ])
 
         ### Obtain cgenff stream file using cgenff
@@ -258,46 +269,45 @@ def build_system_cgenff(
 ! read topology and parameter files
 
 ! protein topology and parameter
-open read card unit 10 name {toppar_dir}/top_all36_prot.rtf
+open read card unit 10 name {toppar_dir_path}/top_all36_prot.rtf
 read  rtf card unit 10
 
-open read card unit 20 name {toppar_dir}/par_all36m_prot.prm
+open read card unit 20 name {toppar_dir_path}/par_all36m_prot.prm
 read para card unit 20 flex
 
 ! nucleic acids
-open read card unit 10 name {toppar_dir}/top_all36_na.rtf
+open read card unit 10 name {toppar_dir_path}/top_all36_na.rtf
 read  rtf card unit 10 append
 
-open read card unit 20 name {toppar_dir}/par_all36_na.prm
+open read card unit 20 name {toppar_dir_path}/par_all36_na.prm
 read para card unit 20 append flex
 
 ! carbohydrates
-open read card unit 10 name {toppar_dir}/top_all36_carb.rtf
+open read card unit 10 name {toppar_dir_path}/top_all36_carb.rtf
 read  rtf card unit 10 append
 
-open read card unit 20 name {toppar_dir}/par_all36_carb.prm
+open read card unit 20 name {toppar_dir_path}/par_all36_carb.prm
 read para card unit 20 append flex
 
 ! lipids
-open read card unit 10 name {toppar_dir}/top_all36_lipid.rtf
+open read card unit 10 name {toppar_dir_path}/top_all36_lipid.rtf
 read  rtf card unit 10 append
 
-open read card unit 20 name {toppar_dir}/par_all36_lipid.prm
+open read card unit 20 name {toppar_dir_path}/par_all36_lipid.prm
 read para card unit 20 append flex
 
 ! CGENFF
-open read card unit 10 name {toppar_dir}/top_all36_cgenff.rtf
+open read card unit 10 name {toppar_dir_path}/top_all36_cgenff.rtf
 read  rtf card unit 10 append
 
-open read card unit 20 name {toppar_dir}/par_all36_cgenff.prm
+open read card unit 20 name {toppar_dir_path}/par_all36_cgenff.prm
 read para card unit 20 append flex
 
 stream {str_path_monomer}
 
 ! Generate sequence
-! read sequence mol {N_mol}
-read sequence mol 1
-generate mol first none last none setup
+read sequence {resname} 1
+generate {resname} first none last none setup
 
 open write unit 10 card name {psf_path_monomer}
 write psf  unit 10 card
@@ -311,7 +321,7 @@ stop
         subprocess.run([
             "charmm",
             "-i",
-            charmm_inp
+            "make_psf.inp"
             ])
 
         psf_pmd += pmd.load_file(psf_path_monomer)
@@ -324,46 +334,50 @@ stop
     ### Build the omm system
     psffile  = CharmmPsfFile("./strc.psf")
     topology = psffile.topology
-    pdbfile  = PDBFile("./strc.pdb")
+    pdbfile  = PDBFile(pdb_path)
     boxvectors = pdbfile.topology.getPeriodicBoxVectors()
     positions  = pdbfile.positions
 
     params  = CharmmParameterSet(*params_path_list)
     psffile.loadParameters(params)
 
-    a = np.linalg.norm(boxvectors[0])
-    b = np.linalg.norm(boxvectors[1])
-    c = np.linalg.norm(boxvectors[2])
+    a = boxvectors[0]
+    b = boxvectors[1]
+    c = boxvectors[2]
 
-    a_norm = a/np.linalg.norm(a)
-    b_norm = b/np.linalg.norm(b)
-    c_norm = c/np.linalg.norm(c)
+    a_len = np.linalg.norm(a)
+    b_len = np.linalg.norm(b)
+    c_len = np.linalg.norm(c)
+
+    a_normalized = a/a_len
+    b_normalized = b/b_len
+    c_normalized = c/c_len
 
     alpha = np.arccos(
         np.dot(
-            c_norm,
-            b_norm
+            c_normalized,
+            b_normalized
             )
         ) * unit.radian
 
     beta = np.arccos(
         np.dot(
-            a_norm,
-            c_norm
+            a_normalized,
+            c_normalized
             )
         ) * unit.radian
 
     gamma = np.arccos(
         np.dot(
-            a_norm,
-            b_norm
+            a_normalized,
+            b_normalized
             )
         ) * unit.radian
 
     psffile.setBox(
-        a,
-        b,
-        c,
+        a_len,
+        b_len,
+        c_len,
         alpha,
         beta,
         gamma,
@@ -386,6 +400,7 @@ def build_system_oplsaa(
 
     import subprocess
     from simtk.openmm.app import ForceField
+    from simtk.openmm.app import PDBFile
 
     set_lbcc = 0
 
@@ -406,26 +421,28 @@ def build_system_oplsaa(
 
         mol = rdmol_list_unique[mol_idx]
 
-        pdb_path_monomer = f"./mol_{mol_idx}.pdb"
-        with open(pdb_path_monomer, "r") as fopen:
+        pdb_path_monomer = f"mol_{mol_idx}.pdb"
+        with open(pdb_path_monomer, "w") as fopen:
             fopen.write(
                 Chem.MolToPDBBlock(mol)
                 )
 
         mi = mol.GetAtomWithIdx(0).GetMonomerInfo()
+        resname = mi.GetResidueName().rstrip().lstrip()
 
-        sys.call([
-            f"{oplsaa_xml_builder_path}/build_xml.sh",
+        subprocess.run([
+            oplsaa_xml_builder_path,
             pdb_path_monomer,
-            mi.GetResidueName(),
-            Chem.GetFormalCharge(mol),
-            int(set_lbcc)
+            resname,
+            str(Chem.GetFormalCharge(mol)),
+            str(set_lbcc)
             ])
 
         xml_file_list.append(
-            f"{mi.GetResidueName()}.xml"
+            f"{resname}.xml"
             )
 
+    pdbfile  = PDBFile(pdb_path)
     topology   = pdbfile.getTopology()
     boxvectors = topology.getPeriodicBoxVectors()
     positions  = pdbfile.positions
@@ -527,12 +544,12 @@ def main():
         system = build_system_cgenff(
             replicated_mol_list,
             "./strc.pdb",
-            version="all36_cgenff"
+            args.toppar
             )
 
     elif args.forcefield.lower() == "oplsaa":
 
-        system = build_system_opls(
+        system = build_system_oplsaa(
             replicated_mol_list,
             "./strc.pdb",
             version="CM1A-LBCC"
