@@ -175,8 +175,7 @@ def build_system_cgenff(
     pdb_path,
     version="all36_cgenff"):
 
-    from .data import cgenff
-    import sys
+    import subprocess
     import parmed as pmd
     from rdkit import Chem
 
@@ -235,7 +234,7 @@ def build_system_cgenff(
         psf_path_monomer  = pdb_path_monomer.replace(".pdb", ".psf")
 
         ### Convert to mol2 file using obabel
-        sys.call([
+        subprocess.run([
             "obabel",
             "-ipdb",
             f"./mol_{mol_idx}.pdb",
@@ -244,7 +243,7 @@ def build_system_cgenff(
             ])
 
         ### Obtain cgenff stream file using cgenff
-        sys.call([
+        subprocess.run([
             "cgenff",
             "-p",
             rtf_path,
@@ -309,7 +308,7 @@ stop
             fopen.write(charmm_inp)
 
         ### Obtain psf file using charmm
-        sys.call([
+        subprocess.run([
             "charmm",
             "-i",
             charmm_inp
@@ -385,8 +384,7 @@ def build_system_oplsaa(
     pdb_path,
     version="CM1A"):
 
-    from .data import opls
-    import sys
+    import subprocess
     from simtk.openmm.app import ForceField
 
     set_lbcc = 0
