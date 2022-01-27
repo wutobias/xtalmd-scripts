@@ -7,7 +7,6 @@ from openmm import unit
 from openmm import app
 from rdkit import Chem
 import numpy as np
-import argparse
 
 from pkg_resources import resource_filename
 
@@ -53,7 +52,10 @@ def OPLS_LJ(system):
     system.addForce(lorentz)
     return system
 
+
 def parse_arguments():
+
+    import argparse
 
     parser = argparse.ArgumentParser(
         description="Python script for building openmm xml files for xtal md simulations with different force fields."
@@ -108,6 +110,7 @@ def build_system_gaff(
     pdb_path,
     version="2.11"):
 
+    from rdkit import Chem
     from openff.toolkit.topology import Molecule
     from openmmforcefields.generators import GAFFTemplateGenerator
     from simtk.openmm.app import ForceField
@@ -492,48 +495,48 @@ def main():
     if args.forcefield.lower() == "gaff1":
 
         system = build_system_gaff(
-            "./strc.pdb",
             replicated_mol_list,
+            "./strc.pdb",
             version="1.81"
             )
 
     elif args.forcefield.lower() == "gaff2":
 
         system = build_system_gaff(
-            "./strc.pdb",
             replicated_mol_list,
+            "./strc.pdb",
             version="2.11"
             )
 
     elif args.forcefield.lower() == "parsley":
 
         system = build_system_off(
-            "./strc.pdb",
             replicated_mol_list,
+            "./strc.pdb",
             version="1.3.1"
             )
 
     elif args.forcefield.lower() == "sage":
 
         system = build_system_off(
-            "./strc.pdb",
             replicated_mol_list,
+            "./strc.pdb",
             version="2.0.0"
             )
 
     elif args.forcefield.lower() == "cgenff":
 
         system = build_system_cgenff(
-            "./strc.pdb",
             replicated_mol_list,
+            "./strc.pdb",
             version="all36_cgenff"
             )
 
     elif args.forcefield.lower() == "oplsaa":
 
         system = build_system_opls(
-            "./strc.pdb",
             replicated_mol_list,
+            "./strc.pdb",
             version="CM1A-LBCC"
             )
 
