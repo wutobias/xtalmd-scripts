@@ -2,12 +2,17 @@
 
 import gemmi
 from xtalmdscripts.supercellbuilding import make_supercell
-from xtalmdscripts.supercellbuilding import get_unique_mapping
 import openmm
 from openmm import unit
 from openmm import app
 from rdkit import Chem
 import numpy as np
+import argparse
+
+from pkg_resources import resource_filename
+
+oplsaa_xml_builder_path = resource_filename("xtalmdscripts.data", "oplsaa/build_xml.sh")
+cgenff_dir_path         = resource_filename("xtalmdscripts.data", "cgenff/")
 
 def OPLS_LJ(system):
 
@@ -175,14 +180,14 @@ def build_system_cgenff(
     from simtk.openmm.app import ForceField
     from simtk.openmm.app import PDBFile, CharmmPsfFile, CharmmParameterSet
 
-    toppar_dir = f"{cgenff.__path__}/toppar_c36_jul21"
+    toppar_dir = f"{oplsaa_xml_builder_path}/toppar_c36_jul21"
 
     ### topology
     rtf_path = f"{toppar_dir}/top_{version}.rtf"
     ### parameters
     prm_path = f"{toppar_dir}/par_{version}.prm"
 
-    unique_mapping  = get_unique_mapping(replicated_mol_list)
+    unique_mapping, rdmol_list_unique  = make_supercell.get_unique_mapping(replicated_mol_list)
     unique_mol_idxs = set(unique_mapping.values())
     unique_mol_idxs = sorted(unique_mol_idxs)
 
@@ -208,11 +213,14 @@ def build_system_cgenff(
         f'{toppar_dir}/par_all36_cgenff.prm',
     ]
     for mol_idx in unique_mol_idxs:
+
+        mol = rdmol_list_unique[mol_idx]
+
         pdb_path_monomer = f"./mol_{mol_idx}.pdb"
 
         with open(pdb_path_monomer, "r") as fopen:
             fopen.write(
-                Chem.MolToPDBBlock(replicated_mol_list[mol_idx])
+                Chem.MolToPDBBlock(mol)
                 )
 
         ### mol2 path
@@ -388,14 +396,14 @@ def build_system_oplsaa(
         raise ValueError(
             f"version={version} not understood.")
 
-    unique_mapping  = get_unique_mapping(replicated_mol_list)
+    unique_mapping, rdmol_list_unique = make_supercell.get_unique_mapping(replicated_mol_list)
     unique_mol_idxs = set(unique_mapping.values())
     unique_mol_idxs = sorted(unique_mol_idxs)
 
     xml_file_list   = list()
     for mol_idx in unique_mol_idxs:
 
-        mol = replicated_mol_list[mol_idx]
+        mol = rdmol_list_unique[mol_idx]
 
         pdb_path_monomer = f"./mol_{mol_idx}.pdb"
         with open(pdb_path_monomer, "r") as fopen:
@@ -406,7 +414,7 @@ def build_system_oplsaa(
         mi = mol.GetAtomWithIdx(0).GetMonomerInfo()
 
         sys.call([
-            f"{opls.__path__}/build_xml.sh",
+            f"{oplsaa_xml_builder_path}/build_xml.sh",
             pdb_path_monomer,
             mi.GetResidueName(),
             Chem.GetFormalCharge(mol),
