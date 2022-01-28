@@ -470,8 +470,7 @@ def main():
     min_length_b = args.nbcutoff * unit.nanometer * 2.5
     min_length_c = args.nbcutoff * unit.nanometer * 2.5
 
-    doc  = gemmi.cif.read(args.input)[0]
-    strc = gemmi.make_small_structure_from_block(doc)
+    strc = make_supercell.parse_cif(args.input)
 
     uc_length_a = strc.cell.a * unit.angstrom
     uc_length_b = strc.cell.b * unit.angstrom
@@ -485,18 +484,10 @@ def main():
     b_len = np.max(b_min_max) - np.min(b_min_max) + 1.
     c_len = np.max(c_min_max) - np.min(c_min_max) + 1.
 
-    strc_write               = gemmi.Structure()
-    strc_write.spacegroup_hm = strc.spacegroup_hm
-    strc_write.cell          = gemmi.UnitCell(
-        strc.cell.a * a_len,
-        strc.cell.b * b_len,
-        strc.cell.c * c_len,
-        strc.cell.alpha,
-        strc.cell.beta,
-        strc.cell.gamma
-    )
+    print(f"Building super cell with with {a_len} x {b_len} x {c_len}")
 
-    ### Build the supercell as a set of rdkit molecules
+    ### Build the supercell as a list of rdkit molecules
+    ### ================================================
     replicated_mol_list = make_supercell.generate_replicated_mol_list(
         strc,
         a_min_max,
@@ -504,8 +495,18 @@ def main():
         c_min_max,
         )
 
+    ### Write pdb file
+    ### ==============
+    pdb_str = make_supercell.get_pdb_str(
+        replicated_mol_list, 
+        strc,
+        a_min_max,
+        b_min_max,
+        c_min_max
+        )
+
     with open("./strc.pdb", "w") as fopen:
-        fopen.write(make_supercell.get_pdb_block(replicated_mol_list, strc_write))
+        fopen.write(pdb_str)
 
     if args.forcefield.lower() == "gaff1":
 
@@ -554,6 +555,12 @@ def main():
             "./strc.pdb",
             version="CM1A-LBCC"
             )
+
+        ### Set nonbonded cutoff special for oplsaa
+        forces = {system.getForce(index).__class__.__name__: system.getForce(
+            index) for index in range(system.getNumForces())}
+        nbforce = forces['CustomNonbondedForce']
+        nbforce.setCutoffDistance(args.nbcutoff * unit.nanometer)
 
     else:
         raise ValueError(
