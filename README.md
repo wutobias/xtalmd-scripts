@@ -12,7 +12,7 @@ In order to be able to use the cgenff CHARMM force field, the programs `cgenff` 
 
 ### Oplsaa Force Field
 In order to be able to use the OplsAA force field, there must be conda environment called `ligpargen` that has the program `LigParGen` installed. Furthermore, the program `BOSS` must be installed and available in `PATH`.
-Instructions on how to install `LigParGen` and get a `BOSS` license can be found here[http://zarbi.chem.yale.edu/ligpargen/]. A yml file to setup the `ligpargen` conda environment is in the top level folder of this GitHub repo.
+Instructions on how to install `LigParGen` and get a `BOSS` license can be found [here](http://zarbi.chem.yale.edu/ligpargen/). A yml file to setup the `ligpargen` conda environment is in the top level folder of this GitHub repo.
 
 ### Dependencies
 ```
