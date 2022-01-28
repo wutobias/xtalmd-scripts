@@ -12,13 +12,3 @@ The `-a`, `-b` and `-c` arguments tell the program where it should start (first 
 
 Type `make_supercell.py --help` for more help.
 
-### Notes
-
-This script makes heavy usage of `xyz2mol`, which is developed in the Jensen group and can be found [here](https://github.com/jensengroup/xyz2mol).
-
-### Dependencies
-```
-gemmi
-networkx
-rdkit
-```
