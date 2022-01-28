@@ -339,35 +339,20 @@ def get_pdb_block(
 
     return pdb_block
 
-def parse_cif(cif_path):
+def get_pdb_str(
+    replicated_mol_list,
+    strc,
+    a_min_max,
+    b_min_max,
+    c_min_max):
 
     import gemmi
 
-    doc  = gemmi.cif.read(cif_path)[0]
-    strc = gemmi.make_small_structure_from_block(doc)
-
-    return strc
-
-def main():
-
-    args = parse_arguments()
-
-    strc = parse_cif(args.input)
-
-    ### Build the supercell as a set of rdkit molecule objects
-    ### ======================================================
-    replicated_mol_list = generate_replicated_mol_list(
-        strc,
-        args.a_min_max,
-        args.b_min_max,
-        args.c_min_max
-        )
-
     ### Write pdb file
     ### ==============
-    a_len = np.max(args.a_min_max) - np.min(args.a_min_max) + 1.
-    b_len = np.max(args.b_min_max) - np.min(args.b_min_max) + 1.
-    c_len = np.max(args.c_min_max) - np.min(args.c_min_max) + 1.
+    a_len = np.max(a_min_max) - np.min(a_min_max) + 1.
+    b_len = np.max(b_min_max) - np.min(b_min_max) + 1.
+    c_len = np.max(c_min_max) - np.min(c_min_max) + 1.
 
     strc_write               = gemmi.Structure()
     strc_write.spacegroup_hm = strc.spacegroup_hm
@@ -381,8 +366,44 @@ def main():
     )
 
     pdb_block = get_pdb_block(replicated_mol_list, strc_write)
+
+    return pdb_block
+    
+
+def parse_cif(cif_path):
+
+    import gemmi
+
+    doc  = gemmi.cif.read(cif_path)[0]
+    strc = gemmi.make_small_structure_from_block(doc)
+
+    return strc
+
+def main():
+
+    args = parse_arguments()
+    strc = parse_cif(args.input)
+
+    ### Build the supercell as a set of rdkit molecule objects
+    ### ======================================================
+    replicated_mol_list = generate_replicated_mol_list(
+        strc,
+        args.a_min_max,
+        args.b_min_max,
+        args.c_min_max
+        )
+
+    ### Write pdb file
+    ### ==============
+    pdb_str = get_pdb_str(
+        replicated_mol_list, 
+        strc,
+        args.a_min_max,
+        args.b_min_max,
+        args.c_min_max
+        )
     with open(args.output, "w") as fopen:
-        fopen.write(pdb_block)
+        fopen.write(pdb_str)
 
     ### Generate list of unique smiles for unique
     ### molecules in UC
@@ -403,6 +424,10 @@ def main():
 
     ### Output final summary
     ### ====================
+    a_len = np.max(args.a_min_max) - np.min(args.a_min_max) + 1.
+    b_len = np.max(args.b_min_max) - np.min(args.b_min_max) + 1.
+    c_len = np.max(args.c_min_max) - np.min(args.c_min_max) + 1.
+
     print(f"""
 Summary:
 ========
