@@ -43,12 +43,12 @@ def parse_arguments():
         type=str, 
         help="force field name",
         choices=[
-            "Gaff1", 
-            "Gaff2", 
-            "Parsley",
-            "Sage",
-            "Cgenff",
-            "Oplsaa"
+            "gaff1",
+            "gaff2",
+            "parsley",
+            "sage",
+            "cgenff",
+            "oplsaa"
             ],
         required=True
         )
@@ -442,7 +442,7 @@ def build_system_oplsaa(
             f"{resname}.xml"
             )
 
-    pdbfile  = PDBFile(pdb_path)
+    pdbfile    = PDBFile(pdb_path)
     topology   = pdbfile.getTopology()
     boxvectors = topology.getPeriodicBoxVectors()
     positions  = pdbfile.positions
