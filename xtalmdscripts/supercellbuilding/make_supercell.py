@@ -70,6 +70,7 @@ def parse_arguments():
 
     return parser.parse_args()
 
+
 def make_P1(strc):
 
     """
@@ -162,6 +163,7 @@ def make_P1(strc):
     atom_num        = np.array(atom_num)
 
     return atom_crds_ortho, atom_num
+
 
 def make_supercell(
     strc,
@@ -326,6 +328,7 @@ def equalize_rdmols(mol_list):
 
     return mol_list
 
+
 def generate_replicated_mol_list(
     strc, 
     a_min_max,
@@ -351,6 +354,7 @@ def generate_replicated_mol_list(
 
     return replicated_mol_list    
 
+
 def get_pdb_block(
     replicated_mol_list, 
     strc_write):
@@ -372,6 +376,7 @@ def get_pdb_block(
     pdb_block  = header + crds_block
 
     return pdb_block
+
 
 def get_pdb_str(
     replicated_mol_list,
@@ -420,6 +425,7 @@ def parse_cif(cif_path):
     strc = gemmi.make_small_structure_from_block(doc)
 
     return strc
+
 
 def main():
 
