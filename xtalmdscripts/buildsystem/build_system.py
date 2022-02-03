@@ -15,6 +15,10 @@ oplsaa_xml_builder_path = resource_filename("xtalmdscripts.data", "oplsaa/build_
 
 def parse_arguments():
 
+    """
+    Parse command line arguments.
+    """
+
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -118,6 +122,10 @@ def build_system_gaff(
     pdb_path,
     version="2.11"):
 
+    """
+    Build openmm system for gaff force field.
+    """
+
     from rdkit import Chem
     from openff.toolkit.topology import Molecule
     from openmmforcefields.generators import GAFFTemplateGenerator
@@ -151,6 +159,10 @@ def build_system_off(
     pdb_path,
     version="1.3.1"):
 
+    """
+    Build openmm system for openff force field.
+    """
+
     from openff.toolkit.topology import Molecule
     from openmmforcefields.generators import SMIRNOFFTemplateGenerator
     from simtk.openmm.app import ForceField
@@ -182,6 +194,10 @@ def build_system_cgenff(
     replicated_mol_list,
     pdb_path,
     toppar_dir_path):
+
+    """
+    Build openmm system for cgenff force field.
+    """
 
     import subprocess
     import parmed as pmd
@@ -398,6 +414,10 @@ def build_system_oplsaa(
     pdb_path,
     version="CM1A"):
 
+    """
+    Build openmm system for opls aa force field.
+    """
+
     import subprocess
     from simtk.openmm.app import ForceField
     from simtk.openmm.app import PDBFile
@@ -461,6 +481,10 @@ def build_system_oplsaa(
 
 
 def main():
+
+    """
+    Build openmm system for given ff and save as xml.
+    """
 
     args = parse_arguments()
 

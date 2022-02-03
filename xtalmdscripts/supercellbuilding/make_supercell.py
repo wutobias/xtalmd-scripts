@@ -14,6 +14,10 @@ import argparse
 
 def parse_arguments():
 
+    """
+    Parse command line arguments.
+    """
+
     parser = argparse.ArgumentParser(
         description="Python script for building supercell that can be used with PBC in MD simulation."
         )
@@ -67,6 +71,11 @@ def parse_arguments():
     return parser.parse_args()
 
 def make_P1(strc):
+
+    """
+    Generate the P1 cell. Return tuple with atomic coordinates (in Ang) and
+    atomic numbers of all atoms in P1 cell.
+    """
 
     strc.setup_cell_images()
     atom_crds_ortho = list()
@@ -162,6 +171,12 @@ def make_supercell(
     b_min, b_max,
     c_min, c_max):
 
+    """
+    Generate supercell based specified parameters. Assuming that `atom_crds_ortho`
+    and `atom_num` are for P1 cell. See method `make_P1`. Returns list of rdkit mol
+    objects with all molecules in supercell.
+    """
+
     a_replicate = np.arange(a_min,a_max+1, dtype=int)
     b_replicate = np.arange(b_min,b_max+1, dtype=int)
     c_replicate = np.arange(c_min,c_max+1, dtype=int)
@@ -244,6 +259,10 @@ def make_supercell(
 
 def get_unique_mapping(mol_list):
 
+    """
+    Get unique mapping dict and list of unique rdkit mol objects in list of rdkit mol objects.
+    """
+
     N_mol = len(mol_list)
 
     smiles_list = [Chem.MolToSmiles(mol, isomericSmiles=True) for mol in mol_list]
@@ -268,6 +287,11 @@ def get_unique_mapping(mol_list):
 
 
 def equalize_rdmols(mol_list):
+
+    """
+    Get list of rdkit mol objects in which all chemically idential mol objects
+    have identical topology and pdb monomer info. Only difference are coordinates.
+    """
 
     import copy
 
@@ -308,6 +332,11 @@ def generate_replicated_mol_list(
     b_min_max,
     c_min_max):
 
+    """
+    Generate rdkit mol object list for molecules in supercell. supercell is generated
+    according input parameters.
+    """
+
     atom_crds_ortho, atom_num = make_P1(strc)
     replicated_mol_list = make_supercell(
         strc,
@@ -325,6 +354,11 @@ def generate_replicated_mol_list(
 def get_pdb_block(
     replicated_mol_list, 
     strc_write):
+
+    """
+    Get pdb block as str. strc_write is gemmi structure object and must reflect
+    the dimensions of the supercell.
+    """
 
     ### Combine all rdmols in a single big rdmol
     N_mol   = len(replicated_mol_list)
@@ -345,6 +379,10 @@ def get_pdb_str(
     a_min_max,
     b_min_max,
     c_min_max):
+
+    """
+    Get full pdb file as str.
+    """
 
     import gemmi
 
@@ -372,6 +410,10 @@ def get_pdb_str(
 
 def parse_cif(cif_path):
 
+    """
+    Parse cif file as gemmis structure object.
+    """
+
     import gemmi
 
     doc  = gemmi.cif.read(cif_path)[0]
@@ -380,6 +422,10 @@ def parse_cif(cif_path):
     return strc
 
 def main():
+
+    """
+    Run the workflow.
+    """
 
     args = parse_arguments()
     strc = parse_cif(args.input)
