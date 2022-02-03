@@ -288,7 +288,6 @@ class ContextWrapper(object):
 def run_xtal_min(
     xml_path, 
     pdb_path,
-    temperature,
     platform_name = "CUDA",
     property_dict = {
         "Precision" : "mixed"
@@ -330,11 +329,7 @@ def run_xtal_min(
     
     context.setPositions(pdbfile.positions)
     context.setPeriodicBoxVectors(*topology.getPeriodicBoxVectors())
-    context.setVelocitiesToTemperature(
-            temperature.value_in_unit_system(
-                unit.md_unit_system
-                )
-            )
+
     cw = ContextWrapper(
         context, 
         system.getNumParticles()
@@ -363,23 +358,39 @@ def run_xtal_min(
         print("Delta1", delta1, "Delta2", delta2)
         
 
+    return context
+
+
+def main()
+
+    """
+    Run the main workflow.
+    """
+
+    args = parse_arguments()
+
+    ### Note: CUDA is much faster even for
+    ###       the wrapped minimization here (about factor 10)
+    context = run_xtal_min(
+        args.input,
+        args.pdb
+        platform_name = "CUDA",
+        property_dict = {
+            #"Threads"             : '4',
+            "DeterministicForces" : "True"
+        }
+    )
+
     state = context.getState(getPositions=True)
-    pos   = state.getPositions()
-    box   = state.getPeriodicBoxVectors()
+    with open(args.output, "w") as fopen:
+        fopen.write(
+            openmm.XmlSerializer.serialize(state)
+            )
 
-    return pos, box
+def entry_point():
 
+    main()
 
+if __name__ == "__main__":
 
-### Note: CUDA is much faster even for
-###       the wrapped minimization here (about factor 10)
-pos, box = run_xtal_min(
-    "./4515127.xml",
-    "./strc.pdb",
-    300. * unit.kelvin,
-    platform_name = "CUDA",
-    property_dict = {
-        #"Threads"             : '4',
-        "DeterministicForces" : "True"
-    }
-)
+    entry_point()
