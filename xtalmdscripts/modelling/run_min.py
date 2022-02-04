@@ -467,9 +467,17 @@ def main():
         raise NotImplementedError(f"Command {args.command} not understood.")
 
     import os
+    import warnings
     worker_id_dict = dict()
     for output_dir in input_dict:
         if output_dir == "num_cpus":
+            continue
+
+        if not os.path.exists(input_dict[output_dir]["input"]):
+            warnings.warn(f"{input_dict[output_dir]["input"]} not found. Skipping.")
+            continue
+        if not os.path.exists(input_dict[output_dir]["pdb"]):
+            warnings.warn(f"{input_dict[output_dir]["pdb"]} not found. Skipping.")
             continue
 
         if HAS_RAY:
