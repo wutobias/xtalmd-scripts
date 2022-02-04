@@ -1,0 +1,14 @@
+#"ray_host" : "localhost:6381"
+"num_cpus" : 4
+"adipamide-gaff1" :
+    "input"  : "../build_system/adipamide/1101307_gaff1.xml"
+    "pdb"    : "../build_system/adipamide/1101307_gaff1.pdb"
+    "output" : "1101307_gaff1_min"
+    "steps"  : 5
+    "method" : "Nelder-Mead"
+"adipamide-gaff2" :
+    "input"  : "../build_system/adipamide/1101307_gaff2.xml"
+    "pdb"    : "../build_system/adipamide/1101307_gaff2.pdb"
+    "output" : "1101307_gaff2_min"
+    "steps"  : 5
+    "method" : "Nelder-Mead"
