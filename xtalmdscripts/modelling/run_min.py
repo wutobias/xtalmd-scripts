@@ -17,7 +17,20 @@ def parse_arguments():
         description="Python script for minimizing unit cell."
         )
 
-    parser.add_argument(
+    subparser  = parser.add_subparsers(dest='command')
+    subparser.required = True
+    yaml_parse = subparser.add_parser("yaml")
+    xml_parse  = subparser.add_parser("xml")
+
+    yaml_parse.add_argument(
+        '--input', 
+        "-i", 
+        type=str, 
+        help="Input yaml file", 
+        required=True
+        )
+
+    xml_parse.add_argument(
         '--input', 
         "-i", 
         type=str, 
@@ -25,7 +38,7 @@ def parse_arguments():
         required=True
         )
 
-    parser.add_argument(
+    xml_parse.add_argument(
         '--pdb', 
         "-p", 
         type=str, 
@@ -33,12 +46,30 @@ def parse_arguments():
         required=True
         )
 
-    parser.add_argument(
+    xml_parse.add_argument(
         '--output', 
         "-o", 
         type=str, 
         help="Output xml file.", 
         required=True
+        )
+
+    xml_parse.add_argument(
+        '--steps', 
+        "-s", 
+        type=int, 
+        help="Number of iterations.", 
+        required=False,
+        default=100
+        )
+
+    xml_parse.add_argument(
+        '--method', 
+        "-m", 
+        type=str, 
+        help="Minimization method for box vectors.", 
+        required=False,
+        default="Nelder-Mead"
         )
 
     return parser.parse_args()
@@ -72,7 +103,7 @@ class ContextWrapper(object):
             
         pos_box_flat = self.pos_box_to_flat(pos, box)
         
-        return x
+        return pos_box_flat
     
     @property
     def box_flat(self):
@@ -167,10 +198,13 @@ class ContextWrapper(object):
         pos_frac    = np.matmul(box_old_inv, pos_old.T).T
         pos_new     = np.matmul(box_new, pos_frac.T).T * unit.nanometer
 
-        self.context.setPositions(pos_new)
-        self.context.setPeriodicBoxVectors(*box_new)
+        try:
+            self.context.setPositions(pos_new)
+            self.context.setPeriodicBoxVectors(*box_new)
 
-        ene = state.getPotentialEnergy()
+            ene = state.getPotentialEnergy()
+        except:
+            ene = 9999999999999999999999. * unit.kilojoule_per_mole
         return ene._value
     
     def ene(self, pos_box_flat):
@@ -206,8 +240,13 @@ class ContextWrapper(object):
         box_inv  = np.linalg.inv(box)        
         pos_frac = np.matmul(box_inv, pos.T).T
 
-        self.context.setPositions(pos)
-        self.context.setPeriodicBoxVectors(*box)
+        try:
+            self.context.setPositions(pos)
+            self.context.setPeriodicBoxVectors(*box)
+        except:
+            boxgrad_flat = np.zeros(6, dtype=float)
+            boxgrad_flat[:] = 9999999999999999.
+            return boxgrad_flat
         
         boxgrad_flat = np.zeros(6, dtype=float) * unit.kilojoule_per_mole / unit.nanometer
         grad_idx = 0
@@ -244,7 +283,7 @@ class ContextWrapper(object):
         
         epsilon = 1e-5 * unit.nanometer
         
-        pos, box = self.get_pos_box(pos_box_flat)
+        pos, box = self.flat_to_pos_box(pos_box_flat)
         
         box_inv  = np.linalg.inv(box)        
         pos_frac = np.matmul(box_inv, pos.T).T
@@ -288,6 +327,8 @@ class ContextWrapper(object):
 def run_xtal_min(
     xml_path, 
     pdb_path,
+    steps = 100,
+    method = "Nelder-Mead",
     platform_name = "CUDA",
     property_dict = {
         "Precision" : "mixed"
@@ -295,9 +336,9 @@ def run_xtal_min(
     ):
 
     """
-    Run xtal minimizatin. Return final context.
+    Run xtal minimizatin. Return final context that has minimal energy.
     """
-    
+
     import openmm
     from openmm import unit
     from openmm import app
@@ -335,15 +376,16 @@ def run_xtal_min(
         system.getNumParticles()
         )
     x0 = np.copy(cw.box_flat)
-    ene2_t = cw.ene_box(x0)
-    for _ in range(500):
+    best_ene = 999999999999999999999.
+    best_x   = None
+    for _ in range(steps):
         openmm.LocalEnergyMinimizer.minimize(context)
         x0 = np.copy(cw.box_flat)
         ene1 = cw.ene_box(x0)
         result = optimize.minimize(
             fun=cw.ene_box,
             x0=x0, 
-            method="BFGS",
+            method=method,
             jac=cw.grad_box
         )
         context.setPeriodicBoxVectors(
@@ -351,17 +393,20 @@ def run_xtal_min(
                 result.x
             )
         )
-        ene2 = cw.ene_box(result.x)
-        delta1 = ene2 - ene1
-        delta2 = ene2 - ene2_t
-        ene2_t = ene2
-        print("Delta1", delta1, "Delta2", delta2)
-        
+        ene = cw.ene_box(result.x)
+        if ene < best_ene:
+            best_ene = ene
+            best_x   = cw.pos_box_flat
 
-    return context
+    pos, box = cw.flat_to_pos_box(best_x)
+    context.setPositions(pos)
+    context.setPeriodicBoxVectors(*box)
+    state = context.getState(getPositions=True)
+
+    return openmm.XmlSerializer.serialize(state)
 
 
-def main()
+def main():
 
     """
     Run the main workflow.
@@ -369,23 +414,141 @@ def main()
 
     args = parse_arguments()
 
-    ### Note: CUDA is much faster even for
-    ###       the wrapped minimization here (about factor 10)
-    context = run_xtal_min(
-        args.input,
-        args.pdb
-        platform_name = "CUDA",
-        property_dict = {
-            #"Threads"             : '4',
-            "DeterministicForces" : "True"
-        }
-    )
+    HAS_RAY = False
+    if args.command == "xml":
 
-    state = context.getState(getPositions=True)
-    with open(args.output, "w") as fopen:
-        fopen.write(
-            openmm.XmlSerializer.serialize(state)
+        input_dict = {
+            "./" : 
+                    {
+                        "input"      : args.input,
+                        "pdb"        : args.pdb,
+                        "output"     : args.output,
+                        "steps"      : args.steps,
+                        "method"     : args.method
+                    }
+            }
+
+    elif args.command == "yaml":
+        import yaml
+        with open(args.input, "r") as fopen:
+            input_dict = yaml.safe_load(fopen)
+        HAS_RAY = True
+        try:
+            import ray
+        except:
+            HAS_RAY = False
+        if HAS_RAY:
+            if "ray_host" in input_dict:
+                ray.init(address=input_dict["ray_host"])
+            else:
+                ray.init()
+
+            ### Wrapper around `run_xtal_min` function for ray
+            @ray.remote(num_cpus=input_dict["num_cpus"], num_gpus=1)
+            def run_xtal_min_remote(
+                xml_path, 
+                pdb_path,
+                steps = 100,
+                method = "Nelder-Mead",
+                platform_name = "CUDA",
+                property_dict = {
+                    "Precision" : "mixed"
+                }):
+                return run_xtal_min(
+                    xml_path = xml_path, 
+                    pdb_path = pdb_path,
+                    steps = steps,
+                    method = method,
+                    platform_name = platform_name,
+                    property_dict = property_dict
+                    )
+
+    else:
+        raise NotImplementedError(f"Command {args.command} not understood.")
+
+    import os
+    worker_id_dict = dict()
+    for output_dir in input_dict:
+        if output_dir == "num_cpus":
+            continue
+
+        if HAS_RAY:
+            ### Note: CUDA is much faster even for
+            ###       the wrapped minimization here (about factor 10)
+            worker_id = run_xtal_min_remote.remote(
+                xml_path = input_dict[output_dir]["input"],
+                pdb_path = input_dict[output_dir]["pdb"],
+                steps = int(input_dict[output_dir]["steps"]),
+                method = input_dict[output_dir]["method"],
+                platform_name = "CUDA",
+                property_dict = {
+                    #"Threads"             : '4',
+                    "DeterministicForces" : "True"
+                }
             )
+            worker_id_dict[output_dir] = worker_id
+
+        else:
+            worker_id = run_xtal_min(
+                xml_path = input_dict[output_dir]["input"],
+                pdb_path = input_dict[output_dir]["pdb"],
+                steps = int(input_dict[output_dir]["steps"]),
+                method = input_dict[output_dir]["method"],
+                platform_name = "CUDA",
+                property_dict = {
+                    #"Threads"             : '4',
+                    "DeterministicForces" : "True"
+                }
+            )
+            worker_id_dict[output_dir] = worker_id
+
+    for output_dir in input_dict:
+        if output_dir == "num_cpus":
+            continue
+
+        os.makedirs(output_dir, exist_ok=True)
+        prefix = input_dict[output_dir]["output"]
+        if prefix.endswith(".xml"):
+            prefix = prefix.replace(".xml", "")
+        elif prefix.endswith(".pdb"):
+            prefix = prefix.replace(".pdb", "")
+        prefix = f"{output_dir}/{prefix}"
+
+        if HAS_RAY:
+            state = openmm.XmlSerializer.deserialize(
+                ray.get(worker_id_dict[output_dir])
+                )
+        else:
+            state = openmm.XmlSerializer.deserialize(
+                worker_id_dict[output_dir]
+                )
+
+        ### Save state in xml format
+        with open(f"./{prefix}.xml", "w") as fopen:
+            fopen.write(
+                openmm.XmlSerializer.serialize(state)
+                )
+        ### Save State in pdb format
+        from openmm import app
+        box = state.getPeriodicBoxVectors(asNumpy=True)
+        pos = state.getPositions(asNumpy=True)
+        pdbfile = app.PDBFile(input_dict[output_dir]["pdb"])
+        pdbfile.topology.setPeriodicBoxVectors(box)
+
+        with open(f"./{prefix}.pdb", "w") as fopen:
+            app.PDBFile.writeHeader(
+                pdbfile.topology,
+                fopen
+                )
+            app.PDBFile.writeModel(
+                pdbfile.topology,
+                pos,
+                fopen
+                )
+            app.PDBFile.writeFooter(
+                pdbfile.topology,
+                fopen
+                )
 
 def entry_point():
 
