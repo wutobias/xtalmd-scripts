@@ -12,3 +12,15 @@
     "output" : "1101307_gaff2_min"
     "steps"  : 5
     "method" : "Nelder-Mead"
+"oxamide-gaff1" :
+    "input"  : "../build_system/oxamide/1473522_gaff1.xml"
+    "pdb"    : "../build_system/oxamide/1473522_gaff1.pdb"
+    "output" : "1473522_gaff1_min"
+    "steps"  : 5
+    "method" : "Nelder-Mead"
+"oxamide-gaff2" :
+    "input"  : "../build_system/oxamide/1473522_gaff2.xml"
+    "pdb"    : "../build_system/oxamide/1473522_gaff2.pdb"
+    "output" : "1473522_gaff2_min"
+    "steps"  : 5
+    "method" : "Nelder-Mead"
