@@ -8,7 +8,7 @@ b_min_max = [0,2]
 c_min_max = [0,2]
 
 ### Load the cif file as gemmi structure
-strc = make_supercell.parse_cif("./1101307.cif")
+strc = make_supercell.parse_cif("../data/adipamide/1101307.cif")
 replicated_mol_list = make_supercell.generate_replicated_mol_list(
     strc,
     a_min_max,
