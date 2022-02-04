@@ -50,33 +50,53 @@ global atomic_valence_electrons
 
 atomic_valence = defaultdict(list)
 atomic_valence[1] = [1]
+atomic_valence[2] = [0]
+atomic_valence[3] = [1]
 atomic_valence[5] = [3,4]
 atomic_valence[6] = [4]
 atomic_valence[7] = [3,4]
 atomic_valence[8] = [2,1,3]
 atomic_valence[9] = [1]
+atomic_valence[10] = [0]
+atomic_valence[11] = [1]
+atomic_valence[12] = [2]
+atomic_valence[18] = [0]
+atomic_valence[19] = [1]
+atomic_valence[20] = [2]
 atomic_valence[14] = [4]
 atomic_valence[15] = [5,3] #[5,4,3]
-atomic_valence[16] = [6,3,2] #[6,4,2]
+atomic_valence[16] = [6,2,4]
 atomic_valence[17] = [1]
 atomic_valence[32] = [4]
 atomic_valence[35] = [1]
+atomic_valence[36] = [0]
 atomic_valence[53] = [1]
+atomic_valence[54] = [0]
 
 atomic_valence_electrons = {}
 atomic_valence_electrons[1] = 1
+atomic_valence_electrons[2] = 8 # ugly hack, sorry
+atomic_valence_electrons[3] = 1
 atomic_valence_electrons[5] = 3
 atomic_valence_electrons[6] = 4
 atomic_valence_electrons[7] = 5
 atomic_valence_electrons[8] = 6
 atomic_valence_electrons[9] = 7
+atomic_valence_electrons[10] = 8
+atomic_valence_electrons[11] = 1
+atomic_valence_electrons[12] = 2
 atomic_valence_electrons[14] = 4
 atomic_valence_electrons[15] = 5
 atomic_valence_electrons[16] = 6
 atomic_valence_electrons[17] = 7
+atomic_valence_electrons[18] = 8
+atomic_valence_electrons[19] = 1
+atomic_valence_electrons[20] = 2
 atomic_valence_electrons[32] = 4
 atomic_valence_electrons[35] = 7
+atomic_valence_electrons[36] = 8
 atomic_valence_electrons[53] = 7
+atomic_valence_electrons[54] = 8
 
 
 def str_atom(atom):
@@ -140,7 +160,7 @@ def valences_not_too_large(BO, valences):
 
     return True
 
-def charge_is_OK(BO, AC, charge, DU, atomic_valence_electrons, atoms, valences,
+def charge_is_OK(BO, AC, charge, atomic_valence_electrons, atoms, valences,
                  allow_charged_fragments=True):
     # total charge
     Q = 0
@@ -192,7 +212,7 @@ def BO_is_OK(BO, AC, charge, DU, atomic_valence_electrons, atoms, valences,
         return False
 
     check_sum = (BO - AC).sum() == sum(DU)
-    check_charge = charge_is_OK(BO, AC, charge, DU, atomic_valence_electrons, atoms, valences,
+    check_charge = charge_is_OK(BO, AC, charge, atomic_valence_electrons, atoms, valences,
                                 allow_charged_fragments)
 
     if check_charge and check_sum: 
@@ -205,13 +225,15 @@ def get_atomic_charge(atom, atomic_valence_electrons, BO_valence):
     """
     """
 
-    if atom == 1:
+    if atom in [1, 3, 11, 19]:
         charge = 1 - BO_valence
+    elif atom in [12, 20]:
+        charge = 2 - BO_valence
     elif atom == 5:
         charge = 3 - BO_valence
     elif atom == 15 and BO_valence == 5:
         charge = 0
-    elif atom == 16 and BO_valence == 6:
+    elif atom == 16 and BO_valence in [4, 6]:
         charge = 0
     else:
         charge = atomic_valence_electrons - 8 + BO_valence
@@ -257,7 +279,7 @@ def clean_charges(mol):
 
 
 def BO2mol(mol, BO_matrix, atoms, atomic_valence_electrons,
-           mol_charge, allow_charged_fragments=True,  use_atom_maps=False):
+           mol_charge, allow_charged_fragments=True):
     """
     based on code written by Paolo Toscani
 
@@ -311,25 +333,20 @@ def BO2mol(mol, BO_matrix, atoms, atomic_valence_electrons,
             atomic_valence_electrons,
             BO_valences,
             BO_matrix,
-            mol_charge,
-            use_atom_maps)
+            mol_charge)
     else:
-        mol = set_atomic_radicals(mol, atoms, atomic_valence_electrons, BO_valences,
-                                                            use_atom_maps)
+        mol = set_atomic_radicals(mol, atoms, atomic_valence_electrons, BO_valences)
 
     return mol
 
 
 def set_atomic_charges(mol, atoms, atomic_valence_electrons,
-                       BO_valences, BO_matrix, mol_charge,
-                       use_atom_maps):
+                       BO_valences, BO_matrix, mol_charge):
     """
     """
     q = 0
     for i, atom in enumerate(atoms):
         a = mol.GetAtomWithIdx(i)
-        if use_atom_maps:
-            a.SetAtomMapNum(i+1)
         charge = get_atomic_charge(atom, atomic_valence_electrons[atom], BO_valences[i])
         q += charge
         if atom == 6:
@@ -349,8 +366,7 @@ def set_atomic_charges(mol, atoms, atomic_valence_electrons,
     return mol
 
 
-def set_atomic_radicals(mol, atoms, atomic_valence_electrons, BO_valences,
-                                                use_atom_maps):
+def set_atomic_radicals(mol, atoms, atomic_valence_electrons, BO_valences):
     """
 
     The number of radical electrons = absolute atomic charge
@@ -358,8 +374,6 @@ def set_atomic_radicals(mol, atoms, atomic_valence_electrons, BO_valences,
     """
     for i, atom in enumerate(atoms):
         a = mol.GetAtomWithIdx(i)
-        if use_atom_maps:
-            a.SetAtomMapNum(i+1)
         charge = get_atomic_charge(
             atom,
             atomic_valence_electrons[atom],
@@ -440,6 +454,7 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
         # valence can't be smaller than number of neighbourgs
         possible_valence = [x for x in atomic_valence[atomicNum] if x >= valence]
         if not possible_valence:
+            print(atomicNum)
             print('Valence of atom',i,'is',valence,'which bigger than allowed max',max(atomic_valence[atomicNum]),'. Stopping')
             sys.exit()
         valences_list_of_lists.append(possible_valence)
@@ -448,6 +463,14 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
     valences_list = itertools.product(*valences_list_of_lists)
 
     best_BO = AC.copy()
+    lowest_penalty = 2**32 # a very large int
+    #fewest_atomic_charges = 2**32 # a very large int
+    #fewest_unwanted_charges = 2**32
+
+    num_valences = 1
+    for vale in valences_list_of_lists:
+        num_valences *= len(vale)
+    #print('valences: %d' % num_valences)
 
     for valences in valences_list:
 
@@ -462,7 +485,7 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
             check_bo = None
 
         if check_len and check_bo:
-            return AC, atomic_valence_electrons
+            return AC
 
         UA_pairs_list = get_UA_pairs(UA, AC, use_graph=use_graph)
         for UA_pairs in UA_pairs_list:
@@ -470,24 +493,42 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
             status = BO_is_OK(BO, AC, charge, DU_from_AC,
                         atomic_valence_electrons, atoms, valences,
                         allow_charged_fragments=allow_charged_fragments)
-            charge_OK = charge_is_OK(BO, AC, charge, DU_from_AC, atomic_valence_electrons, atoms, valences,
+            charge_OK = charge_is_OK(BO, AC, charge, atomic_valence_electrons, atoms, valences,
                                      allow_charged_fragments=allow_charged_fragments)
-
-            if status:
-                return BO, atomic_valence_electrons
-            elif BO.sum() >= best_BO.sum() and valences_not_too_large(BO, valences) and charge_OK:
+            BO_valences = list(BO.sum(axis=1))
+            num_atomic_charges = 0 # cumulative count (modulo) of charges on atoms
+            num_unwanted_charges = 0 # not [N+] and not [O-]
+            penalty = 0
+            for index, atom in enumerate(atoms):
+                current_charge = get_atomic_charge(atom, atomic_valence_electrons[atom], BO_valences[index])
+                num_atomic_charges += abs(current_charge)
+                is_positive_nitrogen = atom == 7 and current_charge == 1
+                is_negative_oxygen = atom == 8 and current_charge == -1
+                if not (is_positive_nitrogen or is_negative_oxygen):
+                    num_unwanted_charges += abs(current_charge)
+                # give +3 penalty to =S=
+                if atom == 16 and BO_valences[index] == 4 and AC.sum(axis=1)[index] == 2:
+                    penalty += 3 # lowest penalty to favor -S- over =S= in 3-methylthiazolium
+            #fewest_atomic_charges = min(fewest_atomic_charges, num_atomic_charges)
+            #fewest_unwanted_charges = min(fewest_unwanted_charges, num_unwanted_charges)
+            penalty +=  8 * num_unwanted_charges # 8 was picked randomly
+            penalty +=  1 * num_atomic_charges
+            penalty -=  1 * BO.sum()    # maximize bond order
+            penalty -= 42 * status      # 42 was picked randomly
+            if valences_not_too_large(BO, valences) and charge_OK and penalty < lowest_penalty:
+                lowest_penalty = min(lowest_penalty, penalty)
+                #print(penalty, lowest_penalty)
                 best_BO = BO.copy()
 
-    return best_BO, atomic_valence_electrons
+    return best_BO
 
 
-def AC2mol(mol, AC, atoms, charge, allow_charged_fragments=True, 
-           use_graph=True, use_atom_maps=False):
+def AC2mol(mol, AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
     """
     """
 
     # convert AC matrix to bond order (BO) matrix
-    BO, atomic_valence_electrons = AC2BO(
+    BO = AC2BO(
         AC,
         atoms,
         charge,
@@ -501,11 +542,11 @@ def AC2mol(mol, AC, atoms, charge, allow_charged_fragments=True,
         atoms,
         atomic_valence_electrons,
         charge,
-        allow_charged_fragments=allow_charged_fragments,
-        use_atom_maps=use_atom_maps)
+        allow_charged_fragments=allow_charged_fragments)
 
     # If charge is not correct don't return mol
     if Chem.GetFormalCharge(mol) != charge:
+        print('Charge mismatch: %d %d' % (Chem.GetFormalCharge(mol), charge))
         return []
 
     # BO2mol returns an arbitrary resonance form. Let's make the rest
@@ -529,27 +570,34 @@ def get_proto_mol(atoms):
     return mol
 
 
-def read_xyz_file(filename, look_for_charge=True):
-    """
-    """
+def read_xyz_file(filename):
+    with open(filename) as f:
+        string = f.read()
+    return read_xyz_string(string)
 
+def read_xyz_string(string):
     atomic_symbols = []
     xyz_coordinates = []
     charge = 0
     title = ""
+    line_number = 0
 
-    with open(filename, "r") as file:
-        for line_number, line in enumerate(file):
-            if line_number == 0:
-                num_atoms = int(line)
-            elif line_number == 1:
-                title = line
-                if "charge=" in line:
-                    charge = int(line.split("=")[1])
-            else:
-                atomic_symbol, x, y, z = line.split()
-                atomic_symbols.append(atomic_symbol)
-                xyz_coordinates.append([float(x), float(y), float(z)])
+    lines = string.split('\n')
+    if len(lines[-1]) == 0:
+        lines = lines[:-1]
+
+    for line in lines:
+        if line_number == 0:
+            num_atoms = int(line)
+        elif line_number == 1:
+            title = line
+            if "charge=" in line:
+                charge = int(line.split("=")[1])
+        else:
+            atomic_symbol, x, y, z = line.split()
+            atomic_symbols.append(atomic_symbol)
+            xyz_coordinates.append([float(x), float(y), float(z)])
+        line_number += 1
 
     atoms = [int_atom(atom) for atom in atomic_symbols]
 
@@ -618,27 +666,34 @@ def get_AC(mol, covalent_factor=1.3):
 
     """
 
+    pt = Chem.GetPeriodicTable()
+    def get_covalent_radius(atomic_number):
+        """workaround because RDKit's radius for phosphorous is too small"""
+        if atomic_number == 1:
+            return 0.31
+        if atomic_number == 15:
+            return 1.05
+        return pt.GetRcovalent(atomic_number)
+
     # Calculate distance matrix
     dMat = Chem.Get3DDistanceMatrix(mol)
 
-    pt = Chem.GetPeriodicTable()
     num_atoms = mol.GetNumAtoms()
     AC = np.zeros((num_atoms, num_atoms), dtype=int)
 
     for i in range(num_atoms):
         a_i = mol.GetAtomWithIdx(i)
-        Rcov_i = pt.GetRcovalent(a_i.GetAtomicNum()) * covalent_factor
+        Rcov_i = get_covalent_radius(a_i.GetAtomicNum()) * covalent_factor
         for j in range(i + 1, num_atoms):
             a_j = mol.GetAtomWithIdx(j)
-            Rcov_j = pt.GetRcovalent(a_j.GetAtomicNum()) * covalent_factor
+            Rcov_j = get_covalent_radius(a_j.GetAtomicNum()) * covalent_factor
             if dMat[i, j] <= Rcov_i + Rcov_j:
                 AC[i, j] = 1
                 AC[j, i] = 1
-
     return AC
 
 
-def xyz2AC_huckel(atomicNumList, xyz, charge):
+def xyz2AC_huckel(atomicNumList,xyz,charge):
     """
 
     args
@@ -694,9 +749,12 @@ def chiral_stereo_check(mol):
     return
 
 
-def xyz2mol(atoms, coordinates, charge=0, allow_charged_fragments=True,
-            use_graph=True, use_huckel=False, embed_chiral=True,
-            use_atom_maps=False):
+def xyz2mol(atoms, coordinates,
+    charge=0,
+    allow_charged_fragments=True,
+    use_graph=True,
+    use_huckel=False,
+    embed_chiral=True):
     """
     Generate a rdkit molobj from atoms, coordinates and a total_charge.
 
@@ -723,9 +781,8 @@ def xyz2mol(atoms, coordinates, charge=0, allow_charged_fragments=True,
     # Convert AC to bond order matrix and add connectivity and charge info to
     # mol object
     new_mols = AC2mol(mol, AC, atoms, charge,
-                     allow_charged_fragments=allow_charged_fragments,
-                     use_graph=use_graph,
-                     use_atom_maps=use_atom_maps)
+        allow_charged_fragments=allow_charged_fragments,
+        use_graph=use_graph)
 
     # Check for stereocenters and chiral centers
     if embed_chiral:
@@ -791,7 +848,7 @@ if __name__ == "__main__":
     # chiral comment
     embed_chiral = not args.ignore_chiral
 
-    # read atoms and coordinates. Try to find the charge
+    # read atoms and coordinates. Try to find the charge in the xyz file
     atoms, charge, xyz_coordinates = read_xyz_file(filename)
 
     # huckel uses extended Huckel bond orders to locate bonds (requires RDKit 2019.9.1 or later)
