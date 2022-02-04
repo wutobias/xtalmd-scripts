@@ -298,7 +298,7 @@ def make_supercell(
         mi  = Chem.AtomPDBResidueInfo()
         mi.SetIsHeteroAtom(True)
         mi.SetResidueName(f'M{mol_identifies[mol_idx]}'.ljust(3))
-        mi.SetResidueNumber(mol_identifies[mol_idx] + 1)
+        mi.SetResidueNumber(mol_idx + 1)
         mi.SetOccupancy(1.0)
         mi.SetTempFactor(0.0)
         #mi.SetChainId(f"{string.ascii_uppercase[mol_identifies[mol_idx]]}")
@@ -363,6 +363,7 @@ def equalize_rdmols(mol_list):
 
     for mol_idx in unique_mapping:
         ### This is the molecule that holds the correct coordinates
+        ### and pdb monomer info.
         mol_1 = mol_list[mol_idx]
         ### This is the molecule that holds the correct names, ordering, etc...
         mol_2 = copy.deepcopy(rdmol_list_unique[unique_mapping[mol_idx]])
@@ -381,8 +382,10 @@ def equalize_rdmols(mol_list):
 
         N_atoms = mol_1.GetNumAtoms()
         for atm_idx in range(N_atoms):
-            atom = mol_2.GetAtomWithIdx(atm_idx)
-            mi   = mol_1.GetAtomWithIdx(atm_idx).GetMonomerInfo()
+            atom   = mol_2.GetAtomWithIdx(atm_idx)
+            ### Note, we cannot `copy.copy(mi_original)`
+            ### or `copy.copy(mol_1.GetAtomWithIdx(atm_idx))`
+            mi = mol_1.GetAtomWithIdx(atm_idx).GetMonomerInfo()
             mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
             atom.SetMonomerInfo(mi)
 
@@ -434,7 +437,24 @@ def get_pdb_block(
         mol_new = Chem.CombineMols(mol_new, mol)
 
     header     = strc_write.make_pdb_headers()
-    crds_block = Chem.MolToPDBBlock(mol_new)
+
+    ### With the flavor options, one can control what is written
+    ### to the pdb block.
+    ###
+    ### flavor: (optional)
+    ### flavor & 1 : Write MODEL/ENDMDL lines around each record
+    ### 
+    ### flavor & 2 : Don’t write any CONECT records
+    ### 
+    ### flavor & 4 : Write CONECT records in both directions
+    ### 
+    ### flavor & 8 : Don’t use multiple CONECTs to encode bond order
+    ### 
+    ### flavor & 16 : Write MASTER record
+    ### 
+    ### flavor & 32 : Write TER record
+
+    crds_block = Chem.MolToPDBBlock(mol_new, flavor=32)
     pdb_block  = header + crds_block
 
     return pdb_block
