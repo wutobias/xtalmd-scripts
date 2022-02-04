@@ -47,11 +47,12 @@ def parse_arguments():
         )
 
     xml_parse.add_argument(
-        '--output', 
-        "-o", 
+        '--prefix', 
+        "-pre", 
         type=str, 
-        help="Output xml file.", 
-        required=True
+        help="Output xml and pdb files.", 
+        default="xtal_min",
+        required=False
         )
 
     xml_parse.add_argument(
@@ -422,7 +423,7 @@ def main():
                     {
                         "input"      : args.input,
                         "pdb"        : args.pdb,
-                        "output"     : args.output,
+                        "prefix"     : args.prefix,
                         "steps"      : args.steps,
                         "method"     : args.method
                     }
@@ -515,7 +516,7 @@ def main():
             continue
 
         os.makedirs(output_dir, exist_ok=True)
-        prefix = input_dict[output_dir]["output"]
+        prefix = input_dict[output_dir]["prefix"]
         if prefix.endswith(".xml"):
             prefix = prefix.replace(".xml", "")
         elif prefix.endswith(".pdb"):
