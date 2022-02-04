@@ -529,14 +529,18 @@ def main():
         c_min_max
         )
 
-    with open("./strc.pdb", "w") as fopen:
+    prefix = args.output
+    if prefix.endswith(".xml"):
+        prefix = prefix.replace(".xml", "")
+
+    with open(f"./{prefix}.pdb", "w") as fopen:
         fopen.write(pdb_str)
 
     if args.forcefield.lower() == "gaff1":
 
         system = build_system_gaff(
             replicated_mol_list,
-            "./strc.pdb",
+            f"./{prefix}.pdb",
             version="1.81"
             )
 
@@ -544,7 +548,7 @@ def main():
 
         system = build_system_gaff(
             replicated_mol_list,
-            "./strc.pdb",
+            f"./{prefix}.pdb",
             version="2.11"
             )
 
@@ -552,7 +556,7 @@ def main():
 
         system = build_system_off(
             replicated_mol_list,
-            "./strc.pdb",
+            f"./{prefix}.pdb",
             version="1.3.1"
             )
 
@@ -560,7 +564,7 @@ def main():
 
         system = build_system_off(
             replicated_mol_list,
-            "./strc.pdb",
+            f"./{prefix}.pdb",
             version="2.0.0"
             )
 
@@ -568,7 +572,7 @@ def main():
 
         system = build_system_cgenff(
             replicated_mol_list,
-            "./strc.pdb",
+            f"./{prefix}.pdb",
             args.toppar
             )
 
@@ -576,7 +580,7 @@ def main():
 
         system = build_system_oplsaa(
             replicated_mol_list,
-            "./strc.pdb",
+            f"./{prefix}.pdb",
             version="CM1A-LBCC"
             )
 
@@ -596,7 +600,7 @@ def main():
     nbforce = forces['NonbondedForce']
     nbforce.setCutoffDistance(args.nbcutoff * unit.nanometer)
 
-    with open(args.output, "w") as fopen:
+    with open(f"./{prefix}.xml", "w") as fopen:
         fopen.write(openmm.XmlSerializer.serialize(system))
 
 def entry_point():
