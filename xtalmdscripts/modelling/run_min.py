@@ -50,7 +50,7 @@ def parse_arguments():
         '--prefix', 
         "-pre", 
         type=str, 
-        help="Output xml and pdb files.", 
+        help="Output prefix xml and pdb files.", 
         default="xtal_min",
         required=False
         )

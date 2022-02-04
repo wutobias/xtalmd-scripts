@@ -34,11 +34,12 @@ def parse_arguments():
         )
 
     parser.add_argument(
-        '--output', 
-        "-o", 
+        '--prefix', 
+        "-pre", 
         type=str, 
-        help="output xml file", 
-        required=True
+        help="Output prefix xml and pdb files.", 
+        default="xtal_min",
+        required=False
         )
 
     parser.add_argument(
@@ -529,7 +530,7 @@ def main():
         c_min_max
         )
 
-    prefix = args.output
+    prefix = args.prefix
     if prefix.endswith(".xml"):
         prefix = prefix.replace(".xml", "")
 
