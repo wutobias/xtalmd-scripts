@@ -8,7 +8,7 @@ import string
 from rdkit import Chem
 from rdkit.Geometry import Point3D
 
-from .xyz2mol import xyz2mol
+from . import xyz2mol
 
 import argparse
 
@@ -78,6 +78,8 @@ def make_P1(strc):
     atomic numbers of all atoms in P1 cell.
     """
 
+    import networkx as nx
+
     strc.setup_cell_images()
     atom_crds_ortho = list()
     atom_num  = list()
@@ -86,11 +88,69 @@ def make_P1(strc):
         pos = strc.cell.orthogonalize(site.fract)
         atom_crds_ortho.append([pos.x, pos.y, pos.z])
         atom_num.append(site.element.atomic_number)
+    N_atoms = len(atom_num)
+
+    found_bond = True
+    ### Terminate if we haven't found any bonds.
+    while found_bond:
+        ### Update the frac coordinates
+        atom_crds_frac = list()
+        for atm_idx in range(N_atoms):
+            frac = strc.cell.fractionalize(
+                gemmi.Position(
+                    *atom_crds_ortho[atm_idx]
+                    )
+                )
+            atom_crds_frac.append(frac.tolist())
+
+        ### Get the "pre-molecules" (adjacency matrix with not much chemistry)
+        acmatrix, mol = xyz2mol.xyz2AC(
+            atom_num,
+            atom_crds_ortho,
+            0,
+            )
+        ### Twice the total number of bonds in the pre-molecules
+        n_bond2_new  = np.sum(acmatrix)
+        n_bond2_best = n_bond2_new
+
+        ### Find the disconnected graphs from the adjacency matrix
+        G           = nx.convert_matrix.from_numpy_matrix(acmatrix)
+        G_node_list = list(nx.connected_components(G))
+        ### Translate molecules to neighboring unit cells in + direction
+        ### and check if we can form new bonds. If yes, update `atom_crds_ortho`
+        found_bond = False
+        for g in G_node_list:
+            for a in [0,-1]:
+                for b in [0,-1]:
+                    for c in [0,-1]:
+                        atom_crds_ortho_cp = copy.deepcopy(atom_crds_ortho)
+                        for atm_idx in g:
+                            frac = copy.deepcopy(atom_crds_frac[atm_idx])
+                            frac[0] += a
+                            frac[1] += b
+                            frac[2] += c
+                            ortho = strc.cell.orthogonalize(
+                                gemmi.Fractional(*frac)
+                            ).tolist()
+                            atom_crds_ortho_cp[atm_idx] = ortho
+                        acmatrix, mol = xyz2mol.xyz2AC(
+                            atom_num,
+                            atom_crds_ortho_cp,
+                            0,
+                            )
+                        n_bond2_new = np.sum(acmatrix)
+                        if n_bond2_new > n_bond2_best:
+                            atom_crds_ortho = copy.deepcopy(atom_crds_ortho_cp)
+                            n_bond2_best = n_bond2_new
+                            found_bond = True
 
     mol_list = Chem.GetMolFrags(
-        xyz2mol(
+        xyz2mol.xyz2mol(
             atom_num,
-            atom_crds_ortho)[0], 
+            atom_crds_ortho,
+            charge=0,
+            allow_charged_fragments=True
+            )[0], 
         asMols=True
     )
     N_mol           = len(mol_list)
@@ -143,11 +203,11 @@ def make_P1(strc):
                                     frac_crds_query[0] -= a
                                     frac_crds_query[1] -= b
                                     frac_crds_query[2] -= c
-                        
+
                         frac_crds_cp[:,0] += i
                         frac_crds_cp[:,1] += j
                         frac_crds_cp[:,2] += k
-                        
+
                         if not overlap:
                             ortho_crds = list()
                             for atm_idx, frac in enumerate(frac_crds_cp):
@@ -184,9 +244,11 @@ def make_supercell(
     c_replicate = np.arange(c_min,c_max+1, dtype=int)
 
     mol_list = Chem.GetMolFrags(
-        xyz2mol(
+        xyz2mol.xyz2mol(
             atom_num.tolist(), 
-            atom_crds_ortho)[0], 
+            atom_crds_ortho,
+            charge=0,
+            allow_charged_fragments=True)[0], 
         asMols=True
     )
 
