@@ -1,0 +1,25 @@
+#"ray_host" : "localhost:6381"
+"adipamide-gaff1" :
+    "input"       : "../build_system/adipamide/1101307_gaff1.xml"
+    "pdb"         : "../xtal_min/adipamide-gaff1/1101307_gaff1_min.pdb"
+    "prefix"      : "1473522_gaff1"
+    "temperature" : 298.15
+    "nanoseconds" : 2
+"adipamide-gaff2" :
+    "input"       : "../build_system/adipamide/1101307_gaff2.xml"
+    "pdb"         : "../xtal_min/adipamide-gaff2/1101307_gaff2_min.pdb"
+    "prefix"      : "1473522_gaff2"
+    "temperature" : 298.15
+    "nanoseconds" : 2
+"oxamide-gaff1" :
+    "input"       : "../build_system/oxamide/1473522_gaff1.xml"
+    "pdb"         : "../xtal_min/oxamide-gaff1/1473522_gaff1_min.pdb"
+    "prefix"      : "1473522_gaff1"
+    "temperature" : 298.15
+    "nanoseconds" : 2
+"oxamide-gaff2" :
+    "input"       : "../build_system/oxamide/1473522_gaff2.xml"
+    "pdb"         : "../xtal_min/oxamide-gaff2/1473522_gaff2_min.pdb"
+    "prefix"      : "1473522_gaff2"
+    "temperature" : 298.15
+    "nanoseconds" : 2
