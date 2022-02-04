@@ -477,7 +477,7 @@ def main():
             warnings.warn(f"{input_dict[output_dir]['input']} not found. Skipping.")
             continue
         if not os.path.exists(input_dict[output_dir]["pdb"]):
-            warnings.warn(f"{input_dict[output_dir['pdb']]} not found. Skipping.")
+            warnings.warn(f"{input_dict[output_dir]['pdb']} not found. Skipping.")
             continue
 
         if HAS_RAY:
