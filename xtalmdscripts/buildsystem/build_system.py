@@ -148,7 +148,7 @@ def build_system_gaff(
         topology = topology,
         nonbondedMethod=app.PME, 
         constraints=app.HBonds,
-        removeCMMotion=True,        
+        removeCMMotion=False,
     )
 
     return system
@@ -184,7 +184,7 @@ def build_system_off(
         topology = topology,
         nonbondedMethod=app.PME, 
         constraints=app.HBonds,
-        removeCMMotion=True,        
+        removeCMMotion=False,
     )
 
     return system
@@ -403,7 +403,7 @@ stop
         params,
         nonbondedMethod=app.PME, 
         constraints=app.HBonds,
-        removeCMMotion=True,        
+        removeCMMotion=False,
     )
 
     return system
@@ -472,7 +472,7 @@ def build_system_oplsaa(
         topology=topology,
         nonbondedMethod=app.PME, 
         constraints=app.HBonds,
-        removeCMMotion=True,
+        removeCMMotion=False,
     )
 
     system = OPLS_LJ(system)
