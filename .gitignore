@@ -7,3 +7,7 @@ dist
 *.xml
 *.dcd
 *.csv
+*.mol2
+*.str
+*.inp
+*.psf
