@@ -515,10 +515,6 @@ def main():
         if output_dir == "num_cpus":
             continue
 
-        os.makedirs(output_dir, exist_ok=True)
-        prefix = input_dict[output_dir]["prefix"]
-        prefix = f"{output_dir}/{prefix}"
-
         if HAS_RAY:
             state = openmm.XmlSerializer.deserialize(
                 ray.get(worker_id_dict[output_dir])
@@ -527,6 +523,10 @@ def main():
             state = openmm.XmlSerializer.deserialize(
                 worker_id_dict[output_dir]
                 )
+
+        os.makedirs(output_dir, exist_ok=True)
+        prefix = input_dict[output_dir]["prefix"]
+        prefix = f"{output_dir}/{prefix}"
 
         ### Save state in xml format
         with open(f"./{prefix}.xml", "w") as fopen:
