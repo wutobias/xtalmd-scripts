@@ -35,7 +35,10 @@ else
 	LigParGen --pdb ${pdbfile} --resname ${resname} --charge ${charge}
 fi
 
-cp /tmp/${resname}.xml .
-cp /tmp/${resname}.pdb .
+cp -f /tmp/${resname}.xml .
+cp -f /tmp/${resname}.pdb .
+rm -f /tmp/${resname}.*
+
+sleep 2s
 
 echo "Finished."
