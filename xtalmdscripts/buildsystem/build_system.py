@@ -762,10 +762,6 @@ def main():
                     version=version
                     )
                 )
-            forces = {monomer_sys_list[-1].getForce(index).__class__.__name__: monomer_sys_list[-1].getForce(
-                index) for index in range(monomer_sys_list[-1].getNumForces())}
-            nbforce = forces['CustomNonbondedForce']
-            nbforce.setCutoffDistance(args.nbcutoff * unit.nanometer)
 
     else:
         raise ValueError(
