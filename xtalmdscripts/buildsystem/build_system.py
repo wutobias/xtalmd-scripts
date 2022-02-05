@@ -145,9 +145,13 @@ def build_system_gaff(
     topology = pdbfile.getTopology()
     positions = pdbfile.getPositions()
     boxvectors = topology.getPeriodicBoxVectors()
-    system   = forcefield.createSystem(
+    if boxvectors == None:
+        nonbondedMethod = app.NoCutoff
+    else:
+        nonbondedMethod = app.PME
+    system = forcefield.createSystem(
         topology = topology,
-        nonbondedMethod=app.PME, 
+        nonbondedMethod=nonbondedMethod,
         constraints=app.HBonds,
         removeCMMotion=False,
     )
@@ -181,9 +185,13 @@ def build_system_off(
     topology = pdbfile.getTopology()
     positions = pdbfile.getPositions()
     boxvectors = topology.getPeriodicBoxVectors()
-    system   = forcefield.createSystem(
+    if boxvectors == None:
+        nonbondedMethod = app.NoCutoff
+    else:
+        nonbondedMethod = app.PME
+    system = forcefield.createSystem(
         topology = topology,
-        nonbondedMethod=app.PME, 
+        nonbondedMethod=nonbondedMethod,
         constraints=app.HBonds,
         removeCMMotion=False,
     )
@@ -358,51 +366,55 @@ stop
     params  = CharmmParameterSet(*params_path_list)
     psffile.loadParameters(params)
 
-    a = boxvectors[0]
-    b = boxvectors[1]
-    c = boxvectors[2]
+    if boxvectors == None:
+        nonbondedMethod = app.NoCutoff
+    else:
+        a = boxvectors[0]
+        b = boxvectors[1]
+        c = boxvectors[2]
 
-    a_len = np.linalg.norm(a)
-    b_len = np.linalg.norm(b)
-    c_len = np.linalg.norm(c)
+        a_len = np.linalg.norm(a)
+        b_len = np.linalg.norm(b)
+        c_len = np.linalg.norm(c)
 
-    a_normalized = a/a_len
-    b_normalized = b/b_len
-    c_normalized = c/c_len
+        a_normalized = a/a_len
+        b_normalized = b/b_len
+        c_normalized = c/c_len
 
-    alpha = np.arccos(
-        np.dot(
-            c_normalized,
-            b_normalized
-            )
-        ) * unit.radian
+        alpha = np.arccos(
+            np.dot(
+                c_normalized,
+                b_normalized
+                )
+            ) * unit.radian
 
-    beta = np.arccos(
-        np.dot(
-            a_normalized,
-            c_normalized
-            )
-        ) * unit.radian
+        beta = np.arccos(
+            np.dot(
+                a_normalized,
+                c_normalized
+                )
+            ) * unit.radian
 
-    gamma = np.arccos(
-        np.dot(
-            a_normalized,
-            b_normalized
-            )
-        ) * unit.radian
+        gamma = np.arccos(
+            np.dot(
+                a_normalized,
+                b_normalized
+                )
+            ) * unit.radian
 
-    psffile.setBox(
-        a_len,
-        b_len,
-        c_len,
-        alpha,
-        beta,
-        gamma,
-    )
+        psffile.setBox(
+            a_len,
+            b_len,
+            c_len,
+            alpha,
+            beta,
+            gamma,
+        )
 
+        nonbondedMethod = app.PME
     system = psffile.createSystem(
         params,
-        nonbondedMethod=app.PME, 
+        nonbondedMethod=nonbondedMethod, 
         constraints=app.HBonds,
         removeCMMotion=False,
     )
@@ -469,9 +481,13 @@ def build_system_oplsaa(
     positions  = pdbfile.positions
     forcefield = app.ForceField(*xml_file_list)
 
+    if boxvectors == None:
+        nonbondedMethod = app.NoCutoff
+    else:
+        nonbondedMethod = app.PME
     system = forcefield.createSystem(
-        topology=topology,
-        nonbondedMethod=app.PME, 
+        topology = topology,
+        nonbondedMethod=nonbondedMethod,
         constraints=app.HBonds,
         removeCMMotion=False,
     )
@@ -531,65 +547,133 @@ def main():
         )
 
     prefix = args.prefix
-    if prefix.endswith(".xml"):
-        prefix = prefix.replace(".xml", "")
-
     with open(f"./{prefix}.pdb", "w") as fopen:
         fopen.write(pdb_str)
 
+    _, rdmol_list_unique = make_supercell.get_unique_mapping(replicated_mol_list)
+    for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
+        pdb_str = Chem.MolToPDBBlock(rdmol)
+        with open(f"./{prefix}_monomer{rdmol_idx}.pdb", "w") as fopen:
+            fopen.write(pdb_str)
+
+    monomer_sys_list = list()
     if args.forcefield.lower() == "gaff1":
+
+        version = "1.81"
 
         system = build_system_gaff(
             replicated_mol_list,
             f"./{prefix}.pdb",
-            version="1.81"
+            version=version
             )
+        for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
+            monomer_sys_list.append(
+                build_system_gaff(
+                    [rdmol],
+                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    version=version
+                    )
+                )
 
     elif args.forcefield.lower() == "gaff2":
 
+        version = "2.11"
+
         system = build_system_gaff(
             replicated_mol_list,
             f"./{prefix}.pdb",
-            version="2.11"
+            version=version
             )
+        for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
+            monomer_sys_list.append(
+                build_system_gaff(
+                    [rdmol],
+                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    version=version
+                    )
+                )
 
     elif args.forcefield.lower() == "parsley":
 
+        version = "1.3.1"
+
         system = build_system_off(
             replicated_mol_list,
             f"./{prefix}.pdb",
-            version="1.3.1"
+            version=version
             )
+        for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
+            monomer_sys_list.append(
+                build_system_off(
+                    [rdmol],
+                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    version=version
+                    )
+                )
 
     elif args.forcefield.lower() == "sage":
 
+        version = "2.0.0"
+
         system = build_system_off(
             replicated_mol_list,
             f"./{prefix}.pdb",
-            version="2.0.0"
+            version=version
             )
+        for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
+            monomer_sys_list.append(
+                build_system_off(
+                    [rdmol],
+                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    version=version
+                    )
+                )
 
     elif args.forcefield.lower() == "cgenff":
+
+        if args.toppar == None:
+            raise ValueError(f"When building cgenff ff, must provide --toppar")
 
         system = build_system_cgenff(
             replicated_mol_list,
             f"./{prefix}.pdb",
             args.toppar
             )
+        for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
+            monomer_sys_list.append(
+                build_system_cgenff(
+                    [rdmol],
+                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    args.toppar
+                    )
+                )
 
     elif args.forcefield.lower() == "oplsaa":
+
+        version="CM1A-LBCC"
 
         system = build_system_oplsaa(
             replicated_mol_list,
             f"./{prefix}.pdb",
-            version="CM1A-LBCC"
+            version=version
             )
-
         ### Set nonbonded cutoff special for oplsaa
         forces = {system.getForce(index).__class__.__name__: system.getForce(
             index) for index in range(system.getNumForces())}
         nbforce = forces['CustomNonbondedForce']
         nbforce.setCutoffDistance(args.nbcutoff * unit.nanometer)
+        for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
+            monomer_sys_list.append(
+                build_system_oplsaa(
+                    [rdmol],
+                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    version=version
+                    )
+                )
+            forces = {monomer_sys_list[-1].getForce(index).__class__.__name__: monomer_sys_list[-1].getForce(
+                index) for index in range(monomer_sys_list[-1].getNumForces())}
+            nbforce = forces['CustomNonbondedForce']
+            nbforce.setCutoffDistance(args.nbcutoff * unit.nanometer)
 
     else:
         raise ValueError(
@@ -603,6 +687,11 @@ def main():
 
     with open(f"./{prefix}.xml", "w") as fopen:
         fopen.write(openmm.XmlSerializer.serialize(system))
+
+    for sys_idx, system in enumerate(monomer_sys_list):
+        with open(f"./{prefix}_monomer{sys_idx}.xml", "w") as fopen:
+            fopen.write(openmm.XmlSerializer.serialize(system))
+
 
 def entry_point():
 
