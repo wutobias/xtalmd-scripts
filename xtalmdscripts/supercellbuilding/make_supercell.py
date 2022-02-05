@@ -344,6 +344,7 @@ def get_unique_mapping(mol_list):
                 if not found_unique:
                     rdmol_list_unique.append(mol)
                     found_unique = True
+                    unique_mapping[mol_idx] = smiles_unique_idx
                 else:
                     unique_mapping[mol_idx] = smiles_unique_idx
 
@@ -435,8 +436,7 @@ def get_pdb_block(
     for mol_idx in range(N_mol):
         mol = copy.deepcopy(replicated_mol_list[mol_idx])
         mol_new = Chem.CombineMols(mol_new, mol)
-
-    header     = strc_write.make_pdb_headers()
+    header = strc_write.make_pdb_headers()
 
     ### With the flavor options, one can control what is written
     ### to the pdb block.
