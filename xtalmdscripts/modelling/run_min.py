@@ -482,34 +482,24 @@ def main():
             continue
 
         if HAS_RAY:
-            ### Note: CUDA is much faster even for
-            ###       the wrapped minimization here (about factor 10)
-            worker_id = run_xtal_min_remote.remote(
-                xml_path = input_dict[output_dir]["input"],
-                pdb_path = input_dict[output_dir]["pdb"],
-                steps = int(input_dict[output_dir]["steps"]),
-                method = input_dict[output_dir]["method"],
-                platform_name = "CUDA",
-                property_dict = {
-                    #"Threads"             : '4',
-                    "DeterministicForces" : "True"
-                }
-            )
-            worker_id_dict[output_dir] = worker_id
-
+            min_func = run_xtal_min_remote.remote
         else:
-            worker_id = run_xtal_min(
-                xml_path = input_dict[output_dir]["input"],
-                pdb_path = input_dict[output_dir]["pdb"],
-                steps = int(input_dict[output_dir]["steps"]),
-                method = input_dict[output_dir]["method"],
-                platform_name = "CUDA",
-                property_dict = {
-                    #"Threads"             : '4',
-                    "DeterministicForces" : "True"
-                }
-            )
-            worker_id_dict[output_dir] = worker_id
+            min_func = run_xtal_min
+
+        ### Note: CUDA is much faster even for
+        ###       the wrapped minimization here (about factor 10)
+        worker_id = min_func(
+            xml_path = input_dict[output_dir]["input"],
+            pdb_path = input_dict[output_dir]["pdb"],
+            steps = int(input_dict[output_dir]["steps"]),
+            method = input_dict[output_dir]["method"],
+            platform_name = "CUDA",
+            property_dict = {
+                #"Threads"             : '4',
+                "DeterministicForces" : "True"
+            }
+        )
+        worker_id_dict[output_dir] = worker_id
 
     for output_dir in input_dict:
         if output_dir == "num_cpus":
