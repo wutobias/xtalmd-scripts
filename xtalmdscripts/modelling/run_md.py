@@ -141,7 +141,7 @@ def run_nvt_md(
     property_dict = {
         "Precision" : "mixed"
     },
-    prefix = "xtal_md"
+    prefix = "nvt_md"
     ):
     
     import openmm
@@ -518,7 +518,7 @@ def main():
                 property_dict = {
                     "Precision" : "mixed"
                 },
-                prefix = "xtal_md"
+                prefix = "nvt_md"
                 ):
                 return run_nvt_md(
                     xml_path = xml_path, 
