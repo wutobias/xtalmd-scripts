@@ -1,25 +1,74 @@
 #"ray_host" : "localhost:6381"
 "adipamide-gaff1" :
     "input"       : "../build_system/adipamide/1101307_gaff1.xml"
-    "pdb"         : "../xtal_min/adipamide-gaff1/1101307_gaff1_min.pdb"
-    "prefix"      : "1473522_gaff1"
+    "pdb"         : "../xtal_min/adipamide-gaff1/min.pdb"
+    "prefix"      : "md"
     "temperature" : 298.15
-    "nanoseconds" : 2
+    "nanoseconds" : 100
 "adipamide-gaff2" :
     "input"       : "../build_system/adipamide/1101307_gaff2.xml"
-    "pdb"         : "../xtal_min/adipamide-gaff2/1101307_gaff2_min.pdb"
-    "prefix"      : "1473522_gaff2"
+    "pdb"         : "../xtal_min/adipamide-gaff2/min.pdb"
+    "prefix"      : "md"
     "temperature" : 298.15
-    "nanoseconds" : 2
+    "nanoseconds" : 100
+"adipamide-parsley" :
+    "input"       : "../build_system/adipamide/1101307_parsley.xml"
+    "pdb"         : "../xtal_min/adipamide-parsley/min.pdb"
+    "prefix"      : "md"
+    "temperature" : 298.15
+    "nanoseconds" : 100
+"adipamide-sage" :
+    "input"       : "../build_system/adipamide/1101307_sage.xml"
+    "pdb"         : "../xtal_min/adipamide-sage/min.pdb"
+    "prefix"      : "md"
+    "temperature" : 298.15
+    "nanoseconds" : 100
+"adipamide-cgenff" :
+    "input"       : "../build_system/adipamide/1101307_cgenff.xml"
+    "pdb"         : "../xtal_min/adipamide-cgenff/min.pdb"
+    "prefix"      : "md"
+    "temperature" : 298.15
+    "nanoseconds" : 100
+"adipamide-oplsaa" :
+    "input"       : "../build_system/adipamide/1101307_oplsaa.xml"
+    "pdb"         : "../xtal_min/adipamide-oplsaa/min.pdb"
+    "prefix"      : "md"
+    "temperature" : 298.15
+    "nanoseconds" : 100
+
 "oxamide-gaff1" :
     "input"       : "../build_system/oxamide/1473522_gaff1.xml"
-    "pdb"         : "../xtal_min/oxamide-gaff1/1473522_gaff1_min.pdb"
-    "prefix"      : "1473522_gaff1"
+    "pdb"         : "../xtal_min/oxamide-gaff1/min.pdb"
+    "prefix"      : "md"
     "temperature" : 298.15
-    "nanoseconds" : 2
+    "nanoseconds" : 100
 "oxamide-gaff2" :
     "input"       : "../build_system/oxamide/1473522_gaff2.xml"
-    "pdb"         : "../xtal_min/oxamide-gaff2/1473522_gaff2_min.pdb"
-    "prefix"      : "1473522_gaff2"
+    "pdb"         : "../xtal_min/oxamide-gaff2/min.pdb"
+    "prefix"      : "md"
     "temperature" : 298.15
-    "nanoseconds" : 2
+    "nanoseconds" : 100
+"oxamide-parsley" :
+    "input"       : "../build_system/oxamide/1473522_parsley.xml"
+    "pdb"         : "../xtal_min/oxamide-parsley/min.pdb"
+    "prefix"      : "md"
+    "temperature" : 298.15
+    "nanoseconds" : 100
+"oxamide-sage" :
+    "input"       : "../build_system/oxamide/1473522_sage.xml"
+    "pdb"         : "../xtal_min/oxamide-sage/min.pdb"
+    "prefix"      : "md"
+    "temperature" : 298.15
+    "nanoseconds" : 100
+"oxamide-cgenff" :
+    "input"       : "../build_system/oxamide/1473522_cgenff.xml"
+    "pdb"         : "../xtal_min/oxamide-cgenff/min.pdb"
+    "prefix"      : "md"
+    "temperature" : 298.15
+    "nanoseconds" : 100
+"oxamide-oplsaa" :
+    "input"       : "../build_system/oxamide/1473522_oplsaa.xml"
+    "pdb"         : "../xtal_min/oxamide-oplsaa/min.pdb"
+    "prefix"      : "md"
+    "temperature" : 298.15
+    "nanoseconds" : 100

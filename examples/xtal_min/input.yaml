@@ -3,24 +3,73 @@
 "adipamide-gaff1" :
     "input"  : "../build_system/adipamide/1101307_gaff1.xml"
     "pdb"    : "../build_system/adipamide/1101307_gaff1.pdb"
-    "prefix" : "1101307_gaff1_min"
-    "steps"  : 5
+    "prefix" : "min"
+    "steps"  : 50
     "method" : "Nelder-Mead"
 "adipamide-gaff2" :
     "input"  : "../build_system/adipamide/1101307_gaff2.xml"
     "pdb"    : "../build_system/adipamide/1101307_gaff2.pdb"
-    "prefix" : "1101307_gaff2_min"
-    "steps"  : 5
+    "prefix" : "min"
+    "steps"  : 50
     "method" : "Nelder-Mead"
+"adipamide-parsley" :
+    "input"  : "../build_system/adipamide/1101307_parsley.xml"
+    "pdb"    : "../build_system/adipamide/1101307_parsley.pdb"
+    "prefix" : "min"
+    "steps"  : 50
+    "method" : "Nelder-Mead"
+"adipamide-sage" :
+    "input"  : "../build_system/adipamide/1101307_sage.xml"
+    "pdb"    : "../build_system/adipamide/1101307_sage.pdb"
+    "prefix" : "min"
+    "steps"  : 50
+    "method" : "Nelder-Mead"
+"adipamide-cgenff" :
+    "input"  : "../build_system/adipamide/1101307_cgenff.xml"
+    "pdb"    : "../build_system/adipamide/1101307_cgenff.pdb"
+    "prefix" : "min"
+    "steps"  : 50
+    "method" : "Nelder-Mead"
+"adipamide-oplsaa" :
+    "input"  : "../build_system/adipamide/1101307_oplsaa.xml"
+    "pdb"    : "../build_system/adipamide/1101307_oplsaa.pdb"
+    "prefix" : "min"
+    "steps"  : 50
+    "method" : "Nelder-Mead"
+
 "oxamide-gaff1" :
     "input"  : "../build_system/oxamide/1473522_gaff1.xml"
     "pdb"    : "../build_system/oxamide/1473522_gaff1.pdb"
-    "prefix" : "1473522_gaff1_min"
-    "steps"  : 5
+    "prefix" : "min"
+    "steps"  : 50
     "method" : "Nelder-Mead"
 "oxamide-gaff2" :
     "input"  : "../build_system/oxamide/1473522_gaff2.xml"
     "pdb"    : "../build_system/oxamide/1473522_gaff2.pdb"
-    "prefix" : "1473522_gaff2_min"
-    "steps"  : 5
+    "prefix" : "min"
+    "steps"  : 50
+    "method" : "Nelder-Mead"
+"oxamide-parsley" :
+    "input"  : "../build_system/oxamide/1473522_parsley.xml"
+    "pdb"    : "../build_system/oxamide/1473522_parsley.pdb"
+    "prefix" : "min"
+    "steps"  : 50
+    "method" : "Nelder-Mead"
+"oxamide-sage" :
+    "input"  : "../build_system/oxamide/1473522_sage.xml"
+    "pdb"    : "../build_system/oxamide/1473522_sage.pdb"
+    "prefix" : "min"
+    "steps"  : 50
+    "method" : "Nelder-Mead"
+"oxamide-cgenff" :
+    "input"  : "../build_system/oxamide/1473522_cgenff.xml"
+    "pdb"    : "../build_system/oxamide/1473522_cgenff.pdb"
+    "prefix" : "min"
+    "steps"  : 50
+    "method" : "Nelder-Mead"
+"oxamide-oplsaa" :
+    "input"  : "../build_system/oxamide/1473522_oplsaa.xml"
+    "pdb"    : "../build_system/oxamide/1473522_oplsaa.pdb"
+    "prefix" : "min"
+    "steps"  : 50
     "method" : "Nelder-Mead"
