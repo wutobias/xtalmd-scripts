@@ -285,9 +285,9 @@ def build_system_cgenff(
         ### Obtain cgenff stream file using cgenff
         subprocess.run([
             "cgenff",
-            #"-p",
-            #rtf_path,
-            #prm_path,
+            "-p",
+            rtf_path,
+            prm_path,
             "-b",
             "-f",
             str_path_monomer,
