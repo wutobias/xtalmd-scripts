@@ -562,19 +562,44 @@ def main():
     b_len = np.max(args.b_min_max) - np.min(args.b_min_max) + 1.
     c_len = np.max(args.c_min_max) - np.min(args.c_min_max) + 1.
 
+    import gemmi
+    doc           = gemmi.cif.read(args.input)[0]
+    cif_info_dict = {
+        "temperature"  : "Not found",
+        "cell_setting" : "Not found",
+        "space_group"  : "Not found",
+        "density"      : "Not found"
+    }
+    for item in doc:
+        if item.pair == None:
+            continue
+        key, value = item.pair
+        if "_diffrn_ambient_temperature".lower() == key.lower():
+            cif_info_dict["temperature"] = value
+        elif "_symmetry_cell_setting".lower() == key.lower():
+            cif_info_dict["cell_setting"] = value
+        elif "_symmetry_space_group_name_H-M".lower() == key.lower():
+            cif_info_dict["space_group"] = value
+        elif "_exptl_crystal_density_diffrn".lower() == key.lower():
+            cif_info_dict["density"] = value
+
     print(f"""
 Summary:
 ========
+Temperature [K]               : {cif_info_dict['temperature']},
+Cell Setting                  : {cif_info_dict['cell_setting']},
+Space Group H-M               : {cif_info_dict['space_group']},
+Density [g/cm3]               : {cif_info_dict['density']},
 
-Total number of molecules : {len(replicated_mol_list)},
-Total Length edge a       : {strc.cell.a * a_len:4.2f},
-Total Length edge b       : {strc.cell.b * b_len:4.2f},
-Total Length edge c       : {strc.cell.c * c_len:4.2f},
-Cell angle alpha          : {strc.cell.alpha:4.2f},
-Cell angle beta           : {strc.cell.beta:4.2f},
-Cell angle gamma          : {strc.cell.gamma:4.2f},
-Total Volume supercell    : {strc.cell.volume * a_len * b_len * c_len:4.2f}
-SMILES for molecules in UC: {" ".join(smiles_list)}
+Total number of molecules     : {len(replicated_mol_list)},
+Total Length edge a [Ang]     : {strc.cell.a * a_len:4.2f},
+Total Length edge b [Ang]     : {strc.cell.b * b_len:4.2f},
+Total Length edge c [Ang]     : {strc.cell.c * c_len:4.2f},
+Cell angle alpha [deg]        : {strc.cell.alpha:4.2f},
+Cell angle beta  [deg]        : {strc.cell.beta:4.2f},
+Cell angle gamma [deg]        : {strc.cell.gamma:4.2f},
+Total Volume supercell [Ang3] : {strc.cell.volume * a_len * b_len * c_len:4.2f}
+SMILES for molecules in UC    : {" ".join(smiles_list)}
 """
 )
 
