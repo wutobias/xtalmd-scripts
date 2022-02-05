@@ -443,15 +443,10 @@ def get_pdb_block(
     ###
     ### flavor: (optional)
     ### flavor & 1 : Write MODEL/ENDMDL lines around each record
-    ### 
     ### flavor & 2 : Don’t write any CONECT records
-    ### 
     ### flavor & 4 : Write CONECT records in both directions
-    ### 
     ### flavor & 8 : Don’t use multiple CONECTs to encode bond order
-    ### 
     ### flavor & 16 : Write MASTER record
-    ### 
     ### flavor & 32 : Write TER record
 
     crds_block = Chem.MolToPDBBlock(mol_new, flavor=32)
