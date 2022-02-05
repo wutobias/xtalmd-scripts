@@ -208,6 +208,7 @@ def build_system_cgenff(
     Build openmm system for cgenff force field.
     """
 
+    import os
     import subprocess
     import parmed as pmd
     from rdkit import Chem
@@ -245,6 +246,9 @@ def build_system_cgenff(
         f'{toppar_dir_path}/top_all36_cgenff.rtf',
         f'{toppar_dir_path}/par_all36_cgenff.prm',
     ]
+
+    to_remove_list = list()
+    str_list = list()
     for mol_idx in unique_mol_idxs:
 
         mol = rdmol_list_unique[mol_idx]
@@ -281,9 +285,9 @@ def build_system_cgenff(
         ### Obtain cgenff stream file using cgenff
         subprocess.run([
             "cgenff",
-            "-p",
-            rtf_path,
-            prm_path,
+            #"-p",
+            #rtf_path,
+            #prm_path,
             "-b",
             "-f",
             str_path_monomer,
@@ -350,6 +354,18 @@ stop
             ])
 
         psf_pmd += pmd.load_file(psf_path_monomer)
+
+        to_remove_list.extend([
+            str_path_monomer,
+            pdb_path_monomer,
+            mol2_path_monomer,
+            psf_path_monomer,
+            "make_psf.inp",
+            "strc.psf"
+            ])
+
+        with open(str_path_monomer, "r") as fopen:
+            str_list.append(fopen.read())
 
     ### Replicate the unique molecules
     ### in order to match the full `replicated_mol_list`
@@ -419,7 +435,12 @@ stop
         removeCMMotion=False,
     )
 
-    return system
+    ### Clean up
+    for filename in to_remove_list:
+        if os.path.exists(filename):
+            os.remove(filename)
+
+    return system, str_list
 
 
 def build_system_oplsaa(
@@ -431,6 +452,8 @@ def build_system_oplsaa(
     Build openmm system for opls aa force field.
     """
 
+    import os
+    import time
     import subprocess
     from simtk.openmm.app import ForceField
     from simtk.openmm.app import PDBFile
@@ -450,32 +473,92 @@ def build_system_oplsaa(
     unique_mol_idxs = sorted(unique_mol_idxs)
 
     xml_file_list   = list()
+    pdbname_mapping_dict = dict()
+    to_remove_list = list()
     for mol_idx in unique_mol_idxs:
 
         mol = rdmol_list_unique[mol_idx]
 
         pdb_path_monomer = f"mol_{mol_idx}.pdb"
+        mol_path_monomer = f"mol_{mol_idx}.mol"
         with open(pdb_path_monomer, "w") as fopen:
             fopen.write(
                 Chem.MolToPDBBlock(mol)
                 )
+        with Chem.SDWriter(mol_path_monomer) as sdwriter:
+            sdwriter.write(mol)
 
         mi = mol.GetAtomWithIdx(0).GetMonomerInfo()
         resname = mi.GetResidueName().rstrip().lstrip()
 
         subprocess.run([
             oplsaa_xml_builder_path,
-            pdb_path_monomer,
+            mol_path_monomer,
             resname,
             str(Chem.GetFormalCharge(mol)),
             str(set_lbcc)
             ])
 
+        while not (os.path.exists(f"{resname}.xml") and os.path.isfile(f"{resname}.xml")):
+            time.sleep(1)
+        while not (os.path.exists(f"{resname}.pdb") and os.path.isfile(f"{resname}.pdb")):
+            time.sleep(1)
+
         xml_file_list.append(
             f"{resname}.xml"
             )
+        
+        pdbname_mapping_dict[resname] = dict()
 
+        pdbfile_renamed  = PDBFile(f"{resname}.pdb")
+        pdbfile_original = PDBFile(f"mol_{mol_idx}.pdb")
+
+        assert pdbfile_renamed.topology.getNumAtoms() == pdbfile_original.topology.getNumAtoms()
+
+        N_atoms = pdbfile_renamed.topology.getNumAtoms()
+
+        atoms_renamed_list  = list(pdbfile_renamed.topology.atoms())
+        atoms_original_list = list(pdbfile_original.topology.atoms())
+        for atm_idx in range(N_atoms):
+            atom_renamed  = atoms_renamed_list[atm_idx]
+            atom_original = atoms_original_list[atm_idx]
+            assert atom_renamed.residue.name == resname
+            assert atom_original.residue.name == resname
+            pdbname_mapping_dict[resname][atom_original.name] = atom_renamed.name
+
+        to_remove_list.extend([
+            f"{resname}.pdb",
+            f"{resname}.xml",
+            pdb_path_monomer,
+            mol_path_monomer,
+            f"/tmp/{resname}.pdb",
+            f"/tmp/{resname}.mol",
+            f"/tmp/mol_{mol_idx}.pdb",
+            f"/tmp/mol_{mol_idx}.mol",
+        ])
+
+    ### LigParGen renames atoms. Use the pdbname_mapping_dict to map
+    ### the old atom names to the new ones.
     pdbfile    = PDBFile(pdb_path)
+    for atom in pdbfile.topology.atoms():
+        resname = atom.residue.name
+        atom.name = pdbname_mapping_dict[resname][atom.name]
+    with open(pdb_path, "w") as fopen:
+        topology = pdbfile.getTopology()
+        PDBFile.writeHeader(
+            topology,
+            fopen
+            )
+        PDBFile.writeModel(
+            topology,
+            pdbfile.positions,
+            fopen
+            )
+        PDBFile.writeFooter(
+            topology,
+            fopen
+            )
+
     topology   = pdbfile.getTopology()
     boxvectors = topology.getPeriodicBoxVectors()
     positions  = pdbfile.positions
@@ -493,6 +576,11 @@ def build_system_oplsaa(
     )
 
     system = OPLS_LJ(system)
+
+    ### Clean up
+    for filename in to_remove_list:
+        if os.path.exists(filename):
+            os.remove(filename)
 
     return system
 
@@ -634,19 +722,23 @@ def main():
         if args.toppar == None:
             raise ValueError(f"When building cgenff ff, must provide --toppar")
 
-        system = build_system_cgenff(
+        system, str_list = build_system_cgenff(
             replicated_mol_list,
             f"./{prefix}.pdb",
             args.toppar
             )
+        for idx, str_ in enumerate(str_list):
+            with open(f"{prefix}_monomer{idx}.str", "w") as fopen:
+                fopen.write(str_)
+
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
-            monomer_sys_list.append(
-                build_system_cgenff(
-                    [rdmol],
-                    f"./{prefix}_monomer{rdmol_idx}.pdb",
-                    args.toppar
-                    )
+            monomer_system, _ = build_system_cgenff(
+                [rdmol],
+                f"./{prefix}_monomer{rdmol_idx}.pdb",
+                args.toppar
                 )
+            monomer_sys_list.append(monomer_system)
+
 
     elif args.forcefield.lower() == "oplsaa":
 

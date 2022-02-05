@@ -5,7 +5,7 @@ if [ ! $# -eq 4 ]; then
 	exit
 fi
 
-pdbfile=$1
+molfile=$1
 resname=$2
 charge=$3
 lbcc=$4
@@ -30,14 +30,21 @@ conda activate ligpargen
 echo "BOSSdir $BOSSdir ..."
 
 if [ $lbcc_flag ]; then
-	LigParGen --pdb ${pdbfile} --resname ${resname} --charge ${charge} --lbcc
+	LigParGen --mol ${molfile} --resname ${resname} --charge ${charge} --lbcc
 else
-	LigParGen --pdb ${pdbfile} --resname ${resname} --charge ${charge}
+	LigParGen --mol ${molfile} --resname ${resname} --charge ${charge}
 fi
+
+molfilename=`basename -s .mol ${molfile}`
 
 cp -f /tmp/${resname}.xml .
 cp -f /tmp/${resname}.pdb .
 rm -f /tmp/${resname}.*
+rm -f /tmp/${molfilename}.*
+rm -f /tmp/LL
+rm -f /tmp/slvzmat
+rm -f /tmp/clu.pdb
+rm -f /tmp/optzmat
 
 sleep 2s
 
