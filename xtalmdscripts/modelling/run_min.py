@@ -517,10 +517,6 @@ def main():
 
         os.makedirs(output_dir, exist_ok=True)
         prefix = input_dict[output_dir]["prefix"]
-        if prefix.endswith(".xml"):
-            prefix = prefix.replace(".xml", "")
-        elif prefix.endswith(".pdb"):
-            prefix = prefix.replace(".pdb", "")
         prefix = f"{output_dir}/{prefix}"
 
         if HAS_RAY:
