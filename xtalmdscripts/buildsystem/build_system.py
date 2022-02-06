@@ -622,7 +622,7 @@ def main():
 
     ### Build the supercell as a list of rdkit molecules
     ### ================================================
-    replicated_mol_list = make_supercell.generate_replicated_mol_list(
+    replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs = make_supercell.generate_replicated_mol_list(
         strc,
         a_min_max,
         b_min_max,
@@ -642,6 +642,12 @@ def main():
     prefix = args.prefix
     with open(f"./{prefix}.pdb", "w") as fopen:
         fopen.write(pdb_str)
+    with open(f"{prefix}.csv", "w") as fopen:
+        info_str = get_supercell_info_str(
+            mol_identifies, 
+            unitcell_in_supercell_fracs
+            )
+        fopen.write(info_str)
 
     _, rdmol_list_unique = make_supercell.get_unique_mapping(replicated_mol_list)
     for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
