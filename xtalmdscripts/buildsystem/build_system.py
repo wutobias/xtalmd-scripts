@@ -78,7 +78,7 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def OPLS_LJ(system):
+def OPLS_LJ(system, CutoffPeriodic=True):
 
     """
     Helper function to get the OPLS combination rules.
@@ -90,7 +90,10 @@ def OPLS_LJ(system):
     nonbonded_force = forces['NonbondedForce']
     lorentz = openmm.CustomNonbondedForce(
         '4*epsilon*((sigma/r)^12-(sigma/r)^6); sigma=sqrt(sigma1*sigma2); epsilon=sqrt(epsilon1*epsilon2)')
-    lorentz.setNonbondedMethod(lorentz.CutoffPeriodic)
+    if CutoffPeriodic:
+        lorentz.setNonbondedMethod(lorentz.CutoffPeriodic)
+    else:
+        lorentz.setNonbondedMethod(lorentz.NoCutoff)
     lorentz.addPerParticleParameter('sigma')
     lorentz.addPerParticleParameter('epsilon')
     lorentz.setCutoffDistance(nonbonded_force.getCutoffDistance())
@@ -565,9 +568,11 @@ def build_system_oplsaa(
     forcefield = app.ForceField(*xml_file_list)
 
     if boxvectors == None:
-        nonbondedMethod = app.NoCutoff
+        nonbondedMethod  = app.NoCutoff
+        lorentz_periodic = False
     else:
-        nonbondedMethod = app.PME
+        nonbondedMethod  = app.PME
+        lorentz_periodic = True
     system = forcefield.createSystem(
         topology = topology,
         nonbondedMethod=nonbondedMethod,
@@ -575,7 +580,7 @@ def build_system_oplsaa(
         removeCMMotion=False,
     )
 
-    system = OPLS_LJ(system)
+    system = OPLS_LJ(system, lorentz_periodic)
 
     ### Clean up
     for filename in to_remove_list:
