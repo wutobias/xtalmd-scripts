@@ -643,7 +643,7 @@ def main():
     with open(f"./{prefix}.pdb", "w") as fopen:
         fopen.write(pdb_str)
     with open(f"{prefix}.csv", "w") as fopen:
-        info_str = get_supercell_info_str(
+        info_str = make_supercell.get_supercell_info_str(
             mol_identifies, 
             unitcell_in_supercell_fracs
             )
