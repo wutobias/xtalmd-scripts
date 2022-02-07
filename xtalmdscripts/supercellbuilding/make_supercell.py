@@ -524,6 +524,20 @@ def get_supercell_info_str(mol_identifies, unitcell_in_supercell_fracs):
 
     return info_str
 
+
+def get_replicated_mol_list_json(replicated_mol_list):
+
+    """
+    Returns rdkit json string of collapsed replicated mol_list.
+    """
+
+    from rdkit import Chem
+
+    mol_combo = Chem.Mol()
+    for mol in replicated_mol_list:
+        mol_combo = Chem.CombineMols(mol_combo, mol)
+    return Chem.MolToJSON(mol_combo)
+
 def main():
 
     """
@@ -559,6 +573,10 @@ def main():
             unitcell_in_supercell_fracs
             )
         fopen.write(info_str)
+    
+    with open(f"{args.prefix}.json", "w") as fopen:
+        json_str = get_replicated_mol_list_json(replicated_mol_list)
+        fopen.write(json_str)
 
     ### Generate list of unique smiles for unique
     ### molecules in UC

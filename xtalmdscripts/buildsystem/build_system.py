@@ -648,6 +648,9 @@ def main():
             unitcell_in_supercell_fracs
             )
         fopen.write(info_str)
+    with open(f"{prefix}.json", "w") as fopen:
+        json_str = make_supercell.get_replicated_mol_list_json(replicated_mol_list)
+        fopen.write(json_str)
 
     _, rdmol_list_unique = make_supercell.get_unique_mapping(replicated_mol_list)
     for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
