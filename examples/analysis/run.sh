@@ -1,1 +1,1 @@
-make_tables -i input.json -o table.xlsx
+make_tables -i input.yaml -o table.xlsx
