@@ -4,6 +4,7 @@ import openmm
 from openmm import unit
 import numpy as np
 from scipy import optimize
+from .utils import Logger
 
 def parse_arguments():
 
@@ -333,7 +334,8 @@ def run_xtal_min(
     platform_name = "CUDA",
     property_dict = {
         "Precision" : "mixed"
-    }
+    },
+    prefix="xtal_min"
     ):
 
     """
@@ -377,6 +379,7 @@ def run_xtal_min(
         system.getNumParticles()
         )
     x0 = np.copy(cw.box_flat)
+    logfile = Logger(system, "")
     best_ene = 999999999999999999999.
     best_x   = None
     for _ in range(steps):
@@ -398,13 +401,18 @@ def run_xtal_min(
         if ene < best_ene:
             best_ene = ene
             best_x   = cw.pos_box_flat
+        state = context.getState(
+            getEnergy=True,
+            getPositions=True
+        )
+        logfile.write(state)
 
     pos, box = cw.flat_to_pos_box(best_x)
     context.setPositions(pos)
     context.setPeriodicBoxVectors(*box)
     state = context.getState(getPositions=True)
 
-    return openmm.XmlSerializer.serialize(state)
+    return openmm.XmlSerializer.serialize(state), logfile.str
 
 
 def main():
@@ -454,14 +462,16 @@ def main():
                 platform_name = "CUDA",
                 property_dict = {
                     "Precision" : "mixed"
-                }):
+                },
+                prefix="xtal_min"):
                 return run_xtal_min(
                     xml_path = xml_path, 
                     pdb_path = pdb_path,
                     steps = steps,
                     method = method,
                     platform_name = platform_name,
-                    property_dict = property_dict
+                    property_dict = property_dict,
+                    prefix="xtal_min"
                     )
 
     else:
@@ -497,7 +507,8 @@ def main():
             property_dict = {
                 #"Threads"             : '4',
                 "DeterministicForces" : "True"
-            }
+            },
+            prefix="xtal_min"
         )
         worker_id_dict[output_dir] = worker_id
 
@@ -506,13 +517,11 @@ def main():
             continue
 
         if HAS_RAY:
-            state = openmm.XmlSerializer.deserialize(
-                ray.get(worker_id_dict[output_dir])
-                )
+            state, file_str = ray.get(worker_id_dict[output_dir])
+            state = openmm.XmlSerializer.deserialize(state)
         else:
-            state = openmm.XmlSerializer.deserialize(
-                worker_id_dict[output_dir]
-                )
+            state, file_str = worker_id_dict[output_dir]
+            state = openmm.XmlSerializer.deserialize(state)
 
         os.makedirs(output_dir, exist_ok=True)
         prefix = input_dict[output_dir]["prefix"]
@@ -523,6 +532,8 @@ def main():
             fopen.write(
                 openmm.XmlSerializer.serialize(state)
                 )
+        with open(f"./{prefix}.csv", "w") as fopen:
+            fopen.write(file_str)
         ### Save State in pdb format
         from openmm import app
         box = state.getPeriodicBoxVectors(asNumpy=True)
