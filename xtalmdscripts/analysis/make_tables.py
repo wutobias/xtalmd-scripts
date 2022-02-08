@@ -483,8 +483,8 @@ def main():
                 _com_diffs      = analysis_engine.compute_com_diff_per_residue(query_traj, ref_strc)
                 _pc_diffs       = analysis_engine.compute_pc_diff_per_residue(query_traj, ref_strc)
                 _distance_diffs = ref_distances - analysis_engine.compute_pairwise_distances(query_traj, dist_pair_list)
-                _distance_diffs = np.abs(_distance_diffs)
-                _com_diffs      = np.abs(_com_diffs)
+                _distance_diffs = np.abs(_distance_diffs) * _NM_2_ANG
+                _com_diffs      = np.abs(_com_diffs) * _NM_2_ANG
 
                 com_diffs.extend(_com_diffs.tolist())
                 pc_diffs[0].extend(_pc_diffs[:,:,0].tolist())
@@ -530,7 +530,7 @@ def main():
             std  = np.std(distance_diffs)
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "<[Δ(d < 4Å)]>", 
                 forcefield_name, 
                 crystal_name
@@ -542,7 +542,7 @@ def main():
             std  = np.std(com_diffs)
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "<[D(dCOM)]>",
                 forcefield_name, 
                 crystal_name
@@ -554,7 +554,7 @@ def main():
             std  = np.std(pc_diffs[0])
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "<{∠PA1-PA1(expt)}>", 
                 forcefield_name, 
                 crystal_name
@@ -564,7 +564,7 @@ def main():
             std  = np.std(pc_diffs[1])
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "<{∠PA2-PA2(expt)}>", 
                 forcefield_name, 
                 crystal_name
@@ -574,7 +574,7 @@ def main():
             std  = np.std(pc_diffs[2])
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "<{∠PA3-PA3(expt)}>", 
                 forcefield_name, 
                 crystal_name
@@ -586,6 +586,7 @@ def main():
             if len(hbond_O_single_diffs) > 0:
                 avg  = np.mean(hbond_O_single_diffs)
                 std  = np.std(hbond_O_single_diffs)
+                std  = std/avg*100.
             else:
                 avg = "--"
                 std = "--"
@@ -600,6 +601,7 @@ def main():
             if len(hbond_O_double_diffs) > 0:
                 avg  = np.mean(hbond_O_double_diffs)
                 std  = np.std(hbond_O_double_diffs)
+                std  = std/avg*100.
             else:
                 avg = "--"
                 std = "--"
@@ -614,6 +616,7 @@ def main():
             if len(hbond_N_single_diffs) > 0:
                 avg  = np.mean(hbond_N_single_diffs)
                 std  = np.std(hbond_N_single_diffs)
+                std  = std/avg*100.
             else:
                 avg = "--"
                 std = "--"
@@ -628,6 +631,7 @@ def main():
             if len(hbond_N_double_diffs) > 0:
                 avg  = np.mean(hbond_N_double_diffs)
                 std  = np.std(hbond_N_double_diffs)
+                std  = std/avg*100.
             else:
                 avg = "--"
                 std = "--"
@@ -645,7 +649,7 @@ def main():
             std   = np.std(a_len)
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "a", 
                 forcefield_name, 
                 crystal_name
@@ -655,7 +659,7 @@ def main():
             std  = np.std(b_len)
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "b", 
                 forcefield_name, 
                 crystal_name
@@ -665,7 +669,7 @@ def main():
             std  = np.std(c_len)
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "c", 
                 forcefield_name, 
                 crystal_name
@@ -677,7 +681,7 @@ def main():
             std  = np.std(alpha)
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "alpha", 
                 forcefield_name, 
                 crystal_name
@@ -687,7 +691,7 @@ def main():
             std  = np.std(beta)
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "beta", 
                 forcefield_name, 
                 crystal_name
@@ -697,7 +701,7 @@ def main():
             std  = np.std(gamma)
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "gamma", 
                 forcefield_name, 
                 crystal_name
@@ -725,7 +729,7 @@ def main():
             std = np.std(density_xtal)
             workbook_wrap.add_data(
                 avg,
-                std,
+                std/avg*100.,
                 "Density", 
                 forcefield_name, 
                 crystal_name
