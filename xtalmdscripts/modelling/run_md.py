@@ -303,14 +303,12 @@ def run_xtal_md(
         platform=platform,
     )
     
-    simulation.context.setPositions(pdbfile.positions)
-    simulation.context.setPeriodicBoxVectors(*topology.getPeriodicBoxVectors())
-    simulation.context.setVelocitiesToTemperature(
-            temperature.value_in_unit_system(
-                unit.md_unit_system
-                )
-            )
-    simulation.loadState(f"./{prefix}_thermalization.xml")
+    with open(f"./{prefix}_thermalization.xml", "r") as fopen:
+        state = openmm.XmlSerializer.deserialize(fopen.read())
+    simulation.context.setPositions(state.getPositions())
+    simulation.context.setVelocities(state.getVelocities())
+    simulation.context.setPeriodicBoxVectors(*state.getPeriodicBoxVectors())
+
     ### Run for 500 picoseconds
     ### 1 step is 0.002 picoseconds
     ### 1 picosecond is 500 steps
@@ -346,14 +344,11 @@ def run_xtal_md(
         platform=platform,
     )
     
-    simulation.context.setPositions(pdbfile.positions)
-    simulation.context.setPeriodicBoxVectors(*topology.getPeriodicBoxVectors())
-    simulation.context.setVelocitiesToTemperature(
-            temperature.value_in_unit_system(
-                unit.md_unit_system
-                )
-            )
-    simulation.loadState(f"./{prefix}_pressure1.xml")
+    with open(f"./{prefix}_pressure1.xml", "r") as fopen:
+        state = openmm.XmlSerializer.deserialize(fopen.read())
+    simulation.context.setPositions(state.getPositions())
+    simulation.context.setVelocities(state.getVelocities())
+    simulation.context.setPeriodicBoxVectors(*state.getPeriodicBoxVectors())
     ### Run for 500 picoseconds
     ### 1 step is 0.002 picoseconds
     ### 1 picosecond is 500 steps

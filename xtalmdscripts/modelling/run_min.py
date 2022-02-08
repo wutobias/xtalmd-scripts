@@ -401,6 +401,10 @@ def run_xtal_min(
         if ene < best_ene:
             best_ene = ene
             best_x   = cw.pos_box_flat
+        else:
+            pos, box = cw.flat_to_pos_box(best_x)
+            context.setPositions(pos)
+            context.setPeriodicBoxVectors(*box)
         state = context.getState(
             getEnergy=True,
             getPositions=True
