@@ -497,7 +497,8 @@ def main():
                         query_traj, 
                         acc_O_single_pair_list
                         )
-                    diffs = ref_hbond_O_double_diffs - _hbond_O_single_diffs
+                    diffs  = ref_hbond_O_double_diffs - _hbond_O_single_diffs
+                    diffs *= _NM_2_ANG
                     hbond_O_single_diffs.extend(diffs.tolist())
 
                 if acc_O_double_pair_list.size > 0:
@@ -505,7 +506,8 @@ def main():
                         query_traj, 
                         acc_O_double_pair_list
                         )
-                    diffs = ref_hbond_O_double_diffs - _hbond_O_double_diffs
+                    diffs  = ref_hbond_O_double_diffs - _hbond_O_double_diffs
+                    diffs *= _NM_2_ANG
                     hbond_O_double_diffs.extend(diffs.tolist())
 
                 if acc_N_single_pair_list.size > 0:
@@ -513,7 +515,8 @@ def main():
                         query_traj, 
                         acc_N_single_pair_list
                         )
-                    diffs = ref_hbond_N_single_diffs - _hbond_N_single_diffs
+                    diffs  = ref_hbond_N_single_diffs - _hbond_N_single_diffs
+                    diffs *= _NM_2_ANG
                     hbond_N_single_diffs.extend(diffs.tolist())
 
                 if acc_N_double_pair_list.size > 0:
@@ -521,7 +524,8 @@ def main():
                         query_traj, 
                         acc_N_double_pair_list
                         )
-                    diffs = ref_hbond_N_double_diffs - _hbond_N_double_diffs
+                    diffs  = ref_hbond_N_double_diffs - _hbond_N_double_diffs
+                    diffs *= _NM_2_ANG
                     hbond_N_double_diffs.extend(diffs.tolist())
 
             ### Write distance diff data ###
