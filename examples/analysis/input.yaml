@@ -1,117 +1,153 @@
-- "N-Ac,N'Me-Ala" :
-    - "FORCEFIELD" :
-        - "NAME"      : "ff99SB",
-        - "XTAL_TRAJ" : "xtal.dcd",
-        - "GAS_TRAJ"  : "energy.xvg",
-        - "GAS_ENERGY"  : "energy.xvg",
+"Oxamide" :
 
-        - "UNITCELLS_A" : 4,
-        - "UNITCELLS_B" : 4,
-        - "UNITCELLS_C" : 4,
-        - "MOLS_PER_CELL" : 2,
-        - "TEMPERATURE"   : 300
+    "experiment" :
+        "experiment-cif"           : "../data/oxamide/1473522.cif"
+        "supercell-pdb"            : "../build_system/oxamide/1473522_gaff1.pdb"
+        "supercell-rdkit"          : "../build_system/oxamide/1473522_gaff1.json"
+        "sublimation-enthalpy"     : 117.3 # Value in kJ/mol, see https://webbook.nist.gov/cgi/cbook.cgi?ID=C471465&Mask=4
+        "sublimation-enthalpy-std" : 1.2 # Value in kJ/mol
+        "temperature"              : 387.
 
-{
-    "N-Ac,N'Me-Ala" : {
-        
-        "FORCEFIELD" : [
+    "GAFF1" :
 
-            {
-                "XTAL_ENERGY" : "energy.xvg",
-                "XTAL_CELL"   : "energy.xvg",
-                "GAS_ENERGY"  : "energy.xvg",
-                "NAME" : "ff99SB",
-                "UNITCELLS_A" : 4,
-                "UNITCELLS_B" : 4,
-                "UNITCELLS_C" : 4,
-                "MOLS_PER_CELL" : 2,
-                "TEMPERATURE"   : 300
-            },
-            {
-                "XTAL_ENERGY" : "energy.xvg",
-                "XTAL_CELL"   : "energy.xvg",
-                "GAS_ENERGY"  : "energy.xvg",
-                "NAME" : "GAFF",
-                "UNITCELLS_A" : 4,
-                "UNITCELLS_B" : 4,
-                "UNITCELLS_C" : 4,
-                "MOLS_PER_CELL" : 2,
-                "TEMPERATURE"   : 300
+        "xtal-ucinfo"     : "../build_system/oxamide/1473522_gaff1.csv"
+        "xtal-topology"   : "../build_system/oxamide/1473522_gaff1.pdb"
+        "xtal-trajectory" : "../xtal_md/oxamide-gaff1/*_?.dcd"
+        "xtal-output"     : "../xtal_md/oxamide-gaff1/*_?.csv"
 
-            },
-            {
-                "XTAL_ENERGY" : "energy.xvg",
-                "XTAL_CELL"   : "energy.xvg",
-                "GAS_ENERGY"  : "energy.xvg",
-                "NAME" : "Parsley",
-                "UNITCELLS_A" : 4,
-                "UNITCELLS_B" : 4,
-                "UNITCELLS_C" : 4,
-                "MOLS_PER_CELL" : 2,
-                "TEMPERATURE"   : 300
-            }
+        "gas-topology"    : "../build_system/oxamide/1473522_gaff1_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/oxamide-gaff1_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/oxamide-gaff1_gas/*_?.csv"
 
-        ],
+    "GAFF2" :
 
-        "EXPT" : {
+        "xtal-ucinfo"     : "../build_system/oxamide/1473522_gaff2.csv"
+        "xtal-topology"   : "../build_system/oxamide/1473522_gaff2.pdb"
+        "xtal-trajectory" : "../xtal_md/oxamide-gaff2/*_?.dcd"
+        "xtal-output"     : "../xtal_md/oxamide-gaff2/*_?.csv"
 
-            "CIF" : "1101307.cif",
-            "SUBLIMATION_ENTHALPY" : "42.42",
-            "SUBLIMATION_ENTHALPY_ERROR" : "42.42"
+        "gas-topology"    : "../build_system/oxamide/1473522_gaff2_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/oxamide-gaff2_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/oxamide-gaff2_gas/*_?.csv"
 
-        }
+    "Parsley" :
 
-    },
+        "xtal-ucinfo"     : "../build_system/oxamide/1473522_parsley.csv"
+        "xtal-topology"   : "../build_system/oxamide/1473522_parsley.pdb"
+        "xtal-trajectory" : "../xtal_md/oxamide-parsley/*_?.dcd"
+        "xtal-output"     : "../xtal_md/oxamide-parsley/*_?.csv"
 
-    "Adipamide" : {
-        
-        "FORCEFIELD" : [
+        "gas-topology"    : "../build_system/oxamide/1473522_parsley_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/oxamide-parsley_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/oxamide-parsley_gas/*_?.csv"
 
-            {
-                "XTAL_ENERGY" : "energy.xvg",
-                "XTAL_CELL"   : "energy.xvg",
-                "GAS_ENERGY"  : "energy.xvg",
-                "NAME" : "ff99SB",
-                "UNITCELLS_A" : 4,
-                "UNITCELLS_B" : 4,
-                "UNITCELLS_C" : 4,
-                "MOLS_PER_CELL" : 2,
-                "TEMPERATURE"   : 300
-            },
-            {
-                "XTAL_ENERGY" : "energy.xvg",
-                "XTAL_CELL"   : "energy.xvg",
-                "GAS_ENERGY"  : "energy.xvg",
-                "NAME" : "GAFF",
-                "UNITCELLS_A" : 4,
-                "UNITCELLS_B" : 4,
-                "UNITCELLS_C" : 4,
-                "MOLS_PER_CELL" : 2,
-                "TEMPERATURE"   : 300
+    "Sage" :
 
-            },
-            {
-                "XTAL_ENERGY" : "energy.xvg",
-                "XTAL_CELL"   : "energy.xvg",
-                "GAS_ENERGY"  : "energy.xvg",
-                "NAME" : "Parsley",
-                "UNITCELLS_A" : 4,
-                "UNITCELLS_B" : 4,
-                "UNITCELLS_C" : 4,
-                "MOLS_PER_CELL" : 2,
-                "TEMPERATURE"   : 300
-            }
+        "xtal-ucinfo"     : "../build_system/oxamide/1473522_sage.csv"
+        "xtal-topology"   : "../build_system/oxamide/1473522_sage.pdb"
+        "xtal-trajectory" : "../xtal_md/oxamide-sage/*_?.dcd"
+        "xtal-output"     : "../xtal_md/oxamide-sage/*_?.csv"
 
-        ],
+        "gas-topology"    : "../build_system/oxamide/1473522_sage_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/oxamide-sage_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/oxamide-sage_gas/*_?.csv"
 
-        "EXPT" : {
+    "CGENFF" :
 
-            "CIF" : "1101307.cif",
-            "SUBLIMATION_ENTHALPY" : "42.42",
-            "SUBLIMATION_ENTHALPY_ERROR" : "42.42"
+        "xtal-ucinfo"     : "../build_system/oxamide/1473522_cgenff.csv"
+        "xtal-topology"   : "../build_system/oxamide/1473522_cgenff.pdb"
+        "xtal-trajectory" : "../xtal_md/oxamide-cgenff/*_?.dcd"
+        "xtal-output"     : "../xtal_md/oxamide-cgenff/*_?.csv"
 
-        }
+        "gas-topology"    : "../build_system/oxamide/1473522_cgenff_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/oxamide-cgenff_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/oxamide-cgenff_gas/*_?.csv"
 
-    }
+    "OPLSAA" :
 
-}
+        "xtal-ucinfo"     : "../build_system/oxamide/1473522_oplsaa.csv"
+        "xtal-topology"   : "../build_system/oxamide/1473522_oplsaa.pdb"
+        "xtal-trajectory" : "../xtal_md/oxamide-oplsaa/*_?.dcd"
+        "xtal-output"     : "../xtal_md/oxamide-oplsaa/*_?.csv"
+
+        "gas-topology"    : "../build_system/oxamide/1473522_oplsaa_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/oxamide-oplsaa_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/oxamide-oplsaa_gas/*_?.csv"
+
+
+"Adipamide" :
+
+    "experiment" :
+        "experiment-cif"           : "../data/adipamide/1101307.cif"
+        "supercell-pdb"            : "../build_system/adipamide/1101307_gaff1.pdb"
+        "supercell-rdkit"          : "../build_system/adipamide/1101307_gaff1.json"
+        #"sublimation-enthalpy"     : "--"
+        #"sublimation-enthalpy-std" : "--"
+        "temperature"              : 298.15
+
+    "GAFF1" :
+
+        "xtal-ucinfo"     : "../build_system/adipamide/1101307_gaff1.csv"
+        "xtal-topology"   : "../build_system/adipamide/1101307_gaff1.pdb"
+        "xtal-trajectory" : "../xtal_md/adipamide-gaff1/*_?.dcd"
+        "xtal-output"     : "../xtal_md/adipamide-gaff1/*_?.csv"
+
+        "gas-topology"    : "../build_system/adipamide/1101307_gaff1_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/adipamide-gaff1_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/adipamide-gaff1_gas/*_?.csv"
+
+    "GAFF2" :
+
+        "xtal-ucinfo"     : "../build_system/adipamide/1101307_gaff2.csv"
+        "xtal-topology"   : "../build_system/adipamide/1101307_gaff2.pdb"
+        "xtal-trajectory" : "../xtal_md/adipamide-gaff2/*_?.dcd"
+        "xtal-output"     : "../xtal_md/adipamide-gaff2/*_?.csv"
+
+        "gas-topology"    : "../build_system/adipamide/1101307_gaff2_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/adipamide-gaff2_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/adipamide-gaff2_gas/*_?.csv"
+
+    "Parsley" :
+
+        "xtal-ucinfo"     : "../build_system/adipamide/1101307_parsley.csv"
+        "xtal-topology"   : "../build_system/adipamide/1101307_parsley.pdb"
+        "xtal-trajectory" : "../xtal_md/adipamide-parsley/*_?.dcd"
+        "xtal-output"     : "../xtal_md/adipamide-parsley/*_?.csv"
+
+        "gas-topology"    : "../build_system/adipamide/1101307_parsley_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/adipamide-parsley_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/adipamide-parsley_gas/*_?.csv"
+
+    "Sage" :
+
+        "xtal-ucinfo"     : "../build_system/adipamide/1101307_sage.csv"
+        "xtal-topology"   : "../build_system/adipamide/1101307_sage.pdb"
+        "xtal-trajectory" : "../xtal_md/adipamide-sage/*_?.dcd"
+        "xtal-output"     : "../xtal_md/adipamide-sage/*_?.csv"
+
+        "gas-topology"    : "../build_system/adipamide/1101307_sage_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/adipamide-sage_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/adipamide-sage_gas/*_?.csv"
+
+    "CGENFF" :
+
+        "xtal-ucinfo"     : "../build_system/adipamide/1101307_cgenff.csv"
+        "xtal-topology"   : "../build_system/adipamide/1101307_cgenff.pdb"
+        "xtal-trajectory" : "../xtal_md/adipamide-cgenff/*_?.dcd"
+        "xtal-output"     : "../xtal_md/adipamide-cgenff/*_?.csv"
+
+        "gas-topology"    : "../build_system/adipamide/1101307_cgenff_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/adipamide-cgenff_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/adipamide-cgenff_gas/*_?.csv"
+
+    "OPLSAA" :
+
+        "xtal-ucinfo"     : "../build_system/adipamide/1101307_oplsaa.csv"
+        "xtal-topology"   : "../build_system/adipamide/1101307_oplsaa.pdb"
+        "xtal-trajectory" : "../xtal_md/adipamide-oplsaa/*_?.dcd"
+        "xtal-output"     : "../xtal_md/adipamide-oplsaa/*_?.csv"
+
+        "gas-topology"    : "../build_system/adipamide/1101307_oplsaa_monomer0.pdb"
+        "gas-trajectory"  : "../xtal_md/adipamide-oplsaa_gas/*_?.dcd"
+        "gas-output"      : "../xtal_md/adipamide-oplsaa_gas/*_?.csv"
+

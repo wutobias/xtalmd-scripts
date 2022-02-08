@@ -2,11 +2,15 @@
 
 import xlsxwriter
 import numpy as np
-import os
 import argparse
-import json
-from collections import OrderedDict
 import gemmi
+import yaml
+import glob
+import mdtraj as md
+from collections import OrderedDict
+from rdkit import Chem
+
+from . import analysis_engine
 
 _KJ_2_KCAL = 1./4.184
 _NM_2_ANG  = 10.
@@ -18,109 +22,133 @@ def parse_arguments():
         description="Python script for merging simulation data for xtal MD project."
         )
 
-    parser.add_argument('--input',  "-i", type=str, help="Input file", required=True)
+    parser.add_argument('--input',  "-i", type=str, help="Input yaml file.", required=True)
     parser.add_argument('--output', "-o", type=str, help="Output xlsx MS Excel file", required=True)
 
     return parser.parse_args()
 
 
-def parse_data(file_path, file_format=None):
+def read_csv(csv_path):
 
-    if file_format == None:
-        filename, file_format = os.path.splitext(file_path)
-        file_format = file_format.replace(".","")
+    """
+    Read csv file. Save each column as key:value pair in dict.
+    """
 
-    if file_format.lower() == "xvg":
-
-        data_dict   = dict()
-        legend_list = list()
-        with open(file_path, "r") as fopen:
-            for line in fopen:
-                line = line.lstrip().rstrip().split()
-                if line[0].startswith("#"):
-                    if len(line) < 3:
-                        continue
-                    if line[1] == "gmx" and\
-                        line[2] == "energy" and\
-                        "-nmol" in " ".join(line):
-                        nmol_index = line.index("-nmol")
-                        data_dict["nmol"] = int(line[nmol_index + 1])
-                    continue
-                elif line[0].startswith("@"):
-                    if len(line) < 4:
-                        continue
-                    if line[2] == "legend":
-                        legend = line[3].replace('"',"")
-                        legend_list.append(legend)
-                        data_dict[legend] = list()
-                    continue
-                else:
-                    for legend_idx, value in enumerate(line[1:]):
-                        legend = legend_list[legend_idx]
-                        data_dict[legend].append(float(value))
-                        
-        for legend in legend_list:
-            data_dict[legend] = np.array(data_dict[legend])
-        data_dict["N_frames"] = data_dict[legend].size
-    else:
-        raise ValueError(
-            f"File format {file_format} not known."
-            )
+    data_dict   = OrderedDict()
+    header_dict = OrderedDict()
+    with open(csv_path, "r") as fopen:
+        read_first_line = True
+        for line in fopen:
+            if read_first_line:
+                if line[0] == "#":
+                    line = line[1:]
+                line = line.lstrip().rstrip().split(",")
+                for column, key in enumerate(line):
+                    data_dict[key] = list()
+                    header_dict[column] = key
+                read_first_line = False
+                continue
+            else:
+                line = line.lstrip().rstrip().split(",")
+                for column in header_dict:
+                    key   = header_dict[column]
+                    value = line[column]
+                    data_dict[key].append(float(value))
+    for key in data_dict:
+        data_dict[key] = np.array(data_dict[key])
+    data_dict["N_rows"] = data_dict[key].size
+    data_dict["N_columns"] = len(data_dict[key])
 
     return data_dict
 
 
-def main():
+class WorkbookWrapper(object):
 
-    args       = parse_arguments()
-    with open(args.input, "r") as fopen:
-        input_list = json.load(fopen)
+    def __init__(self, output):
 
-    workbook  = xlsxwriter.Workbook(args.output)
+        """
+        Constructor for the whole thing. `output` is the xlsx output path on disk.
+        """
 
-    ### Define some formats for later use
-    ### =================================
-    header_format_1 = workbook.add_format(
-        {
-            'bold'   : 1,
-            'border' : 2,
-            'align'  : 'center',
-            'valign' : 'vcenter',
-            'bottom' : True,
-            'top'    : True,
-            'left'   : False,
-            'right'  : False,
-        }
-    )
+        self.workbook  = xlsxwriter.Workbook(output)
 
-    header_format_2 = workbook.add_format(
-        {
-            'bold'   : 1,
-            'border' : 1,
-            'align'  : 'center',
-            'valign' : 'vcenter',
-            'bottom' : True,
-            'top'    : True,
-            'left'   : False,
-            'right'  : False,
-        }
-    )
+        ### Define some formats for later use
+        ### =================================
+        self.header_format_1 = self.workbook.add_format(
+            {
+                'bold'   : 1,
+                'border' : 2,
+                'align'  : 'center',
+                'valign' : 'vcenter',
+                'bottom' : True,
+                'top'    : True,
+                'left'   : False,
+                'right'  : False,
+            }
+        )
 
-    data_format_1 = workbook.add_format(
-        {
-            'align'  : 'center',
-            'valign' : 'vcenter',
-        }
-    )
+        self.header_format_2 = self.workbook.add_format(
+            {
+                'bold'   : 1,
+                'border' : 1,
+                'align'  : 'center',
+                'valign' : 'vcenter',
+                'bottom' : True,
+                'top'    : True,
+                'left'   : False,
+                'right'  : False,
+            }
+        )
 
-    ### Loop over each xtal and put in new notebook
-    ### ===========================================
-    for crystal_name in input_list:
-        worksheet      = workbook.add_worksheet(crystal_name)
-        N_force_fields = len(input_list[crystal_name]["FORCEFIELD"])
+        self.data_format_1 = self.workbook.add_format(
+            {
+                'align'  : 'center',
+                'valign' : 'vcenter',
+            }
+        )
 
-        ### Set column width and row height for header
-        ### ==========================================
+        self.worksheet_dict   = OrderedDict()
+        self.force_field_dict = OrderedDict()
+
+        self.labels_dict_row = OrderedDict()
+        self.labels_dict_row["Sublimation Energy"]   = 3
+        self.labels_dict_row["a"]                    = 4
+        self.labels_dict_row["b"]                    = 5
+        self.labels_dict_row["c"]                    = 6
+        self.labels_dict_row["α"]                    = 7
+        self.labels_dict_row["β"]                    = 8
+        self.labels_dict_row["γ"]                    = 9
+        self.labels_dict_row["alpha"]                = 7
+        self.labels_dict_row["beta"]                 = 8
+        self.labels_dict_row["gamma"]                = 9
+        self.labels_dict_row["<[Δ(d < 4Å)]>"]        = 10
+        self.labels_dict_row["Max Δ(d < 4Å)"]        = 11
+        self.labels_dict_row["H-bond geometry"]      = 12
+        self.labels_dict_row["X-H•••O"]              = 13
+        self.labels_dict_row["X-H•••O=C"]            = 14
+        self.labels_dict_row["X-H•••N"]              = 15
+        self.labels_dict_row["X-H•••N=C"]            = 16
+        self.labels_dict_row["Translation/Rotation"] = 17
+        self.labels_dict_row["<[D(dCOM)]>"]          = 18
+        self.labels_dict_row["Max D(dCOM)"]          = 19
+        self.labels_dict_row["<{∠PA1-PA1(expt)}>"]   = 20
+        self.labels_dict_row["<{∠PA2-PA2(expt)}>"]   = 21
+        self.labels_dict_row["<{∠PA3-PA3(expt)}>"]   = 22
+        self.labels_dict_row["Max ∠PA1-PA1(expt)"]   = 23
+        self.labels_dict_row["Max ∠PA2-PA2(expt)"]   = 24
+        self.labels_dict_row["Max ∠PA3-PA3(expt)"]   = 25
+        self.labels_dict_row["Density"]              = 26
+
+    
+    def add_xtal(self, crystal_name):
+
+        """
+        Add a new crystal with name `crystal_name` to the workbook. This will come as a new
+        worksheet in the xlsx file.
+        """
+
+        worksheet = self.workbook.add_worksheet(crystal_name)
+
         worksheet.set_column(
             0,
             0,
@@ -138,16 +166,7 @@ def main():
             0,
             0,
             "Crystal/Property",
-            header_format_1
-        )
-
-        worksheet.merge_range(
-            first_row=0,
-            first_col=1, 
-            last_row=0, 
-            last_col=2 * N_force_fields,
-            data="Force Field",
-            cell_format=header_format_1
+            self.header_format_1
         )
 
         ### Write row labels
@@ -156,237 +175,87 @@ def main():
             1,
             0,
             crystal_name, 
-            header_format_1
+            self.header_format_1
         )
 
         worksheet.write(
             2,
             0,
             "",
-            header_format_2
+            self.header_format_2
         )
 
-        labels_dict_row = OrderedDict()
-        labels_dict_row["Sublimation Energy"]   = 3
-        labels_dict_row["a"]                    = 4
-        labels_dict_row["b"]                    = 5
-        labels_dict_row["c"]                    = 6
-        labels_dict_row["α"]                    = 7
-        labels_dict_row["β"]                    = 8
-        labels_dict_row["γ"]                    = 9
-        labels_dict_row["<[Δ(d < 4Å)]>"]        = 10
-        labels_dict_row["Max Δ(d < 4Å)"]        = 11
-        labels_dict_row["H-bond geometry"]      = 12
-        labels_dict_row["X-H•••O1"]             = 13
-        labels_dict_row["H•••O1=C"]             = 14
-        labels_dict_row["X-H•••O2"]             = 15
-        labels_dict_row["H•••O2=C"]             = 16
-        labels_dict_row["Translation/Rotation"] = 17
-        labels_dict_row["<[D(dCOM)]>"]          = 18
-        labels_dict_row["Max D(dCOM)"]          = 19
-        labels_dict_row["<{∠PA1-PA1(expt)}>"]   = 20
-        labels_dict_row["<{∠PA2-PA2(expt)}>"]   = 21
-        labels_dict_row["<{∠PA3-PA3(expt)}>"]   = 22
-        labels_dict_row["Max ∠PA1-PA1(expt)"]   = 23
-        labels_dict_row["Max ∠PA2-PA2(expt)"]   = 24
-        labels_dict_row["Max ∠PA3-PA3(expt)"]   = 25
-
-        for label, row_idx in labels_dict_row.items():
+        for label, row_idx in self.labels_dict_row.items():
             worksheet.write(
                 row_idx,
                 0,
                 label,
-                data_format_1
+                self.data_format_1
             )
 
-        ### Write data for each FF
-        ### ======================
-        force_field_dict_list = input_list[crystal_name]["FORCEFIELD"]
-        for force_field_idx, force_field_dicts in enumerate(force_field_dict_list):
-            xtal_energy_data = parse_data(force_field_dicts["XTAL_ENERGY"])
-            xtal_cell_data   = parse_data(force_field_dicts["XTAL_CELL"])
-            gas_energy_data  = parse_data(force_field_dicts["GAS_ENERGY"])
-            ff_name          = force_field_dicts["NAME"]
+        self.worksheet_dict[crystal_name] = worksheet
+        self.force_field_dict[crystal_name] = list()
 
-            worksheet.merge_range(
-                first_row=1,
-                first_col=1 + force_field_idx * 2, 
-                last_row=1, 
-                last_col=2 + force_field_idx * 2,
-                data=ff_name,
-                cell_format=header_format_1
-            )
 
-            worksheet.write(
-                2,
-                1 + force_field_idx * 2,
-                "< >",
-                header_format_2
-            )
+    def add_forcefield(self, forcefield_name, crystal_name):
 
-            worksheet.write(
-                2,
-                2 + force_field_idx * 2,
-                "% Dev",
-                header_format_2
-            )
+        """
+        Add a force field with name `forcefield_name` to worksheet
+        of xtal with name `crystal_name`.
+        """
 
-            ### Compute Cell data
-            ### =================
-            a = np.stack((
-                xtal_cell_data["Box-XX"],
-                np.zeros(xtal_cell_data["N_frames"], dtype=float),
-                np.zeros(xtal_cell_data["N_frames"], dtype=float)
-                )).T * _NM_2_ANG
-            a_len = np.linalg.norm(a, axis=1)
-
-            b = np.stack((
-                xtal_cell_data["Box-YX"],
-                xtal_cell_data["Box-YY"],
-                np.zeros(xtal_cell_data["N_frames"], dtype=float)
-                )).T * _NM_2_ANG
-            b_len = np.linalg.norm(b, axis=1)
-
-            c = np.stack((
-                xtal_cell_data["Box-ZX"],
-                xtal_cell_data["Box-ZY"],
-                xtal_cell_data["Box-ZZ"]
-                )).T * _NM_2_ANG
-            c_len = np.linalg.norm(c, axis=1)
-            
-            a = (a.T / a_len).T
-            b = (b.T / b_len).T
-            c = (c.T / c_len).T
-
-            ### Calculate cell angles
-            ### =====================
-            alpha = np.arccos(np.einsum('ij,ij->i', b, c)) * 180. / np.pi
-            beta  = np.arccos(np.einsum('ij,ij->i', a, c)) * 180. / np.pi
-            gamma = np.arccos(np.einsum('ij,ij->i', a, b)) * 180. / np.pi
-
-            ### Correct unit cell lengths
-            ### =========================
-            a_len /= float(force_field_dicts["UNITCELLS_A"])
-            b_len /= float(force_field_dicts["UNITCELLS_B"])
-            c_len /= float(force_field_dicts["UNITCELLS_C"])
-
-            worksheet.write(
-                labels_dict_row["a"],
-                1 + force_field_idx * 2,
-                np.mean(a_len),
-                data_format_1
-            )
-            worksheet.write(
-                labels_dict_row["a"],
-                2 + force_field_idx * 2,
-                np.std(a_len)/np.mean(a_len)*100.,
-                data_format_1
-            )
-
-            worksheet.write(
-                labels_dict_row["b"],
-                1 + force_field_idx * 2,
-                np.mean(b_len),
-                data_format_1
-            )
-            worksheet.write(
-                labels_dict_row["b"],
-                2 + force_field_idx * 2,
-                np.std(b_len)/np.mean(b_len)*100.,
-                data_format_1
-            )
-
-            worksheet.write(
-                labels_dict_row["c"],
-                1 + force_field_idx * 2,
-                np.mean(c_len),
-                data_format_1
-            )
-            worksheet.write(
-                labels_dict_row["c"],
-                2 + force_field_idx * 2,
-                np.std(c_len)/np.mean(c_len)*100.,
-                data_format_1
-            )
-
-            worksheet.write(
-                labels_dict_row["α"],
-                1 + force_field_idx * 2,
-                np.mean(alpha),
-                data_format_1
-            )
-            worksheet.write(
-                labels_dict_row["α"],
-                2 + force_field_idx * 2,
-                np.std(alpha)/np.mean(alpha)*100.,
-                data_format_1
-            )
-
-            worksheet.write(
-                labels_dict_row["β"],
-                1 + force_field_idx * 2,
-                np.mean(beta),
-                data_format_1
-            )
-            worksheet.write(
-                labels_dict_row["β"],
-                2 + force_field_idx * 2,
-                np.std(beta)/np.mean(beta)*100.,
-                data_format_1
-            )
-
-            worksheet.write(
-                labels_dict_row["γ"],
-                1 + force_field_idx * 2,
-                np.mean(gamma),
-                data_format_1
-            )
-            worksheet.write(
-                labels_dict_row["γ"],
-                2 + force_field_idx * 2,
-                np.std(gamma)/np.mean(gamma)*100.,
-                data_format_1
-            )
-
-            ### Write sublimation enthalpy
-            ### ==========================
-            
-            ### If we have "nmol" in xtal_energy_data, it means we
-            ### the field "Potential" has been corrected for the
-            ### number of molecules.
-            if "nmol" in xtal_energy_data:
-                num_molecules_total = 1.
-            else:
-                num_molecules_total      = force_field_dicts["UNITCELLS_A"]
-                num_molecules_total     *= force_field_dicts["UNITCELLS_B"]
-                num_molecules_total     *= force_field_dicts["UNITCELLS_C"]
-                num_molecules_total     *= force_field_dicts["MOLS_PER_CELL"]
-            sublimation_energy_mean  = np.mean(xtal_energy_data["Potential"]/num_molecules_total)
-            sublimation_energy_mean -= np.mean(gas_energy_data["Potential"])
-            sublimation_energy_mean *= _KJ_2_KCAL
-            sublimation_energy_mean += _GASCONST_KCAL * force_field_dicts["TEMPERATURE"]
-            ### Error propgation
-            sublimation_energy_std   = np.var(xtal_energy_data["Potential"]/num_molecules_total)
-            sublimation_energy_std  += np.var(gas_energy_data["Potential"])
-            sublimation_energy_std   = np.sqrt(sublimation_energy_std)
-            sublimation_energy_std  *= _KJ_2_KCAL
-            worksheet.write(
-                labels_dict_row["Sublimation Energy"],
-                1 + force_field_idx * 2,
-                sublimation_energy_mean,
-                data_format_1
-            )
-            if sublimation_energy_mean > 0.:
-                worksheet.write(
-                    labels_dict_row["Sublimation Energy"],
-                    2 + force_field_idx * 2,
-                    sublimation_energy_std/sublimation_energy_mean*100.,
-                    data_format_1
-                )
-
-        ### Write data for expt
-        ### ===================
+        self.force_field_dict[crystal_name].append(forcefield_name)
+        N_force_fields = len(self.force_field_dict[crystal_name])
+        force_field_idx = N_force_fields - 1
         expt_col = 1 + N_force_fields * 2
+        worksheet = self.worksheet_dict[crystal_name]
+
+        worksheet.merge_range(
+            first_row=1,
+            first_col=1 + force_field_idx * 2, 
+            last_row=1, 
+            last_col=2 + force_field_idx * 2,
+            data=forcefield_name,
+            cell_format=self.header_format_1
+        )
+
+        worksheet.write(
+            2,
+            1 + force_field_idx * 2,
+            "< >",
+            self.header_format_2
+        )
+
+        worksheet.write(
+            2,
+            2 + force_field_idx * 2,
+            "% Dev",
+            self.header_format_2
+        )
+
+
+        worksheet.write(
+            2,
+            expt_col,
+            "< >",
+            self.header_format_2
+        )
+
+        worksheet.write(
+            2,
+            1 + expt_col,
+            "% Dev",
+            self.header_format_2
+        )
+
+        worksheet.merge_range(
+            first_row=0,
+            first_col=1, 
+            last_row=0, 
+            last_col=2 * N_force_fields,
+            data="Force Field",
+            cell_format=self.header_format_1
+        )
 
         worksheet.merge_range(
             first_row=1,
@@ -394,87 +263,553 @@ def main():
             last_row=1, 
             last_col=1 + expt_col,
             data="Expt.",
-            cell_format=header_format_1
+            cell_format=self.header_format_1
         )
 
+
+    def add_data(
+        self,
+        data_value, 
+        data_std, 
+        data_name, 
+        forcefield_name, 
+        crystal_name):
+
+        """
+        Add data of value `data_value` and name `data_name` to worksheet
+        of crystal `crystal_name` in column of force field `forcefield_name`.
+        """
+
+        if forcefield_name == "experiment":
+            N_force_fields  = len(self.force_field_dict[crystal_name])
+            force_field_idx = N_force_fields
+        else:
+            force_field_idx = self.force_field_dict[crystal_name].index(forcefield_name)
+        
+        worksheet = self.worksheet_dict[crystal_name]
         worksheet.write(
-            2,
-            expt_col,
-            "< >",
-            header_format_2
+            self.labels_dict_row[data_name],
+            1 + force_field_idx * 2,
+            data_value,
+            self.data_format_1
+        )
+        worksheet.write(
+            self.labels_dict_row[data_name],
+            2 + force_field_idx * 2,
+            data_std,
+            self.data_format_1
         )
 
-        worksheet.write(
-            2,
-            1 + expt_col,
-            "% Dev",
-            header_format_2
-        )
 
-        expt_dict = input_list[crystal_name]["EXPT"]
-        doc       = gemmi.cif.read(expt_dict["CIF"])[0]
-        strc      = gemmi.make_small_structure_from_block(doc)
+    def close(self):
 
-        worksheet.write(
-            labels_dict_row["a"],
-            expt_col,
-            ### Ang to nm
+        """
+        Close the workbook.
+        """
+
+        self.workbook.close()
+
+
+def main():
+
+    args = parse_arguments()
+    with open(args.input, "r") as fopen:
+        input_dict = yaml.safe_load(fopen)
+
+    workbook_wrap  = WorkbookWrapper(args.output)
+
+    ### Loop over each xtal and put in new workbook
+    ### ===========================================
+    for crystal_name in input_dict:
+        workbook_wrap.add_xtal(crystal_name)
+
+        ref_strc = md.load(input_dict[crystal_name]["experiment"]["supercell-pdb"])
+        with open(input_dict[crystal_name]["experiment"]["supercell-rdkit"], "r") as fopen:
+            rdmol = Chem.JSONToMols(fopen.read())[0]
+        dist_pair_list = analysis_engine.build_pair_list(
+            traj = ref_strc,
+            distance_cutoff = 0.4, 
+            bond_cutoff = 4, 
+            exclude_hydrogen=False
+            )
+        acc_O_single_pair_list,\
+        acc_O_double_pair_list,\
+        acc_N_single_pair_list,\
+        acc_N_double_pair_list = analysis_engine.get_hbond_indices(
+            ref_strc,
+            rdmol
+            )
+
+        ref_distances = analysis_engine.compute_pairwise_distances(ref_strc, dist_pair_list)
+
+        if acc_O_single_pair_list.size > 0:
+            ref_hbond_O_single_diffs = analysis_engine.compute_pairwise_distances(
+                ref_strc, 
+                acc_O_single_pair_list
+                )
+
+        if acc_O_double_pair_list.size > 0:
+            ref_hbond_O_double_diffs = analysis_engine.compute_pairwise_distances(
+                ref_strc, 
+                acc_O_double_pair_list
+                )
+
+        if acc_N_single_pair_list.size > 0:
+            ref_hbond_N_single_diffs = analysis_engine.compute_pairwise_distances(
+                ref_strc, 
+                acc_N_single_pair_list
+                )
+
+        if acc_N_double_pair_list.size > 0:
+            ref_hbond_N_double_diffs = analysis_engine.compute_pairwise_distances(
+                ref_strc, 
+                acc_N_double_pair_list
+                )
+
+        ### Carry out analysis for each forcefield
+        ### ======================================
+        for forcefield_name in input_dict[crystal_name]:
+            if forcefield_name.lower() == "experiment":
+                continue
+            workbook_wrap.add_forcefield(forcefield_name, crystal_name)
+
+            xtal_ucinfo     = input_dict[crystal_name][forcefield_name]["xtal-ucinfo"]
+            xtal_topology   = input_dict[crystal_name][forcefield_name]["xtal-topology"]
+            xtal_trajectory = input_dict[crystal_name][forcefield_name]["xtal-trajectory"]
+            xtal_output     = input_dict[crystal_name][forcefield_name]["xtal-output"]
+
+            gas_output = input_dict[crystal_name][forcefield_name]["gas-output"]
+
+            ucinfo = read_csv(xtal_ucinfo)
+
+            a_idxs = [ucinfo["unitcell_in_supercell_a"][mol_idx] for mol_idx in range(ucinfo["N_rows"])]
+            b_idxs = [ucinfo["unitcell_in_supercell_b"][mol_idx] for mol_idx in range(ucinfo["N_rows"])]
+            c_idxs = [ucinfo["unitcell_in_supercell_c"][mol_idx] for mol_idx in range(ucinfo["N_rows"])]
+
+            N_unitcells_a = np.max(a_idxs) - np.min(a_idxs)
+            N_unitcells_b = np.max(b_idxs) - np.min(b_idxs)
+            N_unitcells_c = np.max(c_idxs) - np.min(c_idxs)
+
+            ### N_rows is number of molecules in supercell info csv
+            N_molecules = ucinfo["N_rows"]
+
+            a_len = list()
+            b_len = list()
+            c_len = list()
+
+            alpha = list()
+            beta  = list()
+            gamma = list()
+
+            ene_xtal = list()
+            ene_gas  = list()
+
+            density_xtal = list()
+
+            distance_diffs = list()
+            com_diffs      = list()
+            pc_diffs       = [list(), list(), list()]
+
+            hbond_O_single_diffs = list()
+            hbond_O_double_diffs = list()
+            hbond_N_single_diffs = list()
+            hbond_N_double_diffs = list()
+
+            for output_csv in glob.glob(xtal_output):
+                data = read_csv(output_csv)
+
+                ### N_rows is number of frames in mdtraj output csv
+                box_a  = np.zeros((data["N_rows"], 3), dtype=float)
+                box_b  = np.zeros((data["N_rows"], 3), dtype=float)
+                box_c  = np.zeros((data["N_rows"], 3), dtype=float)
+
+                box_a[:,0] = data["Box-XX"]
+                box_b[:,0] = data["Box-YX"]
+                box_b[:,1] = data["Box-YY"]
+                box_c[:,0] = data["Box-ZX"]
+                box_c[:,1] = data["Box-ZY"]
+                box_c[:,2] = data["Box-ZZ"]
+
+                ### Calc vector norm
+                norm_a = np.linalg.norm(box_a, axis=1)
+                norm_b = np.linalg.norm(box_b, axis=1)
+                norm_c = np.linalg.norm(box_c, axis=1)
+
+                ### Calc vector norm and convert to Ang
+                _a_len = norm_a / float(N_unitcells_a) * _NM_2_ANG
+                _b_len = norm_b / float(N_unitcells_b) * _NM_2_ANG
+                _c_len = norm_c / float(N_unitcells_c) * _NM_2_ANG
+
+                a_len.extend(_a_len.tolist())
+                b_len.extend(_b_len.tolist())
+                c_len.extend(_c_len.tolist())
+
+                ### Normalize boxvectors and calc box angles.
+                _a_len = np.linalg.norm(box_a, axis=1)
+                _b_len = np.linalg.norm(box_b, axis=1)
+                _c_len = np.linalg.norm(box_c, axis=1)
+
+                box_a = (box_a.T / norm_a).T
+                box_b = (box_b.T / norm_b).T
+                box_c = (box_c.T / norm_c).T
+
+                _alpha = np.arccos(np.einsum('ij,ij->i', box_b, box_c)) * 180. / np.pi
+                _beta  = np.arccos(np.einsum('ij,ij->i', box_a, box_c)) * 180. / np.pi
+                _gamma = np.arccos(np.einsum('ij,ij->i', box_a, box_b)) * 180. / np.pi
+
+                alpha.extend(_alpha.tolist())
+                beta.extend(_beta.tolist())
+                gamma.extend(_gamma.tolist())
+
+                _potential = data["Potential"] # Potential energy in kJ/mol
+                ene_xtal.extend(_potential.tolist())
+
+                _density = data["Density"]
+                density_xtal.extend(_density.tolist())
+
+            for output_csv in glob.glob(gas_output):
+
+                data = read_csv(output_csv)
+                _potential = data["Potential"] # Potential energy in kJ/mol
+                ene_gas.extend(_potential)
+
+            for output_dcd in glob.glob(xtal_trajectory):
+
+                query_traj = md.load(
+                    output_dcd,
+                    top=ref_strc.topology
+                    )
+
+                _com_diffs      = analysis_engine.compute_com_diff_per_residue(query_traj, ref_strc)
+                _pc_diffs       = analysis_engine.compute_pc_diff_per_residue(query_traj, ref_strc)
+                _distance_diffs = ref_distances - analysis_engine.compute_pairwise_distances(query_traj, dist_pair_list)
+                _distance_diffs = np.abs(_distance_diffs)
+                _com_diffs      = np.abs(_com_diffs)
+
+                com_diffs.extend(_com_diffs.tolist())
+                pc_diffs[0].extend(_pc_diffs[:,:,0].tolist())
+                pc_diffs[1].extend(_pc_diffs[:,:,1].tolist())
+                pc_diffs[2].extend(_pc_diffs[:,:,2].tolist())
+                distance_diffs.extend(_distance_diffs.tolist())
+
+                if acc_O_single_pair_list.size > 0:
+                    _hbond_O_single_diffs = analysis_engine.compute_pairwise_distances(
+                        query_traj, 
+                        acc_O_single_pair_list
+                        )
+                    diffs = ref_hbond_O_double_diffs - _hbond_O_single_diffs
+                    hbond_O_single_diffs.extend(diffs.tolist())
+
+                if acc_O_double_pair_list.size > 0:
+                    _hbond_O_double_diffs = analysis_engine.compute_pairwise_distances(
+                        query_traj, 
+                        acc_O_double_pair_list
+                        )
+                    diffs = ref_hbond_O_double_diffs - _hbond_O_double_diffs
+                    hbond_O_double_diffs.extend(diffs.tolist())
+
+                if acc_N_single_pair_list.size > 0:
+                    _hbond_N_single_diffs = analysis_engine.compute_pairwise_distances(
+                        query_traj, 
+                        acc_N_single_pair_list
+                        )
+                    diffs = ref_hbond_N_single_diffs - _hbond_N_single_diffs
+                    hbond_N_single_diffs.extend(diffs.tolist())
+
+                if acc_N_double_pair_list.size > 0:
+                    _hbond_N_double_diffs = analysis_engine.compute_pairwise_distances(
+                        query_traj, 
+                        acc_N_double_pair_list
+                        )
+                    diffs = ref_hbond_N_double_diffs - _hbond_N_double_diffs
+                    hbond_N_double_diffs.extend(diffs.tolist())
+
+            ### Write distance diff data ###
+            ### ======================== ###
+            avg  = np.mean(distance_diffs)
+            std  = np.std(distance_diffs)
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "<[Δ(d < 4Å)]>", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            ### Write com diff data ###
+            ### =================== ###
+            avg  = np.mean(com_diffs)
+            std  = np.std(com_diffs)
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "<[D(dCOM)]>",
+                forcefield_name, 
+                crystal_name
+                )
+
+            ### Write pc diff data ###
+            ### ================== ###
+            avg  = np.mean(pc_diffs[0])
+            std  = np.std(pc_diffs[0])
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "<{∠PA1-PA1(expt)}>", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            avg  = np.mean(pc_diffs[1])
+            std  = np.std(pc_diffs[1])
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "<{∠PA2-PA2(expt)}>", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            avg  = np.mean(pc_diffs[2])
+            std  = np.std(pc_diffs[2])
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "<{∠PA3-PA3(expt)}>", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            ### Write hbond data ###
+            ### ================ ###
+
+            if len(hbond_O_single_diffs) > 0:
+                avg  = np.mean(hbond_O_single_diffs)
+                std  = np.std(hbond_O_single_diffs)
+            else:
+                avg = "--"
+                std = "--"
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "X-H•••O", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            if len(hbond_O_double_diffs) > 0:
+                avg  = np.mean(hbond_O_double_diffs)
+                std  = np.std(hbond_O_double_diffs)
+            else:
+                avg = "--"
+                std = "--"
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "X-H•••O=C", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            if len(hbond_N_single_diffs) > 0:
+                avg  = np.mean(hbond_N_single_diffs)
+                std  = np.std(hbond_N_single_diffs)
+            else:
+                avg = "--"
+                std = "--"
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "X-H•••N", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            if len(hbond_N_double_diffs) > 0:
+                avg  = np.mean(hbond_N_double_diffs)
+                std  = np.std(hbond_N_double_diffs)
+            else:
+                avg = "--"
+                std = "--"
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "X-H•••N=C", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            ### Write box vector length ###
+            ### ======================= ###
+            avg   = np.mean(a_len)
+            std   = np.std(a_len)
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "a", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            avg  = np.mean(b_len)
+            std  = np.std(b_len)
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "b", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            avg  = np.mean(c_len)
+            std  = np.std(c_len)
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "c", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            ### Write box vector angles ###
+            ### ======================= ###
+            avg  = np.mean(alpha)
+            std  = np.std(alpha)
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "alpha", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            avg  = np.mean(beta)
+            std  = np.std(beta)
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "beta", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            avg  = np.mean(gamma)
+            std  = np.std(gamma)
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "gamma", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            ### Write sublimation enthalpy ###
+            ### ========================== ###
+            ene_xtal = np.array(ene_xtal)
+            ene_gas = np.array(ene_gas)
+            sublimation_avg  = np.mean(ene_xtal)/float(N_molecules) - np.mean(ene_gas)
+            sublimation_avg += (_GASCONST_KCAL * input_dict[crystal_name]["experiment"]["temperature"])
+            sublimation_std  = np.var(ene_xtal) + np.var(ene_gas)
+            sublimation_std  = np.sqrt(sublimation_std)
+            workbook_wrap.add_data(
+                sublimation_avg,
+                sublimation_std/sublimation_avg * 100.,
+                "Sublimation Energy", 
+                forcefield_name, 
+                crystal_name
+                )
+
+            ### Write density ###
+            ### ============= ###
+            avg = np.mean(density_xtal)
+            std = np.std(density_xtal)
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "Density", 
+                forcefield_name, 
+                crystal_name
+                )
+
+        ### Parse in experimental data ###
+        ### ========================== ###
+        doc     = gemmi.cif.read(input_dict[crystal_name]["experiment"]["experiment-cif"])[0]
+        strc    = gemmi.make_small_structure_from_block(doc)
+        density = doc.find_value("_exptl_crystal_density_diffrn")
+        if density != None:
+            density = float(density)
+        elif "density" in input_dict[crystal_name]["experiment"]:
+            density = input_dict[crystal_name]["experiment"]["density"]
+        else:
+            ### Then we don't have density
+            density = "--"
+
+        workbook_wrap.add_data(
             strc.cell.a,
-            data_format_1
-        )
+            "--",
+            "a", 
+            "experiment", 
+            crystal_name
+            )
 
-        worksheet.write(
-            labels_dict_row["b"],
-            expt_col,
-            ### Ang to nm
+        workbook_wrap.add_data(
             strc.cell.b,
-            data_format_1
-        )
+            "--",
+            "b", 
+            "experiment", 
+            crystal_name
+            )
 
-        worksheet.write(
-            labels_dict_row["c"],
-            expt_col,
-            ### Ang to nm
+        workbook_wrap.add_data(
             strc.cell.c,
-            data_format_1
-        )
+            "--",
+            "c", 
+            "experiment", 
+            crystal_name
+            )
 
-        worksheet.write(
-            labels_dict_row["α"],
-            expt_col,
+        workbook_wrap.add_data(
             strc.cell.alpha,
-            data_format_1
-        )
+            "--",
+            "alpha", 
+            "experiment", 
+            crystal_name
+            )
 
-        worksheet.write(
-            labels_dict_row["β"],
-            expt_col,
+        workbook_wrap.add_data(
             strc.cell.beta,
-            data_format_1
-        )
+            "--",
+            "beta", 
+            "experiment", 
+            crystal_name
+            )
 
-        worksheet.write(
-            labels_dict_row["γ"],
-            expt_col,
+        workbook_wrap.add_data(
             strc.cell.gamma,
-            data_format_1
-        )
+            "--",
+            "gamma", 
+            "experiment", 
+            crystal_name
+            )
 
-        worksheet.write(
-            labels_dict_row["Sublimation Energy"],
-            expt_col,
-            expt_dict["SUBLIMATION_ENTHALPY"],
-            data_format_1
-        )
+        if "sublimation-enthalpy" in input_dict[crystal_name]["experiment"]:
+            workbook_wrap.add_data(
+                input_dict[crystal_name]["experiment"]["sublimation-enthalpy"],
+                input_dict[crystal_name]["experiment"]["sublimation-enthalpy-std"],
+                "Sublimation Energy",
+                "experiment", 
+                crystal_name
+                )
 
-        worksheet.write(
-            labels_dict_row["Sublimation Energy"],
-            expt_col + 1,
-            expt_dict["SUBLIMATION_ENTHALPY_ERROR"],
-            data_format_1
-        )
+        workbook_wrap.add_data(
+            density,
+            "--",
+            "Density", 
+            "experiment", 
+            crystal_name
+            )
 
-    workbook.close()
+    workbook_wrap.close()
 
 
 def entry_point():
