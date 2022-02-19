@@ -456,7 +456,6 @@ def build_system_oplsaa(
     """
 
     import os
-    import time
     import subprocess
     from simtk.openmm.app import ForceField
     from simtk.openmm.app import PDBFile
@@ -475,7 +474,7 @@ def build_system_oplsaa(
     unique_mol_idxs = set(unique_mapping.values())
     unique_mol_idxs = sorted(unique_mol_idxs)
 
-    xml_file_list   = list()
+    xml_file_list = list()
     pdbname_mapping_dict = dict()
     to_remove_list = list()
     for mol_idx in unique_mol_idxs:
@@ -496,24 +495,19 @@ def build_system_oplsaa(
 
         subprocess.run([
             oplsaa_xml_builder_path,
-            mol_path_monomer,
+            pdb_path_monomer,
             resname,
-            str(Chem.GetFormalCharge(mol)),
+            str(int(Chem.GetFormalCharge(mol))),
             str(set_lbcc)
             ])
 
-        while not (os.path.exists(f"{resname}.xml") and os.path.isfile(f"{resname}.xml")):
-            time.sleep(1)
-        while not (os.path.exists(f"{resname}.pdb") and os.path.isfile(f"{resname}.pdb")):
-            time.sleep(1)
-
         xml_file_list.append(
-            f"{resname}.xml"
+            f"{resname}.openmm.xml"
             )
-        
+
         pdbname_mapping_dict[resname] = dict()
 
-        pdbfile_renamed  = PDBFile(f"{resname}.pdb")
+        pdbfile_renamed  = PDBFile(f"{resname}.openmm.pdb")
         pdbfile_original = PDBFile(f"mol_{mol_idx}.pdb")
 
         assert pdbfile_renamed.topology.getNumAtoms() == pdbfile_original.topology.getNumAtoms()
@@ -530,14 +524,10 @@ def build_system_oplsaa(
             pdbname_mapping_dict[resname][atom_original.name] = atom_renamed.name
 
         to_remove_list.extend([
-            f"{resname}.pdb",
-            f"{resname}.xml",
+            f"{resname}.openmm.pdb",
+            f"{resname}.openmm.xml",
             pdb_path_monomer,
             mol_path_monomer,
-            f"/tmp/{resname}.pdb",
-            f"/tmp/{resname}.mol",
-            f"/tmp/mol_{mol_idx}.pdb",
-            f"/tmp/mol_{mol_idx}.mol",
         ])
 
     ### LigParGen renames atoms. Use the pdbname_mapping_dict to map
@@ -756,7 +746,8 @@ def main():
 
     elif args.forcefield.lower() == "oplsaa":
 
-        version="CM1A-LBCC"
+        #version="CM1A-LBCC"
+        version="CM1A"
 
         system = build_system_oplsaa(
             replicated_mol_list,

@@ -1,51 +1,41 @@
 #!/bin/bash
 
 if [ ! $# -eq 4 ]; then
-	echo "Usage: build_xml.sh <pdbfile> <resname> <charge> <1/0 for LBCC>"
-	exit
+    echo "Usage: build_xml.sh <molfile> <resname> <charge> <1/0 for LBCC>"
+    exit
 fi
 
-molfile=$1
+infile=$1
 resname=$2
 charge=$3
 lbcc=$4
 
-echo "Activate conda env ..."
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/tobias/progs/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/tobias/progs/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/tobias/progs/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/tobias/progs/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-conda activate ligpargen
-
 echo "BOSSdir $BOSSdir ..."
 
+TMPDIR="/tmp/ligpargen${RANDOM}"
+
 if [ $lbcc_flag ]; then
-	LigParGen --mol ${molfile} --resname ${resname} --charge ${charge} --lbcc
+    ligpargen --ifile ${infile} \
+              --path ${TMPDIR} \
+              --molname ${resname} \
+              --resname ${resname} \
+              --charge ${charge} \
+              --cgen CM1A-LBCC
 else
-	LigParGen --mol ${molfile} --resname ${resname} --charge ${charge}
+    ligpargen --ifile ${infile} \
+              --path ${TMPDIR} \
+              --molname ${resname} \
+              --resname ${resname} \
+              --charge ${charge} \
+              --cgen CM1A
 fi
 
-molfilename=`basename -s .mol ${molfile}`
+molfilename=`basename -s .pdb ${infile}`
+molfilename=`basename -s .mol ${infile}`
 
-cp -f /tmp/${resname}.xml .
-cp -f /tmp/${resname}.pdb .
-rm -f /tmp/${resname}.*
-rm -f /tmp/${molfilename}.*
-rm -f /tmp/LL
-rm -f /tmp/slvzmat
-rm -f /tmp/clu.pdb
-rm -f /tmp/optzmat
 
-sleep 2s
+cp -f ${TMPDIR}/${resname}.openmm.xml .
+cp -f ${TMPDIR}/${resname}.openmm.pdb .
+rm -rf ${TMPDIR}
 
 echo "Finished."
