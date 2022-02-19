@@ -11,8 +11,7 @@ This script makes heavy usage of `xyz2mol`, which is developed in the Jensen gro
 In order to be able to use the cgenff CHARMM force field, the programs `cgenff` and `charmm` must be in `PATH`.
 
 ### Oplsaa Force Field
-In order to be able to use the OplsAA force field, there must be conda environment called `ligpargen` that has the program `LigParGen` installed. Furthermore, the program `BOSS` must be installed and available in `PATH`.
-Instructions on how to install `LigParGen` and get a `BOSS` license can be found [here](http://zarbi.chem.yale.edu/ligpargen/). A yml file to setup the `ligpargen` conda environment is in the top level folder of this GitHub repo.
+The program `BOSS` must be installed and available in `PATH` in order to use this force field. Make sure that the environment variable `BOSSdir` is set and points to the directory of the BOSS installation. The `BOSS` program is available for free [here](http://zarbi.chem.yale.edu/software.html). After that install the program `ligpargen` from [here](https://github.com/Isra3l/ligpargen).
 
 ## Installation
 
