@@ -1,7 +1,6 @@
 ## Table Formatting
 
-The script `make_tables.py` reads data from md trajs, cif and others and
-incorporates it into a single excel sheet.
+The script `make_tables.py` reads data from md trajs, cif and others and incorporates it into a single excel sheet. See `examples/analysis` for an example `.yaml` input file.
 
 ## Usage
 
