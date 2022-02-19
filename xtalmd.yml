@@ -170,6 +170,7 @@ dependencies:
   - ocl-icd=2.3.1
   - ocl-icd-system=1.0.0
   - olefile=0.46
+  - openbabel=3.1.1
   - openeye-toolkits=2021.2.0
   - openff-forcefields=2.0.0
   - openff-toolkit=0.10.2
@@ -291,12 +292,15 @@ dependencies:
     - gpustat==1.0.0b1
     - grpcio==1.43.0
     - hiredis==2.0.0
+    - ligpargen==2.1
+    - markdown==3.3.6
     - mmpbsa-py==16.0
     - msgpack==1.0.3
     - multidict==6.0.2
     - nvidia-ml-py3==7.352.0
     - opencensus==0.8.0
     - opencensus-context==0.1.2
+    - openmmhelper==0.1
     - packmol-memgen==1.1.0rc0
     - pdb4amber==1.7.dev0
     - protobuf==3.19.4
