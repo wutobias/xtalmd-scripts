@@ -66,6 +66,15 @@ def parse_arguments():
         )
 
     xml_parse.add_argument(
+        '--alternating', 
+        "-a", 
+        action='store_true',
+        help="Use alternating minimizations.", 
+        required=False,
+        default=False,
+        )
+
+    xml_parse.add_argument(
         '--method', 
         "-m", 
         type=str, 
@@ -330,6 +339,7 @@ def run_xtal_min(
     xml_path, 
     pdb_path,
     steps = 100,
+    alternating = False,
     method = "Nelder-Mead",
     platform_name = "CUDA",
     property_dict = {
@@ -378,43 +388,79 @@ def run_xtal_min(
         context, 
         system.getNumParticles()
         )
-    x0 = np.copy(cw.box_flat)
     logfile = Logger(system, "")
-    best_ene = 999999999999999999999.
-    best_x   = None
-    for _ in range(steps):
-        openmm.LocalEnergyMinimizer.minimize(context)
+    
+    ### Alternate between openmm native minimizer
+    ### and xtal cell minimization.
+    if alternating:
         x0 = np.copy(cw.box_flat)
-        ene1 = cw.ene_box(x0)
-        result = optimize.minimize(
-            fun=cw.ene_box,
-            x0=x0, 
-            method=method,
-            jac=cw.grad_box
-        )
-        context.setPeriodicBoxVectors(
-            *cw.flatbox_to_box(
-                result.x
+        best_ene = 999999999999999999999.
+        best_x   = None
+        for _ in range(steps):
+            openmm.LocalEnergyMinimizer.minimize(context)
+            x0 = np.copy(cw.box_flat)
+            ene1 = cw.ene_box(x0)
+            result = optimize.minimize(
+                fun=cw.ene_box,
+                x0=x0, 
+                method=method,
+                jac=cw.grad_box
             )
-        )
-        ene = cw.ene_box(result.x)
-        if ene < best_ene:
-            best_ene = ene
-            best_x   = cw.pos_box_flat
-        else:
-            pos, box = cw.flat_to_pos_box(best_x)
+            context.setPeriodicBoxVectors(
+                *cw.flatbox_to_box(
+                    result.x
+                )
+            )
+            ene = cw.ene_box(result.x)
+            if ene < best_ene:
+                best_ene = ene
+                best_x   = cw.pos_box_flat
+            else:
+                pos, box = cw.flat_to_pos_box(best_x)
+                context.setPositions(pos)
+                context.setPeriodicBoxVectors(*box)
+            state = context.getState(
+                getEnergy=True,
+                getPositions=True
+            )
+            logfile.write(state)
+
+        pos, box = cw.flat_to_pos_box(best_x)
+        context.setPositions(pos)
+        context.setPeriodicBoxVectors(*box)
+        state = context.getState(getPositions=True)
+
+    ### Minimize everything together.
+    else:
+        def callback(xk):
+            pos, box = cw.flat_to_pos_box(xk)
             context.setPositions(pos)
             context.setPeriodicBoxVectors(*box)
+            state = context.getState(
+                getEnergy=True,
+                getPositions=True
+            )
+            logfile.write(state)
+            
+        x0 = np.copy(cw.pos_box_flat)
+        result = optimize.minimize(
+            fun=cw.ene,
+            x0=x0, 
+            method=method,
+            jac=cw.grad,
+            callback=callback,
+            options = {
+                "maxiter" : steps,
+                "disp"    : True,
+            }
+        )
+        pos, box = cw.flat_to_pos_box(result.x)
+        context.setPositions(pos)
+        context.setPeriodicBoxVectors(*box)
         state = context.getState(
             getEnergy=True,
             getPositions=True
         )
-        logfile.write(state)
-
-    pos, box = cw.flat_to_pos_box(best_x)
-    context.setPositions(pos)
-    context.setPeriodicBoxVectors(*box)
-    state = context.getState(getPositions=True)
 
     return openmm.XmlSerializer.serialize(state), logfile.str
 
@@ -433,11 +479,12 @@ def main():
         input_dict = {
             "./" : 
                     {
-                        "input"      : args.input,
-                        "pdb"        : args.pdb,
-                        "prefix"     : args.prefix,
-                        "steps"      : args.steps,
-                        "method"     : args.method
+                        "input"       : args.input,
+                        "pdb"         : args.pdb,
+                        "prefix"      : args.prefix,
+                        "steps"       : args.steps,
+                        "alternating" : args.alternating,
+                        "method"      : args.method
                     }
             }
 
@@ -462,6 +509,7 @@ def main():
                 xml_path, 
                 pdb_path,
                 steps = 100,
+                alternating = False,
                 method = "Nelder-Mead",
                 platform_name = "CUDA",
                 property_dict = {
@@ -506,6 +554,7 @@ def main():
             xml_path = input_dict[output_dir]["input"],
             pdb_path = input_dict[output_dir]["pdb"],
             steps = int(input_dict[output_dir]["steps"]),
+            alternating = bool(input_dict[output_dir]["alternating"]),
             method = input_dict[output_dir]["method"],
             platform_name = "CUDA",
             property_dict = {
