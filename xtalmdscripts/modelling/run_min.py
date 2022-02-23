@@ -2,6 +2,8 @@
 
 import openmm
 from openmm import unit
+from openmm import app
+from openmm.app.internal.unitcell import computePeriodicBoxVectors, computeLengthsAndAngles
 import numpy as np
 from scipy import optimize
 from .utils import Logger
@@ -93,11 +95,12 @@ class ContextWrapper(object):
     to facilitate minimization.
     """
     
-    def __init__(self, context, number_of_atoms):
+    def __init__(self, context, number_of_atoms, use_lengths_and_angles=True):
         
         self.context = context
         self.number_of_atoms = number_of_atoms
         self.N_crds = self.number_of_atoms * 3
+        self.use_lengths_and_angles = use_lengths_and_angles
     
     @property
     def pos_box_flat(self):
@@ -135,12 +138,14 @@ class ContextWrapper(object):
         """
         Transform 3x3 box vector to flat vector.
         """
-        
-        boxflat = np.zeros(6, dtype=float) * unit.nanometer
+        if self.use_lengths_and_angles:
+            return computeLengthsAndAngles(box)
+
+        boxflat = np.zeros(6, dtype=float)
         boxflat[0]   = box[0,0]
         boxflat[1:3] = box[1,:][:2]
         boxflat[3:]  = box[2,:]
-        
+
         return boxflat            
     
     def pos_box_to_flat(self, pos, box):
@@ -151,7 +156,7 @@ class ContextWrapper(object):
         """
         
         boxflat = self.box_to_flat(box)
-        pos_box_flat = np.hstack((pos.flatten(), boxflat._value))
+        pos_box_flat = np.hstack((pos.flatten(), boxflat))
 
         return pos_box_flat                
     
@@ -164,14 +169,8 @@ class ContextWrapper(object):
         
         pos_flat = flat_pos_box[:self.N_crds] * unit.nanometer
         pos = pos_flat.reshape((self.number_of_atoms, 3))
+        box = self.flatbox_to_box(flat_pos_box[self.N_crds:])
 
-        box_flat = flat_pos_box[self.N_crds:] * unit.nanometer
-        box = np.zeros((3,3), dtype=float) * unit.nanometer
-        box[0,0] = box_flat[0]
-        box[1,0] = box_flat[1]
-        box[1,1] = box_flat[2]
-        box[2,:] = box_flat[3:]
-            
         return pos, box
 
     def flatbox_to_box(self, boxflat):
@@ -179,13 +178,15 @@ class ContextWrapper(object):
         """
         Unravel flat box vector to 3x3 box vector
         """
-        
-        boxflat_cp = np.copy(boxflat[:]) * unit.nanometer
-        box = np.zeros((3,3), dtype=float) * unit.nanometer
-        box[0,0] = boxflat_cp[0]
-        box[1,0] = boxflat_cp[1]
-        box[1,1] = boxflat_cp[2]
-        box[2,:] = boxflat_cp[3:]
+        if self.use_lengths_and_angles:
+            box = computePeriodicBoxVectors(*boxflat)
+        else:
+            boxflat_cp = np.copy(boxflat[:]) * unit.nanometer
+            box = np.zeros((3,3), dtype=float) * unit.nanometer
+            box[0,0] = boxflat_cp[0]
+            box[1,0] = boxflat_cp[1]
+            box[1,1] = boxflat_cp[2]
+            box[2,:] = boxflat_cp[3:]
         
         return box 
     
@@ -202,6 +203,9 @@ class ContextWrapper(object):
             getPositions=True,
         )
 
+        box_new = app.internal.unitcell.reducePeriodicBoxVectors(box_new)
+        box_new = np.array(box_new._value) * box_new.unit
+
         pos_old = state.getPositions(asNumpy=True)
         box_old = state.getPeriodicBoxVectors(asNumpy=True)
 
@@ -215,7 +219,10 @@ class ContextWrapper(object):
 
             ene = state.getPotentialEnergy()
         except:
-            ene = 9999999999999999999999. * unit.kilojoule_per_mole
+            boxold = state.getPeriodicBoxVectors(asNumpy=True)
+            raise ValueError(
+                f"Cannot set box {boxold} to {box_new}")
+
         return ene._value
     
     def ene(self, pos_box_flat):
@@ -225,12 +232,20 @@ class ContextWrapper(object):
         """
         
         pos, box = self.flat_to_pos_box(pos_box_flat)
-        
-        self.context.setPositions(pos)
-        self.context.setPeriodicBoxVectors(*box)
-            
         state = self.context.getState(getEnergy=True)
-        ene   = state.getPotentialEnergy()
+
+        box = app.internal.unitcell.reducePeriodicBoxVectors(box)
+        box = np.array(box._value) * box.unit
+
+        try:
+            self.context.setPositions(pos)
+            self.context.setPeriodicBoxVectors(*box)
+
+            ene = state.getPotentialEnergy()
+        except:
+            boxold = state.getPeriodicBoxVectors(asNumpy=True)
+            raise ValueError(
+                f"Cannot set box {boxold} to {box}")
         
         return ene._value
     
@@ -248,6 +263,9 @@ class ContextWrapper(object):
         )
         pos = state.getPositions(asNumpy=True)
 
+        box = app.internal.unitcell.reducePeriodicBoxVectors(box)
+        box = np.array(box._value) * box.unit
+
         box_inv  = np.linalg.inv(box)        
         pos_frac = np.matmul(box_inv, pos.T).T
 
@@ -255,9 +273,9 @@ class ContextWrapper(object):
             self.context.setPositions(pos)
             self.context.setPeriodicBoxVectors(*box)
         except:
-            boxgrad_flat = np.zeros(6, dtype=float)
-            boxgrad_flat[:] = 9999999999999999.
-            return boxgrad_flat
+            boxold = state.getPeriodicBoxVectors(asNumpy=True)
+            raise ValueError(
+                f"Cannot set box {boxold} to {box}")
         
         boxgrad_flat = np.zeros(6, dtype=float) * unit.kilojoule_per_mole / unit.nanometer
         grad_idx = 0
@@ -295,12 +313,21 @@ class ContextWrapper(object):
         epsilon = 1e-5 * unit.nanometer
         
         pos, box = self.flat_to_pos_box(pos_box_flat)
+
+        box = app.internal.unitcell.reducePeriodicBoxVectors(box)
+        box = np.array(box._value) * box.unit
         
         box_inv  = np.linalg.inv(box)        
         pos_frac = np.matmul(box_inv, pos.T).T
 
-        self.context.setPositions(pos)
-        self.context.setPeriodicBoxVectors(*box)
+        try:
+            self.context.setPositions(pos)
+            self.context.setPeriodicBoxVectors(*box)
+        except:
+            boxold = state.getPeriodicBoxVectors(asNumpy=True)
+            raise ValueError(
+                f"Cannot set box {boxold} to {box}")
+
         state  = self.context.getState(getForces=True)
         forces = state.getForces(asNumpy=True)._value
         
@@ -381,8 +408,9 @@ def run_xtal_min(
         platform,
     )
     
+    box_reduced = topology.getPeriodicBoxVectors()
     context.setPositions(pdbfile.positions)
-    context.setPeriodicBoxVectors(*topology.getPeriodicBoxVectors())
+    context.setPeriodicBoxVectors(*box_reduced)
 
     cw = ContextWrapper(
         context, 
@@ -516,6 +544,7 @@ def main():
                     "Precision" : "mixed"
                 },
                 prefix="xtal_min"):
+
                 return run_xtal_min(
                     xml_path = xml_path, 
                     pdb_path = pdb_path,
