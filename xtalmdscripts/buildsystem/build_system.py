@@ -63,7 +63,16 @@ def parse_arguments():
         "-nb", 
         type=float, 
         help="nonbonded cutoff distance in nm", 
-        default="0.8",
+        default=0.9,
+        required=False
+        )
+
+    parser.add_argument(
+        '--axislengthfactor', 
+        "-ax", 
+        type=float, 
+        help="Each axis is add least this value times the nbcutoff in length.", 
+        default=5.0,
         required=False
         )
 
@@ -73,6 +82,24 @@ def parse_arguments():
         type=str, 
         help="path to topology and parameter files for charm", 
         required=False
+        )
+
+    parser.add_argument(
+        '--addhs', 
+        "-ah", 
+        action='store_true',
+        help="Remove any existing hydrogen and add protonate molecule. Requires OpenEye Toolkits.", 
+        required=False,
+        default=False,
+        )
+
+    parser.add_argument(
+        '--addwater', 
+        "-aw", 
+        type=int, 
+        help="Number of water molecules to add", 
+        required=False,
+        default=0,\
         )
 
     return parser.parse_args()
@@ -155,8 +182,9 @@ def build_system_gaff(
     system = forcefield.createSystem(
         topology = topology,
         nonbondedMethod=nonbondedMethod,
-        constraints=app.HBonds,
+        constraints=None,
         removeCMMotion=False,
+        rigidWater=False,
     )
 
     return system
@@ -195,8 +223,9 @@ def build_system_off(
     system = forcefield.createSystem(
         topology = topology,
         nonbondedMethod=nonbondedMethod,
-        constraints=app.HBonds,
+        constraints=None,
         removeCMMotion=False,
+        rigidWater=False,
     )
 
     return system
@@ -213,45 +242,37 @@ def build_system_cgenff(
 
     import os
     import subprocess
+    import glob
     import parmed as pmd
     from rdkit import Chem
+    from .utils import get_params_path_list, get_charmm_inp_header
 
     from simtk.openmm.app import ForceField
     from simtk.openmm.app import PDBFile, CharmmPsfFile, CharmmParameterSet
 
     ### cgenff topology
-    rtf_path = f"{toppar_dir_path}/top_all36_cgenff.rtf"
+    rtf_path_cgenff = f"{toppar_dir_path}/top_all36_cgenff.rtf"
     ### cgenff parameters
-    prm_path = f"{toppar_dir_path}/par_all36_cgenff.prm"
+    prm_path_cgenff = f"{toppar_dir_path}/par_all36_cgenff.prm"
 
-    unique_mapping, rdmol_list_unique  = make_supercell.get_unique_mapping(replicated_mol_list)
+    unique_mapping, rdmol_list_unique  = make_supercell.get_unique_mapping(
+        replicated_mol_list,
+        stereochemistry=False
+        )
     unique_mol_idxs = set(unique_mapping.values())
     unique_mol_idxs = sorted(unique_mol_idxs)
 
     ### number replicatations necessary to build
     ### the the replicated mol list from the unique list
     N_unique_replicates = int(len(replicated_mol_list)/len(unique_mol_idxs))
-    assert (len(replicated_mol_list) % len(unique_mol_idxs)) == 0
 
-    ### This is the parmed.Structure instance that will
-    ### store all topology information
-    psf_pmd = pmd.Structure()
-    ### Stores the path to all charmm str, topology and parameter files.
-    params_path_list = [
-        f'{toppar_dir_path}/top_all36_prot.rtf',
-        f'{toppar_dir_path}/par_all36m_prot.prm',
-        f'{toppar_dir_path}/top_all36_na.rtf',
-        f'{toppar_dir_path}/par_all36_na.prm',
-        f'{toppar_dir_path}/top_all36_carb.rtf',
-        f'{toppar_dir_path}/par_all36_carb.prm',
-        f'{toppar_dir_path}/top_all36_lipid.rtf',
-        f'{toppar_dir_path}/par_all36_lipid.prm',
-        f'{toppar_dir_path}/top_all36_cgenff.rtf',
-        f'{toppar_dir_path}/par_all36_cgenff.prm',
-    ]
+    ### Stores the names to all charmm str, topology and parameter files.
+    params_path_list  = get_params_path_list(toppar_dir_path)
+    charmm_inp_header = get_charmm_inp_header(toppar_dir_path)
 
     to_remove_list = list()
     str_list = list()
+    pmd_list = list()
     for mol_idx in unique_mol_idxs:
 
         mol = rdmol_list_unique[mol_idx]
@@ -289,8 +310,8 @@ def build_system_cgenff(
         subprocess.run([
             "cgenff",
             "-p",
-            rtf_path,
-            prm_path,
+            rtf_path_cgenff,
+            prm_path_cgenff,
             "-b",
             "-f",
             str_path_monomer,
@@ -298,48 +319,15 @@ def build_system_cgenff(
             ])
 
         charmm_inp = f"""
-! read topology and parameter files
-
-! protein topology and parameter
-open read card unit 10 name {toppar_dir_path}/top_all36_prot.rtf
-read  rtf card unit 10
-
-open read card unit 20 name {toppar_dir_path}/par_all36m_prot.prm
-read para card unit 20 flex
-
-! nucleic acids
-open read card unit 10 name {toppar_dir_path}/top_all36_na.rtf
-read  rtf card unit 10 append
-
-open read card unit 20 name {toppar_dir_path}/par_all36_na.prm
-read para card unit 20 append flex
-
-! carbohydrates
-open read card unit 10 name {toppar_dir_path}/top_all36_carb.rtf
-read  rtf card unit 10 append
-
-open read card unit 20 name {toppar_dir_path}/par_all36_carb.prm
-read para card unit 20 append flex
-
-! lipids
-open read card unit 10 name {toppar_dir_path}/top_all36_lipid.rtf
-read  rtf card unit 10 append
-
-open read card unit 20 name {toppar_dir_path}/par_all36_lipid.prm
-read para card unit 20 append flex
-
-! CGENFF
-open read card unit 10 name {toppar_dir_path}/top_all36_cgenff.rtf
-read  rtf card unit 10 append
-
-open read card unit 20 name {toppar_dir_path}/par_all36_cgenff.prm
-read para card unit 20 append flex
+{charmm_inp_header}
 
 stream {str_path_monomer}
 
 ! Generate sequence
+bomlev -1
 read sequence {resname} 1
 generate {resname} first none last none setup
+bomlev 0
 
 open write unit 10 card name {psf_path_monomer}
 write psf  unit 10 card
@@ -353,10 +341,12 @@ stop
         subprocess.run([
             "charmm",
             "-i",
-            "make_psf.inp"
+            "make_psf.inp",
+            "-o",
+            "/dev/null"
             ])
 
-        psf_pmd += pmd.load_file(psf_path_monomer)
+        pmd_list.append(pmd.load_file(psf_path_monomer))
 
         to_remove_list.extend([
             str_path_monomer,
@@ -370,9 +360,11 @@ stop
         with open(str_path_monomer, "r") as fopen:
             str_list.append(fopen.read())
 
-    ### Replicate the unique molecules
-    ### in order to match the full `replicated_mol_list`
-    psf_pmd *= N_unique_replicates
+    ### This is the parmed.Structure instance that will
+    ### store all topology information
+    psf_pmd = pmd.Structure()
+    for replicated_mol_idx in range(len(replicated_mol_list)):
+        psf_pmd += pmd_list[unique_mapping[replicated_mol_idx]]
     psf_pmd.write_psf("./strc.psf")
 
     ### Build the omm system
@@ -434,8 +426,9 @@ stop
     system = psffile.createSystem(
         params,
         nonbondedMethod=nonbondedMethod, 
-        constraints=app.HBonds,
+        constraints=None,
         removeCMMotion=False,
+        rigidWater=False,
     )
 
     ### Clean up
@@ -459,6 +452,7 @@ def build_system_oplsaa(
     import subprocess
     from simtk.openmm.app import ForceField
     from simtk.openmm.app import PDBFile
+    from simtk.openmm.app import modeller
 
     set_lbcc = 0
 
@@ -470,7 +464,10 @@ def build_system_oplsaa(
         raise ValueError(
             f"version={version} not understood.")
 
-    unique_mapping, rdmol_list_unique = make_supercell.get_unique_mapping(replicated_mol_list)
+    unique_mapping, rdmol_list_unique = make_supercell.get_unique_mapping(
+        replicated_mol_list,
+        stereochemistry=False
+        )
     unique_mol_idxs = set(unique_mapping.values())
     unique_mol_idxs = sorted(unique_mol_idxs)
 
@@ -514,15 +511,6 @@ def build_system_oplsaa(
 
         N_atoms = pdbfile_renamed.topology.getNumAtoms()
 
-        atoms_renamed_list  = list(pdbfile_renamed.topology.atoms())
-        atoms_original_list = list(pdbfile_original.topology.atoms())
-        for atm_idx in range(N_atoms):
-            atom_renamed  = atoms_renamed_list[atm_idx]
-            atom_original = atoms_original_list[atm_idx]
-            assert atom_renamed.residue.name == resname
-            assert atom_original.residue.name == resname
-            pdbname_mapping_dict[resname][atom_original.name] = atom_renamed.name
-
         to_remove_list.extend([
             f"{resname}.openmm.pdb",
             f"{resname}.openmm.xml",
@@ -530,12 +518,30 @@ def build_system_oplsaa(
             mol_path_monomer,
         ])
 
-    ### LigParGen renames atoms. Use the pdbname_mapping_dict to map
-    ### the old atom names to the new ones.
-    pdbfile    = PDBFile(pdb_path)
-    for atom in pdbfile.topology.atoms():
-        resname = atom.residue.name
-        atom.name = pdbname_mapping_dict[resname][atom.name]
+        import xml.etree.ElementTree as ET
+        
+        tree = ET.parse(f"{resname}.openmm.xml")
+        root = tree.getroot()
+        ### We will have double atom types and names
+        ### if we have multiple molecules. So force them
+        ### to be different between molecules (even when
+        ### parameters are identical). Note that charges 
+        ### might be slightly different even between 
+        ### enantiomeric molecules.
+        for r1 in root:
+            for r2 in r1:
+                for attrib in r2.attrib:
+                    if any([attrib.startswith(c) for c in ["class", "name", "type"]]):
+                        r2.attrib[attrib]  += f"_{mol_idx}"
+                for r3 in r2:
+                    for attrib in r3.attrib:
+                        if any([attrib.startswith(c) for c in ["class", "name", "type"]]):
+                            r3.attrib[attrib]  += f"_{mol_idx}"
+
+        with open(f"{resname}.openmm.xml", "wb") as fopen:
+            fopen.write(ET.tostring(root))
+
+    pdbfile = PDBFile(pdb_path)
     with open(pdb_path, "w") as fopen:
         topology = pdbfile.getTopology()
         PDBFile.writeHeader(
@@ -566,8 +572,9 @@ def build_system_oplsaa(
     system = forcefield.createSystem(
         topology = topology,
         nonbondedMethod=nonbondedMethod,
-        constraints=app.HBonds,
+        constraints=None,
         removeCMMotion=False,
+        rigidWater=False,
     )
 
     system = OPLS_LJ(system, lorentz_periodic)
@@ -588,11 +595,11 @@ def main():
 
     args = parse_arguments()
 
-    ### We want to build super cell that is longer than 2.5 times the 
+    ### We want to build super cell that is longer than 5.0 times the 
     ### nonbonded cutoff in each direction
-    min_length_a = args.nbcutoff * unit.nanometer * 2.5
-    min_length_b = args.nbcutoff * unit.nanometer * 2.5
-    min_length_c = args.nbcutoff * unit.nanometer * 2.5
+    min_length_a = args.nbcutoff * unit.nanometer * args.axislengthfactor
+    min_length_b = args.nbcutoff * unit.nanometer * args.axislengthfactor
+    min_length_c = args.nbcutoff * unit.nanometer * args.axislengthfactor
 
     strc = make_supercell.parse_cif(args.input)
 
@@ -617,13 +624,18 @@ def main():
         a_min_max,
         b_min_max,
         c_min_max,
+        args.addhs,
+        args.addwater
         )
 
     ### Write pdb file
     ### ==============
+    strc_write               = gemmi.Structure()
+    strc_write.spacegroup_hm = "P1"
+    strc_write.cell          = strc.cell
     pdb_str = make_supercell.get_pdb_str(
         replicated_mol_list, 
-        strc,
+        strc_write,
         a_min_max,
         b_min_max,
         c_min_max
@@ -642,7 +654,10 @@ def main():
         json_str = make_supercell.get_replicated_mol_list_json(replicated_mol_list)
         fopen.write(json_str)
 
-    _, rdmol_list_unique = make_supercell.get_unique_mapping(replicated_mol_list)
+    _, rdmol_list_unique = make_supercell.get_unique_mapping(
+        replicated_mol_list,
+        stereochemistry=False
+        )
     for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
         pdb_str = Chem.MolToPDBBlock(rdmol)
         with open(f"./{prefix}_monomer{rdmol_idx}.pdb", "w") as fopen:
