@@ -29,5 +29,5 @@ Useful for post processing. This json file `{prefix}.json` can be used to recons
 ```
 from rdkit import Chem
 with open("adipamide.json", "r") as fopen:
-	mol=Chem.JSONToMols(fopen.read())
+    mol=Chem.JSONToMols(fopen.read())
 ```
