@@ -77,12 +77,30 @@ def parse_arguments():
         )
 
     xml_parse.add_argument(
+        '--use_lengths_and_angles', 
+        "-la", 
+        action='store_true',
+        help="Use cell length and angles for minimizing.", 
+        required=False,
+        default=False,
+        )
+
+    xml_parse.add_argument(
         '--method', 
         "-m", 
         type=str, 
         help="Minimization method for box vectors.", 
         required=False,
         default="Nelder-Mead"
+        )
+
+    xml_parse.add_argument(
+        '--epsilon', 
+        "-e", 
+        type=float, 
+        help="Epsilon (in nm) used for finite difference gradient calcs.", 
+        required=False,
+        default=1.e-5
         )
 
     return parser.parse_args()
@@ -95,12 +113,14 @@ class ContextWrapper(object):
     to facilitate minimization.
     """
     
-    def __init__(self, context, number_of_atoms, use_lengths_and_angles=True):
+    def __init__(self, context, number_of_atoms, epsilon=1.e-5, use_lengths_and_angles=False):
         
         self.context = context
         self.number_of_atoms = number_of_atoms
         self.N_crds = self.number_of_atoms * 3
         self.use_lengths_and_angles = use_lengths_and_angles
+
+        self._epsilon = epsilon * unit.nanometer
     
     @property
     def pos_box_flat(self):
@@ -115,7 +135,10 @@ class ContextWrapper(object):
         pos = state.getPositions(asNumpy=True)
         box = state.getPeriodicBoxVectors(asNumpy=True)
             
-        pos_box_flat = self.pos_box_to_flat(pos, box)
+        pos_box_flat = self.pos_box_to_flat(
+            pos.value_in_unit(unit.nanometer), 
+            box.value_in_unit(unit.nanometer)
+            )
         
         return pos_box_flat
     
@@ -129,7 +152,9 @@ class ContextWrapper(object):
         state = self.context.getState()
         box   = state.getPeriodicBoxVectors(asNumpy=True)
 
-        boxflat = self.box_to_flat(box)
+        boxflat = self.box_to_flat(
+            box.value_in_unit(unit.nanometer)
+            )
         
         return boxflat
         
@@ -141,7 +166,7 @@ class ContextWrapper(object):
         if self.use_lengths_and_angles:
             return computeLengthsAndAngles(box)
 
-        boxflat = np.zeros(6, dtype=float)
+        boxflat      = np.zeros(6, dtype=float)
         boxflat[0]   = box[0,0]
         boxflat[1:3] = box[1,:][:2]
         boxflat[3:]  = box[2,:]
@@ -209,7 +234,7 @@ class ContextWrapper(object):
         pos_old = state.getPositions(asNumpy=True)
         box_old = state.getPeriodicBoxVectors(asNumpy=True)
 
-        box_old_inv = np.linalg.inv(box_old)        
+        box_old_inv = np.linalg.inv(box_old.value_in_unit(unit.nanometer))        
         pos_frac    = np.matmul(box_old_inv, pos_old.T).T
         pos_new     = np.matmul(box_new, pos_frac.T).T * unit.nanometer
 
@@ -255,7 +280,7 @@ class ContextWrapper(object):
         Compute energy gradient from flat box vector. Gradient in kJ/mol/nm
         """
         
-        epsilon = 1e-5 * unit.nanometer
+        epsilon = self._epsilon
         
         box = self.flatbox_to_box(boxflat)
         state = self.context.getState(
@@ -283,13 +308,23 @@ class ContextWrapper(object):
             ### Note that first vec must be parallel to x axis
             for c in range(r+1):
                 box[r,c] += epsilon
-                pos_new   = np.matmul(box, pos_frac.T).T * unit.nanometer
-                x_new     = self.pos_box_to_flat(pos_new, box)
+                box_plus  = app.internal.unitcell.reducePeriodicBoxVectors(box)
+                box_plus  = np.array(box_plus._value) * box_plus.unit
+                pos_new   = np.matmul(box_plus, pos_frac.T).T
+                x_new     = self.pos_box_to_flat(
+                    pos_new, 
+                    box_plus.value_in_unit(unit.nanometer)
+                    )
                 ene_plus  = self.ene(x_new) * unit.kilojoule_per_mole
 
-                box[r,c] -= 2. * epsilon
-                pos_new   = np.matmul(box, pos_frac.T).T * unit.nanometer
-                x_new     = self.pos_box_to_flat(pos_new, box)
+                box[r,c]  -= 2. * epsilon
+                box_minus  = app.internal.unitcell.reducePeriodicBoxVectors(box)
+                box_minus  = np.array(box_minus._value) * box_minus.unit
+                pos_new    = np.matmul(box_minus, pos_frac.T).T
+                x_new      = self.pos_box_to_flat(
+                    pos_new, 
+                    box_minus.value_in_unit(unit.nanometer)
+                    )
                 ene_minus = self.ene(x_new) * unit.kilojoule_per_mole
 
                 boxgrad_flat[grad_idx]  = (ene_plus - ene_minus)/(epsilon * 2.)
@@ -310,7 +345,7 @@ class ContextWrapper(object):
         Compute energy gradient from flat position and boxvector. Gradient in kJ/mol/nm
         """        
         
-        epsilon = 1e-5 * unit.nanometer
+        epsilon = self._epsilon
         
         pos, box = self.flat_to_pos_box(pos_box_flat)
 
@@ -337,13 +372,23 @@ class ContextWrapper(object):
             ### Note that first vec must be parallel to x axis
             for c in range(r+1):
                 box[r,c] += epsilon
-                pos_new   = np.matmul(box, pos_frac.T).T * unit.nanometer
-                x_new     = self.pos_box_to_flat(pos_new, box)
+                box_plus  = app.internal.unitcell.reducePeriodicBoxVectors(box)
+                box_plus  = np.array(box_plus._value) * box_plus.unit
+                pos_new   = np.matmul(box_plus, pos_frac.T).T
+                x_new     = self.pos_box_to_flat(
+                    pos_new, 
+                    box_plus.value_in_unit(unit.nanometer)
+                    )
                 ene_plus  = self.ene(x_new) * unit.kilojoule_per_mole
                 
-                box[r,c] -= 2. * epsilon
-                pos_new   = np.matmul(box, pos_frac.T).T * unit.nanometer
-                x_new     = self.pos_box_to_flat(pos_new, box)
+                box[r,c]  -= 2. * epsilon
+                box_minus  = app.internal.unitcell.reducePeriodicBoxVectors(box)
+                box_minus  = np.array(box_minus._value) * box_minus.unit
+                pos_new    = np.matmul(box_minus, pos_frac.T).T
+                x_new      = self.pos_box_to_flat(
+                    pos_new, 
+                    box_minus.value_in_unit(unit.nanometer)
+                    )
                 ene_minus = self.ene(x_new) * unit.kilojoule_per_mole
                 
                 boxgrad_flat[grad_idx]  = (ene_plus - ene_minus)/(epsilon * 2.)
@@ -366,7 +411,9 @@ def run_xtal_min(
     xml_path, 
     pdb_path,
     steps = 100,
+    epsilon = 1.e-5,
     alternating = False,
+    use_lengths_and_angles = False,
     method = "Nelder-Mead",
     platform_name = "CUDA",
     property_dict = {
@@ -383,6 +430,9 @@ def run_xtal_min(
     from openmm import unit
     from openmm import app
     import numpy as np
+
+    time_step = 1. * unit.femtoseconds
+    constraint_tolerance = 1.e-6
     
     pdbfile  = app.PDBFile(pdb_path)
     topology = pdbfile.topology
@@ -394,9 +444,9 @@ def run_xtal_min(
     integrator = openmm.LangevinIntegrator(
         300. * unit.kelvin,
         1./unit.picoseconds,
-        0.002 * unit.picoseconds
+        time_step
     )
-    integrator.setConstraintTolerance(0.00001)
+    integrator.setConstraintTolerance(constraint_tolerance)
 
     platform = openmm.Platform.getPlatformByName(platform_name)
     for property_name, property_value in property_dict.items():
@@ -414,10 +464,12 @@ def run_xtal_min(
 
     cw = ContextWrapper(
         context, 
-        system.getNumParticles()
+        system.getNumParticles(),
+        epsilon,
+        use_lengths_and_angles
         )
     logfile = Logger(system, "")
-    
+
     ### Alternate between openmm native minimizer
     ### and xtal cell minimization.
     if alternating:
@@ -428,12 +480,21 @@ def run_xtal_min(
             openmm.LocalEnergyMinimizer.minimize(context)
             x0 = np.copy(cw.box_flat)
             ene1 = cw.ene_box(x0)
-            result = optimize.minimize(
-                fun=cw.ene_box,
-                x0=x0, 
-                method=method,
-                jac=cw.grad_box
-            )
+            try:
+                result = optimize.minimize(
+                    fun=cw.ene_box,
+                    x0=x0, 
+                    method=method,
+                    jac=cw.grad_box,
+                    options = {
+                        "maxiter" : steps,
+                        "disp"    : False,
+                        "gtol"    : 1.e-5,
+                    }
+
+                )
+            except Exception as e:
+                return 0, e
             context.setPeriodicBoxVectors(
                 *cw.flatbox_to_box(
                     result.x
@@ -471,17 +532,21 @@ def run_xtal_min(
             logfile.write(state)
             
         x0 = np.copy(cw.pos_box_flat)
-        result = optimize.minimize(
-            fun=cw.ene,
-            x0=x0, 
-            method=method,
-            jac=cw.grad,
-            callback=callback,
-            options = {
-                "maxiter" : steps,
-                "disp"    : True,
-            }
-        )
+        try:
+            result = optimize.minimize(
+                fun=cw.ene,
+                x0=x0, 
+                method=method,
+                jac=cw.grad,
+                callback=callback,
+                options = {
+                    "maxiter" : steps,
+                    "disp"    : True,
+                    "gtol"    : 1.e-5,
+                }
+            )
+        except Exception as e:
+            return 0, e
         pos, box = cw.flat_to_pos_box(result.x)
         context.setPositions(pos)
         context.setPeriodicBoxVectors(*box)
@@ -511,7 +576,9 @@ def main():
                         "pdb"         : args.pdb,
                         "prefix"      : args.prefix,
                         "steps"       : args.steps,
+                        "epsilon"     : args.epsilon,
                         "alternating" : args.alternating,
+                        "use_lengths_and_angles" : args.use_lengths_and_angles,
                         "method"      : args.method
                     }
             }
@@ -537,7 +604,9 @@ def main():
                 xml_path, 
                 pdb_path,
                 steps = 100,
+                epsilon = 1.e-5,
                 alternating = False,
+                use_lengths_and_angles = False,
                 method = "Nelder-Mead",
                 platform_name = "CUDA",
                 property_dict = {
@@ -549,6 +618,9 @@ def main():
                     xml_path = xml_path, 
                     pdb_path = pdb_path,
                     steps = steps,
+                    epsilon = epsilon,
+                    alternating = alternating,
+                    use_lengths_and_angles  = use_lengths_and_angles,
                     method = method,
                     platform_name = platform_name,
                     property_dict = property_dict,
@@ -563,6 +635,8 @@ def main():
     worker_id_dict = dict()
     for output_dir in input_dict:
         if output_dir == "num_cpus":
+            continue
+        if output_dir == "ray_host":
             continue
 
         if not os.path.exists(input_dict[output_dir]["input"]):
@@ -583,7 +657,9 @@ def main():
             xml_path = input_dict[output_dir]["input"],
             pdb_path = input_dict[output_dir]["pdb"],
             steps = int(input_dict[output_dir]["steps"]),
+            epsilon = float(input_dict[output_dir]["epsilon"]),
             alternating = bool(input_dict[output_dir]["alternating"]),
+            use_lengths_and_angles = bool(input_dict[output_dir]["use_lengths_and_angles"]),
             method = input_dict[output_dir]["method"],
             platform_name = "CUDA",
             property_dict = {
@@ -600,21 +676,24 @@ def main():
 
         if HAS_RAY:
             state, file_str = ray.get(worker_id_dict[output_dir])
-            state = openmm.XmlSerializer.deserialize(state)
         else:
             state, file_str = worker_id_dict[output_dir]
-            state = openmm.XmlSerializer.deserialize(state)
+        if state == 0:
+            warnings.warn(f"No output for {output_dir}. Minimization failed with {file_str}.")
+            continue
+
+        state = openmm.XmlSerializer.deserialize(state)
 
         os.makedirs(output_dir, exist_ok=True)
         prefix = input_dict[output_dir]["prefix"]
         prefix = f"{output_dir}/{prefix}"
 
         ### Save state in xml format
-        with open(f"./{prefix}.xml", "w") as fopen:
+        with open(f"{prefix}.xml", "w") as fopen:
             fopen.write(
                 openmm.XmlSerializer.serialize(state)
                 )
-        with open(f"./{prefix}.csv", "w") as fopen:
+        with open(f"{prefix}.csv", "w") as fopen:
             fopen.write(file_str)
         ### Save State in pdb format
         from openmm import app
@@ -623,7 +702,7 @@ def main():
         pdbfile = app.PDBFile(input_dict[output_dir]["pdb"])
         pdbfile.topology.setPeriodicBoxVectors(box)
 
-        with open(f"./{prefix}.pdb", "w") as fopen:
+        with open(f"{prefix}.pdb", "w") as fopen:
             app.PDBFile.writeHeader(
                 pdbfile.topology,
                 fopen
