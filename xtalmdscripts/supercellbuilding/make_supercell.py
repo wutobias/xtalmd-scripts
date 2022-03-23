@@ -634,20 +634,16 @@ def equalize_rdmols(mol_list, stereochemistry=True):
         conf_pos_1 = conf_1.GetPositions()
         conf_2     = mol_2.GetConformer(0)
         conf_pos_2 = conf_2.GetPositions()
-        for mol2_idx, mol1_idx in enumerate(match):
-
-            pos = conf_pos_1[mol1_idx]
+        for mol2_atm_idx, mol1_atm_idx in enumerate(match):
+            pos = conf_pos_1[mol1_atm_idx]
             conf_2.SetAtomPosition(
-                mol2_idx,
+                mol2_atm_idx,
                 Point3D(*pos)
             )
-
-        N_atoms = mol_1.GetNumAtoms()
-        for atm_idx in range(N_atoms):
-            atom   = mol_2.GetAtomWithIdx(atm_idx)
+            atom = mol_2.GetAtomWithIdx(mol2_atm_idx)
             ### Note, we cannot `copy.copy(mi_original)`
             ### or `copy.copy(mol_1.GetAtomWithIdx(atm_idx))`
-            mi = mol_1.GetAtomWithIdx(atm_idx).GetMonomerInfo()
+            mi = mol_1.GetAtomWithIdx(mol1_atm_idx).GetMonomerInfo()
             mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
             atom.SetMonomerInfo(mi)
 
