@@ -7,10 +7,327 @@ from scipy.spatial import distance
 import string
 from rdkit import Chem
 from rdkit.Geometry import Point3D
+import warnings
 
 from . import xyz2mol
 
 import argparse
+
+def combine_mols(mol_list):
+
+    mol_list  = copy.deepcopy(mol_list)
+    N_mol_per_unitcell = len(mol_list)
+    mol_combo = Chem.Mol()
+    for mol in mol_list:
+        mol_combo = Chem.CombineMols(mol_combo, mol)
+    return mol_combo
+
+
+class FfWrapper(object):
+
+    def __init__(self, mol, only_hydrogen=True):
+
+        from rdkit.Chem import AllChem as Chem
+
+        self._mol = copy.deepcopy(mol)
+
+        mp  = Chem.MMFFGetMoleculeProperties(mol)
+        self._ffm = Chem.MMFFGetMoleculeForceField(mol, mp)
+
+        self._H_atom_list   = list()
+        self._all_atom_list = list()
+        for atom in mol.GetAtoms():
+            if atom.GetAtomicNum() == 1:
+                self._H_atom_list.append(atom.GetIdx())
+            self._all_atom_list.append(atom.GetIdx())
+
+        self._H_atom_list = np.array(self._H_atom_list)
+        self._H_idxs = np.arange(mol.GetNumAtoms()*3, dtype=int)
+        self._H_idxs = self._H_idxs.reshape((mol.GetNumAtoms(), 3))
+        self._H_idxs = self._H_idxs[self._H_atom_list]
+        self._H_idxs_flat = self._H_idxs.flatten()
+
+        self._all_atom_list = np.array(self._all_atom_list)
+        self._all_idxs = np.arange(mol.GetNumAtoms()*3, dtype=int)
+        self._all_idxs = self._all_idxs.reshape((mol.GetNumAtoms(), 3))
+        self._all_idxs_flat = self._H_idxs.flatten()
+
+        self._num_all_atoms = len(self._all_atom_list)
+        self._num_H_atoms   = len(self._H_atom_list)
+
+        self.only_hydrogen = only_hydrogen
+
+    @property
+    def num_all_atoms(self):
+        return self._num_all_atoms
+
+    @property
+    def num_H_atoms(self):
+        return self._num_H_atoms
+
+    @property
+    def H_atom_list(self):
+        return self._H_atom_list
+
+    @property
+    def H_idxs(self):
+        return self._H_idxs
+
+    @property
+    def H_idxs_flat(self):
+        return self._H_idxs_flat
+
+    @property
+    def all_atom_list(self):
+        return self._all_atom_list
+
+    @property
+    def all_idxs(self):
+        return self._all_idxs
+
+    @property
+    def all_idxs_flat(self):
+        return self._all_idxs_flat
+
+    @property
+    def ffm(self):
+        return self._ffm
+
+    @property
+    def mol(self):
+        return self._mol
+
+    @property
+    def pos(self):
+        pos = np.array(self.ffm.Positions())
+        if self.only_hydrogen:
+            pos = pos[self.H_idxs_flat].tolist()
+        return pos
+
+    @pos.setter
+    def pos(self, pos):
+
+        from rdkit.Chem import AllChem as Chem
+
+        conformer      = self._mol.GetConformer()
+
+        if self.only_hydrogen:
+            pos_stack = np.array(pos).reshape((self.num_H_atoms, 3))
+            for H_atm_idx, atm_idx in enumerate(self.H_atom_list):
+                conformer.SetAtomPosition(
+                    int(atm_idx),
+                    Point3D(
+                        *pos_stack[H_atm_idx]
+                        )
+                    )
+        else:
+            pos_stack = np.array(pos).reshape((self.num_all_atoms, 3))
+            for atm_idx in range(self._mol.GetNumAtoms()):
+                conformer.SetAtomPosition(
+                    int(atm_idx),
+                    Point3D(
+                        *pos_stack[atm_idx]
+                        )
+                    )
+
+        mp  = Chem.MMFFGetMoleculeProperties(self._mol)
+        self._ffm = Chem.MMFFGetMoleculeForceField(self._mol, mp)
+
+    def ene(self,x):
+        pos = self.ffm.Positions()
+        pos = np.array(pos)
+        if self.only_hydrogen:
+            pos[self.H_idxs_flat] = x
+        else:
+            pos[:] = x
+        pos = pos.tolist()
+        return self.ffm.CalcEnergy(pos)
+
+    def grad(self,x):
+        pos = self.ffm.Positions()
+        pos = np.array(pos)
+        if self.only_hydrogen:
+            pos[self.H_idxs_flat] = x
+        else:
+            pos[:] = x
+        pos = pos.tolist()
+        grad_vals = self.ffm.CalcGrad(pos)
+        grad_vals = np.array(grad_vals)[self.H_idxs_flat]
+        grad_vals = grad_vals.tolist()
+        return grad_vals
+
+
+def apply_delta_hydrogen(
+    mol_list,
+    delta_hydrogen_dict
+    ):
+
+    import numpy as np
+    from rdkit.Chem import AllChem as Chem
+    import copy
+
+    mol_combo   = combine_mols(mol_list)
+    emol        = Chem.EditableMol(mol_combo)
+    offset_list = np.zeros(mol_combo.GetNumAtoms(), dtype=int)
+    for atomidx, switch in delta_hydrogen_dict.items():
+        atom    = mol_combo.GetAtomWithIdx(atomidx)
+        charge  = atom.GetFormalCharge()
+        if switch == 1:
+            Hatom = Chem.Atom(1)
+            idx1  = emol.AddAtom(Hatom)
+            Patom = Chem.AtomFromSmarts(atom.GetSmarts())
+            Patom.SetFormalCharge(charge+1)
+            emol.ReplaceAtom(
+                atomidx+int(offset_list[atomidx]), 
+                Patom
+                )
+            emol.AddBond(
+                idx1,
+                atomidx+int(offset_list[atomidx]),
+                Chem.BondType.SINGLE
+            )
+            
+        elif switch == -1:
+            for n_atom in atom.GetNeighbors():
+                if n_atom.GetAtomicNum() == 1:
+                    idx1  = n_atom.GetIdx()
+                    Patom = Chem.AtomFromSmarts(atom.GetSmarts())
+                    Patom.SetFormalCharge(charge-1)
+                    emol.ReplaceAtom(
+                        atomidx+int(offset_list[atomidx]),
+                        Patom
+                        )
+                    emol.RemoveAtom(
+                        idx1+int(offset_list[idx1])
+                        )
+                    offset_list[idx1:] -= 1
+                    break
+        else:
+            ### Nix.
+            pass
+    mol_combo_prot = emol.GetMol()
+    Chem.SanitizeMol(mol_combo_prot)
+    return Chem.GetMolFrags(mol_combo_prot, asMols=True)
+    
+
+def minimize_H(
+    mol_list,
+    ):
+
+    import numpy as np
+    from rdkit.Chem import AllChem as Chem
+    from scipy import optimize
+    import copy
+
+    mol_combo = combine_mols(mol_list)
+    ff        = FfWrapper(mol_combo, only_hydrogen=True)
+    x0        = ff.pos
+    
+    result = optimize.minimize(
+        fun=ff.ene,
+        x0=x0,
+        jac=ff.grad,
+        method="L-BFGS-B"
+        )
+    ff.pos = result.x
+    energy = ff.ene(result.x)
+
+    return energy, Chem.GetMolFrags(ff.mol, asMols=True)
+
+
+def assign_protonation_states(
+    cell,
+    mol_list,
+    N_iterations=10):
+
+    """
+    Find the energetically best protonation state of the unitcell.
+    """
+
+    import numpy as np
+    from rdkit.Chem import AllChem as Chem
+    import copy
+
+    mol_combo = combine_mols(mol_list)
+    polar_heavy_atom = Chem.MolFromSmarts("[#7,#8,#16]")
+    matches = mol_combo.GetSubstructMatches(
+        polar_heavy_atom, 
+        uniquify=False
+        )
+    N_matches = len(matches)
+    delta_hydrogen_dict_best = dict()
+    for atm_idx in matches:
+        atm_idx = int(atm_idx[0])
+        delta_hydrogen_dict_best[atm_idx] = 0
+    energy_best = 999999999999999999999.
+    mol_list_best = copy.deepcopy(mol_list)
+    N_mol_per_unitcell = len(mol_list)
+
+    charge0 = Chem.GetFormalCharge(mol_combo)
+
+    #with open(f"./best_init.pdb", "w") as fopen:
+    #    fopen.write(
+    #        Chem.MolToPDBBlock(
+    #            combine_mols(
+    #                mol_list_best
+    #                )
+    #            )
+    #        )
+    #count = 0
+    for _ in range(N_iterations):
+        delta_hydrogen_dict = copy.deepcopy(
+            delta_hydrogen_dict_best
+            )
+        for i in range(N_matches):
+            atm_idx_i = int(matches[i][0])
+            delta0_i  = delta_hydrogen_dict[atm_idx_i]
+            for j in range(i+1, N_matches):
+                atm_idx_j = int(matches[j][0])
+                delta0_j  = delta_hydrogen_dict[atm_idx_j]
+                for dij in [[-1,1],[1,-1]]:
+                    ###  0: Do nothing
+                    ### +1: Add hydrogen
+                    ### -1: Remove hydrogen
+                    delta_hydrogen_dict[atm_idx_i] = dij[0]
+                    delta_hydrogen_dict[atm_idx_j] = dij[1]
+                    mol_list_prot = apply_delta_hydrogen(
+                        copy.deepcopy(mol_list),
+                        delta_hydrogen_dict
+                        )
+                    charge = Chem.GetFormalCharge(
+                        combine_mols(mol_list_prot)
+                        )
+                    if charge == charge0:
+                        mol_list_prot, _, _ = make_supercell(
+                            cell,
+                            mol_list_prot,
+                            0, 2,
+                            0, 2,
+                            0, 2)
+                        energy, mol_list_prot = minimize_H(mol_list_prot)
+                        if energy < energy_best:
+                            energy_best = energy
+                            delta_hydrogen_dict_best = copy.deepcopy(
+                                delta_hydrogen_dict
+                                )
+                            mol_list_best = copy.deepcopy(
+                                mol_list_prot[:N_mol_per_unitcell]
+                                )
+                delta_hydrogen_dict[atm_idx_j] = delta0_j
+            delta_hydrogen_dict[atm_idx_i] = delta0_i
+        #print(f"Best energy {energy_best:4.2f}")
+        #with open(f"./best_{count}.pdb", "w") as fopen:
+        #    fopen.write(
+        #        Chem.MolToPDBBlock(
+        #            combine_mols(
+        #                mol_list_best
+        #                )
+        #            )
+        #        )
+        #count += 1
+
+    return mol_list_best
+
 
 def parse_arguments():
 
@@ -44,7 +361,7 @@ def parse_arguments():
         type=int, 
         help="Minimum and maximum unit cell replicates along direction `a`", 
         required=False,
-        default=[-1,1],\
+        default=[-1,1],
         nargs=2
         )
 
@@ -54,7 +371,7 @@ def parse_arguments():
         type=int, 
         help="Minimum and maximum unit cell replicates along direction `b`", 
         required=False,
-        default=[-1,1],\
+        default=[-1,1],
         nargs=2
         )
 
@@ -64,7 +381,7 @@ def parse_arguments():
         type=int, 
         help="Minimum and maximum unit cell replicates along direction `c`", 
         required=False,
-        default=[-1,1],\
+        default=[-1,1],
         nargs=2
         )
 
@@ -83,7 +400,25 @@ def parse_arguments():
         type=int, 
         help="Number of water molecules to add", 
         required=False,
-        default=0,\
+        default=0,
+        )
+
+    parser.add_argument(
+        '--use_symmetry_operations', 
+        "-op", 
+        action='store_true',
+        help="Use symmetry operations in cif file instead of space group.", 
+        required=False,
+        default=False,
+        )
+    
+    parser.add_argument(
+        '--n_protonation_attempts', 
+        "-np", 
+        type=int, 
+        help="Number of attempts to compute protonatation states in  unit cell.", 
+        required=False,
+        default=0,
         )
 
     return parser.parse_args()
@@ -116,7 +451,7 @@ def get_nonoverlapping_atoms(atom_crds_ortho, filter_overlapping=False):
 
 
 def random_fill(
-    strc, 
+    cell, 
     mol_list, 
     N_per_unitcell, 
     radius=1.4, 
@@ -134,7 +469,7 @@ def random_fill(
     import copy
 
     vdw_dict = {
-        1  : 1.09,  #H
+        1  : 1.09, #H
         6  : 1.7,  #C
         7  : 1.55, #N
         8  : 1.52, #O
@@ -155,7 +490,7 @@ def random_fill(
     atom_crds_mol  = np.array(atom_crds_mol)
 
     replicated_mol_list, _, _ = make_supercell(
-        strc,
+        cell,
         mol_list,
         -1, 1,
         -1, 1,
@@ -184,7 +519,7 @@ def random_fill(
         for b in np.linspace(0., 1., 50, True):
             for c in np.linspace(0., 1., 50, True):
                 frac  = np.array([a,b,c], dtype=float)
-                ortho = strc.cell.orthogonalize(
+                ortho = cell.orthogonalize(
                     gemmi.Fractional(*frac)
                             ).tolist()
                 dists      = distance.cdist(atom_crds_xtal, [ortho])
@@ -206,7 +541,7 @@ def random_fill(
         grid_selection = grid[mask_selection]
         grid_selection_query = np.copy(grid_selection).tolist()
         for crd in grid_selection:
-            frac = strc.cell.fractionalize(
+            frac = cell.fractionalize(
                 gemmi.Position(
                     *crd
                     )
@@ -218,7 +553,7 @@ def random_fill(
                         if (a==0) & (b==0) & (c==0):
                             continue
                         frac += [a,b,c]
-                        ortho = strc.cell.orthogonalize(
+                        ortho = cell.orthogonalize(
                             gemmi.Fractional(*frac)
                                     ).tolist()
                         grid_selection_query.append(ortho)
@@ -247,7 +582,7 @@ def random_fill(
     return 1
 
 
-def make_P1(strc, addhs=False):
+def make_P1(cell, atom_crds_ortho, atom_num, addhs=False):
 
     """
     Generate the P1 cell. Return tuple with atomic coordinates (in Ang) and
@@ -257,20 +592,23 @@ def make_P1(strc, addhs=False):
     import networkx as nx
     from rdkit.Chem import AllChem as Chem
     from rdkit.Geometry import Point3D
+    import copy
 
-    #strc.setup_cell_images()
-    atom_crds_ortho = list()
-    atom_num = list()
-
-    for site in strc.get_all_unit_cell_sites():
-        pos = strc.cell.orthogonalize(site.fract)
+    _atom_crds_ortho = list()
+    _atom_num = list()
+    N_atoms = len(atom_num)
+    for i in range(N_atoms):
         if addhs:
-            if int(site.element.atomic_number) != 1:
-                atom_crds_ortho.append([pos.x, pos.y, pos.z])
-                atom_num.append(site.element.atomic_number)
+            if atom_num[i] != 1:
+                _atom_crds_ortho.append(copy.copy(atom_crds_ortho[i]))
+                _atom_num.append(copy.copy(atom_num[i]))
         else:
-            atom_crds_ortho.append([pos.x, pos.y, pos.z])
-            atom_num.append(site.element.atomic_number)
+            _atom_crds_ortho.append(copy.copy(atom_crds_ortho[i]))
+            _atom_num.append(copy.copy(atom_num[i]))
+
+    atom_crds_ortho = _atom_crds_ortho
+    atom_num = _atom_num
+
     atom_crds_ortho = np.array(atom_crds_ortho, dtype=float)
     atom_num = np.array(atom_num, dtype=int)
     nonoverlapping_idxs = get_nonoverlapping_atoms(atom_crds_ortho, filter_overlapping=True)
@@ -284,7 +622,7 @@ def make_P1(strc, addhs=False):
         ### Update the frac coordinates
         atom_crds_frac = list()
         for atm_idx in range(N_atoms):
-            frac = strc.cell.fractionalize(
+            frac = cell.fractionalize(
                 gemmi.Position(
                     *atom_crds_ortho[atm_idx]
                     )
@@ -315,7 +653,7 @@ def make_P1(strc, addhs=False):
                             frac[0] += a
                             frac[1] += b
                             frac[2] += c
-                            ortho = strc.cell.orthogonalize(
+                            ortho = cell.orthogonalize(
                                 gemmi.Fractional(*frac)
                             ).tolist()
                             if not ortho in atom_crds_ortho_cp:
@@ -361,14 +699,14 @@ def make_P1(strc, addhs=False):
         frac_crds = list()
         for pos in conf_pos:
             frac_crds.append(
-                strc.cell.fractionalize(
+                cell.fractionalize(
                     gemmi.Position(
                         *pos
                     )
                 ).tolist()
             )
-        frac_crds       = np.array(frac_crds)
-        valid_atoms     = np.where(
+        frac_crds   = np.array(frac_crds)
+        valid_atoms = np.where(
             (frac_crds[:,0] > 0.) * (frac_crds[:,0] < 1.) *\
             (frac_crds[:,1] > 0.) * (frac_crds[:,1] < 1.) *\
             (frac_crds[:,2] > 0.) * (frac_crds[:,2] < 1.)
@@ -405,7 +743,7 @@ def make_P1(strc, addhs=False):
             for b in [0,-1,1]:
                 for c in [0,-1,1]:
                     frac_crds_query += [a,b,c]
-                    ortho = strc.cell.orthogonalize(
+                    ortho = cell.orthogonalize(
                         gemmi.Fractional(*frac_crds_query)
                     ).tolist()
                     if len(atom_crds_ortho) > 0:
@@ -416,7 +754,7 @@ def make_P1(strc, addhs=False):
                     frac_crds_query -= [a,b,c]
         if not overlap:
             for atm_idx, frac in enumerate(frac_crds):
-                ortho = strc.cell.orthogonalize(
+                ortho = cell.orthogonalize(
                     gemmi.Fractional(*frac)
                 ).tolist()
                 atom_crds_ortho.append(ortho)
@@ -456,7 +794,7 @@ def make_P1(strc, addhs=False):
             oechem.OEAssignImplicitHydrogens(oemol)
             oechem.OEAssignFormalCharges(oemol)
 
-            oequacpac.OEGetReasonableProtomer(oemol)
+            oequacpac.OERemoveFormalCharge(oemol)
             oechem.OEAddExplicitHydrogens(oemol)
 
             mol = rdmol_from_oemol(oemol)
@@ -468,6 +806,7 @@ def make_P1(strc, addhs=False):
             count += 1
 
     else:
+
         acmatrix, _ = xyz2mol.xyz2AC(
             atom_num,
             atom_crds_ortho,
@@ -488,10 +827,9 @@ def make_P1(strc, addhs=False):
             )[0]
             mol_list.append(mol)
 
-    strc_write               = gemmi.Structure()
-    strc_write.spacegroup_hm = strc.spacegroup_hm
-    strc_write.cell          = strc.cell
-
+    #strc_write               = gemmi.Structure()
+    #strc_write.spacegroup_hm = "P1"
+    #strc_write.cell          = cell
     #with open("./make_p1_test.pdb", "w") as fopen:
     #    fopen.write(get_pdb_block(mol_list, strc_write))
 
@@ -499,7 +837,7 @@ def make_P1(strc, addhs=False):
 
 
 def make_supercell(
-    strc,
+    cell,
     mol_list, 
     a_min, a_max,
     b_min, b_max,
@@ -532,14 +870,14 @@ def make_supercell(
                     
                     for atom_idx in range(N_atoms):
                         pos      = conf_pos[atom_idx]                    
-                        frac_pos = strc.cell.fractionalize(
+                        frac_pos = cell.fractionalize(
                             gemmi.Position(*pos)
                         )
                         frac_pos.x += a
                         frac_pos.y += b
                         frac_pos.z += c
                         
-                        conf_pos_abc = strc.cell.orthogonalize(frac_pos).tolist()
+                        conf_pos_abc = cell.orthogonalize(frac_pos).tolist()
                             
                         conf.SetAtomPosition(
                             atom_idx,
@@ -653,29 +991,40 @@ def equalize_rdmols(mol_list, stereochemistry=True):
 
 
 def generate_replicated_mol_list(
-    strc, 
+    cell,
+    atom_crds_ortho,
+    atom_num, 
     a_min_max,
     b_min_max,
     c_min_max,
     addhs=False,
-    addwater=0):
+    protonate_unitcell=True,
+    addwater=0,
+    N_iterations_protonation=0
+    ):
 
     """
     Generate rdkit mol object list for molecules in supercell. supercell is generated
     according input parameters.
     """
 
-    mol_list = make_P1(strc, addhs)
+    mol_list = make_P1(cell, atom_crds_ortho, atom_num, addhs)
+    if N_iterations_protonation > 0: 
+        mol_list = assign_protonation_states(
+            cell=cell, 
+            mol_list=mol_list, 
+            N_iterations=N_iterations_protonation
+            )
     if addwater > 0:
         random_fill(
-            strc,
+            cell,
             mol_list,
             N_per_unitcell=addwater,
             radius=0.5,
             smiles="O"
             )
     replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs = make_supercell(
-        strc,
+        cell,
         mol_list, 
         a_min_max[0], a_min_max[1],
         b_min_max[0], b_min_max[1],
@@ -756,7 +1105,7 @@ def get_pdb_str(
     return pdb_block
     
 
-def parse_cif(cif_path):
+def parse_cif(cif_path, use_symmetry_operations=False):
 
     """
     Parse cif file as gemmis structure object.
@@ -766,8 +1115,42 @@ def parse_cif(cif_path):
 
     doc  = gemmi.cif.read(cif_path)[0]
     strc = gemmi.make_small_structure_from_block(doc)
+    
+    ### finding it by number is much better
+    ### Sometimes the HM name cannot be found by gemmi.
+    table_number = -1
+    for item in doc:
+        if item.pair == None:
+            continue
+        key, value = item.pair
+        if "_symmetry_Int_Tables_number".lower() == key.lower():
+            table_number=int(value)
+            break
+    if table_number > -1:
+        strc.spacegroup_hm = gemmi.find_spacegroup_by_number(table_number).hm
 
-    return strc
+    atom_crds_ortho = list()
+    atom_num = list()
+    if use_symmetry_operations:
+        op_list  = doc.find_values('_symmetry_equiv_pos_as_xyz')
+        gops     = gemmi.GroupOps([gemmi.Op(o) for o in op_list])
+        for site in strc.sites:
+            for op in gops:
+                pos_frac = op.apply_to_xyz(site.fract.tolist())
+                pos = strc.cell.orthogonalize(
+                    gemmi.Fractional(
+                        *pos_frac
+                        )
+                    ).tolist()
+                atom_crds_ortho.append(pos)
+                atom_num.append(site.element.atomic_number)
+    else:
+        for site in strc.get_all_unit_cell_sites():
+            pos = strc.cell.orthogonalize(site.fract)
+            atom_crds_ortho.append([pos.x, pos.y, pos.z])
+            atom_num.append(site.element.atomic_number)
+
+    return strc, atom_crds_ortho, atom_num
 
 
 def get_supercell_info_str(mol_identifies, unitcell_in_supercell_fracs):
@@ -818,17 +1201,20 @@ def main():
     import gemmi
 
     args = parse_arguments()
-    strc = parse_cif(args.input)
+    strc, atom_crds_ortho, atom_num = parse_cif(args.input, args.use_symmetry_operations)
 
     ### Build the supercell as a set of rdkit molecule objects
     ### ======================================================
     replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs = generate_replicated_mol_list(
-        strc,
-        args.a_min_max,
-        args.b_min_max,
-        args.c_min_max,
-        args.addhs,
-        args.addwater
+        cell=strc.cell,
+        atom_crds_ortho=atom_crds_ortho,
+        atom_num=atom_num,
+        a_min_max=args.a_min_max,
+        b_min_max=args.b_min_max,
+        c_min_max=args.c_min_max,
+        addhs=args.addhs,
+        addwater=args.addwater,
+        N_iterations_protonation=args.n_protonation_attempts
         )
 
     ### Write pdb file
@@ -859,10 +1245,10 @@ def main():
     ### Generate list of unique smiles for unique
     ### molecules in UC
     ### =========================================
-    mol_list = make_P1(strc, args.addhs)
+    mol_list = make_P1(strc.cell, atom_crds_ortho, atom_num, args.addhs)
     if args.addwater > 0:
         random_fill(
-            strc,
+            strc.cell,
             mol_list,
             N_per_unitcell=args.addwater,
             radius=0.5,
@@ -870,7 +1256,7 @@ def main():
             )
 
     unitcell_mol_list, _, _ = make_supercell(
-        strc,
+        strc.cell,
         mol_list,
         0,0,
         0,0,
@@ -936,9 +1322,15 @@ Total Volume supercell [Ang3] : {strc.cell.volume * a_len * b_len * c_len:4.2f}
 Density [g/cm3]               : {unitcell_weight / strc.cell.volume * 1.6605:4.2f}
 SMILES for molecules in UC    : {" ".join(smiles_list)}
 """
-
 ### 1.6605 conversion g/mol/Ang^3 to g/cm^3
 )
+
+    try:
+        diff = (unitcell_weight / strc.cell.volume * 1.6605) - float(cif_info_dict["density"])
+        if abs(diff) > 0.1:
+            warnings.warn(f"Density difference {diff}. Check structure.")
+    except:
+        pass
 
 def entry_point():
 
