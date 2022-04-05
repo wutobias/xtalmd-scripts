@@ -99,7 +99,25 @@ def parse_arguments():
         type=int, 
         help="Number of water molecules to add", 
         required=False,
-        default=0,\
+        default=0,
+        )
+
+    parser.add_argument(
+        '--use_symmetry_operations', 
+        "-op", 
+        action='store_true',
+        help="Use symmetry operations in cif file instead of space group.", 
+        required=False,
+        default=False,
+        )
+    
+    parser.add_argument(
+        '--n_protonation_attempts', 
+        "-np", 
+        type=int, 
+        help="Number of attempts to compute protonatation states in  unit cell.", 
+        required=False,
+        default=0,
         )
 
     return parser.parse_args()
@@ -601,7 +619,10 @@ def main():
     min_length_b = args.nbcutoff * unit.nanometer * args.axislengthfactor
     min_length_c = args.nbcutoff * unit.nanometer * args.axislengthfactor
 
-    strc = make_supercell.parse_cif(args.input)
+    strc, atom_crds_ortho, atom_num = make_supercell.parse_cif(
+        args.input, 
+        args.use_symmetry_operations
+        )
 
     uc_length_a = strc.cell.a * unit.angstrom
     uc_length_b = strc.cell.b * unit.angstrom
@@ -620,12 +641,15 @@ def main():
     ### Build the supercell as a list of rdkit molecules
     ### ================================================
     replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs = make_supercell.generate_replicated_mol_list(
-        strc,
-        a_min_max,
-        b_min_max,
-        c_min_max,
-        args.addhs,
-        args.addwater
+        cell=strc.cell,
+        atom_crds_ortho=atom_crds_ortho,
+        atom_num=atom_num,
+        a_min_max=a_min_max,
+        b_min_max=b_min_max,
+        c_min_max=c_min_max,
+        addhs=args.addhs,
+        addwater=args.addwater,
+        N_iterations_protonation=args.n_protonation_attempts
         )
 
     ### Write pdb file
