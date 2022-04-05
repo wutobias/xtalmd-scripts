@@ -13,6 +13,102 @@ from . import xyz2mol
 
 import argparse
 
+
+def parse_arguments():
+
+    """
+    Parse command line arguments.
+    """
+
+    parser = argparse.ArgumentParser(
+        description="Python script for building supercell that can be used with PBC in MD simulation."
+        )
+
+    parser.add_argument(
+        '--input', 
+        "-i", 
+        type=str, 
+        help="Input cif file", 
+        required=True
+        )
+
+    parser.add_argument(
+        '--prefix', 
+        "-pre", 
+        type=str, 
+        help="Prefix for pdb and csv file.", 
+        required=True
+        )
+
+    parser.add_argument(
+        '--a_min_max', 
+        "-a", 
+        type=int, 
+        help="Minimum and maximum unit cell replicates along direction `a`", 
+        required=False,
+        default=[-1,1],
+        nargs=2
+        )
+
+    parser.add_argument(
+        '--b_min_max', 
+        "-b", 
+        type=int, 
+        help="Minimum and maximum unit cell replicates along direction `b`", 
+        required=False,
+        default=[-1,1],
+        nargs=2
+        )
+
+    parser.add_argument(
+        '--c_min_max', 
+        "-c", 
+        type=int, 
+        help="Minimum and maximum unit cell replicates along direction `c`", 
+        required=False,
+        default=[-1,1],
+        nargs=2
+        )
+
+    parser.add_argument(
+        '--addhs', 
+        "-ah", 
+        action='store_true',
+        help="Remove any existing hydrogen and add protonate molecule. Requires OpenEye Toolkits.", 
+        required=False,
+        default=False,
+        )
+
+    parser.add_argument(
+        '--addwater', 
+        "-aw", 
+        type=int, 
+        help="Number of water molecules to add", 
+        required=False,
+        default=0,
+        )
+
+    parser.add_argument(
+        '--use_symmetry_operations', 
+        "-op", 
+        action='store_true',
+        help="Use symmetry operations in cif file instead of space group.", 
+        required=False,
+        default=False,
+        )
+    
+    parser.add_argument(
+        '--n_protonation_attempts', 
+        "-np", 
+        type=int, 
+        help="Number of attempts to compute protonatation states in  unit cell.", 
+        required=False,
+        default=0,
+        )
+
+    return parser.parse_args()
+
+
 def combine_mols(mol_list):
 
     mol_list  = copy.deepcopy(mol_list)
@@ -327,101 +423,6 @@ def assign_protonation_states(
         #count += 1
 
     return mol_list_best
-
-
-def parse_arguments():
-
-    """
-    Parse command line arguments.
-    """
-
-    parser = argparse.ArgumentParser(
-        description="Python script for building supercell that can be used with PBC in MD simulation."
-        )
-
-    parser.add_argument(
-        '--input', 
-        "-i", 
-        type=str, 
-        help="Input cif file", 
-        required=True
-        )
-
-    parser.add_argument(
-        '--prefix', 
-        "-pre", 
-        type=str, 
-        help="Prefix for pdb and csv file.", 
-        required=True
-        )
-
-    parser.add_argument(
-        '--a_min_max', 
-        "-a", 
-        type=int, 
-        help="Minimum and maximum unit cell replicates along direction `a`", 
-        required=False,
-        default=[-1,1],
-        nargs=2
-        )
-
-    parser.add_argument(
-        '--b_min_max', 
-        "-b", 
-        type=int, 
-        help="Minimum and maximum unit cell replicates along direction `b`", 
-        required=False,
-        default=[-1,1],
-        nargs=2
-        )
-
-    parser.add_argument(
-        '--c_min_max', 
-        "-c", 
-        type=int, 
-        help="Minimum and maximum unit cell replicates along direction `c`", 
-        required=False,
-        default=[-1,1],
-        nargs=2
-        )
-
-    parser.add_argument(
-        '--addhs', 
-        "-ah", 
-        action='store_true',
-        help="Remove any existing hydrogen and add protonate molecule. Requires OpenEye Toolkits.", 
-        required=False,
-        default=False,
-        )
-
-    parser.add_argument(
-        '--addwater', 
-        "-aw", 
-        type=int, 
-        help="Number of water molecules to add", 
-        required=False,
-        default=0,
-        )
-
-    parser.add_argument(
-        '--use_symmetry_operations', 
-        "-op", 
-        action='store_true',
-        help="Use symmetry operations in cif file instead of space group.", 
-        required=False,
-        default=False,
-        )
-    
-    parser.add_argument(
-        '--n_protonation_attempts', 
-        "-np", 
-        type=int, 
-        help="Number of attempts to compute protonatation states in  unit cell.", 
-        required=False,
-        default=0,
-        )
-
-    return parser.parse_args()
 
 
 def get_nonoverlapping_atoms(atom_crds_ortho, filter_overlapping=False):
