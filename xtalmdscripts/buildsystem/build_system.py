@@ -493,8 +493,10 @@ def build_system_oplsaa(
     pdbname_mapping_dict = dict()
     to_remove_list = list()
     for mol_idx in unique_mol_idxs:
-
         mol = rdmol_list_unique[mol_idx]
+
+        mi = mol.GetAtomWithIdx(0).GetMonomerInfo()
+        resname = mi.GetResidueName().rstrip().lstrip()
 
         pdb_path_monomer = f"mol_{mol_idx}.pdb"
         mol_path_monomer = f"mol_{mol_idx}.mol"
@@ -504,9 +506,6 @@ def build_system_oplsaa(
                 )
         with Chem.SDWriter(mol_path_monomer) as sdwriter:
             sdwriter.write(mol)
-
-        mi = mol.GetAtomWithIdx(0).GetMonomerInfo()
-        resname = mi.GetResidueName().rstrip().lstrip()
 
         subprocess.run([
             oplsaa_xml_builder_path,
@@ -613,20 +612,56 @@ def main():
 
     args = parse_arguments()
 
-    ### We want to build super cell that is longer than 5.0 times the 
-    ### nonbonded cutoff in each direction
-    min_length_a = args.nbcutoff * unit.nanometer * args.axislengthfactor
-    min_length_b = args.nbcutoff * unit.nanometer * args.axislengthfactor
-    min_length_c = args.nbcutoff * unit.nanometer * args.axislengthfactor
-
     strc, atom_crds_ortho, atom_num = make_supercell.parse_cif(
         args.input, 
         args.use_symmetry_operations
         )
 
-    uc_length_a = strc.cell.a * unit.angstrom
-    uc_length_b = strc.cell.b * unit.angstrom
-    uc_length_c = strc.cell.c * unit.angstrom
+    a_length = strc.cell.a
+    b_length = strc.cell.b
+    c_length = strc.cell.c
+
+    alpha    = strc.cell.alpha * np.pi / 180.
+    beta     = strc.cell.beta  * np.pi / 180.
+    gamma    = strc.cell.gamma * np.pi / 180.
+
+    ### First transform box to reduced form, which is used by openmm.
+    ### This code is from openmm.app.internal.unitcell.computePeriodicBoxVectors
+    ### See also https://github.com/openmm/openmm/blob/master/wrappers/python/openmm/app/internal/unitcell.py
+    a = [a_length, 0, 0]
+    b = [b_length*np.cos(gamma), b_length*np.sin(gamma), 0]
+    cx = c_length*np.cos(beta)
+    cy = c_length*(np.cos(alpha)-np.cos(beta)*np.cos(gamma))/np.sin(gamma)
+    cz = np.sqrt(c_length*c_length-cx*cx-cy*cy)
+    c = [cx, cy, cz]
+
+    # If any elements are very close to 0, set them to exactly 0.
+
+    for i in range(3):
+        if abs(a[i]) < 1e-6:
+            a[i] = 0.0
+        if abs(b[i]) < 1e-6:
+            b[i] = 0.0
+        if abs(c[i]) < 1e-6:
+            c[i] = 0.0
+    a = np.array(a)
+    b = np.array(b)
+    c = np.array(c)
+
+    # Make sure they're in the reduced form required by OpenMM.
+    c = c - b*np.round(c[1]/b[1])
+    c = c - a*np.round(c[0]/a[0])
+    b = b - a*np.round(b[0]/a[0])
+
+    uc_length_a = a[0] * unit.angstrom
+    uc_length_b = b[1] * unit.angstrom
+    uc_length_c = c[2] * unit.angstrom
+
+    ### We want to build super cell that is longer than args.axislengthfactor
+    ### times the nonbonded cutoff in each direction.
+    min_length_a = args.nbcutoff * unit.nanometer * args.axislengthfactor
+    min_length_b = args.nbcutoff * unit.nanometer * args.axislengthfactor
+    min_length_c = args.nbcutoff * unit.nanometer * args.axislengthfactor
 
     a_min_max = [0, np.ceil(min_length_a / uc_length_a)]
     b_min_max = [0, np.ceil(min_length_b / uc_length_b)]
