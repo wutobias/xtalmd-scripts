@@ -771,8 +771,8 @@ def make_P1(cell, atom_crds_ortho, atom_num, addhs=False):
     if addhs:
         from openeye import oechem
         from openeye import oequacpac
-        from xtalmdscripts.supercellbuilding.utils import rdmol_from_oemol
-        from xtalmdscripts.supercellbuilding.utils import oemol_from_rdmol
+        from xtalmdscripts.supercellbuilding.oe_utils import rdmol_from_oemol
+        from xtalmdscripts.supercellbuilding.oe_utils import oemol_from_rdmol
 
         count = 0
         for mol in mol_list_new:
@@ -893,16 +893,16 @@ def make_supercell(
     N_mol = len(replicated_mol_list)
     for mol_idx in range(N_mol):
         mol = replicated_mol_list[mol_idx]
-        mi  = Chem.AtomPDBResidueInfo()
-        mi.SetIsHeteroAtom(True)
-        mi.SetResidueName(f'M{mol_identifies[mol_idx]}'.ljust(3))
-        mi.SetResidueNumber(mol_idx + 1)
-        mi.SetOccupancy(1.0)
-        mi.SetTempFactor(0.0)
         #mi.SetChainId(f"{string.ascii_uppercase[mol_identifies[mol_idx]]}")
         
         atom_counts_dict = dict()
         for atom in mol.GetAtoms():
+            mi  = Chem.AtomPDBResidueInfo()
+            mi.SetIsHeteroAtom(True)
+            mi.SetResidueName(f'M{mol_identifies[mol_idx]}'.ljust(3))
+            mi.SetResidueNumber(mol_idx + 1)
+            mi.SetOccupancy(1.0)
+            mi.SetTempFactor(0.0)
             atomic_num = atom.GetAtomicNum()
             atomic_ele = atom.GetSymbol()
             if not atomic_num in atom_counts_dict:
@@ -919,7 +919,10 @@ def make_supercell(
     return replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs
 
 
-def get_unique_mapping(mol_list, stereochemistry=True):
+def get_unique_mapping(
+    mol_list, 
+    stereochemistry=True
+    ):
 
     """
     Get unique mapping dict and list of unique rdkit mol objects in list of rdkit mol objects.
@@ -950,7 +953,10 @@ def get_unique_mapping(mol_list, stereochemistry=True):
     return unique_mapping, rdmol_list_unique
 
 
-def equalize_rdmols(mol_list, stereochemistry=True):
+def equalize_rdmols(
+    mol_list, 
+    stereochemistry=True
+    ):
 
     """
     Get list of rdkit mol objects in which all chemically idential mol objects
@@ -962,33 +968,36 @@ def equalize_rdmols(mol_list, stereochemistry=True):
 
     unique_mapping, rdmol_list_unique = get_unique_mapping(mol_list, stereochemistry)
 
+    mol_list_new = copy.deepcopy(mol_list)
     for mol_idx in unique_mapping:
-        ### This is the molecule that holds the correct coordinates
-        ### and pdb monomer info.
-        mol_1 = mol_list[mol_idx]
-        ### This is the molecule that holds the correct names, ordering, etc...
-        mol_2 = copy.deepcopy(rdmol_list_unique[unique_mapping[mol_idx]])
-        match = mol_1.GetSubstructMatch(mol_2, useChirality=stereochemistry)
-        conf_1     = mol_1.GetConformer(0)
-        conf_pos_1 = conf_1.GetPositions()
-        conf_2     = mol_2.GetConformer(0)
-        conf_pos_2 = conf_2.GetPositions()
-        for mol2_atm_idx, mol1_atm_idx in enumerate(match):
-            pos = conf_pos_1[mol1_atm_idx]
-            conf_2.SetAtomPosition(
-                mol2_atm_idx,
-                Point3D(*pos)
-            )
-            atom = mol_2.GetAtomWithIdx(mol2_atm_idx)
-            ### Note, we cannot `copy.copy(mi_original)`
-            ### or `copy.copy(mol_1.GetAtomWithIdx(atm_idx))`
-            mi = mol_1.GetAtomWithIdx(mol1_atm_idx).GetMonomerInfo()
-            mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
-            atom.SetMonomerInfo(mi)
+        if mol_idx == unique_mapping[mol_idx]:
+            mol_info = copy.deepcopy(rdmol_list_unique[unique_mapping[mol_idx]])
+        else:
+            ### This is the molecule that holds the correct coordinates
+            ### and pdb monomer info.
+            mol_crds = copy.deepcopy(mol_list[mol_idx])
+            ### This is the molecule that holds the correct names, ordering, etc...
+            mol_info = copy.deepcopy(rdmol_list_unique[unique_mapping[mol_idx]])
+            match   = mol_crds.GetSubstructMatch(mol_info, useChirality=stereochemistry)
 
-        mol_list[mol_idx] = mol_2
+            conf_pos_crds = mol_crds.GetConformer(0).GetPositions()
+            conf_info     = mol_info.GetConformer(0)
+            for mol_info_atm_idx, mol_crds_atm_idx in enumerate(match):
+                pos = conf_pos_crds[mol_crds_atm_idx]
+                conf_info.SetAtomPosition(
+                    mol_info_atm_idx,
+                    Point3D(*pos)
+                )
+                ### Note, we cannot `copy.copy(mi_original)`
+                ### or `copy.copy(mol_target.GetAtomWithIdx(atm_idx))`
+                mi = mol_info.GetAtomWithIdx(mol_info_atm_idx).GetMonomerInfo()
+                mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
+                mi.SetResidueNumber(mol_idx + 1)
+                mol_info.GetAtomWithIdx(mol_info_atm_idx).SetMonomerInfo(mi)
 
-    return mol_list
+        mol_list_new[mol_idx] = mol_info
+
+    return mol_list_new
 
 
 def generate_replicated_mol_list(
@@ -1065,7 +1074,7 @@ def get_pdb_block(
     ### flavor & 16 : Write MASTER record
     ### flavor & 32 : Write TER record
 
-    crds_block = Chem.MolToPDBBlock(mol_new, flavor=32)
+    crds_block = Chem.MolToPDBBlock(mol_new, flavor=8|32)
     pdb_block  = header + crds_block
 
     return pdb_block
@@ -1106,7 +1115,10 @@ def get_pdb_str(
     return pdb_block
     
 
-def parse_cif(cif_path, use_symmetry_operations=False):
+def parse_cif(
+    cif_path, 
+    use_symmetry_operations=False
+    ):
 
     """
     Parse cif file as gemmis structure object.
@@ -1154,7 +1166,10 @@ def parse_cif(cif_path, use_symmetry_operations=False):
     return strc, atom_crds_ortho, atom_num
 
 
-def get_supercell_info_str(mol_identifies, unitcell_in_supercell_fracs):
+def get_supercell_info_str(
+    mol_identifies, 
+    unitcell_in_supercell_fracs
+    ):
 
     """
     Takes list of in unitcell molecule identifiers and unitcell in supercell
