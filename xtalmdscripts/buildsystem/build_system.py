@@ -120,6 +120,15 @@ def parse_arguments():
         default=0,
         )
 
+    parser.add_argument(
+        '--use_openeye', 
+        "-oe", 
+        action='store_true',
+        help="Use openeye-toolkit for topology building. Otherwise use xyz2mol.", 
+        required=False,
+        default=False,
+        )
+
     return parser.parse_args()
 
 
@@ -298,7 +307,7 @@ def build_system_cgenff(
         mi = mol.GetAtomWithIdx(0).GetMonomerInfo()
         resname = mi.GetResidueName()
 
-        pdb_path_monomer = f"./mol_{mol_idx}.pdb"
+        pdb_path_monomer = f"mol_{mol_idx}.pdb"
 
         with open(pdb_path_monomer, "w") as fopen:
             fopen.write(
@@ -317,7 +326,7 @@ def build_system_cgenff(
         subprocess.run([
             "obabel",
             "-ipdb",
-            f"./mol_{mol_idx}.pdb",
+            f"mol_{mol_idx}.pdb",
             "--title",
             resname,
             "-omol2",
@@ -383,10 +392,10 @@ stop
     psf_pmd = pmd.Structure()
     for replicated_mol_idx in range(len(replicated_mol_list)):
         psf_pmd += pmd_list[unique_mapping[replicated_mol_idx]]
-    psf_pmd.write_psf("./strc.psf")
+    psf_pmd.write_psf("strc.psf")
 
     ### Build the omm system
-    psffile  = CharmmPsfFile("./strc.psf")
+    psffile  = CharmmPsfFile("strc.psf")
     topology = psffile.topology
     pdbfile  = PDBFile(pdb_path)
     boxvectors = pdbfile.topology.getPeriodicBoxVectors()
@@ -684,7 +693,8 @@ def main():
         c_min_max=c_min_max,
         addhs=args.addhs,
         addwater=args.addwater,
-        N_iterations_protonation=args.n_protonation_attempts
+        N_iterations_protonation=args.n_protonation_attempts,
+        use_openeye=args.use_openeye
         )
 
     ### Write pdb file
@@ -701,7 +711,7 @@ def main():
         )
 
     prefix = args.prefix
-    with open(f"./{prefix}.pdb", "w") as fopen:
+    with open(f"{prefix}.pdb", "w") as fopen:
         fopen.write(pdb_str)
     with open(f"{prefix}.csv", "w") as fopen:
         info_str = make_supercell.get_supercell_info_str(
@@ -719,7 +729,7 @@ def main():
         )
     for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
         pdb_str = Chem.MolToPDBBlock(rdmol)
-        with open(f"./{prefix}_monomer{rdmol_idx}.pdb", "w") as fopen:
+        with open(f"{prefix}_monomer{rdmol_idx}.pdb", "w") as fopen:
             fopen.write(pdb_str)
 
     monomer_sys_list = list()
@@ -729,14 +739,14 @@ def main():
 
         system = build_system_gaff(
             replicated_mol_list,
-            f"./{prefix}.pdb",
+            f"{prefix}.pdb",
             version=version
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
             monomer_sys_list.append(
                 build_system_gaff(
                     [rdmol],
-                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    f"{prefix}_monomer{rdmol_idx}.pdb",
                     version=version
                     )
                 )
@@ -747,14 +757,14 @@ def main():
 
         system = build_system_gaff(
             replicated_mol_list,
-            f"./{prefix}.pdb",
+            f"{prefix}.pdb",
             version=version
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
             monomer_sys_list.append(
                 build_system_gaff(
                     [rdmol],
-                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    f"{prefix}_monomer{rdmol_idx}.pdb",
                     version=version
                     )
                 )
@@ -765,14 +775,14 @@ def main():
 
         system = build_system_off(
             replicated_mol_list,
-            f"./{prefix}.pdb",
+            f"{prefix}.pdb",
             version=version
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
             monomer_sys_list.append(
                 build_system_off(
                     [rdmol],
-                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    f"{prefix}_monomer{rdmol_idx}.pdb",
                     version=version
                     )
                 )
@@ -783,14 +793,14 @@ def main():
 
         system = build_system_off(
             replicated_mol_list,
-            f"./{prefix}.pdb",
+            f"{prefix}.pdb",
             version=version
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
             monomer_sys_list.append(
                 build_system_off(
                     [rdmol],
-                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    f"{prefix}_monomer{rdmol_idx}.pdb",
                     version=version
                     )
                 )
@@ -802,7 +812,7 @@ def main():
 
         system, str_list = build_system_cgenff(
             replicated_mol_list,
-            f"./{prefix}.pdb",
+            f"{prefix}.pdb",
             args.toppar
             )
         for idx, str_ in enumerate(str_list):
@@ -812,7 +822,7 @@ def main():
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
             monomer_system, _ = build_system_cgenff(
                 [rdmol],
-                f"./{prefix}_monomer{rdmol_idx}.pdb",
+                f"{prefix}_monomer{rdmol_idx}.pdb",
                 args.toppar
                 )
             monomer_sys_list.append(monomer_system)
@@ -825,7 +835,7 @@ def main():
 
         system = build_system_oplsaa(
             replicated_mol_list,
-            f"./{prefix}.pdb",
+            f"{prefix}.pdb",
             version=version
             )
         ### Set nonbonded cutoff special for oplsaa
@@ -837,7 +847,7 @@ def main():
             monomer_sys_list.append(
                 build_system_oplsaa(
                     [rdmol],
-                    f"./{prefix}_monomer{rdmol_idx}.pdb",
+                    f"{prefix}_monomer{rdmol_idx}.pdb",
                     version=version
                     )
                 )
@@ -852,11 +862,11 @@ def main():
     nbforce = forces['NonbondedForce']
     nbforce.setCutoffDistance(args.nbcutoff * unit.nanometer)
 
-    with open(f"./{prefix}.xml", "w") as fopen:
+    with open(f"{prefix}.xml", "w") as fopen:
         fopen.write(openmm.XmlSerializer.serialize(system))
 
     for sys_idx, system in enumerate(monomer_sys_list):
-        with open(f"./{prefix}_monomer{sys_idx}.xml", "w") as fopen:
+        with open(f"{prefix}_monomer{sys_idx}.xml", "w") as fopen:
             fopen.write(openmm.XmlSerializer.serialize(system))
 
 
