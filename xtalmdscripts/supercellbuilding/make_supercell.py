@@ -576,6 +576,8 @@ def random_fill(
         if min_dist > 2.*radius:
             overlap = False
 
+    import copy
+    mol_list_new = copy.deepcopy(mol_list)
     for crds in grid_selection:
         mol_cp         = copy.deepcopy(mol)
         conformer      = mol_cp.GetConformer()
@@ -587,12 +589,17 @@ def random_fill(
                 atm_idx,
                 Point3D(*atom_crds_mol[atm_idx])
             )
-        mol_list.append(mol_cp)
+        mol_list_new.append(mol_cp)
 
-    return 1
+    return mol_list_new
 
 
-def make_P1(cell, atom_crds_ortho, atom_num, addhs=False, use_openeye=False):
+def make_P1(
+    cell, 
+    atom_crds_ortho, 
+    atom_num, 
+    addhs=False, 
+    use_openeye=False):
 
     """
     Generate the P1 cell. Return tuple with atomic coordinates (in Ang) and
@@ -843,7 +850,6 @@ def make_P1(cell, atom_crds_ortho, atom_num, addhs=False, use_openeye=False):
                 oechem.OEPerceiveBondOrders(oemol)
                 oechem.OE3DToInternalStereo(oemol)
                 oechem.OEPerceiveChiral(oemol)
-                oechem.OEAssignImplicitHydrogens(oemol)
                 oechem.OEAssignFormalCharges(oemol)
 
                 oequacpac.OERemoveFormalCharge(oemol)
@@ -939,16 +945,28 @@ def make_supercell(
                     mol_identifies.append(mol_idx)
                     unitcell_in_supercell_fracs.append([a,b,c])
 
-    N_mol = len(replicated_mol_list)
+    return replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs
+
+
+def clean_names(mol_list):
+
+    """
+    Uniquify atom and residue names. Equalize residue names for
+    chemically equal residues.
+    """
+
+    import copy
+
+    mol_list_new = list()
+    N_mol = len(mol_list)
     for mol_idx in range(N_mol):
-        mol = replicated_mol_list[mol_idx]
-        #mi.SetChainId(f"{string.ascii_uppercase[mol_identifies[mol_idx]]}")
+        mol = copy.deepcopy(mol_list[mol_idx])
         
         atom_counts_dict = dict()
         for atom in mol.GetAtoms():
             mi  = Chem.AtomPDBResidueInfo()
             mi.SetIsHeteroAtom(True)
-            mi.SetResidueName(f'M{mol_identifies[mol_idx]}'.ljust(3))
+            mi.SetResidueName(f'M{mol_idx}'.ljust(3))
             mi.SetResidueNumber(mol_idx + 1)
             mi.SetOccupancy(1.0)
             mi.SetTempFactor(0.0)
@@ -963,9 +981,9 @@ def make_supercell(
                 )
             atom.SetMonomerInfo(mi)
 
-        replicated_mol_list[mol_idx] = mol
+        mol_list_new.append(mol)
 
-    return replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs
+    return mol_list_new
 
 
 def get_unique_mapping(
@@ -999,6 +1017,8 @@ def get_unique_mapping(
                 else:
                     unique_mapping[mol_idx] = smiles_unique_idx
 
+    assert len(unique_mapping) == N_mol
+
     return unique_mapping, rdmol_list_unique
 
 
@@ -1021,6 +1041,11 @@ def equalize_rdmols(
     for mol_idx in unique_mapping:
         if mol_idx == unique_mapping[mol_idx]:
             mol_info = copy.deepcopy(rdmol_list_unique[unique_mapping[mol_idx]])
+            for mol_info_atm_idx in range(mol_info.GetNumAtoms()):
+                mi = mol_info.GetAtomWithIdx(mol_info_atm_idx).GetMonomerInfo()
+                mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
+                mi.SetResidueNumber(mol_idx + 1)
+                mol_info.GetAtomWithIdx(mol_info_atm_idx).SetMonomerInfo(mi)
         else:
             ### This is the molecule that holds the correct coordinates
             ### and pdb monomer info.
@@ -1076,13 +1101,16 @@ def generate_replicated_mol_list(
             N_iterations=N_iterations_protonation
             )
     if addwater > 0:
-        random_fill(
+        mol_list = random_fill(
             cell,
             mol_list,
             N_per_unitcell=addwater,
             radius=0.5,
             smiles="O"
             )
+    if addwater > 0 or N_iterations_protonation > 0:
+        mol_list = clean_names(mol_list)
+
     replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs = make_supercell(
         cell,
         mol_list, 
