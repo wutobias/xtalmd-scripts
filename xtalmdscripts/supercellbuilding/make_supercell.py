@@ -1108,8 +1108,7 @@ def generate_replicated_mol_list(
             radius=0.5,
             smiles="O"
             )
-    if addwater > 0 or N_iterations_protonation > 0:
-        mol_list = clean_names(mol_list)
+    mol_list = clean_names(mol_list)
 
     replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs = make_supercell(
         cell,
