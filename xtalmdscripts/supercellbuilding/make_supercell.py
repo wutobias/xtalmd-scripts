@@ -106,6 +106,15 @@ def parse_arguments():
         default=0,
         )
 
+    parser.add_argument(
+        '--use_openeye', 
+        "-oe", 
+        action='store_true',
+        help="Use openeye-toolkit for topology building. Otherwise use xyz2mol.", 
+        required=False,
+        default=False,
+        )
+
     return parser.parse_args()
 
 
@@ -583,7 +592,7 @@ def random_fill(
     return 1
 
 
-def make_P1(cell, atom_crds_ortho, atom_num, addhs=False):
+def make_P1(cell, atom_crds_ortho, atom_num, addhs=False, use_openeye=False):
 
     """
     Generate the P1 cell. Return tuple with atomic coordinates (in Ang) and
@@ -769,6 +778,9 @@ def make_P1(cell, atom_crds_ortho, atom_num, addhs=False):
 
     mol_list = list()
     if addhs:
+        if use_openeye:
+            import warnings
+            warnings.warn("With addhs=True, we automatically set use_openeye=True.")
         from openeye import oechem
         from openeye import oequacpac
         from xtalmdscripts.supercellbuilding.oe_utils import rdmol_from_oemol
@@ -807,26 +819,63 @@ def make_P1(cell, atom_crds_ortho, atom_num, addhs=False):
             count += 1
 
     else:
+        if use_openeye:
+            from openeye import oechem
+            from openeye import oequacpac
+            from xtalmdscripts.supercellbuilding.oe_utils import rdmol_from_oemol
+            from xtalmdscripts.supercellbuilding.oe_utils import oemol_from_rdmol
 
-        acmatrix, _ = xyz2mol.xyz2AC(
-            atom_num,
-            atom_crds_ortho,
-            0,
-            )
-        G           = nx.convert_matrix.from_numpy_matrix(acmatrix)
-        G_node_list = list(nx.connected_components(G))
-        atom_num    = np.array(atom_num, dtype=int)
-        atom_crds_ortho = np.array(atom_crds_ortho)
-        for g in G_node_list:
-            g = list(g)
-            mol = Chem.GetMolFrags(
-                xyz2mol.xyz2mol(
-                    atom_num[g].tolist(), 
-                    atom_crds_ortho[g].tolist(),
-                    charge=0)[0], 
-                asMols=True
-            )[0]
-            mol_list.append(mol)
+            count = 0
+            for mol in mol_list_new:
+                oemol = oechem.OEMol()
+                oemol.SetDimension(3)
+                conf_pos = mol.GetConformer(0).GetPositions()
+                crds = list()
+                for atm_idx in range(mol.GetNumAtoms()):
+                    atom = mol.GetAtomWithIdx(atm_idx)
+                    oemol.NewAtom(int(atom.GetAtomicNum()))
+                    crds.extend(conf_pos[atm_idx])
+                oemol.SetCoords(crds)
+
+                oechem.OEDetermineConnectivity(oemol)
+                oechem.OEFindRingAtomsAndBonds(oemol)
+                oechem.OEAssignAromaticFlags(oemol)
+                oechem.OEPerceiveBondOrders(oemol)
+                oechem.OE3DToInternalStereo(oemol)
+                oechem.OEPerceiveChiral(oemol)
+                oechem.OEAssignImplicitHydrogens(oemol)
+                oechem.OEAssignFormalCharges(oemol)
+
+                oequacpac.OERemoveFormalCharge(oemol)
+
+                mol = rdmol_from_oemol(oemol)
+                Chem.AssignStereochemistryFrom3D(mol)
+                mol_list.append(mol)
+
+                #with open(f"./test_{count}.pdb", "w") as fopen:
+                #    fopen.write(Chem.MolToPDBBlock(mol))
+                count += 1
+
+        else:
+            acmatrix, _ = xyz2mol.xyz2AC(
+                atom_num,
+                atom_crds_ortho,
+                0,
+                )
+            G           = nx.convert_matrix.from_numpy_matrix(acmatrix)
+            G_node_list = list(nx.connected_components(G))
+            atom_num    = np.array(atom_num, dtype=int)
+            atom_crds_ortho = np.array(atom_crds_ortho)
+            for g in G_node_list:
+                g = list(g)
+                mol = Chem.GetMolFrags(
+                    xyz2mol.xyz2mol(
+                        atom_num[g].tolist(), 
+                        atom_crds_ortho[g].tolist(),
+                        charge=0)[0], 
+                    asMols=True
+                )[0]
+                mol_list.append(mol)
 
     #strc_write               = gemmi.Structure()
     #strc_write.spacegroup_hm = "P1"
@@ -910,7 +959,7 @@ def make_supercell(
             else:
                 atom_counts_dict[atomic_num] += 1
             mi.SetName(
-                f"{atomic_ele[0]}{atom_counts_dict[atomic_num]}".ljust(4)
+                f"{atomic_ele}{atom_counts_dict[atomic_num]}".ljust(4)
                 )
             atom.SetMonomerInfo(mi)
 
@@ -1010,7 +1059,8 @@ def generate_replicated_mol_list(
     addhs=False,
     protonate_unitcell=True,
     addwater=0,
-    N_iterations_protonation=0
+    N_iterations_protonation=0,
+    use_openeye=False,
     ):
 
     """
@@ -1018,7 +1068,7 @@ def generate_replicated_mol_list(
     according input parameters.
     """
 
-    mol_list = make_P1(cell, atom_crds_ortho, atom_num, addhs)
+    mol_list = make_P1(cell, atom_crds_ortho, atom_num, addhs, use_openeye)
     if N_iterations_protonation > 0: 
         mol_list = assign_protonation_states(
             cell=cell, 
@@ -1230,7 +1280,8 @@ def main():
         c_min_max=args.c_min_max,
         addhs=args.addhs,
         addwater=args.addwater,
-        N_iterations_protonation=args.n_protonation_attempts
+        N_iterations_protonation=args.n_protonation_attempts,
+        use_openeye=args.use_openeye
         )
 
     ### Write pdb file
@@ -1261,7 +1312,7 @@ def main():
     ### Generate list of unique smiles for unique
     ### molecules in UC
     ### =========================================
-    mol_list = make_P1(strc.cell, atom_crds_ortho, atom_num, args.addhs)
+    mol_list = make_P1(strc.cell, atom_crds_ortho, atom_num, args.addhs, args.use_openeye)
     if args.addwater > 0:
         random_fill(
             strc.cell,
