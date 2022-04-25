@@ -43,31 +43,34 @@ def parse_arguments():
     parser.add_argument(
         '--a_min_max', 
         "-a", 
-        type=int, 
-        help="Minimum and maximum unit cell replicates along direction `a`", 
+        type=float, 
+        help="If this is two arguments: Minimum and maximum unit cell replicates along direction `a`. \
+If this is a single argument: Minimum length of axis `a` in the supercell. Units [nm]", 
         required=False,
         default=[-1,1],
-        nargs=2
+        nargs='+',
         )
 
     parser.add_argument(
         '--b_min_max', 
         "-b", 
-        type=int, 
-        help="Minimum and maximum unit cell replicates along direction `b`", 
+        type=float, 
+        help="If this is two arguments: Minimum and maximum unit cell replicates along direction `b`. \
+If this is a single argument: Minimum length of axis `b` in the supercell. Units [nm]", 
         required=False,
         default=[-1,1],
-        nargs=2
+        nargs='+',
         )
 
     parser.add_argument(
         '--c_min_max', 
         "-c", 
-        type=int, 
-        help="Minimum and maximum unit cell replicates along direction `c`", 
+        type=float, 
+        help="If this is two arguments: Minimum and maximum unit cell replicates along direction `c`. \
+If this is a single argument: Minimum length of axis `c` in the supercell. Units [nm]", 
         required=False,
         default=[-1,1],
-        nargs=2
+        nargs='+',
         )
 
     parser.add_argument(
@@ -805,9 +808,9 @@ def make_P1(
                 crds.extend(conf_pos[atm_idx])
             oemol.SetCoords(crds)
 
+            oechem.OEAssignAromaticFlags(oemol)
             oechem.OEDetermineConnectivity(oemol)
             oechem.OEFindRingAtomsAndBonds(oemol)
-            oechem.OEAssignAromaticFlags(oemol)
             oechem.OEPerceiveBondOrders(oemol)
             oechem.OE3DToInternalStereo(oemol)
             oechem.OEPerceiveChiral(oemol)
@@ -817,6 +820,7 @@ def make_P1(
             oequacpac.OERemoveFormalCharge(oemol)
             oechem.OEAddExplicitHydrogens(oemol)
 
+            oechem.OEAssignAromaticFlags(oemol)
             mol = rdmol_from_oemol(oemol)
             Chem.AssignStereochemistryFrom3D(mol)
             mol_list.append(mol)
@@ -846,14 +850,12 @@ def make_P1(
 
                 oechem.OEDetermineConnectivity(oemol)
                 oechem.OEFindRingAtomsAndBonds(oemol)
-                oechem.OEAssignAromaticFlags(oemol)
                 oechem.OEPerceiveBondOrders(oemol)
                 oechem.OE3DToInternalStereo(oemol)
                 oechem.OEPerceiveChiral(oemol)
                 oechem.OEAssignFormalCharges(oemol)
 
-                oequacpac.OERemoveFormalCharge(oemol)
-
+                oechem.OEAssignAromaticFlags(oemol)
                 mol = rdmol_from_oemol(oemol)
                 Chem.AssignStereochemistryFrom3D(mol)
                 mol_list.append(mol)
@@ -1296,15 +1298,45 @@ def main():
     args = parse_arguments()
     strc, atom_crds_ortho, atom_num = parse_cif(args.input, args.use_symmetry_operations)
 
+    if len(args.a_min_max) == 2:
+        a_min_max = [int(args.a_min_max[0]), int(args.a_min_max[1])]
+    elif len(args.a_min_max) == 1:
+        uc_length_a = strc.cell.a * 0.1
+        a_min_max = [0, np.ceil(args.a_min_max[0] / uc_length_a)]
+    else:
+        raise ValueError(
+            "Argument a_min_max must be either pair (x,y) or single value (z)"
+            )
+
+    if len(args.b_min_max) == 2:
+        b_min_max = [int(args.b_min_max[0]), int(args.b_min_max[1])]
+    elif len(args.b_min_max) == 1:
+        uc_length_b = strc.cell.b * 0.1
+        b_min_max = [0, np.ceil(args.b_min_max[0] / uc_length_b)]
+    else:
+        raise ValueError(
+            "Argument b_min_max must be either pair (x,y) or single value (z)"
+            )
+
+    if len(args.c_min_max) == 2:
+        c_min_max = [int(args.c_min_max[0]), int(args.c_min_max[1])]
+    elif len(args.c_min_max) == 1:
+        uc_length_c = strc.cell.c * 0.1
+        c_min_max = [0, np.ceil(args.c_min_max[0] / uc_length_c)]
+    else:
+        raise ValueError(
+            "Argument c_min_max must be either pair (x,y) or single value (z)"
+            )
+
     ### Build the supercell as a set of rdkit molecule objects
     ### ======================================================
     replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs = generate_replicated_mol_list(
         cell=strc.cell,
         atom_crds_ortho=atom_crds_ortho,
         atom_num=atom_num,
-        a_min_max=args.a_min_max,
-        b_min_max=args.b_min_max,
-        c_min_max=args.c_min_max,
+        a_min_max=a_min_max,
+        b_min_max=b_min_max,
+        c_min_max=c_min_max,
         addhs=args.addhs,
         addwater=args.addwater,
         N_iterations_protonation=args.n_protonation_attempts,
@@ -1319,9 +1351,9 @@ def main():
     pdb_str = get_pdb_str(
         replicated_mol_list, 
         strc_write,
-        args.a_min_max,
-        args.b_min_max,
-        args.c_min_max
+        a_min_max,
+        b_min_max,
+        c_min_max
         )
     with open(f"{args.prefix}.pdb", "w") as fopen:
         fopen.write(pdb_str)
@@ -1368,9 +1400,9 @@ def main():
 
     ### Output final summary
     ### ====================
-    a_len = np.max(args.a_min_max) - np.min(args.a_min_max) + 1.
-    b_len = np.max(args.b_min_max) - np.min(args.b_min_max) + 1.
-    c_len = np.max(args.c_min_max) - np.min(args.c_min_max) + 1.
+    a_len = np.max(a_min_max) - np.min(a_min_max) + 1.
+    b_len = np.max(b_min_max) - np.min(b_min_max) + 1.
+    c_len = np.max(c_min_max) - np.min(c_min_max) + 1.
 
     import gemmi
     doc           = gemmi.cif.read(args.input)[0]

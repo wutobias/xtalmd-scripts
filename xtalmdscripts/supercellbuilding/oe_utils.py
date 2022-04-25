@@ -115,7 +115,7 @@ def rdmol_from_oemol(oemol):
     Chem.GetSSSR(rdmol)
     # I added AssignStereochemistry which takes the directions of the bond set 
     # and assigns the stereochemistry tags on the double bonds
-    Chem.AssignStereochemistry(rdmol, force=False) 
+    Chem.AssignStereochemistry(rdmol, force=False)
     
     return rdmol.GetMol()
 
