@@ -14,7 +14,8 @@ echo "BOSSdir $BOSSdir ..."
 
 TMPDIR="/tmp/ligpargen${RANDOM}"
 
-if [ $lbcc_flag ]; then
+if [ ${lbcc} -eq 1 ]; then
+    echo "CM1A-LBCC charges"
     ligpargen --ifile ${infile} \
               --path ${TMPDIR} \
               --molname ${resname} \
@@ -22,6 +23,7 @@ if [ $lbcc_flag ]; then
               --charge ${charge} \
               --cgen CM1A-LBCC
 else
+    echo "CM1A charges"
     ligpargen --ifile ${infile} \
               --path ${TMPDIR} \
               --molname ${resname} \
