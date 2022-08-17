@@ -120,7 +120,8 @@ class ContextWrapper(object):
         self.N_crds = self.number_of_atoms * 3
         self.use_lengths_and_angles = use_lengths_and_angles
 
-        self._epsilon = epsilon * unit.nanometer
+        ### epsilon is nanometer
+        self._epsilon = epsilon
     
     @property
     def pos_box_flat(self):
@@ -158,18 +159,53 @@ class ContextWrapper(object):
         
         return boxflat
         
+    def fix_box(self, box):
+
+        """
+        Fix box vector so that diagonal elements are positive.
+        """
+
+        box_cp = np.copy(box[:])
+        ### Diagonal elements must be positive.
+        box_cp[0,0] = np.abs(box_cp[0,0])
+        box_cp[1,1] = np.abs(box_cp[1,1])
+        box_cp[2,2] = np.abs(box_cp[2,2])
+
+        return box_cp
+
+    def fix_flat_box(self, boxflat):
+
+        """
+        Fix flat box vector so that box lengths are positive.
+        """
+
+        boxflat_cp = np.copy(boxflat[:])
+        if self.use_lengths_and_angles:
+            ### Vector lengths must be positive.
+            boxflat_cp[:3] = np.abs(boxflat_cp[:3])
+        else:
+            ### Diagonal elements must be positive.
+            boxflat_cp[0] = np.abs(boxflat_cp[0])
+            boxflat_cp[2] = np.abs(boxflat_cp[2])
+            boxflat_cp[5] = np.abs(boxflat_cp[5])
+
+        return boxflat_cp
+
     def box_to_flat(self, box):
 
         """
         Transform 3x3 box vector to flat vector.
         """
+
+        box_fix = self.fix_box(box)
+        box_fix = self.reduce_box(box_fix)
         if self.use_lengths_and_angles:
-            return computeLengthsAndAngles(box)
+            return computeLengthsAndAngles(box_fix)
 
         boxflat      = np.zeros(6, dtype=float)
-        boxflat[0]   = box[0,0]
-        boxflat[1:3] = box[1,:][:2]
-        boxflat[3:]  = box[2,:]
+        boxflat[0]   = box_fix[0,0]
+        boxflat[1:3] = box_fix[1,:][:2]
+        boxflat[3:]  = box_fix[2,:]
 
         return boxflat            
     
@@ -203,18 +239,99 @@ class ContextWrapper(object):
         """
         Unravel flat box vector to 3x3 box vector
         """
+
+        box_fix = self.fix_flat_box(boxflat)
+        box_fix = self.reduce_flat_box(box_fix)
         if self.use_lengths_and_angles:
-            box = computePeriodicBoxVectors(*boxflat)
+            box = computePeriodicBoxVectors(*box_fix)
+            box = box.value_in_unit(unit.nanometer)
         else:
-            boxflat_cp = np.copy(boxflat[:]) * unit.nanometer
-            box = np.zeros((3,3), dtype=float) * unit.nanometer
-            box[0,0] = boxflat_cp[0]
-            box[1,0] = boxflat_cp[1]
-            box[1,1] = boxflat_cp[2]
-            box[2,:] = boxflat_cp[3:]
-        
+            
+            box = np.zeros((3,3), dtype=float)
+            box[0,0] = box_fix[0]
+            box[1,0] = box_fix[1]
+            box[1,1] = box_fix[2]
+            box[2,:] = box_fix[3:]
+
         return box 
     
+    def reduce_flat_box(self, boxflat):
+
+        """
+        Reduce flat box vectors openmm-style.
+        """
+
+        box_fix = self.fix_flat_box(boxflat)
+        if self.use_lengths_and_angles:
+            box = computePeriodicBoxVectors(*box_fix)
+            box  = box.value_in_unit(unit.nanometer)
+        else:
+            box = np.zeros((3,3), dtype=float)
+            box[0,0] = box_fix[0]
+            box[1,0] = box_fix[1]
+            box[1,1] = box_fix[2]
+            box[2,:] = box_fix[3:]
+
+        box     = self.reduce_box(box)
+        boxflat = self.box_to_flat(box)
+
+        return boxflat
+
+
+    def reduce_box(self, box):
+
+        """
+        Reduce box vectors openmm-style.
+        """
+
+        box = app.internal.unitcell.reducePeriodicBoxVectors(box)
+        box = box.value_in_unit(unit.nanometer)
+        box = np.array(box)
+
+        return box
+
+    def scale_pos_to_box(self, pos, box_old, box_new):
+
+        """
+        Scales coordinates to new box.
+        """
+
+        box_old = self.reduce_box(box_old)
+        box_new = self.reduce_box(box_new)
+
+        pos     = pos.value_in_unit(unit.nanometer)
+
+        box_old_inv = np.linalg.inv(box_old)
+        pos_frac    = np.matmul(box_old_inv, pos.T).T
+        pos_new     = np.matmul(box_new, pos_frac.T).T * unit.nanometer
+
+        return pos_new
+
+    def get_frac_pos(self, pos, box):
+
+        """
+        Get fractional coordinates of pos in box. pos must be real coordinates.
+        """
+
+        box = self.reduce_box(box)
+        pos = pos.value_in_unit(unit.nanometer)
+
+        box_inv  = np.linalg.inv(box)
+        pos_frac = np.matmul(box_inv, pos.T).T
+
+        return pos_frac
+
+    def get_real_pos(self, pos, box):
+
+        """
+        Get real coordinates of pos in box. pos must be fractional coordinates.
+        """
+
+        box = self.reduce_box(box)
+        pos_real = np.matmul(box, pos.T).T * unit.nanometer
+
+        return pos_real
+
     def ene_box(self, boxflat):
 
         """
@@ -223,30 +340,36 @@ class ContextWrapper(object):
         """
         
         box_new = self.flatbox_to_box(boxflat)
+        box_new = self.reduce_box(box_new)
+
         state = self.context.getState(
-            getEnergy=True,
             getPositions=True,
         )
-
-        box_new = app.internal.unitcell.reducePeriodicBoxVectors(box_new)
-        box_new = np.array(box_new._value) * box_new.unit
 
         pos_old = state.getPositions(asNumpy=True)
         box_old = state.getPeriodicBoxVectors(asNumpy=True)
 
-        box_old_inv = np.linalg.inv(box_old.value_in_unit(unit.nanometer))        
-        pos_frac    = np.matmul(box_old_inv, pos_old.T).T
-        pos_new     = np.matmul(box_new, pos_frac.T).T * unit.nanometer
+        pos_new = self.scale_pos_to_box(pos_old, box_old, box_new)
 
-        try:
-            self.context.setPositions(pos_new)
-            self.context.setPeriodicBoxVectors(*box_new)
+        system = self.context.getSystem()
+        system.setDefaultPeriodicBoxVectors(
+            *box_new
+            )
+        self.context.reinitialize()
+        self.context.setPeriodicBoxVectors(*box_new)
+        self.context.setPositions(pos_new)
+        state = self.context.getState(
+            getEnergy=True,
+        )
+        ene = state.getPotentialEnergy()
 
-            ene = state.getPotentialEnergy()
-        except:
-            boxold = state.getPeriodicBoxVectors(asNumpy=True)
-            raise ValueError(
-                f"Cannot set box {boxold} to {box_new}")
+        system = self.context.getSystem()
+        system.setDefaultPeriodicBoxVectors(
+            *box_old
+            )
+        self.context.reinitialize()
+        self.context.setPositions(pos_old)
+        self.context.setPeriodicBoxVectors(*box_old)
 
         return ene._value
     
@@ -256,22 +379,37 @@ class ContextWrapper(object):
         Compute system energy from flat position and boxvector. Energy in kJ/mol
         """
         
-        pos, box = self.flat_to_pos_box(pos_box_flat)
-        state = self.context.getState(getEnergy=True)
+        pos_new, box_new = self.flat_to_pos_box(pos_box_flat)
+        box_new = self.reduce_box(box_new)
 
-        box = app.internal.unitcell.reducePeriodicBoxVectors(box)
-        box = np.array(box._value) * box.unit
+        state = self.context.getState(
+            getPositions=True,
+        )
 
-        try:
-            self.context.setPositions(pos)
-            self.context.setPeriodicBoxVectors(*box)
+        pos_old = state.getPositions(asNumpy=True)
+        box_old = state.getPeriodicBoxVectors(asNumpy=True)
+        pos_new = self.scale_pos_to_box(pos_new, box_old, box_new)
 
-            ene = state.getPotentialEnergy()
-        except:
-            boxold = state.getPeriodicBoxVectors(asNumpy=True)
-            raise ValueError(
-                f"Cannot set box {boxold} to {box}")
-        
+        system = self.context.getSystem()
+        system.setDefaultPeriodicBoxVectors(
+            *box_new
+            )
+        self.context.reinitialize()
+        self.context.setPeriodicBoxVectors(*box_new)
+        self.context.setPositions(pos_new)
+        state = self.context.getState(
+            getEnergy=True,
+        )
+        ene = state.getPotentialEnergy()
+
+        system = self.context.getSystem()
+        system.setDefaultPeriodicBoxVectors(
+            *box_old
+            )
+        self.context.reinitialize()
+        self.context.setPeriodicBoxVectors(*box_old)
+        self.context.setPositions(pos_old)
+
         return ene._value
     
     def grad_box(self, boxflat):
@@ -282,60 +420,66 @@ class ContextWrapper(object):
         
         epsilon = self._epsilon
         
-        box = self.flatbox_to_box(boxflat)
+        box_new = self.flatbox_to_box(boxflat)
+        box_new = self.reduce_box(box_new)
+
         state = self.context.getState(
+            getEnergy=True,
             getPositions=True,
         )
-        pos = state.getPositions(asNumpy=True)
 
-        box = app.internal.unitcell.reducePeriodicBoxVectors(box)
-        box = np.array(box._value) * box.unit
+        pos_old = state.getPositions(asNumpy=True)
+        box_old = state.getPeriodicBoxVectors(asNumpy=True)
 
-        box_inv  = np.linalg.inv(box)        
-        pos_frac = np.matmul(box_inv, pos.T).T
+        pos_new  = self.scale_pos_to_box(pos_old, box_old, box_new)
+        pos_frac = self.get_frac_pos(pos_new, box_new)
 
-        try:
-            self.context.setPositions(pos)
-            self.context.setPeriodicBoxVectors(*box)
-        except:
-            boxold = state.getPeriodicBoxVectors(asNumpy=True)
-            raise ValueError(
-                f"Cannot set box {boxold} to {box}")
-        
-        boxgrad_flat = np.zeros(6, dtype=float) * unit.kilojoule_per_mole / unit.nanometer
+        self.context.setPositions(pos_old)
+        self.context.setPeriodicBoxVectors(*box_old)
+        system = self.context.getSystem()
+        system.setDefaultPeriodicBoxVectors(
+            *box_new
+            )
+        self.context.reinitialize()
+        self.context.setPositions(pos_new)
+        self.context.setPeriodicBoxVectors(*box_new)
+
+        boxgrad_flat = np.zeros(6, dtype=float)
         grad_idx = 0
         for r in [0,1,2]:
             ### Note that first vec must be parallel to x axis
             for c in range(r+1):
-                box[r,c] += epsilon
-                box_plus  = app.internal.unitcell.reducePeriodicBoxVectors(box)
-                box_plus  = np.array(box_plus._value) * box_plus.unit
-                pos_new   = np.matmul(box_plus, pos_frac.T).T
-                x_new     = self.pos_box_to_flat(
+                box_new[r,c] += epsilon
+                box_plus      = self.reduce_box(box_new)
+                pos_new       = self.get_real_pos(pos_frac, box_plus)
+                x_new         = self.pos_box_to_flat(
                     pos_new, 
-                    box_plus.value_in_unit(unit.nanometer)
+                    box_plus
                     )
-                ene_plus  = self.ene(x_new) * unit.kilojoule_per_mole
+                ene_plus  = self.ene(x_new)
 
-                box[r,c]  -= 2. * epsilon
-                box_minus  = app.internal.unitcell.reducePeriodicBoxVectors(box)
-                box_minus  = np.array(box_minus._value) * box_minus.unit
-                pos_new    = np.matmul(box_minus, pos_frac.T).T
-                x_new      = self.pos_box_to_flat(
+                box_new[r,c] -= 2. * epsilon
+                box_minus     = self.reduce_box(box_new)
+                pos_new       = self.get_real_pos(pos_frac, box_minus)
+                x_new         = self.pos_box_to_flat(
                     pos_new, 
-                    box_minus.value_in_unit(unit.nanometer)
+                    box_minus
                     )
-                ene_minus = self.ene(x_new) * unit.kilojoule_per_mole
+                ene_minus = self.ene(x_new)
 
-                boxgrad_flat[grad_idx]  = (ene_plus - ene_minus)/(epsilon * 2.)
+                boxgrad_flat[grad_idx] = (ene_plus - ene_minus)/(epsilon * 2.)
 
-                box[r,c] += epsilon
+                box_new[r,c] += epsilon
 
                 grad_idx += 1
 
-        self.context.setPeriodicBoxVectors(*box)
-        self.context.setPositions(pos)
-        boxgrad_flat = boxgrad_flat._value
+        system = self.context.getSystem()
+        system.setDefaultPeriodicBoxVectors(
+            *box_old
+            )
+        self.context.reinitialize()
+        self.context.setPositions(pos_old)
+        self.context.setPeriodicBoxVectors(*box_old)
 
         return boxgrad_flat
 
@@ -347,62 +491,71 @@ class ContextWrapper(object):
         
         epsilon = self._epsilon
         
-        pos, box = self.flat_to_pos_box(pos_box_flat)
+        pos_new, box_new = self.flat_to_pos_box(pos_box_flat)
 
-        box = app.internal.unitcell.reducePeriodicBoxVectors(box)
-        box = np.array(box._value) * box.unit
-        
-        box_inv  = np.linalg.inv(box)        
-        pos_frac = np.matmul(box_inv, pos.T).T
+        box_new = self.reduce_box(box_new)
 
-        try:
-            self.context.setPositions(pos)
-            self.context.setPeriodicBoxVectors(*box)
-        except:
-            boxold = state.getPeriodicBoxVectors(asNumpy=True)
-            raise ValueError(
-                f"Cannot set box {boxold} to {box}")
+        state = self.context.getState(
+            getEnergy=True,
+            getPositions=True,
+        )
 
-        state  = self.context.getState(getForces=True)
-        forces = state.getForces(asNumpy=True)._value
-        
-        boxgrad_flat = np.zeros(6, dtype=float) * unit.kilojoule_per_mole / unit.nanometer
+        pos_old = state.getPositions(asNumpy=True)
+        box_old = state.getPeriodicBoxVectors(asNumpy=True)
+
+        pos_new  = self.scale_pos_to_box(pos_new, box_old, box_new)
+        pos_frac = self.get_frac_pos(pos_new, box_new)
+
+        system = self.context.getSystem()
+        system.setDefaultPeriodicBoxVectors(
+            *box_new
+            )
+        self.context.reinitialize()
+        self.context.setPositions(pos_new)
+        self.context.setPeriodicBoxVectors(*box_new)
+
+        boxgrad_flat = np.zeros(6, dtype=float)
         grad_idx = 0
         for r in [0,1,2]:
             ### Note that first vec must be parallel to x axis
             for c in range(r+1):
-                box[r,c] += epsilon
-                box_plus  = app.internal.unitcell.reducePeriodicBoxVectors(box)
-                box_plus  = np.array(box_plus._value) * box_plus.unit
-                pos_new   = np.matmul(box_plus, pos_frac.T).T
-                x_new     = self.pos_box_to_flat(
+                box_new[r,c] += epsilon
+                box_plus      = self.reduce_box(box_new)
+                pos_new       = self.get_real_pos(pos_frac, box_plus)
+                x_new         = self.pos_box_to_flat(
                     pos_new, 
-                    box_plus.value_in_unit(unit.nanometer)
+                    box_plus
                     )
-                ene_plus  = self.ene(x_new) * unit.kilojoule_per_mole
-                
-                box[r,c]  -= 2. * epsilon
-                box_minus  = app.internal.unitcell.reducePeriodicBoxVectors(box)
-                box_minus  = np.array(box_minus._value) * box_minus.unit
-                pos_new    = np.matmul(box_minus, pos_frac.T).T
-                x_new      = self.pos_box_to_flat(
-                    pos_new, 
-                    box_minus.value_in_unit(unit.nanometer)
-                    )
-                ene_minus = self.ene(x_new) * unit.kilojoule_per_mole
-                
-                boxgrad_flat[grad_idx]  = (ene_plus - ene_minus)/(epsilon * 2.)
+                ene_plus  = self.ene(x_new)
 
-                box[r,c] += epsilon
+                box_new[r,c] -= 2. * epsilon
+                box_minus     = self.reduce_box(box_new)
+                pos_new       = self.get_real_pos(pos_frac, box_minus)
+                x_new         = self.pos_box_to_flat(
+                    pos_new, 
+                    box_minus
+                    )
+                ene_minus = self.ene(x_new)
+
+                boxgrad_flat[grad_idx] = (ene_plus - ene_minus)/(epsilon * 2.)
+
+                box_new[r,c] += epsilon
 
                 grad_idx += 1
 
-        self.context.setPeriodicBoxVectors(*box)
-        self.context.setPositions(pos)
-        boxgrad_flat = boxgrad_flat._value
-        
+        state   = self.context.getState(getForces=True)
+        forces  = state.getForces(asNumpy=True)._value
         forces *= -1
-        grad    = np.hstack((forces.flatten(), boxgrad_flat))        
+
+        grad    = np.hstack((forces.flatten(), boxgrad_flat))
+
+        system = self.context.getSystem()
+        system.setDefaultPeriodicBoxVectors(
+            *box_old
+            )
+        self.context.reinitialize()
+        self.context.setPositions(pos_old)
+        self.context.setPeriodicBoxVectors(*box_old)
 
         return grad
 
@@ -415,9 +568,9 @@ def run_xtal_min(
     alternating = False,
     use_lengths_and_angles = False,
     method = "Nelder-Mead",
-    platform_name = "CUDA",
+    platform_name = "CPU",
     property_dict = {
-        "Precision" : "mixed"
+        "Threads" : "4"
     },
     prefix="xtal_min"
     ):
@@ -437,30 +590,33 @@ def run_xtal_min(
     pdbfile  = app.PDBFile(pdb_path)
     topology = pdbfile.topology
 
-    with open(xml_path, "r") as fopen:
-        xml_str = fopen.read()
-    system = openmm.XmlSerializer.deserialize(xml_str)
+    try:
+        with open(xml_path, "r") as fopen:
+            xml_str = fopen.read()
+        system = openmm.XmlSerializer.deserialize(xml_str)
 
-    integrator = openmm.LangevinIntegrator(
-        300. * unit.kelvin,
-        1./unit.picoseconds,
-        time_step
-    )
-    integrator.setConstraintTolerance(constraint_tolerance)
+        integrator = openmm.LangevinIntegrator(
+            300. * unit.kelvin,
+            1./unit.picoseconds,
+            time_step
+        )
+        integrator.setConstraintTolerance(constraint_tolerance)
 
-    platform = openmm.Platform.getPlatformByName(platform_name)
-    for property_name, property_value in property_dict.items():
-        platform.setPropertyDefaultValue(property_name, property_value)
-        
-    context = openmm.Context(
-        system,
-        integrator,
-        platform,
-    )
+        platform = openmm.Platform.getPlatformByName(platform_name)
+        for property_name, property_value in property_dict.items():
+            platform.setPropertyDefaultValue(property_name, property_value)
+            
+        context = openmm.Context(
+            system,
+            integrator,
+            platform,
+        )
     
-    box_reduced = topology.getPeriodicBoxVectors()
-    context.setPositions(pdbfile.positions)
-    context.setPeriodicBoxVectors(*box_reduced)
+        box_reduced = topology.getPeriodicBoxVectors()
+        context.setPositions(pdbfile.positions)
+        context.setPeriodicBoxVectors(*box_reduced)
+    except Exception as e:
+        return 0, e
 
     cw = ContextWrapper(
         context, 
@@ -473,19 +629,22 @@ def run_xtal_min(
     ### Alternate between openmm native minimizer
     ### and xtal cell minimization.
     if alternating:
-        x0 = np.copy(cw.box_flat)
-        best_ene = 999999999999999999999.
-        best_x   = None
-        for _ in range(steps):
-            openmm.LocalEnergyMinimizer.minimize(context)
-            x0 = np.copy(cw.box_flat)
-            ene1 = cw.ene_box(x0)
-            try:
+        try:
+            best_ene = 999999999999999999999.
+            best_x   = None
+            for _ in range(steps):
+                openmm.LocalEnergyMinimizer.minimize(context)
+                pos_old, box_old = cw.flat_to_pos_box(
+                    cw.pos_box_flat
+                    )
+                x0   = np.copy(cw.box_flat)
+                ene1 = cw.ene_box(x0)
                 result = optimize.minimize(
                     fun=cw.ene_box,
                     x0=x0, 
                     method=method,
                     jac=cw.grad_box,
+                    hess='3-point',
                     options = {
                         "maxiter" : steps,
                         "disp"    : False,
@@ -493,51 +652,88 @@ def run_xtal_min(
                     }
 
                 )
-            except Exception as e:
-                return 0, e
-            context.setPeriodicBoxVectors(
-                *cw.flatbox_to_box(
-                    result.x
+                box_new = cw.flatbox_to_box(result.x)
+                pos_new = cw.scale_pos_to_box(
+                    pos_old, 
+                    box_old, 
+                    box_new
+                    )
+
+                system = context.getSystem()
+                system.setDefaultPeriodicBoxVectors(
+                    *box_new
+                    )
+                context.reinitialize()
+                context.setPeriodicBoxVectors(*box_new)
+                context.setPositions(pos_new)
+                state = context.getState(
+                    getEnergy=True,
+                    getPositions=True
                 )
-            )
-            ene = cw.ene_box(result.x)
-            if ene < best_ene:
-                best_ene = ene
-                best_x   = cw.pos_box_flat
-            else:
-                pos, box = cw.flat_to_pos_box(best_x)
-                context.setPositions(pos)
-                context.setPeriodicBoxVectors(*box)
+                ene = state.getPotentialEnergy()._value
+                if ene < best_ene:
+                    best_ene = ene
+                    best_x   = cw.pos_box_to_flat(pos_new, box_new)
+                else:
+                    ### We are done.
+                    break
+                logfile.write(state)
+
+            pos, box = cw.flat_to_pos_box(best_x)
+            system = context.getSystem()
+            system.setDefaultPeriodicBoxVectors(
+                *box
+                )
+            context.reinitialize()
+            context.setPeriodicBoxVectors(*box)
+            context.setPositions(pos)
+
             state = context.getState(
                 getEnergy=True,
                 getPositions=True
             )
-            logfile.write(state)
-
-        pos, box = cw.flat_to_pos_box(best_x)
-        context.setPositions(pos)
-        context.setPeriodicBoxVectors(*box)
-        state = context.getState(getPositions=True)
+        except Exception as e:
+            return 0, e
 
     ### Minimize everything together.
     else:
-        def callback(xk):
-            pos, box = cw.flat_to_pos_box(xk)
-            context.setPositions(pos)
-            context.setPeriodicBoxVectors(*box)
-            state = context.getState(
-                getEnergy=True,
-                getPositions=True
-            )
-            logfile.write(state)
-            
-        x0 = np.copy(cw.pos_box_flat)
         try:
+            def callback(xk):
+                state = context.getState(
+                    getPositions=True
+                )
+                pos_old = state.getPositions(asNumpy=True).value_in_unit(unit.nanometer)
+                box_old = state.getPeriodicBoxVectors(asNumpy=True).value_in_unit(unit.nanometer)
+                pos_new, box_new = cw.flat_to_pos_box(xk)
+                system = context.getSystem()
+                system.setDefaultPeriodicBoxVectors(
+                    *box_new
+                    )
+                context.reinitialize()
+                context.setPositions(pos_new)
+                context.setPeriodicBoxVectors(*box_new)
+                state = context.getState(
+                    getEnergy=True,
+                    getPositions=True
+                )
+                logfile.write(state)
+
+                system = context.getSystem()
+                system.setDefaultPeriodicBoxVectors(
+                    *box_old
+                    )
+                context.reinitialize()
+                context.setPositions(pos_old)
+                context.setPeriodicBoxVectors(*box_old)
+
+            openmm.LocalEnergyMinimizer.minimize(context)
+            x0 = cw.pos_box_flat
             result = optimize.minimize(
                 fun=cw.ene,
                 x0=x0, 
                 method=method,
                 jac=cw.grad,
+                hess='3-point',
                 callback=callback,
                 options = {
                     "maxiter" : steps,
@@ -545,15 +741,20 @@ def run_xtal_min(
                     "gtol"    : 1.e-5,
                 }
             )
+            pos, box = cw.flat_to_pos_box(result.x)
+            system = context.getSystem()
+            system.setDefaultPeriodicBoxVectors(
+                *box
+                )
+            context.reinitialize()
+            context.setPositions(pos)
+            context.setPeriodicBoxVectors(*box)
+            state = context.getState(
+                getEnergy=True,
+                getPositions=True
+            )
         except Exception as e:
             return 0, e
-        pos, box = cw.flat_to_pos_box(result.x)
-        context.setPositions(pos)
-        context.setPeriodicBoxVectors(*box)
-        state = context.getState(
-            getEnergy=True,
-            getPositions=True
-        )
 
     return openmm.XmlSerializer.serialize(state), logfile.str
 
@@ -579,9 +780,11 @@ def main():
                         "epsilon"     : args.epsilon,
                         "alternating" : args.alternating,
                         "use_lengths_and_angles" : args.use_lengths_and_angles,
-                        "method"      : args.method
+                        "method"      : args.method,
                     }
             }
+
+        input_dict["num_cpus"] = 4
 
     elif args.command == "yaml":
         import yaml
@@ -599,7 +802,7 @@ def main():
                 ray.init()
 
             ### Wrapper around `run_xtal_min` function for ray
-            @ray.remote(num_cpus=input_dict["num_cpus"], num_gpus=1)
+            @ray.remote(num_cpus=input_dict["num_cpus"], num_gpus=0)
             def run_xtal_min_remote(
                 xml_path, 
                 pdb_path,
@@ -608,9 +811,9 @@ def main():
                 alternating = False,
                 use_lengths_and_angles = False,
                 method = "Nelder-Mead",
-                platform_name = "CUDA",
+                platform_name = "CPU",
                 property_dict = {
-                    "Precision" : "mixed"
+                    "Threads" : "4"
                 },
                 prefix="xtal_min"):
 
@@ -638,6 +841,18 @@ def main():
             continue
         if output_dir == "ray_host":
             continue
+        if output_dir == "prefix":
+            continue
+        if output_dir == "steps":
+            continue
+        if output_dir == "method":
+            continue
+        if output_dir == "alternating":
+            continue
+        if output_dir == "use_lengths_and_angles":
+            continue
+        if output_dir == "epsilon":
+            continue
 
         if not os.path.exists(input_dict[output_dir]["input"]):
             warnings.warn(f"{input_dict[output_dir]['input']} not found. Skipping.")
@@ -651,27 +866,94 @@ def main():
         else:
             min_func = run_xtal_min
 
-        ### Note: CUDA is much faster even for
-        ###       the wrapped minimization here (about factor 10)
+        ### Look for global options
+        if "prefix" in input_dict[output_dir]:
+            prefix = input_dict[output_dir]["prefix"]
+        elif "prefix" in input_dict:
+            prefix = input_dict["prefix"]
+        else:
+            prefix = args.prefix
+
+        if os.path.exists(f"{output_dir}/{prefix}.xml"):
+            warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+            continue
+        if os.path.exists(f"{output_dir}/{prefix}.pdb"):
+            warnings.warn(f"{output_dir}/{prefix}.pdb already exists. Skipping.")
+            continue
+        if os.path.exists(f"{output_dir}/{prefix}.csv"):
+            warnings.warn(f"{output_dir}/{prefix}.csv already exists. Skipping.")
+            continue
+
+        if "steps" in input_dict[output_dir]:
+            steps = input_dict[output_dir]["steps"]
+        elif "steps" in input_dict:
+            steps = input_dict["steps"]
+        else:
+            steps = args.steps
+
+        if "method" in input_dict[output_dir]:
+            method = input_dict[output_dir]["method"]
+        elif "method" in input_dict:
+            method = input_dict["method"]
+        else:
+            method = args.method
+
+        if "alternating" in input_dict[output_dir]:
+            alternating = input_dict[output_dir]["alternating"]
+        elif "alternating" in input_dict:
+            alternating = input_dict["alternating"]
+        else:
+            alternating = args.alternating
+
+        if "use_lengths_and_angles" in input_dict[output_dir]:
+            use_lengths_and_angles = input_dict[output_dir]["use_lengths_and_angles"]
+        elif "use_lengths_and_angles" in input_dict:
+            use_lengths_and_angles = input_dict["use_lengths_and_angles"]
+        else:
+            use_lengths_and_angles = args.use_lengths_and_angles
+
+        if "epsilon" in input_dict[output_dir]:
+            epsilon = input_dict[output_dir]["epsilon"]
+        elif "epsilon" in input_dict:
+            epsilon = input_dict["epsilon"]
+        else:
+            epsilon = args.epsilon
+
         worker_id = min_func(
             xml_path = input_dict[output_dir]["input"],
             pdb_path = input_dict[output_dir]["pdb"],
-            steps = int(input_dict[output_dir]["steps"]),
-            epsilon = float(input_dict[output_dir]["epsilon"]),
-            alternating = bool(input_dict[output_dir]["alternating"]),
-            use_lengths_and_angles = bool(input_dict[output_dir]["use_lengths_and_angles"]),
-            method = input_dict[output_dir]["method"],
-            platform_name = "CUDA",
+            steps = int(steps),
+            epsilon = float(epsilon),
+            alternating = bool(alternating),
+            use_lengths_and_angles = bool(use_lengths_and_angles),
+            method = method,
+            platform_name = "CPU",
             property_dict = {
-                #"Threads"             : '4',
-                "DeterministicForces" : "True"
+                "Threads" : str(input_dict["num_cpus"])
             },
-            prefix="xtal_min"
+            prefix=prefix
         )
         worker_id_dict[output_dir] = worker_id
 
     for output_dir in input_dict:
         if output_dir == "num_cpus":
+            continue
+        if output_dir == "ray_host":
+            continue
+        if output_dir == "prefix":
+            continue
+        if output_dir == "steps":
+            continue
+        if output_dir == "method":
+            continue
+        if output_dir == "alternating":
+            continue
+        if output_dir == "use_lengths_and_angles":
+            continue
+        if output_dir == "epsilon":
+            continue
+
+        if not output_dir in worker_id_dict:
             continue
 
         if HAS_RAY:
