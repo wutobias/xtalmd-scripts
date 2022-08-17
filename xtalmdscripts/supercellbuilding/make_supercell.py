@@ -320,6 +320,7 @@ def apply_delta_hydrogen(
 
 def minimize_H(
     mol_list,
+    sanitize=True,
     ):
 
     import numpy as np
@@ -328,6 +329,8 @@ def minimize_H(
     import copy
 
     mol_combo = combine_mols(mol_list)
+    if sanitize:
+        Chem.SanitizeMol(mol_combo)
     ff        = FfWrapper(mol_combo, only_hydrogen=True)
     x0        = ff.pos
     
@@ -993,6 +996,8 @@ def get_unique_mapping(
     stereochemistry=True
     ):
 
+    import copy
+
     """
     Get unique mapping dict and list of unique rdkit mol objects in list of rdkit mol objects.
     if `stereochemistry=True`, the mapping will honor stereochemistry.
@@ -1000,7 +1005,7 @@ def get_unique_mapping(
 
     N_mol = len(mol_list)
 
-    smiles_list = [Chem.MolToSmiles(mol, isomericSmiles=stereochemistry) for mol in mol_list]
+    smiles_list = [Chem.MolToSmiles(mol, isomericSmiles=stereochemistry, allHsExplicit=True) for mol in mol_list]
     smiles_list_unique = set(smiles_list)
     smiles_list_unique = list(smiles_list_unique)
 
@@ -1013,7 +1018,9 @@ def get_unique_mapping(
             smiles = smiles_list[mol_idx]
             if smiles == smiles_unique:
                 if not found_unique:
-                    rdmol_list_unique.append(mol)
+                    rdmol_list_unique.append(
+                        copy.deepcopy(mol)
+                        )
                     found_unique = True
                     unique_mapping[mol_idx] = smiles_unique_idx
                 else:
@@ -1038,38 +1045,31 @@ def equalize_rdmols(
     import copy
 
     unique_mapping, rdmol_list_unique = get_unique_mapping(mol_list, stereochemistry)
+    N_unique_mols = len(rdmol_list_unique)
 
     mol_list_new = copy.deepcopy(mol_list)
     for mol_idx in unique_mapping:
-        if mol_idx == unique_mapping[mol_idx]:
-            mol_info = copy.deepcopy(rdmol_list_unique[unique_mapping[mol_idx]])
-            for mol_info_atm_idx in range(mol_info.GetNumAtoms()):
-                mi = mol_info.GetAtomWithIdx(mol_info_atm_idx).GetMonomerInfo()
-                mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
-                mi.SetResidueNumber(mol_idx + 1)
-                mol_info.GetAtomWithIdx(mol_info_atm_idx).SetMonomerInfo(mi)
-        else:
-            ### This is the molecule that holds the correct coordinates
-            ### and pdb monomer info.
-            mol_crds = copy.deepcopy(mol_list[mol_idx])
-            ### This is the molecule that holds the correct names, ordering, etc...
-            mol_info = copy.deepcopy(rdmol_list_unique[unique_mapping[mol_idx]])
-            match   = mol_crds.GetSubstructMatch(mol_info, useChirality=stereochemistry)
+        ### This is the molecule that holds the correct coordinates
+        ### and pdb monomer info.
+        mol_crds = copy.deepcopy(mol_list[mol_idx])
+        ### This is the molecule that holds the correct names, ordering, etc...
+        mol_info = copy.deepcopy(rdmol_list_unique[unique_mapping[mol_idx]])
+        match    = mol_crds.GetSubstructMatch(mol_info, useChirality=stereochemistry)
 
-            conf_pos_crds = mol_crds.GetConformer(0).GetPositions()
-            conf_info     = mol_info.GetConformer(0)
-            for mol_info_atm_idx, mol_crds_atm_idx in enumerate(match):
-                pos = conf_pos_crds[mol_crds_atm_idx]
-                conf_info.SetAtomPosition(
-                    mol_info_atm_idx,
-                    Point3D(*pos)
-                )
-                ### Note, we cannot `copy.copy(mi_original)`
-                ### or `copy.copy(mol_target.GetAtomWithIdx(atm_idx))`
-                mi = mol_info.GetAtomWithIdx(mol_info_atm_idx).GetMonomerInfo()
-                mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
-                mi.SetResidueNumber(mol_idx + 1)
-                mol_info.GetAtomWithIdx(mol_info_atm_idx).SetMonomerInfo(mi)
+        conf_pos_crds = mol_crds.GetConformer(0).GetPositions()
+        conf_info     = mol_info.GetConformer(0)
+        for mol_info_atm_idx, mol_crds_atm_idx in enumerate(match):
+            pos = conf_pos_crds[mol_crds_atm_idx]
+            conf_info.SetAtomPosition(
+                mol_info_atm_idx,
+                Point3D(*pos)
+            )
+            ### Note, we cannot `copy.copy(mi_original)`
+            ### or `copy.copy(mol_target.GetAtomWithIdx(atm_idx))`
+            mi = mol_info.GetAtomWithIdx(mol_info_atm_idx).GetMonomerInfo()
+            mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
+            mi.SetResidueNumber(mol_idx + 1)
+            mol_info.GetAtomWithIdx(mol_info_atm_idx).SetMonomerInfo(mi)
 
         mol_list_new[mol_idx] = mol_info
 
@@ -1445,7 +1445,7 @@ Cell angle alpha [deg]        : {strc.cell.alpha:4.2f},
 Cell angle beta  [deg]        : {strc.cell.beta:4.2f},
 Cell angle gamma [deg]        : {strc.cell.gamma:4.2f},
 Total Volume supercell [Ang3] : {strc.cell.volume * a_len * b_len * c_len:4.2f}
-Density [g/cm3]               : {unitcell_weight / strc.cell.volume * 1.6605:4.2f}
+Density [g/cm3]               : {unitcell_weight / strc.cell.volume * 1.6605387823355087:4.2f}
 SMILES for molecules in UC    : {" ".join(smiles_list)}
 """
 ### 1.6605 conversion g/mol/Ang^3 to g/cm^3
