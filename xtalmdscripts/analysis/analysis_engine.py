@@ -191,6 +191,7 @@ def compute_pairwise_distances(
 
     """
     Compute pair-wise distances for atoms in `pair_list` in traj.
+    Distances computed in nanometer.
     """
 
     import mdtraj as md
@@ -211,6 +212,7 @@ def compute_tuplewise_angles(
 
     """
     Compute pair-wise angles for atoms in `tuple_list` in traj.
+    Angles computed in radians.
     """
 
     import mdtraj as md
@@ -248,11 +250,23 @@ def get_all_matches(rdmol, query_mol):
 def get_hbond_indices(
     traj,
     rdmol,
+    ON_bonds=False,
     exclude_water=True):
 
     """
     Get pair-wise atom indices of (h-atom-index, acceptor-atom-index) pairs.
-    Returns three lists: 1.) 
+    Returns list of list:
+        [d_i, h_i, a_i]
+
+        d_i: list of donor atom idxs
+        h_i: list of hydrogen atom idxs
+        a_i: list of acceptor atom idxs
+
+    If `ON_bonds=True`, will return four lists with h-bond indices for O single bonds,
+    O double bonds, N single bonds, N double bonds.
+
+        acc_O_single_list, acc_O_double_list, acc_N_single_list, acc_N_double_list
+
     """
 
     import mdtraj as md
@@ -267,35 +281,44 @@ def get_hbond_indices(
         wat_rdmol = Chem.MolFromSmiles("[H]O[H]", params)
         water_list = get_all_matches(rdmol, wat_rdmol)
 
-    acc_O_single = get_all_matches(
-        rdmol, 
-        Chem.MolFromSmarts(
-            "[*:1]-[#8:2]"
+    if ON_bonds:
+        acc_O_single = get_all_matches(
+            rdmol, 
+            Chem.MolFromSmarts(
+                "[*:1]-[#8:2]"
+                )
             )
-        )
-    acc_O_double = get_all_matches(
-        rdmol, 
-        Chem.MolFromSmarts(
-            "[*:1]=[#8:2]"
+        acc_O_double = get_all_matches(
+            rdmol, 
+            Chem.MolFromSmarts(
+                "[*:1]=[#8:2]"
+                )
             )
-        )
-    acc_N_single = get_all_matches(
-        rdmol, 
-        Chem.MolFromSmarts(
-            "[*:1]-[#7:2]"
+        acc_N_single = get_all_matches(
+            rdmol, 
+            Chem.MolFromSmarts(
+                "[*:1]-[#7:2]"
+                )
             )
-        )
-    acc_N_double = get_all_matches(
-        rdmol, 
-        Chem.MolFromSmarts(
-            "[*:1]=[#7:2]"
+        acc_N_double = get_all_matches(
+            rdmol, 
+            Chem.MolFromSmarts(
+                "[*:1]=[#7:2]"
+                )
             )
-        )
 
-    acc_O_single_atom_indices_set = set(acc_O_single)
-    acc_O_double_atom_indices_set = set(acc_O_double)
-    acc_N_single_atom_indices_set = set(acc_N_single)
-    acc_N_double_atom_indices_set = set(acc_N_double)
+        acc_O_single_atom_indices_set = set(acc_O_single)
+        acc_O_double_atom_indices_set = set(acc_O_double)
+        acc_N_single_atom_indices_set = set(acc_N_single)
+        acc_N_double_atom_indices_set = set(acc_N_double)
+
+        acc_O_single_list = list()
+        acc_O_double_list = list()
+        acc_N_single_list = list()
+        acc_N_double_list = list()
+
+    else:
+        acc_list = list()
 
     ### hbond_idxs: d_i, h_i, a_i
     hbond_idxs = md.baker_hubbard(
@@ -305,55 +328,62 @@ def get_hbond_indices(
         periodic=True,
     )
 
-    acc_O_single_list = list()
-    acc_O_double_list = list()
-    acc_N_single_list = list()
-    acc_N_double_list = list()
-
     for hbond_idx in hbond_idxs:
         if exclude_water and np.any(np.isin(water_list, hbond_idx)):
             continue
-        d_i, h_i, a_i = hbond_idx
-        if a_i in acc_O_single_atom_indices_set:
-            acc_O_single_list.append(hbond_idx)
-        elif a_i in acc_O_double_atom_indices_set:
-            acc_O_double_list.append(hbond_idx)
-        elif a_i in acc_N_single_atom_indices_set:
-            acc_N_single_list.append(hbond_idx)
-        elif a_i in acc_N_double_atom_indices_set:
-            acc_N_double_list.append(hbond_idx)
+        if ON_bonds:
+            if a_i in acc_O_single_atom_indices_set:
+                acc_O_single_list.append(hbond_idx)
+            elif a_i in acc_O_double_atom_indices_set:
+                acc_O_double_list.append(hbond_idx)
+            elif a_i in acc_N_single_atom_indices_set:
+                acc_N_single_list.append(hbond_idx)
+            elif a_i in acc_N_double_atom_indices_set:
+                acc_N_double_list.append(hbond_idx)
+            else:
+                d_i, h_i, a_i = hbond_idx
+                smiles_set = set([Chem.MolToSmiles(mol) for mol in Chem.GetMolFrags(rdmol, asMols=True)])
+                warnings.warn(
+                    f"For {smiles_set}:Could not put hbond with d_i:{d_i}, h_i:{h_i}, a_i:{a_i} in any category."
+                    )
         else:
-            smiles_set = set([Chem.MolToSmiles(mol) for mol in Chem.GetMolFrags(rdmol, asMols=True)])
-            warnings.warn(
-                f"For {smiles_set}:Could not put hbond with d_i:{d_i}, h_i:{h_i}, a_i:{a_i} in any category."
-                )
+            acc_list.append(hbond_idx)
 
-    acc_O_single_list = np.array(acc_O_single_list)
-    acc_O_double_list = np.array(acc_O_double_list)
-    acc_N_single_list = np.array(acc_N_single_list)
-    acc_N_double_list = np.array(acc_N_double_list)
+    if ON_bonds:
+        acc_O_single_list = np.array(acc_O_single_list)
+        acc_O_double_list = np.array(acc_O_double_list)
+        acc_N_single_list = np.array(acc_N_single_list)
+        acc_N_double_list = np.array(acc_N_double_list)
 
-    ### Remove redundancies
-    acc_O_single_list = np.unique(acc_O_single_list, axis=0)
-    acc_O_double_list = np.unique(acc_O_double_list, axis=0)
-    acc_N_single_list = np.unique(acc_N_single_list, axis=0)
-    acc_N_double_list = np.unique(acc_N_double_list, axis=0)
+        ### Remove redundancies
+        acc_O_single_list = np.unique(acc_O_single_list, axis=0)
+        acc_O_double_list = np.unique(acc_O_double_list, axis=0)
+        acc_N_single_list = np.unique(acc_N_single_list, axis=0)
+        acc_N_double_list = np.unique(acc_N_double_list, axis=0)
 
-    return acc_O_single_list, acc_O_double_list, acc_N_single_list, acc_N_double_list
+        return acc_O_single_list, acc_O_double_list, acc_N_single_list, acc_N_double_list
+
+    else:
+        acc_list = np.array(acc_list)
+
+        ### Remove redundancies
+        acc_list = np.unique(acc_list, axis=0)
+
+        return acc_list    
 
 
 def compute_com_diff_per_residue(
     query_traj, 
     ref_strc,
     rdmol,
-    residue_classes_list,
+    N_closest_molecules,
     exclude_water=True):
 
-    """
-    Compute com difference for each residue in each frame of `query_traj`
-    against the first frame in `ref_strc`.
-    Returns list with com diffs (in nm) for each residue in each frame of
-    `query_traj`.
+    __doc__ = """
+    Find com distances between each molecule and its `N_closest_molecules` 
+    closest neighboring molecules in trajectory `query_traj`. The closest 
+    molecules are determined and indexed as found in the reference structure 
+    `ref_strc`.
     """
 
     import mdtraj as md
@@ -369,10 +399,16 @@ def compute_com_diff_per_residue(
         params.removeHs = False
         wat_rdmol = Chem.MolFromSmiles("[H]O[H]", params)
         water_list = get_all_matches(rdmol, wat_rdmol)
+
+    atm_idxs_per_residue_dict = dict()
+    for res in ref_strc.topology.residues:
+        atm_idxs_per_residue_dict[res.index] = list()
+        for atom in res.atoms:
+            atm_idxs_per_residue_dict[res.index].append(atom.index)
     
-    a_scan = np.arange(-1,2, dtype=float)
-    b_scan = np.arange(-1,2, dtype=float)
-    c_scan = np.arange(-1,2, dtype=float)
+    a_scan = np.array([0,-1,1], dtype=float)
+    b_scan = np.array([0,-1,1], dtype=float)
+    c_scan = np.array([0,-1,1], dtype=float)
 
     grid = np.array(
         np.meshgrid(
@@ -381,158 +417,113 @@ def compute_com_diff_per_residue(
     )
     N_scans = 27
     grid    = grid.T.reshape((N_scans,-1))
-    com_ref_big = np.zeros((ref_strc.n_residues,27, 3))
-    diff_distances = np.zeros((query_traj.n_residues, query_traj.n_frames), dtype=float)
-    count_start = 0
-    count_stop  = 0
+    com_ref_big = np.zeros((ref_strc.n_residues, 27, 3))
+    com_query_big = np.zeros((query_traj.n_frames, ref_strc.n_residues, 27, 3))
+    diff_distances = np.zeros(
+        (query_traj.n_residues, query_traj.n_frames), 
+        dtype=float
+    )
+    
+    #top = md.Topology()
+    #chain = top.add_chain()
+    #for _ in range(N_closest_molecules):
+    #    _res = top.add_residue("BLA", chain)
+    #    top.add_atom("C", md.element.carbon, _res)
+    #query_traj.save_pdb("traj.pdb")
+    #ref_strc.save_pdb("ref_strc.pdb")
+    
     for res in ref_strc.topology.residues:
-        atm_idxs_per_residue = list()
-        for atom in res.atoms:
-            atm_idxs_per_residue.append(atom.index)
-        if exclude_water and np.any(np.isin(water_list, atm_idxs_per_residue)):
+        if exclude_water and np.any(np.isin(water_list, atm_idxs_per_residue_dict[res.index])):
             continue
-        count_start = count_stop
-        count_stop  = count_start + 27
-        ### Compute com for given residue for each frame
+        ### Compute com for given residue in reference structure
         com_ref = md.compute_center_of_mass(
-            traj=ref_strc.atom_slice(atm_idxs_per_residue)
+            traj = ref_strc.atom_slice(atm_idxs_per_residue_dict[res.index])
         )
-        box       = ref_strc.unitcell_vectors
-        box_inv   = np.linalg.inv(box)
-        com_frac  = np.einsum('ljk,lk->lj', box_inv, com_ref)
+        box      = ref_strc.unitcell_vectors
+        box_inv  = np.linalg.inv(box)
+        com_frac = np.einsum('lkj,lk->lj', box_inv, com_ref)
 
-        com_frac  = np.expand_dims(com_frac, axis=0) + grid
-        com_ref   = np.einsum('ljk,lhk->lhj', box, com_frac)
+        com_frac = np.expand_dims(com_frac, axis=0) + grid
+        com_ref  = np.einsum('lkj,lhk->lhj', box, com_frac)
         com_ref_big[res.index] = com_ref
         
-    for res in ref_strc.topology.residues:
-        atm_idxs_per_residue = list()
-        for atom in res.atoms:
-            atm_idxs_per_residue.append(atom.index)
-
-        ### Compute com for given residue for each frame
-        com_traj = md.compute_center_of_mass(
-            traj=query_traj.atom_slice(atm_idxs_per_residue)
-        )
-        
-        valids = np.where(
-            residue_classes_list == residue_classes_list[res.index]
-        )[0]
-
-        com_ref  = com_ref_big[valids].reshape(valids.size*27,3)
-        diff     = com_traj - np.expand_dims(com_ref, axis=1)
-        dists    = np.linalg.norm(diff, axis=2)
-        diff_distances[res.index,:] = np.min(dists, axis=0)
-
-    return diff_distances
-
-
-def compute_com_diff_per_residue_DEPRECATED(
-    query_traj, 
-    ref_strc,
-    N_unitcells_a,
-    N_unitcells_b,
-    N_unitcells_c):
-
-    """
-    Compute com difference for each residue in each frame of `query_traj`
-    against the first frame in `ref_strc`.
-    Returns list with com diffs (in nm) for each residue in each frame of
-    `query_traj`.
-    This works by translating each residue by the fraction of the number of
-    unit cell repitions in each dimension until a minimal distance to the 
-    same residue in the reference structure is found. This does not work 
-    optimial and output trajectory do not look right...
-
-    Use `compute_com_diff_per_residue` instead.
-    """
-
-    import mdtraj as md
-    import numpy as np
-
-    assert ref_strc.n_residues == query_traj.n_residues
-    assert ref_strc.n_frames == 1
-    
-    a_scan = np.linspace(-1, 1, 2 * int(N_unitcells_a) + 1, True)
-    b_scan = np.linspace(-1, 1, 2 * int(N_unitcells_b) + 1, True)
-    c_scan = np.linspace(-1, 1, 2 * int(N_unitcells_c) + 1, True)
-
-    grid = np.array(
-        np.meshgrid(
-            *[a_scan, b_scan, c_scan]
-        )
-    )
-    N_scans  = 1
-    N_scans *= 2 * int(N_unitcells_a) + 1
-    N_scans *= 2 * int(N_unitcells_b) + 1
-    N_scans *= 2 * int(N_unitcells_c) + 1
-    grid = grid.T.reshape((N_scans,-1))
-
-    ### Here we store the final min dist values
-    diff_distances = np.zeros((query_traj.n_residues, query_traj.n_frames), dtype=float)
-    for res in ref_strc.topology.residues:
-        atm_idxs_per_residue = list()
-        for atom in res.atoms:
-            atm_idxs_per_residue.append(atom.index)
-            
-        ### Compute com for given residue for each frame
-        com_ref = md.compute_center_of_mass(
-            traj=ref_strc.atom_slice(atm_idxs_per_residue)
-        )
+        ### Compute com for given residue in each frame
+        ### in query structure.
         com_query = md.compute_center_of_mass(
-            traj=query_traj.atom_slice(atm_idxs_per_residue)
-        )
+            traj = query_traj.atom_slice(
+                atm_idxs_per_residue_dict[res.index]
+                )
+            )
+        box      = query_traj.unitcell_vectors
+        box_inv  = np.linalg.inv(box)
+        com_frac = np.einsum('lkj,lk->lj', box_inv, com_query)
 
-        ### Translate residue around box and find com minimum
-        ### distance between ref and query
-        box       = query_traj.unitcell_vectors
-        box_inv   = np.linalg.inv(box)
-        com_frac  = np.einsum('ljk,lk->lj', box_inv, com_query)
+        com_frac  = np.expand_dims(com_frac, axis=1) + grid
+        com_query = np.einsum('lkj,lhk->lhj', box, com_frac)
+        com_query_big[:,res.index] = com_query
 
-        com_frac_test = np.expand_dims(com_frac, axis=1) + grid
-        com_test      = np.einsum('ljk,lhk->lhj', box, com_frac_test)
-        diff          = com_ref - com_test
-        dists         = np.linalg.norm(diff, axis=2)
-        diff_distances[res.index, :] = np.min(dists, axis=1)
+    com_diff_result = np.zeros(
+        (
+            query_traj.n_frames, 
+            query_traj.n_residues, 
+            N_closest_molecules
+        ),
+        dtype=float    
+    )
+    for res in ref_strc.topology.residues:
+        if exclude_water and np.any(np.isin(water_list, atm_idxs_per_residue_dict[res.index])):
+            continue
+        res_com = com_ref_big[res.index,0]
+        diff    = com_ref_big - np.expand_dims(res_com, axis=0)
+        dists   = np.linalg.norm(diff, axis=2)
+        ### Get the index of the closest image for each residue
+        ### to the reference residue.
+        min_res_idxs  = np.argmin(dists, axis=1)
+        ### Get the distance of the closest image for each residue
+        ### to the reference residue.
+        min_res_dists = np.choose(min_res_idxs, dists.T)
+        ### Order them  by distance and only keep the `N_closest_molecules` ones.
+        ### The closest one should always be residue itself at the image [0,0,0]
+        ### We can skip that.
+        min_res_idxs_sorted = np.argsort(min_res_dists)[1:N_closest_molecules+1]
+        ### These are the images for each of the closest residues found.
+        min_image_idxs_sorted = min_res_idxs[min_res_idxs_sorted]
         
-        ### The code below explictely loops over all axis and
-        ### is here for testing purpose only. It is about 2 times 
-        ### slower than the grid approach above.
-        #
-        #min_dists = np.zeros(query_traj.n_frames, dtype=float)
-        #min_dists[:] = np.inf
-        #for a in a_scan:
-        #    for b in b_scan:
-        #        for c in c_scan:
-        #            com_frac_test = com_frac + [a,b,c]
-        #            com_test      = np.einsum('ljk,lk->lj', box, com_frac_test)
-        #            ### Sanity check
-        #            #print(
-        #            #    com_test[0],
-        #            #    np.matmul(box[0], com_frac_test[0].T).T
-        #            #)
-        #            
-        #            diff = com_ref-com_test
-        #            dists = np.linalg.norm(diff, axis=1)
-        #            valids = np.where(dists < min_dists)
-        #            min_dists[valids] = np.copy(dists[valids])
-        #diff_distances[res.index, :] = np.copy(min_dists)
+        min_dists_ref = min_res_dists[min_res_idxs_sorted]
+        
+        #traj = md.Trajectory(
+        #    com_ref_big[min_res_idxs_sorted, min_image_idxs_sorted],
+        #    topology=top
+        #)
+        #traj.save_pdb(
+        #    f"closest_neighbor_res{res.index}.pdb"
+        #)
+        
+        res_com = com_query_big[:,res.index,0]
+        res_com = np.expand_dims(res_com, axis=(1,2))
+        diff    = res_com - com_query_big[:,min_res_idxs_sorted]
+        dists   = np.linalg.norm(diff, axis=3)
+        min_dists = np.min(dists, axis=2)
 
-    return diff_distances
+        com_diff_result[:,res.index] = min_dists
+
+    return com_diff_result
 
 
 def compute_pc_diff_per_residue(
     query_traj, 
     ref_strc,
     rdmol,
+    N_closest_molecules,
     exclude_water=True):
 
     """
     Compute difference in principal axes for each residue in each frame of `query_traj`
-    against the first frame in `ref_strc`. The difference is reported as angle (in degree) between
+    against the first frame in `ref_strc`. The difference is reported as angle (in radians) between
     corresponding principle axes.
-    Returns list with principal axes angle diffs (in degree) for each residue in each frame of
-    `query_traj`.
+    Returns list with principal axes angle diffs (in radians) for each residue in each frame of
+    `query_traj`. Also return difference in principal axis angle (in radians) for each
+    residue with respect to each of its `N_closest_molecules` neighboring molecules.
     """
 
     import mdtraj as md
@@ -548,20 +539,71 @@ def compute_pc_diff_per_residue(
         params.removeHs = False
         wat_rdmol = Chem.MolFromSmiles("[H]O[H]", params)
         water_list = get_all_matches(rdmol, wat_rdmol)
-
-    diff_pcs = np.zeros((query_traj.n_residues, query_traj.n_frames, 3), dtype=float)
+        
+    atm_idxs_per_residue_dict = dict()
     for res in ref_strc.topology.residues:
-        atm_idxs_per_residue = list()
+        atm_idxs_per_residue_dict[res.index] = list()
         for atom in res.atoms:
-            atm_idxs_per_residue.append(atom.index)
-        if exclude_water and np.any(np.isin(water_list, atm_idxs_per_residue)):
-            continue
+            atm_idxs_per_residue_dict[res.index].append(atom.index)
+            
+    a_scan = np.array([0,-1,1], dtype=float)
+    b_scan = np.array([0,-1,1], dtype=float)
+    c_scan = np.array([0,-1,1], dtype=float)
 
+    grid = np.array(
+        np.meshgrid(
+            *[a_scan, b_scan, c_scan]
+        )
+    )
+    N_scans = 27
+    grid    = grid.T.reshape((N_scans,-1))
+    com_ref_big = np.zeros((ref_strc.n_residues, 27, 3))
+    com_query_big = np.zeros((query_traj.n_frames, ref_strc.n_residues, 27, 3))
+    pc_ref_big = np.zeros((ref_strc.n_residues, 3, 3))
+    pc_query_big = np.zeros((query_traj.n_frames, ref_strc.n_residues, 3, 3))
+    diff_distances = np.zeros(
+        (query_traj.n_residues, query_traj.n_frames), 
+        dtype=float
+    )
+    
+    for res in ref_strc.topology.residues:
+        if exclude_water and np.any(np.isin(water_list, atm_idxs_per_residue_dict[res.index])):
+            continue
+        ### Compute com for given residue in reference structure
+        com_ref = md.compute_center_of_mass(
+            traj = ref_strc.atom_slice(atm_idxs_per_residue_dict[res.index])
+        )
+        box      = ref_strc.unitcell_vectors
+        box_inv  = np.linalg.inv(box)
+        com_frac = np.einsum('lkj,lk->lj', box_inv, com_ref)
+
+        com_frac = np.expand_dims(com_frac, axis=0) + grid
+        com_ref  = np.einsum('lkj,lhk->lhj', box, com_frac)
+        com_ref_big[res.index] = com_ref
+        
+        ### Compute com for given residue in each frame
+        ### in query structure.
+        com_query = md.compute_center_of_mass(
+            traj = query_traj.atom_slice(atm_idxs_per_residue_dict[res.index])
+        )
+        box      = query_traj.unitcell_vectors
+        box_inv  = np.linalg.inv(box)
+        com_frac = np.einsum('lkj,lk->lj', box_inv, com_query)
+
+        com_frac  = np.expand_dims(com_frac, axis=1) + grid
+        com_query = np.einsum('lkj,lhk->lhj', box, com_frac)
+        com_query_big[:,res.index] = com_query
+
+        ### Compute principal axis.
         pa_ref = md.compute_inertia_tensor(
-            traj=ref_strc.atom_slice(atm_idxs_per_residue),
+            traj=ref_strc.atom_slice(
+                atm_idxs_per_residue_dict[res.index]
+            ),
         )
         pa_query = md.compute_inertia_tensor(
-            traj=query_traj.atom_slice(atm_idxs_per_residue),
+            traj=query_traj.atom_slice(
+                atm_idxs_per_residue_dict[res.index]
+            ),
         )
         ### Note: Eigenvectors are in columns
         eigvals_ref, eigvecs_ref = np.linalg.eig(pa_ref)
@@ -610,35 +652,166 @@ def compute_pc_diff_per_residue(
             eigvecs_ref_sorted,
             1./np.linalg.norm(eigvecs_ref_sorted, axis=2)
         )
-        dot_products  = np.einsum(
-            'ljk,ajk->lk', 
-            eigvecs_query_sorted, 
-            eigvecs_ref_sorted
+        
+        pc_ref_big[res.index] = eigvecs_ref_sorted
+        pc_query_big[:,res.index] = eigvecs_query_sorted
+            
+    diff_pcs_neighbors = np.zeros(
+        (
+            query_traj.n_frames,
+            query_traj.n_residues, 
+            N_closest_molecules,            
+            3
+        ), 
+        dtype=float
+    )
+    diff_pcs_self = np.zeros(
+        (
+            query_traj.n_frames,
+            query_traj.n_residues, 
+            3
+        ), 
+        dtype=float
+    )
+    for res in ref_strc.topology.residues:
+        if exclude_water and np.any(np.isin(water_list, atm_idxs_per_residue_dict[res.index])):
+            continue
+
+        ### =================================================== ###
+        ### CALCULATE PC ANGLES BETWEEN QUERY AND REF STRUCTURE ###
+        ### =================================================== ###
+        ### Dot products query structure and reference structure
+        dot_products_self  = np.einsum(
+            'njk,jk->nj', #n: number of frames, #j,k: matrix indices
+            pc_query_big[:,res.index],
+            pc_ref_big[res.index],
         )
-        angular_diffs = np.arccos(
-            dot_products
-        ) * 180./np.pi
-        angular_diffs_2 = np.zeros(
-            angular_diffs.shape + (2,)
+
+        ### Some dot products will be slightly larger than 1.
+        ### Make them exactly one.
+        valids = np.where(dot_products_self > 1.)
+        dot_products_self[valids] = 1.
+        valids = np.where(dot_products_self < -1.)
+        dot_products_self[valids] = -1.
+
+        angular_diffs_self = np.arccos(
+            dot_products_self
         )
-        angular_diffs_2[...,-2] = angular_diffs
-        angular_diffs_2[...,-1] = 180. - angular_diffs
-        angular_diffs_min = np.min(angular_diffs_2, axis=-1)
+        
+        angular_diffs_self_2 = np.zeros(
+            (1,) + angular_diffs_self.shape + (2,)
+        )
 
-        diff_pcs[res.index, :] = angular_diffs_min
+        angular_diffs_self_2[...,-2] = angular_diffs_self
+        angular_diffs_self_2[...,-1] = np.pi - angular_diffs_self
+        angular_diffs_self_min = np.min(angular_diffs_self_2, axis=-1)
 
-        ### Serial way to compute dot products
-        ### Should give same result as np.einsum
-        #print(
-        #   np.arccos(
-        #       np.dot(
-        #            eigvecs_query_sorted[0][:,1],
-        #            eigvecs_ref_sorted[0][:,1]
-        #        )
-        #   )  * 180./np.pi,
-        #   np.arccos(
-        #       dot_products[0][1]
-        #   ) * 180./np.pi
-        #)
+        diff_pcs_self[:,res.index] = angular_diffs_self_min
 
-    return diff_pcs
+        ### ============================================================================ ###
+        ### CALCULATE PC ANGLES BETWEEN EACH MOLECULE AND ITS CLOSEST NEIGHBORS IN QUERY ###
+        ### ============================================================================ ###
+        res_com = com_ref_big[res.index,0]
+        diff    = com_ref_big - np.expand_dims(res_com, axis=0)
+        dists   = np.linalg.norm(diff, axis=2)
+        ### Get the index of the closest image for each residue
+        ### to the reference residue.
+        min_res_idxs  = np.argmin(dists, axis=1)
+        ### Get the distance of the closest image for each residue
+        ### to the reference residue.
+        min_res_dists = np.choose(min_res_idxs, dists.T)
+        ### Order them  by distance and only keep the `N_closest_molecules` ones.
+        ### The closest one should always be residue itself at the image [0,0,0]
+        ### We can skip that.
+        min_res_idxs_sorted = np.argsort(min_res_dists)[1:N_closest_molecules+1]
+
+        ### Dot products with nearest neighbors in ref structure
+        dot_products_ref  = np.einsum(
+            'ljk,jk->lj', #l: N_closest_molecules #j,k: matrix indices
+            pc_ref_big[min_res_idxs_sorted],
+            pc_ref_big[res.index],
+        )
+        
+        ### Dot products with nearest neighbors in query structure
+        dot_products_query  = np.einsum(
+            'nljk,njk->nlj', #n: number of frames #l: N_closest_molecules #j,k: matrix indices
+            pc_query_big[:,min_res_idxs_sorted],
+            pc_query_big[:,res.index],
+        )
+        
+        ### Some dot products will be slightly larger than 1.
+        ### Make them exactly one.
+        valids = np.where(dot_products_ref > 1.)
+        dot_products_ref[valids] = 1.
+        valids = np.where(dot_products_ref < -1.)
+        dot_products_ref[valids] = -1.
+        
+        valids = np.where(dot_products_query > 1.)
+        dot_products_query[valids] = 1.
+        valids = np.where(dot_products_query < -1.)
+        dot_products_query[valids] = -1.
+
+        angular_diffs_ref = np.arccos(
+            dot_products_ref
+        )
+        angular_diffs_query = np.arccos(
+            dot_products_query
+        )
+        
+        angular_diffs_ref_2 = np.zeros(
+            (1,) + angular_diffs_ref.shape + (2,)
+        )
+        angular_diffs_query_2 = np.zeros(
+            angular_diffs_query.shape + (2,)
+        )
+        
+        angular_diffs_ref_2[...,-2] = angular_diffs_ref
+        angular_diffs_ref_2[...,-1] = np.pi - angular_diffs_ref
+        angular_diffs_ref_min = np.min(angular_diffs_ref_2, axis=-1)
+        
+        angular_diffs_query_2[...,-2] = angular_diffs_query
+        angular_diffs_query_2[...,-1] = np.pi - angular_diffs_query
+        angular_diffs_query_min = np.min(angular_diffs_query_2, axis=-1)
+
+        diff_pcs_neighbors[:,res.index] = angular_diffs_query_min
+
+#        ### Serial way to compute differences
+#        ### Should give same result as np.einsum
+#        for frame_idx in range(query_traj.n_frames):
+#            for res_j in range(N_closest_molecules):
+#                for pc_idx in [0,1,2]:
+#                    dot_ref = np.dot(
+#                        pc_ref_big[min_res_idxs_sorted[res_j],pc_idx], 
+#                        pc_ref_big[res.index,pc_idx]
+#                    )
+#                    dot_query = np.dot(
+#                        pc_query_big[frame_idx,min_res_idxs_sorted[res_j],pc_idx], 
+#                        pc_query_big[frame_idx,res.index,pc_idx]
+#                    )
+#
+#                    if dot_ref > 1.:
+#                        dot_ref =1.
+#                    if dot_query > 1.:
+#                        dot_query =1.
+#
+#                    angular_ref = np.arccos(
+#                        dot_ref
+#                    )
+#                    angular_query = np.arccos(
+#                        dot_query
+#                    )
+#
+#                    angular_ref = np.min(
+#                        [angular_ref,
+#                         np.pi - angular_ref
+#                        ]
+#                    )
+#                    angular_query = np.min(
+#                        [angular_query,
+#                         np.pi - angular_query
+#                        ]
+#                    )
+#
+#                    diff_pcs_neighbors[frame_idx, res.index, res_j, pc_idx] = angular_query
+
+    return diff_pcs_neighbors, diff_pcs_self
