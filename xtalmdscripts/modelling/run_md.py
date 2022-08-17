@@ -344,60 +344,62 @@ def run_xtal_md(
     
     ### 2. Pressure equilibration anisotropic
     ### =====================================
-    system = openmm.XmlSerializer.deserialize(xml_str)
-    system.setDefaultPeriodicBoxVectors(
-        *state.getPeriodicBoxVectors()
+    for _ in range(100):
+        system = openmm.XmlSerializer.deserialize(xml_str)
+        system.setDefaultPeriodicBoxVectors(
+            *state.getPeriodicBoxVectors()
+            )
+
+        barostat_aniso = openmm.MonteCarloAnisotropicBarostat(
+            (1., 1., 1.) * unit.bar,
+            temperature.value_in_unit_system(unit.md_unit_system),
+        )
+        ### Default is 25
+        barostat_aniso.setFrequency(25)
+        system.addForce(barostat_aniso)
+
+        integrator = openmm.LangevinIntegrator(
+            temperature.value_in_unit_system(unit.md_unit_system),
+            friction,
+            time_step.value_in_unit_system(unit.md_unit_system))
+        integrator.setConstraintTolerance(constraint_tolerance)
+
+        platform = openmm.Platform.getPlatformByName(platform_name)
+        for property_name, property_value in property_dict.items():
+            platform.setPropertyDefaultValue(property_name, property_value)
+            
+        simulation = app.Simulation(
+            topology=topology,
+            system=system,
+            integrator=integrator,
+            platform=platform,
         )
 
-    barostat_aniso = openmm.MonteCarloAnisotropicBarostat(
-        (1., 1., 1.) * unit.bar,
-        temperature.value_in_unit_system(unit.md_unit_system),
-    )
-    ### Default is 25
-    barostat_aniso.setFrequency(25)
-
-    system.addForce(barostat_aniso)
-    
-    integrator = openmm.LangevinIntegrator(
-        temperature.value_in_unit_system(unit.md_unit_system),
-        friction,
-        time_step.value_in_unit_system(unit.md_unit_system))
-    integrator.setConstraintTolerance(constraint_tolerance)
-
-    platform = openmm.Platform.getPlatformByName(platform_name)
-    for property_name, property_value in property_dict.items():
-        platform.setPropertyDefaultValue(property_name, property_value)
-        
-    simulation = app.Simulation(
-        topology=topology,
-        system=system,
-        integrator=integrator,
-        platform=platform,
-    )
-
-    simulation.context.setPositions(
-        state.getPositions()
-        )
-    simulation.context.setVelocities(
-        state.getVelocities()
-        )
-    simulation.context.setPeriodicBoxVectors(
-        *state.getPeriodicBoxVectors()
-        )
-
-    ### Run for 1 ns
-    ### 1 step is 0.001 picoseconds
-    ### 1 picosecond is 1000 steps
-    try:
-        simulation.step(1000 * 1000)
-    except Exception as e:
-        return e
-    state = simulation.context.getState(
-        getPositions=True,
-        getVelocities=True,
-        getEnergy=True,
-        getForces=True
-        )
+        simulation.context.setPositions(
+            state.getPositions()
+            )
+        simulation.context.setVelocities(
+            state.getVelocities()
+            )
+        simulation.context.setPeriodicBoxVectors(
+            *state.getPeriodicBoxVectors()
+            )
+        ### Run for 0.01 ns
+        ### 1 step is 0.001 picoseconds
+        ### 1 picosecond is 1000 steps
+        try:
+            simulation.step(1000 * 10)
+        except Exception as e:
+            return e
+        state = simulation.context.getState(
+            getPositions=True,
+            getVelocities=True,
+            getEnergy=True,
+            getForces=True
+            )
+        topology.setPeriodicBoxVectors(
+            state.getPeriodicBoxVectors()
+            )
     with open(f"{prefix}_pressure1.xml", "w") as fopen:
         fopen.write(
             openmm.XmlSerializer.serialize(state)
@@ -464,7 +466,7 @@ def run_xtal_md(
         simulation.context.setPeriodicBoxVectors(
             *state.getPeriodicBoxVectors()
             )
-        ### Run for 1 ns
+        ### Run for 0.01 ns
         ### 1 step is 0.001 picoseconds
         ### 1 picosecond is 1000 steps
         try:
@@ -682,8 +684,13 @@ def main():
 
     ### Only if we have ray, wait for all jobs to finish
     for output_dir_replicate in worker_id_dict:
+        if not output_dir_replicate in worker_id_dict:
+            continue
         if HAS_RAY:
-            result = ray.get(worker_id_dict[output_dir_replicate])
+            try:
+                result = ray.get(worker_id_dict[output_dir_replicate])
+            except Exception as e:
+                result = e
         else:
             result = worker_id_dict[output_dir_replicate]
         if result != 1:
