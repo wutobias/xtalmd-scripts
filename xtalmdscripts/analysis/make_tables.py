@@ -1572,7 +1572,7 @@ pymol.cmd.distance(
                 ### Lattice energy. This is by definition a negative quantity.
                 ene_lattice      = np.mean(ene_xtal) - np.mean(ene_gas)
                 RT               = _GASCONST_KCAL * input_dict[crystal_name]["experiment"]["temperature"]
-                sublimation_avg  = - ene_lattice + RT
+                sublimation_avg  = - ene_lattice - 2. * RT
                 sublimation_std  = np.var(ene_xtal) + np.var(ene_gas)
                 sublimation_std  = np.sqrt(sublimation_std)
                 workbook_wrap.add_data(
