@@ -820,10 +820,10 @@ def make_P1(
             oechem.OEAssignImplicitHydrogens(oemol)
             oechem.OEAssignFormalCharges(oemol)
 
-            oequacpac.OERemoveFormalCharge(oemol)
             oechem.OEAddExplicitHydrogens(oemol)
 
             oechem.OEAssignAromaticFlags(oemol)
+
             mol = rdmol_from_oemol(oemol)
             Chem.AssignStereochemistryFrom3D(mol)
             mol_list.append(mol)
@@ -856,6 +856,7 @@ def make_P1(
                 oechem.OEPerceiveBondOrders(oemol)
                 oechem.OE3DToInternalStereo(oemol)
                 oechem.OEPerceiveChiral(oemol)
+                oechem.OEAssignImplicitHydrogens(oemol)
                 oechem.OEAssignFormalCharges(oemol)
 
                 oechem.OEAssignAromaticFlags(oemol)
@@ -1372,14 +1373,6 @@ def main():
     ### molecules in UC
     ### =========================================
     mol_list = make_P1(strc.cell, atom_crds_ortho, atom_num, args.addhs, args.use_openeye)
-    if args.addwater > 0:
-        random_fill(
-            strc.cell,
-            mol_list,
-            N_per_unitcell=args.addwater,
-            radius=0.5,
-            smiles="O"
-            )
 
     unitcell_mol_list, _, _ = make_supercell(
         strc.cell,
@@ -1390,6 +1383,8 @@ def main():
         )
     from rdkit.Chem import Descriptors
     unitcell_weight = 0.
+    if args.addwater > 0:
+        unitcell_weight += (args.addwater * 18.01528)
     smiles_list     = list()
     for mol in unitcell_mol_list:
         unitcell_weight += Descriptors.MolWt(mol)
