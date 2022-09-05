@@ -157,6 +157,10 @@ def OPLS_LJ(system, CutoffPeriodic=True):
     """
     Helper function to get the OPLS combination rules.
     See http://zarbi.chem.yale.edu/ligpargen/openMM_tutorial.html
+
+    Scaling factors for 1-4 interactions are 0.5 for both LJ and charge.
+    These are assumed to be already correctly scaled when the system
+    is parsed.
     """
 
     forces = {system.getForce(index).__class__.__name__: system.getForce(
@@ -188,8 +192,7 @@ def OPLS_LJ(system, CutoffPeriodic=True):
         if eps._value != 0.0:
             #print p1,p2,sig,eps
             sig14 = np.sqrt(LJset[p1][0] * LJset[p2][0])
-            #eps14 = np.sqrt(LJset[p1][1] * LJset[p2][1]) * 0.5
-            ### eps is already scaled
+            eps14 = np.sqrt(LJset[p1][1] * LJset[p2][1]) * 0.5
             nonbonded_force.setExceptionParameters(i, p1, p2, q, sig14, eps)
     system.addForce(lorentz)
     return system
