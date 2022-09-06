@@ -13,3 +13,6 @@ dist
 *.psf
 *.xlsx
 *.json
+examples/OFFBenchmark/CIF/*.cif
+!examples/OFFBenchmark/*/*.csv
+examples/analysis/*.py
