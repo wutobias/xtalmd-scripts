@@ -100,6 +100,8 @@ As an alternative, we can optimize the atom positions and box vectors seperately
 -i build_system/oxamide/1473522_oplsaa.xml -p build_system/oxamide/1473522_oplsaa.pdb -pre xtal_min/oxamide_oplsaa_min_alt --method BFGS --steps 100 --alternating
 ```
 
+In general, the option `--method` can be used to define the main optimization algorithm in place. Valid choices are Nelder-Mead, Powell, CG, BFGS, Newton-CG, L-BFGS-B, TNC, COBYLA, SLSQP, trust-const, dogleg, trust-ncg, trust-exact, trust-krylov. See the [scipy documentation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html) for more information.
+
 Now let's do the same thing for a larger number of lattice structures. The commands are all stored in the [`input.yaml`](xtal_min/input.yaml) Go to the folder `xtal_min` first, and then run the following command. But be careful, this will start a lot of processes. If you want to limit the number of available CPUs, first start the ray server manually `ray start --head --port=6831 --redis-password=5241590000000000 --num-cpus=16 --num-gpus=4` and add the line `"ray_host" : "localhost:6381"` to the `input.yaml` file.
 
 ```
