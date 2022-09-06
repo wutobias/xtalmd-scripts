@@ -9,6 +9,8 @@ c_min_max = [0,2]
 
 ### Load the cif file as gemmi structure
 strc = make_supercell.parse_cif("../data/adipamide/1101307.cif")
+### `replicated_mol_list` is a list of rdkit molecule objects.
+### One for each molecule in the lattice.
 replicated_mol_list, _, _ = make_supercell.generate_replicated_mol_list(
     strc,
     a_min_max,
