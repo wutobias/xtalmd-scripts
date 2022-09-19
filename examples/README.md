@@ -58,9 +58,6 @@ We can build atomic-level systems using different force fields: GAFF 1.X, GAFF 2
 Note that for the CgenFF force field to work, you must have the Charmm/CgenFF force field files installed.
 
 ```
-mkdir build_system/oxamide
-mkdir build_system/adipamide
-
 build_system -i data/oxamide/1473522.cif -pre build_system/oxamide/1473522_gaff1   -ff gaff1
 build_system -i data/oxamide/1473522.cif -pre build_system/oxamide/1473522_gaff2   -ff gaff2
 build_system -i data/oxamide/1473522.cif -pre build_system/oxamide/1473522_parsley -ff parsley
