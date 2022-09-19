@@ -7,15 +7,15 @@ This is to illustrate some use cases of this package. The examples provided here
 Here we build a default 3x3x3 supercell lattice:
 
 ```
-make_supercell -i data/adipamide/1101307.cif -pre buildsystem/1101307_3x3x3
-make_supercell -i data/oxamide/1473522.cif -pre buildsystem/1473522_3x3x3
+make_supercell -i data/adipamide/1101307.cif -pre supercellbuilding//1101307_3x3x3
+make_supercell -i data/oxamide/1473522.cif   -pre supercellbuilding/1473522_3x3x3
 ```
 
 Next, let's build a 5x5x5 lattice:
 
 ```
 make_supercell -i data/adipamide/1101307.cif -pre supercellbuilding/1101307_5x5x5 --a_min_max -2 2 --b_min_max -2 2 --c_min_max -2 2
-make_supercell -i data/oxamide/1473522.cif -pre supercellbuilding/1473522_5x5x5 --a_min_max -2 2 --b_min_max -2 2 --c_min_max -2 2
+make_supercell -i data/oxamide/1473522.cif   -pre supercellbuilding/1473522_5x5x5 --a_min_max -2 2 --b_min_max -2 2 --c_min_max -2 2
 ```
 
 By default, `make_supercell` uses the `xyz2mol` for building molecule topologies. However, sometimes that doesn't work and we will have to use the OpenEye toolkit for this. In order to do that, simply re-run the above commands with `--use_openeye`. For instance:
@@ -43,7 +43,6 @@ Sometimes CIF files contain an unusal space group. In these cases the resulting 
 
 ```
 make_supercell -i data/adipamide/1101307.cif -pre supercellbuilding/1101307_3x3x3_op --use_symmetry_operations
-make_supercell -i data/oxamide/1473522.cif -pre supercellbuilding/1473522_3x3x3_op --use_symmetry_operations
 ```
 
 Some crystals need have bound water molecules that are resolved in the crystal structure. With the option `--addwater`, one can add a fixed number of water molecules to the unit cell. Default is `--addwater 0` (do not add any water molecules).
@@ -59,6 +58,9 @@ We can build atomic-level systems using different force fields: GAFF 1.X, GAFF 2
 Note that for the CgenFF force field to work, you must have the Charmm/CgenFF force field files installed.
 
 ```
+mkdir build_system/oxamide
+mkdir build_system/adipamide
+
 build_system -i data/oxamide/1473522.cif -pre build_system/oxamide/1473522_gaff1   -ff gaff1
 build_system -i data/oxamide/1473522.cif -pre build_system/oxamide/1473522_gaff2   -ff gaff2
 build_system -i data/oxamide/1473522.cif -pre build_system/oxamide/1473522_parsley -ff parsley
