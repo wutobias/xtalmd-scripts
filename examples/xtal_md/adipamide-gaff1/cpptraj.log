@@ -1,6 +1,0 @@
-# 03/02/22 10:07:45
-parm ../../build_system/adipamide/1101307_gaff1.pdb
-trajin md_production_10.dcd
-trajout md_production_10.pdb
-go
-quit

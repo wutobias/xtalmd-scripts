@@ -90,13 +90,13 @@ After the building the lattice, we should first minimize the lattice. This can b
 First, let's optimize the joint coordinates of atomic positions and lattice vectors using 100 steps of BFGS.
 
 ```
-run_xtal_min xml -i build_system/oxamide/1473522_oplsaa.xml -p build_system/oxamide/1473522_oplsaa.pdb -pre xtal_min/oxamide_oplsaa_min --method BFGS --steps 100
+run_xtal_min xml -i build_system/oxamide/1473522_gaff1.xml -p build_system/oxamide/1473522_gaff1.pdb -pre xtal_min/oxamide_gaff1_min --method BFGS --steps 100
 ```
 
 As an alternative, we can optimize the atom positions and box vectors seperately and alternate between the two.
 
 ```
--i build_system/oxamide/1473522_oplsaa.xml -p build_system/oxamide/1473522_oplsaa.pdb -pre xtal_min/oxamide_oplsaa_min_alt --method BFGS --steps 100 --alternating
+run_xtal_min xml -i build_system/oxamide/1473522_gaff1.xml -p build_system/oxamide/1473522_gaff1.pdb -pre xtal_min/oxamide_gaff1_min_alt --method BFGS --steps 100 --alternating
 ```
 
 In general, the option `--method` can be used to define the main optimization algorithm in place. Valid choices are Nelder-Mead, Powell, CG, BFGS, Newton-CG, L-BFGS-B, TNC, COBYLA, SLSQP, trust-const, dogleg, trust-ncg, trust-exact, trust-krylov. See the [scipy documentation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html) for more information.
@@ -111,9 +111,13 @@ run_xtal_min yaml -i input.yaml
 
 To run MD simulations of the supercell lattice, we use `run_xtal_md`. In accordance with the minimization script `run_xtal_min`, we can run this in two modes, either `run_xtal_md xml` from the command line or `run_xtal_md yaml` as high-throughput.
 
-The command line arguments are very self-explaining. Just run `run_xtal_md xml -h` to see what is available. 
+The command line arguments are very self-explaining. Just run `run_xtal_md xml -h` to see what is available. For instance, to run a 2 nanosecond lattice simulation of oxamide starting from the minimized structure:
 
-For the high-throughput work, have a look at the [`input.yaml`](xtal_min/input.yaml). This works similarly as for the previous `run_xtal_min yaml` case.
+```
+run_xtal_md xml -i build_system/oxamide/1473522_gaff1.xml -p xtal_min/oxamide_gaff1/1473522_gaff1_min.pdb --temperature=298.15 --nanoseconds 2 --prefix xtal_md/oxamide_gaff1
+```
+
+For the high-throughput work, have a look at the [`input.yaml`](xtal_min/input.yaml). This works sort of similarly as for the previous `run_xtal_min yaml` case.
 
 ## Data Analysis
 
