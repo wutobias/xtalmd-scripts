@@ -99,7 +99,7 @@ As an alternative, we can optimize the atom positions and box vectors seperately
 run_xtal_min xml -i build_system/oxamide/1473522_gaff1.xml -p build_system/oxamide/1473522_gaff1.pdb -pre xtal_min/oxamide_gaff1_min_alt --method BFGS --steps 100 --alternating
 ```
 
-Normally, the minimization operates on the 6 degrees of freedom in unit cell matrix. However, one can also use axes lengths and box vectors as the minization variables. In that case, add the `--use_lengths_and_angles` option to the command above.
+Normally, the minimization operates on the 6 degrees of freedom in unit cell matrix. However, one can also use axes lengths and angles for the minization variables. In that case, add the `--use_lengths_and_angles` option to the command above.
 
 In general, the option `--method` can be used to define the main optimization algorithm in place. Valid choices are Nelder-Mead, Powell, CG, BFGS, Newton-CG, L-BFGS-B, TNC, COBYLA, SLSQP, trust-const, dogleg, trust-ncg, trust-exact, trust-krylov. See the [scipy documentation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html) for more information.
 
