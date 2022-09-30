@@ -2,6 +2,7 @@
 
 rm -rf *d-lt4.py
 rm -rf *hbond.py
+rm -rf *.xlsx
 
 rm -rf adipamide-gaff1
 rm -rf adipamide-gaff1-gas
