@@ -1,86 +1,68 @@
 #"ray_host" : "localhost:6381"
 "adipamide-gaff1" :
-    "input"       : "../build_system/adipamide/1101307_gaff1.xml"
-    "pdb"         : "../xtal_min/adipamide-gaff1/min.pdb"
+    "input"       : "build_system/adipamide_gaff1.xml"
+    "pdb"         : "adipamide-gaff1/min.pdb"
     "prefix"      : "md"
     "temperature" : 298.15
-    "nanoseconds" : 100
-    "nvt"         : False
-"adipamide-gaff2" :
-    "input"       : "../build_system/adipamide/1101307_gaff2.xml"
-    "pdb"         : "../xtal_min/adipamide-gaff2/min.pdb"
-    "prefix"      : "md"
-    "temperature" : 298.15
-    "nanoseconds" : 100
+    "nanoseconds" : 2
+    "replicates"  : 2
     "nvt"         : False
 "adipamide-parsley" :
-    "input"       : "../build_system/adipamide/1101307_parsley.xml"
-    "pdb"         : "../xtal_min/adipamide-parsley/min.pdb"
+    "input"       : "build_system/adipamide_parsley.xml"
+    "pdb"         : "adipamide-parsley/min.pdb"
     "prefix"      : "md"
     "temperature" : 298.15
-    "nanoseconds" : 100
-    "nvt"         : False
-"adipamide-sage" :
-    "input"       : "../build_system/adipamide/1101307_sage.xml"
-    "pdb"         : "../xtal_min/adipamide-sage/min.pdb"
-    "prefix"      : "md"
-    "temperature" : 298.15
-    "nanoseconds" : 100
-    "nvt"         : False
-"adipamide-cgenff" :
-    "input"       : "../build_system/adipamide/1101307_cgenff.xml"
-    "pdb"         : "../xtal_min/adipamide-cgenff/min.pdb"
-    "prefix"      : "md"
-    "temperature" : 298.15
-    "nanoseconds" : 100
-    "nvt"         : False
-"adipamide-oplsaa" :
-    "input"       : "../build_system/adipamide/1101307_oplsaa.xml"
-    "pdb"         : "../xtal_min/adipamide-oplsaa/min.pdb"
-    "prefix"      : "md"
-    "temperature" : 298.15
-    "nanoseconds" : 100
+    "nanoseconds" : 2
+    "replicates"  : 2
     "nvt"         : False
 
+"adipamide-gaff1-gas" :
+    "input"       : "build_system/adipamide_gaff1_monomer0.xml"
+    "pdb"         : "build_system/adipamide_gaff1_monomer0.pdb"
+    "prefix"      : "md"
+    "temperature" : 298.15
+    "nanoseconds" : 2
+    "replicates"  : 2
+    "nvt"         : True
+"adipamide-parsley-gas" :
+    "input"       : "build_system/adipamide_parsley_monomer0.xml"
+    "pdb"         : "build_system/adipamide_parsley_monomer0.pdb"
+    "prefix"      : "md"
+    "temperature" : 298.15
+    "nanoseconds" : 2
+    "replicates"  : 2
+    "nvt"         : True
+
 "oxamide-gaff1" :
-    "input"       : "../build_system/oxamide/1473522_gaff1.xml"
-    "pdb"         : "../xtal_min/oxamide-gaff1/min.pdb"
+    "input"       : "build_system/oxamide_gaff1.xml"
+    "pdb"         : "oxamide-gaff1/min.pdb"
     "prefix"      : "md"
     "temperature" : 298.15
-    "nanoseconds" : 100
-    "nvt"         : False
-"oxamide-gaff2" :
-    "input"       : "../build_system/oxamide/1473522_gaff2.xml"
-    "pdb"         : "../xtal_min/oxamide-gaff2/min.pdb"
-    "prefix"      : "md"
-    "temperature" : 298.15
-    "nanoseconds" : 100
+    "nanoseconds" : 2
+    "replicates"  : 2
     "nvt"         : False
 "oxamide-parsley" :
-    "input"       : "../build_system/oxamide/1473522_parsley.xml"
-    "pdb"         : "../xtal_min/oxamide-parsley/min.pdb"
+    "input"       : "build_system/oxamide_parsley.xml"
+    "pdb"         : "oxamide-parsley/min.pdb"
     "prefix"      : "md"
     "temperature" : 298.15
-    "nanoseconds" : 100
+    "nanoseconds" : 2
+    "replicates"  : 2
     "nvt"         : False
-"oxamide-sage" :
-    "input"       : "../build_system/oxamide/1473522_sage.xml"
-    "pdb"         : "../xtal_min/oxamide-sage/min.pdb"
+
+"oxamide-gaff1-gas" :
+    "input"       : "build_system/oxamide_gaff1_monomer0.xml"
+    "pdb"         : "build_system/oxamide_gaff1_monomer0.pdb"
     "prefix"      : "md"
     "temperature" : 298.15
-    "nanoseconds" : 100
-    "nvt"         : False
-"oxamide-cgenff" :
-    "input"       : "../build_system/oxamide/1473522_cgenff.xml"
-    "pdb"         : "../xtal_min/oxamide-cgenff/min.pdb"
+    "nanoseconds" : 2
+    "replicates"  : 2
+    "nvt"         : True
+"oxamide-parsley-gas" :
+    "input"       : "build_system/oxamide_parsley_monomer0.xml"
+    "pdb"         : "build_system/oxamide_parsley_monomer0.pdb"
     "prefix"      : "md"
     "temperature" : 298.15
-    "nanoseconds" : 100
-    "nvt"         : False
-"oxamide-oplsaa" :
-    "input"       : "../build_system/oxamide/1473522_oplsaa.xml"
-    "pdb"         : "../xtal_min/oxamide-oplsaa/min.pdb"
-    "prefix"      : "md"
-    "temperature" : 298.15
-    "nanoseconds" : 100
-    "nvt"         : False
+    "nanoseconds" : 2
+    "replicates"  : 2
+    "nvt"         : True
