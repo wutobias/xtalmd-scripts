@@ -1708,7 +1708,7 @@ pymol.cmd.distance(
         ### Write hbond data ###
         ### ================ ###
 
-        if len(hbond_distances) > 0:
+        if len(ref_hbond_distances) > 0:
             avg   = np.mean(ref_hbond_distances)
             std   = "--"
             dev   = "--"
@@ -1736,7 +1736,7 @@ pymol.cmd.distance(
             crystal_name
             )
 
-        if len(hbond_angles) > 0:
+        if len(ref_hbond_angles) > 0:
             avg   = np.mean(ref_hbond_angles)
             std   = "--"
             dev   = "--"
