@@ -78,7 +78,7 @@ A short example in python can be found [here](make_supercell/example.py)
 
 We can build atomic-level systems using different force fields: GAFF 1.X, GAFF 2.X, OpenFF 1.X, OpenFF 2.X, CgenFF, OPLS. For that we will use the script `build_system`, which inherits all the options from the previous `make_supercell`. The script `build_system` can build the lattice structure as a pdb file and generate the accompanying force field as an OpenMM xml file.
 
-Note that for the CgenFF force field to work, you must have installed the Charmm/CgenFF force field files stored under `toppar_c36_jul21` as well as the programs `CgenFF` and `CHARMM`. For the opls-AA forcefield to work, you must have installed the programs `LigParGen` and `BOSS`. See [here](README.md) for instructions on how to get these.
+Note that for the CgenFF force field to work, you must have installed the Charmm/CgenFF force field files stored under `toppar_c36_jul21` as well as the programs `CgenFF` and `CHARMM`. For the opls-AA forcefield to work, you must have installed the programs `LigParGen` and `BOSS`. See [here](../README.md) for instructions on how to get these.
 
 ```
 build_system -i data/oxamide.cif -pre build_system/oxamide_gaff1   -ff gaff1
