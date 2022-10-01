@@ -72,7 +72,36 @@ Some crystals need have bound water molecules that are resolved in the crystal s
 
 ## Building supercells (python)
 
-A short example in python can be found [here](make_supercell/example.py)
+A short example for building a 3x3x3 supercell in python:
+
+```python
+from xtalmdscripts.supercellbuilding import make_supercell
+
+### Set a,b,c limits for 3x3x3
+a_min_max = [0,2]
+b_min_max = [0,2]
+c_min_max = [0,2]
+
+### Load the cif file as gemmi structure
+strc = make_supercell.parse_cif("data/adipamide.cif")
+### `replicated_mol_list` is a list of rdkit molecule objects.
+### One for each molecule in the lattice.
+replicated_mol_list, _, _ = make_supercell.generate_replicated_mol_list(
+    strc,
+    a_min_max,
+    b_min_max,
+    c_min_max,
+    )
+pdb_str = make_supercell.get_pdb_str(
+    replicated_mol_list,
+    strc,
+    a_min_max,
+    b_min_max,
+    c_min_max
+    )
+with open("./make_supercell/adipamide_3x3x3_py.pdb", "w") as fopen:
+    fopen.write(pdb_str)
+```
 
 ## Building Molecular Mechanics Atomic-Level Systems
 
