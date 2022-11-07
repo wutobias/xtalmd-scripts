@@ -172,5 +172,5 @@ For the high-throughput work, have a look at the [`input.yaml`](xtal_min/input.y
 The data analysis interface works only through `.yaml` files. This is necessary, since we need to combine lots of different information, which is easier in a structured file format than on the command line. Have a look into the file `analysis/input.yaml` to see what information goes where. The variables should be self-explaining. The final analysis is summarized and saved in an Excel `.xlsx` table. Run the analaysis using:
 
 ```
-make_tables -i input.yaml -o table.xlsx
+make_tables -i analysis/input.yaml -o table.xlsx
 ```
