@@ -149,6 +149,22 @@ def parse_arguments():
         default=False,
         )
 
+    parser.add_argument(
+        '--charge_method', 
+        "-cm", 
+        type=str, 
+        help="Charge method used for partial charge assignment. Choice `default` uses standard method for forcefield.", 
+        choices=[
+            "default",
+            "am1bcc", 
+            "am1elf10", 
+            "am1-mulliken", 
+            "gasteiger"
+            ],
+        required=False,
+        default="default"
+        )
+
     return parser.parse_args()
 
 
@@ -190,7 +206,6 @@ def OPLS_LJ(system, CutoffPeriodic=True):
         # FORCE
         lorentz.addExclusion(p1, p2)
         if eps._value != 0.0:
-            #print p1,p2,sig,eps
             sig14 = np.sqrt(LJset[p1][0] * LJset[p2][0])
             eps14 = np.sqrt(LJset[p1][1] * LJset[p2][1]) * 0.5
             nonbonded_force.setExceptionParameters(i, p1, p2, q, sig14, eps)
@@ -923,7 +938,7 @@ def main():
         json_str = make_supercell.get_replicated_mol_list_json(replicated_mol_list)
         fopen.write(json_str)
 
-    _, rdmol_list_unique = make_supercell.get_unique_mapping(
+    unique_mapping, rdmol_list_unique = make_supercell.get_unique_mapping(
         replicated_mol_list,
         stereochemistry=False
         )
@@ -1102,6 +1117,87 @@ def main():
         index) for index in range(system.getNumForces())}
     nbforce = forces['NonbondedForce']
     nbforce.setCutoffDistance(args.nbcutoff * unit.nanometer)
+
+    ### Change charge method
+    if args.charge_method.lower() != "default":
+        from openff.toolkit.topology import Molecule
+        partial_charges_list = list()
+        for rdmol in rdmol_list_unique:
+            offmol = Molecule.from_rdkit(rdmol)
+            offmol.assign_partial_charges(
+                partial_charge_method=args.charge_method.lower(),
+                )
+            partial_charges_list.append(
+                offmol.partial_charges
+                )
+
+        atom_count = 0
+        old_q_list = list()
+        new_q_list = list()
+        for mol_idx in unique_mapping:
+            unique_idx = unique_mapping[mol_idx]
+            partial_charges = partial_charges_list[unique_idx]
+            N_atoms = len(partial_charges)
+            for i in range(N_atoms):
+                q_old, sig, eps = nbforce.getParticleParameters(atom_count)
+                q_new = partial_charges[i]
+                old_q_list.append(q_old)
+                new_q_list.append(q_new)                
+                nbforce.setParticleParameters(
+                    atom_count, 
+                    q_new, 
+                    sig, 
+                    eps
+                    )
+                atom_count += 1
+
+        for i in range(nbforce.getNumExceptions()):
+            p1, p2, q_prod, sig, eps = nbforce.getExceptionParameters(i)
+            q1 = old_q_list[p1]
+            q2 = old_q_list[p2]
+            f  = q_prod/(q1*q2)
+
+            q1_new = new_q_list[p1]
+            q2_new = new_q_list[p2]
+
+            q_prod = f * q1_new * q2_new
+
+            nbforce.setExceptionParameters(i, p1, p2, q_prod, sig, eps)
+
+        for sys_idx, system in enumerate(monomer_sys_list):
+            forces = {system.getForce(index).__class__.__name__: system.getForce(
+                index) for index in range(system.getNumForces())}
+            nbforce = forces['NonbondedForce']
+
+            old_q_list = list()
+            new_q_list = list()
+            unique_idx = unique_mapping[sys_idx]
+            partial_charges = partial_charges_list[unique_idx]
+            N_atoms = len(partial_charges)
+            for i in range(N_atoms):
+                q_old, sig, eps = nbforce.getParticleParameters(i)
+                q_new = partial_charges[i]
+                old_q_list.append(q_old)
+                new_q_list.append(q_new)                
+                nbforce.setParticleParameters(
+                    i, 
+                    q_new, 
+                    sig, 
+                    eps
+                    )
+
+            for i in range(nbforce.getNumExceptions()):
+                p1, p2, q_prod, sig, eps = nbforce.getExceptionParameters(i)
+                q1 = old_q_list[p1]
+                q2 = old_q_list[p2]
+                f  = q_prod/(q1*q2)
+
+                q1_new = new_q_list[p1]
+                q2_new = new_q_list[p2]
+
+                q_prod = f * q1_new * q2_new
+
+                nbforce.setExceptionParameters(i, p1, p2, q_prod, sig, eps)
 
     with open(f"{prefix}.xml", "w") as fopen:
         fopen.write(openmm.XmlSerializer.serialize(system))
