@@ -12,19 +12,19 @@
     "GAFF1" :
 
         "xtal-topology"   : "build_system/oxamide_gaff1.pdb"
-        "xtal-trajectory" : "oxamide-gaff1/run_?/*_?.dcd"
-        "xtal-output"     : "oxamide-gaff1/run_?/*_?.csv"
+        "xtal-trajectory" : "xtal_md/oxamide-gaff1/run_?/*_?.dcd"
+        "xtal-output"     : "xtal_md/oxamide-gaff1/run_?/*_?.csv"
 
-        "gas-output-1"     : "oxamide-gaff1-gas/run_?/*_?.csv"
+        "gas-output-1"     : "xtal_md/oxamide-gaff1-gas/run_?/*_?.csv"
         "stoichiometry-1"  : 1.
 
     "Parsley" :
 
         "xtal-topology"   : "build_system/oxamide_parsley.pdb"
-        "xtal-trajectory" : "oxamide-parsley/run_?/*_?.dcd"
-        "xtal-output"     : "oxamide-parsley/run_?/*_?.csv"
+        "xtal-trajectory" : "xtal_md/oxamide-parsley/run_?/*_?.dcd"
+        "xtal-output"     : "xtal_md/oxamide-parsley/run_?/*_?.csv"
 
-        "gas-output-1"     : "oxamide-parsley-gas/run_?/*_?.csv"
+        "gas-output-1"     : "xtal_md/oxamide-parsley-gas/run_?/*_?.csv"
         "stoichiometry-1"  : 1.
 
 
@@ -40,17 +40,17 @@
     "GAFF1" :
 
         "xtal-topology"   : "build_system/adipamide_gaff1.pdb"
-        "xtal-trajectory" : "adipamide-gaff1/run_?/*_?.dcd"
-        "xtal-output"     : "adipamide-gaff1/run_?/*_?.csv"
+        "xtal-trajectory" : "xtal_md/adipamide-gaff1/run_?/*_?.dcd"
+        "xtal-output"     : "xtal_md/adipamide-gaff1/run_?/*_?.csv"
 
-        "gas-output-1"     : "adipamide-gaff1-gas/run_?/*_?.csv"
+        "gas-output-1"     : "xtal_md/adipamide-gaff1-gas/run_?/*_?.csv"
         "stoichiometry-1"  : 1.
 
     "Parsley" :
 
         "xtal-topology"   : "build_system/adipamide_parsley.pdb"
-        "xtal-trajectory" : "adipamide-parsley/run_?/*_?.dcd"
-        "xtal-output"     : "adipamide-parsley/run_?/*_?.csv"
+        "xtal-trajectory" : "xtal_md/adipamide-parsley/run_?/*_?.dcd"
+        "xtal-output"     : "xtal_md/adipamide-parsley/run_?/*_?.csv"
 
-        "gas-output-1"     : "adipamide-parsley-gas/run_?/*_?.csv"
+        "gas-output-1"     : "xtal_md/adipamide-parsley-gas/run_?/*_?.csv"
         "stoichiometry-1"  : 1.

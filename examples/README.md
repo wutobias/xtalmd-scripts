@@ -173,8 +173,8 @@ run_xtal_md yaml -i input.yaml
 
 ## Data Analysis
 
-The data analysis interface works only through `.yaml` files. This is necessary, since we need to combine lots of different information, which is easier in a structured file format than on the command line. Have a look into the file `analysis/input.yaml` to see what information goes where. The variables should be self-explaining. The final analysis is summarized and saved in an Excel `.xlsx` table. Run the analaysis using:
+The data analysis interface works only through `.yaml` files. This is necessary, since we need to combine lots of different information, which is easier in a structured file format than on the command line. Have a look into the file `analysis/input.yaml` to see what information goes where. The variables should be self-explaining. The final analysis is summarized and saved in an Excel `.xlsx` table.
 
 ```
-make_tables -i analysis/input.yaml -o table.xlsx
+make_tables -i input.yaml -o table.xlsx
 ```

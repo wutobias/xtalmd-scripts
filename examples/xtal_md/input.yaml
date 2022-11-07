@@ -1,5 +1,5 @@
 #"ray_host" : "localhost:6381"
-"../xtal_min/adipamide-gaff1" :
+"adipamide-gaff1" :
     "input"       : "../build_system/adipamide_gaff1.xml"
     "pdb"         : "../xtal_min/adipamide-gaff1/min.pdb"
     "prefix"      : "md"
@@ -7,7 +7,7 @@
     "nanoseconds" : 2
     "replicates"  : 2
     "nvt"         : False
-"../xtal_min/adipamide-parsley" :
+"adipamide-parsley" :
     "input"       : "../build_system/adipamide_parsley.xml"
     "pdb"         : "../xtal_min/adipamide-parsley/min.pdb"
     "prefix"      : "md"
@@ -16,7 +16,7 @@
     "replicates"  : 2
     "nvt"         : False
 
-"../xtal_min/adipamide-gaff1-gas" :
+"adipamide-gaff1-gas" :
     "input"       : "../build_system/adipamide_gaff1_monomer0.xml"
     "pdb"         : "../build_system/adipamide_gaff1_monomer0.pdb"
     "prefix"      : "md"
@@ -24,7 +24,7 @@
     "nanoseconds" : 2
     "replicates"  : 2
     "nvt"         : True
-"../xtal_min/adipamide-parsley-gas" :
+"adipamide-parsley-gas" :
     "input"       : "../build_system/adipamide_parsley_monomer0.xml"
     "pdb"         : "../build_system/adipamide_parsley_monomer0.pdb"
     "prefix"      : "md"
@@ -33,7 +33,7 @@
     "replicates"  : 2
     "nvt"         : True
 
-"../xtal_min/oxamide-gaff1" :
+"oxamide-gaff1" :
     "input"       : "../build_system/oxamide_gaff1.xml"
     "pdb"         : "../xtal_min/oxamide-gaff1/min.pdb"
     "prefix"      : "md"
@@ -41,7 +41,7 @@
     "nanoseconds" : 2
     "replicates"  : 2
     "nvt"         : False
-"../xtal_min/oxamide-parsley" :
+"oxamide-parsley" :
     "input"       : "../build_system/oxamide_parsley.xml"
     "pdb"         : "../xtal_min/oxamide-parsley/min.pdb"
     "prefix"      : "md"
@@ -50,7 +50,7 @@
     "replicates"  : 2
     "nvt"         : False
 
-"../xtal_min/oxamide-gaff1-gas" :
+"oxamide-gaff1-gas" :
     "input"       : "../build_system/oxamide_gaff1_monomer0.xml"
     "pdb"         : "../build_system/oxamide_gaff1_monomer0.pdb"
     "prefix"      : "md"
@@ -58,7 +58,7 @@
     "nanoseconds" : 2
     "replicates"  : 2
     "nvt"         : True
-"../xtal_min/oxamide-parsley-gas" :
+"oxamide-parsley-gas" :
     "input"       : "../build_system/oxamide_parsley_monomer0.xml"
     "pdb"         : "../build_system/oxamide_parsley_monomer0.pdb"
     "prefix"      : "md"
