@@ -1,8 +1,8 @@
 #"ray_host" : "localhost:6381"
 "num_cpus" : 4
 "adipamide-gaff1" :
-    "input"                  : "build_system/adipamide_gaff1.xml"
-    "pdb"                    : "build_system/adipamide_gaff1.pdb"
+    "input"                  : "../build_system/adipamide_gaff1.xml"
+    "pdb"                    : "../build_system/adipamide_gaff1.pdb"
     "prefix"                 : "min"
     "steps"                  : 10
     "method"                 : "L-BFGS-B"
@@ -10,8 +10,8 @@
     "use_lengths_and_angles" : False
     "epsilon"                : 1.e-5
 "adipamide-parsley" :
-    "input"                  : "build_system/adipamide_parsley.xml"
-    "pdb"                    : "build_system/adipamide_parsley.pdb"
+    "input"                  : "../build_system/adipamide_parsley.xml"
+    "pdb"                    : "../build_system/adipamide_parsley.pdb"
     "prefix"                 : "min"
     "steps"                  : 10
     "method"                 : "L-BFGS-B"
@@ -19,8 +19,8 @@
     "use_lengths_and_angles" : False
     "epsilon"                : 1.e-5
 "oxamide-gaff1" :
-    "input"                  : "build_system/oxamide_gaff1.xml"
-    "pdb"                    : "build_system/oxamide_gaff1.pdb"
+    "input"                  : "../build_system/oxamide_gaff1.xml"
+    "pdb"                    : "../build_system/oxamide_gaff1.pdb"
     "prefix"                 : "min"
     "steps"                  : 10
     "method"                 : "L-BFGS-B"
@@ -28,8 +28,8 @@
     "use_lengths_and_angles" : False
     "epsilon"                : 1.e-5
 "oxamide-parsley" :
-    "input"                  : "build_system/oxamide_parsley.xml"
-    "pdb"                    : "build_system/oxamide_parsley.pdb"
+    "input"                  : "../build_system/oxamide_parsley.xml"
+    "pdb"                    : "../build_system/oxamide_parsley.pdb"
     "prefix"                 : "min"
     "steps"                  : 10
     "method"                 : "L-BFGS-B"
