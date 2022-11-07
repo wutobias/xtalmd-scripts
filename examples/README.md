@@ -165,9 +165,7 @@ The command line arguments are very self-explaining. Just run `run_xtal_md xml -
 run_xtal_md xml -i build_system/oxamide_gaff1.xml -p xtal_min/oxamide_gaff1_min.pdb --temperature=298.15 --nanoseconds 2 --replicates 2 --prefix oxamide_gaff1
 ```
 
-For the high-throughput work, have a look at the [`input.yaml`](xtal_min/input.yaml).
-To run the simulations in high-througput mode, change to the directory
-`xtal_md` and run
+For the high-throughput work, have a look at the [`input.yaml`](xtal_min/input.yaml). To run the simulations in high-througput mode, change to the directory `xtal_md` and run
 
 ```
 run_xtal_md yaml -i input.yaml
