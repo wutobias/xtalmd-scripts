@@ -875,6 +875,67 @@ def main():
                     top=ref_strc.topology
                     )
 
+                ### Unwrap trajectory
+                ### =================
+                ### See von Bülow et al. doi.org/10.1063/5.0008316
+                ### First position vector (i.e. reference structure) 
+                ### is both wrapped and unwrapped.
+                r_w_0 = np.copy(ref_strc.xyz[0])
+                r_u_0 = np.copy(r_w_0)
+
+                halfbox = np.ones(3, dtype=float)
+                halfbox[:] = 0.5
+                for i in range(query_traj.n_frames):
+                    
+                    r_w_1 = query_traj.xyz[i]
+                    r_u_1 = np.zeros_like(r_w_1)
+
+                    a_1 = query_traj.unitcell_vectors[i].T
+                    b_1 = np.linalg.inv(a_1)
+
+                    for molecule in ref_strc.topology.find_molecules():
+                        r_w_1_cog = np.zeros(3, dtype=float)
+                        r_w_0_cog = np.zeros(3, dtype=float)
+                        d_w_1_cog = np.zeros(3, dtype=float)
+                        for atom in molecule:
+                            r_w_1_cog += r_w_1[atom.index]
+                            r_w_0_cog += r_w_0[atom.index]
+                        r_w_1_cog /= len(molecule)
+                        r_w_0_cog /= len(molecule)
+
+                        ### Determine wrapped position
+                        r_w_1_cog_fract  = np.matmul(b_1, r_w_1_cog.T).T
+                        r_w_1_cog_fract -= np.floor(r_w_1_cog_fract)
+                        r_w_1_cog        = np.matmul(a_1, r_w_1_cog_fract.T).T
+
+                        d_w_1_cog  = r_w_1_cog - r_w_0_cog
+                        
+                        fract_offset = np.matmul(b_1, d_w_1_cog.T).T + halfbox
+                        fract_offset = np.floor(fract_offset)
+                        d_u_1_cog    = d_w_1_cog - np.matmul(a_1, fract_offset.T).T
+
+                        for atom in molecule:
+                            r_u_1[atom.index] = r_u_0[atom.index] + d_u_1_cog
+
+                    r_w_0 = np.copy(query_traj.xyz[i])
+                    r_u_0 = np.copy(r_u_1)
+
+                    query_traj.xyz[i] = np.copy(r_u_1)
+
+                ### Finally shift all atom positions
+                ### to get the best-fit RMSD with the reference
+                ### structure just using translation.
+                for i in range(query_traj.n_frames):
+                    
+                    x = query_traj.xyz[i]
+                    
+                    ref_cog  = np.mean(ref_strc.xyz[0], axis=0)
+                    traj_cog = np.mean(x, axis=0)
+                    
+                    displ = ref_cog - traj_cog
+                    x    += displ
+                    query_traj.xyz[i] = x
+
                 frame_and_path_list.extend(
                         [output_traj for _ in range(query_traj.n_frames)]
                     )
