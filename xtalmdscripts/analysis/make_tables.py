@@ -99,6 +99,11 @@ class WorkbookWrapper(object):
             "<[Δ(d < 4Å)]>",
             "Max <[Δ(d < 4Å)]>",
 
+            "RMSD noH",
+            # ==================== #
+            "<RMSD>",
+            "Max <RMSD>",
+
             "H-bond geometry abs",
             # ==================== #
             "<[d(D-H•••A)]>",
@@ -114,8 +119,8 @@ class WorkbookWrapper(object):
             
             "Translation/Rotation",
             # =================== #
-            "<Δ[d(N_COM)]>",
-            "Max <Δ[d(N_COM)]>",
+            "<Δ[d(COM)]>",
+            "Max <Δ[d(COM)]>",
             "<{∠PA1-PA1(expt)}>",
             "<{∠PA2-PA2(expt)}>",
             "<{∠PA3-PA3(expt)}>",
@@ -187,6 +192,7 @@ class WorkbookWrapper(object):
             "Thermo data",
             "Cell parameters",
             "Interatomic distances",
+            "RMSD noH"
             "H-bond geometry abs",
             "H-bond geometry delta",
             "Translation/Rotation",
@@ -631,7 +637,6 @@ def main():
         workbook_wrap.add_xtal(crystal_name)
 
         ref_distances = list()
-        ref_com       = list()
         ref_pc1_neighbors = list()
         ref_pc2_neighbors = list()
         ref_pc3_neighbors = list()
@@ -679,14 +684,6 @@ def main():
             ref_strc, 
             dist_pair_list
             )
-
-        ref_com = analysis_engine.compute_com_diff_per_residue(
-            ref_strc, 
-            ref_strc,
-            rdmol,
-            N_closest_molecules=6,
-            exclude_water=True
-            )
         ref_pc_neighbors, ref_pc_self = analysis_engine.compute_pc_diff_per_residue(
             ref_strc, 
             ref_strc,
@@ -725,8 +722,8 @@ def main():
                 residue_classes_list = residue_classes_list
             )
 
-        doc     = gemmi.cif.read(input_dict[crystal_name]["experiment"]["experiment-cif"])[0]
-        strc    = gemmi.make_small_structure_from_block(doc)
+        doc  = gemmi.cif.read(input_dict[crystal_name]["experiment"]["experiment-cif"])[0]
+        strc = gemmi.make_small_structure_from_block(doc)
         ref_density = doc.find_value("_exptl_crystal_density_diffrn")
         if ref_density != None:
             try:
@@ -748,7 +745,6 @@ def main():
         ref_beta  = strc.cell.beta
         ref_gamma = strc.cell.gamma
         ref_distances = np.array(ref_distances) * _NM_2_ANG
-        ref_com       = np.array(ref_com) * _NM_2_ANG
         ref_pc1_neighbors = np.array(ref_pc1_neighbors) * _RAD_2_DEG
         ref_pc2_neighbors = np.array(ref_pc2_neighbors) * _RAD_2_DEG
         ref_pc3_neighbors = np.array(ref_pc3_neighbors) * _RAD_2_DEG
@@ -812,7 +808,9 @@ def main():
             density_xtal = list()
 
             distances = list()
-            com       = list()
+            com_diff  = list()
+            rmsd      = list()
+            rmsd_per_residue = list()
             pc1_neighbors = list()
             pc2_neighbors = list()
             pc3_neighbors = list()
@@ -965,11 +963,10 @@ def main():
                 _density = md.density(query_traj)
                 density_xtal.extend(_density)
 
-                _com = analysis_engine.compute_com_diff_per_residue(
+                _com_diff = analysis_engine.compute_com_diff_per_residue(
                     query_traj, 
                     ref_strc,
                     rdmol,
-                    N_closest_molecules=6,
                     exclude_water=True
                     )
                 _pc_neighbors, _pc_self = analysis_engine.compute_pc_diff_per_residue(
@@ -982,6 +979,13 @@ def main():
                 _distances = analysis_engine.compute_pairwise_distances(
                     query_traj, 
                     dist_pair_list
+                    )
+                _rmsd, _rmsd_per_residue = analysis_engine.compute_rmsd(
+                        query_traj,
+                        ref_strc,
+                        rdmol,
+                        exclude_hydrogen=True,
+                        exclude_water=True,
                     )
 
                 if a_h_d_list.size > 0:
@@ -996,9 +1000,11 @@ def main():
                         )
 
                 ### This means, we only do this the first iteration
-                if len(com) == 0:
-                    com = _com
+                if len(com_diff) == 0:
+                    com_diff = _com_diff
                     distances = _distances
+                    rmsd =_rmsd
+                    rmsd_per_residue =_rmsd_per_residue
                     pc1_neighbors = _pc_neighbors[...,0]
                     pc2_neighbors = _pc_neighbors[...,1]
                     pc3_neighbors = _pc_neighbors[...,2]
@@ -1010,8 +1016,10 @@ def main():
                         hbond_angles = _hbond_angles
 
                 else:
-                    com = np.vstack((com, _com))
+                    com_diff = np.vstack((com_diff, _com_diff))
                     distances = np.vstack((distances, _distances))
+                    rmsd = np.vstack((rmsd, _rmsd))
+                    rmsd_per_residue = np.vstack((rmsd_per_residue, _rmsd_per_residue))
                     pc1_neighbors = np.vstack((pc1_neighbors, _pc_neighbors[...,0]))
                     pc2_neighbors = np.vstack((pc2_neighbors, _pc_neighbors[...,1]))
                     pc3_neighbors = np.vstack((pc3_neighbors, _pc_neighbors[...,2]))
@@ -1035,7 +1043,9 @@ def main():
             ### Devide by 1000 to get g/cm^3
             density_xtal = np.array(density_xtal) / 1000.
             distances = np.array(distances) * _NM_2_ANG
-            com       = np.array(com) * _NM_2_ANG
+            rmsd = np.array(rmsd) * _NM_2_ANG
+            rmsd_per_residue = np.array(rmsd_per_residue) * _NM_2_ANG
+            com_diff  = np.array(com_diff) * _NM_2_ANG
             pc1_neighbors = np.array(pc1_neighbors) * _RAD_2_DEG
             pc2_neighbors = np.array(pc2_neighbors) * _RAD_2_DEG
             pc3_neighbors = np.array(pc3_neighbors) * _RAD_2_DEG
@@ -1139,15 +1149,15 @@ pymol.cmd.distance(
 
             ### Write com diff data ###
             ### =================== ###
-            diffs = np.abs(com - ref_com)
+            diffs = com_diff
             avg   = np.mean(diffs)
             std   = np.std(diffs)
-            dev   = np.mean(diffs/ref_com) * 100.
+            dev   = None
             workbook_wrap.add_data(
                 avg ,
                 std,
                 dev,
-                "<Δ[d(N_COM)]>",
+                "<Δ[d(COM)]>",
                 forcefield_name, 
                 crystal_name
                 )
@@ -1159,12 +1169,42 @@ pymol.cmd.distance(
                 )
             max_avg = res_avg[max_idx]
             max_std = np.std(diffs[:,max_idx])
-            max_dev = np.mean(diffs[:,max_idx]/ref_com[:,max_idx]) * 100.
+            max_dev = None
             workbook_wrap.add_data(
                 max_avg,
                 max_std,
                 max_dev,
-                "Max <Δ[d(N_COM)]>",
+                "Max <Δ[d(COM)]>",
+                forcefield_name, 
+                crystal_name
+                )
+
+            ### Write rmsd data ###
+            ### =============== ###
+            avg   = np.mean(rmsd)
+            std   = np.std(rmsd)
+            dev   = None
+            workbook_wrap.add_data(
+                avg ,
+                std,
+                dev,
+                "<RMSD>",
+                forcefield_name, 
+                crystal_name
+                )
+
+            max_idx = np.unravel_index(
+                np.argmax(rmsd_per_residue),
+                rmsd_per_residue.shape
+                )
+            max_avg = np.mean(rmsd_per_residue[:,max_idx])
+            max_std = np.std(rmsd_per_residue[:,max_idx])
+            max_dev = None
+            workbook_wrap.add_data(
+                max_avg,
+                max_std,
+                max_dev,
+                "Max <RMSD>",
                 forcefield_name, 
                 crystal_name
                 )

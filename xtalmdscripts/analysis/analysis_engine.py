@@ -369,21 +369,16 @@ def get_hbond_indices(
         ### Remove redundancies
         acc_list = np.unique(acc_list, axis=0)
 
-        return acc_list    
-
+        return acc_list
 
 def compute_com_diff_per_residue(
-    query_traj, 
+    query_traj,
     ref_strc,
     rdmol,
-    N_closest_molecules,
     exclude_water=True):
 
     __doc__ = """
-    Find com distances between each molecule and its `N_closest_molecules` 
-    closest neighboring molecules in trajectory `query_traj`. The closest 
-    molecules are determined and indexed as found in the reference structure 
-    `ref_strc`.
+    Find com positions for each molecule in query_traj.
     """
 
     import mdtraj as md
@@ -405,109 +400,99 @@ def compute_com_diff_per_residue(
         atm_idxs_per_residue_dict[res.index] = list()
         for atom in res.atoms:
             atm_idxs_per_residue_dict[res.index].append(atom.index)
-    
-    a_scan = np.array([0,-1,1], dtype=float)
-    b_scan = np.array([0,-1,1], dtype=float)
-    c_scan = np.array([0,-1,1], dtype=float)
-
-    grid = np.array(
-        np.meshgrid(
-            *[a_scan, b_scan, c_scan]
-        )
-    )
-    N_scans = 27
-    grid    = grid.T.reshape((N_scans,-1))
-    com_ref_big = np.zeros((ref_strc.n_residues, 27, 3))
-    com_query_big = np.zeros((query_traj.n_frames, ref_strc.n_residues, 27, 3))
-    diff_distances = np.zeros(
-        (query_traj.n_residues, query_traj.n_frames), 
-        dtype=float
-    )
-    
-    #top = md.Topology()
-    #chain = top.add_chain()
-    #for _ in range(N_closest_molecules):
-    #    _res = top.add_residue("BLA", chain)
-    #    top.add_atom("C", md.element.carbon, _res)
-    #query_traj.save_pdb("traj.pdb")
-    #ref_strc.save_pdb("ref_strc.pdb")
-    
-    for res in ref_strc.topology.residues:
-        if exclude_water and np.any(np.isin(water_list, atm_idxs_per_residue_dict[res.index])):
-            continue
-        ### Compute com for given residue in reference structure
-        com_ref = md.compute_center_of_mass(
-            traj = ref_strc.atom_slice(atm_idxs_per_residue_dict[res.index])
-        )
-        box      = ref_strc.unitcell_vectors
-        box_inv  = np.linalg.inv(box)
-        com_frac = np.einsum('lkj,lk->lj', box_inv, com_ref)
-
-        com_frac = np.expand_dims(com_frac, axis=0) + grid
-        com_ref  = np.einsum('lkj,lhk->lhj', box, com_frac)
-        com_ref_big[res.index] = com_ref
-        
-        ### Compute com for given residue in each frame
-        ### in query structure.
-        com_query = md.compute_center_of_mass(
-            traj = query_traj.atom_slice(
-                atm_idxs_per_residue_dict[res.index]
-                )
-            )
-        box      = query_traj.unitcell_vectors
-        box_inv  = np.linalg.inv(box)
-        com_frac = np.einsum('lkj,lk->lj', box_inv, com_query)
-
-        com_frac  = np.expand_dims(com_frac, axis=1) + grid
-        com_query = np.einsum('lkj,lhk->lhj', box, com_frac)
-        com_query_big[:,res.index] = com_query
 
     com_diff_result = np.zeros(
         (
             query_traj.n_frames, 
-            query_traj.n_residues, 
-            N_closest_molecules
+            query_traj.n_residues,
         ),
         dtype=float    
     )
+
     for res in ref_strc.topology.residues:
         if exclude_water and np.any(np.isin(water_list, atm_idxs_per_residue_dict[res.index])):
             continue
-        res_com = com_ref_big[res.index,0]
-        diff    = com_ref_big - np.expand_dims(res_com, axis=0)
-        dists   = np.linalg.norm(diff, axis=2)
-        ### Get the index of the closest image for each residue
-        ### to the reference residue.
-        min_res_idxs  = np.argmin(dists, axis=1)
-        ### Get the distance of the closest image for each residue
-        ### to the reference residue.
-        min_res_dists = np.choose(min_res_idxs, dists.T)
-        ### Order them  by distance and only keep the `N_closest_molecules` ones.
-        ### The closest one should always be residue itself at the image [0,0,0]
-        ### We can skip that.
-        min_res_idxs_sorted = np.argsort(min_res_dists)[1:N_closest_molecules+1]
-        ### These are the images for each of the closest residues found.
-        min_image_idxs_sorted = min_res_idxs[min_res_idxs_sorted]
-        
-        min_dists_ref = min_res_dists[min_res_idxs_sorted]
-        
-        #traj = md.Trajectory(
-        #    com_ref_big[min_res_idxs_sorted, min_image_idxs_sorted],
-        #    topology=top
-        #)
-        #traj.save_pdb(
-        #    f"closest_neighbor_res{res.index}.pdb"
-        #)
-        
-        res_com = com_query_big[:,res.index,0]
-        res_com = np.expand_dims(res_com, axis=(1,2))
-        diff    = res_com - com_query_big[:,min_res_idxs_sorted]
-        dists   = np.linalg.norm(diff, axis=3)
-        min_dists = np.min(dists, axis=2)
-
-        com_diff_result[:,res.index] = min_dists
-
+        com_query = md.compute_center_of_mass(
+            traj = query_traj.atom_slice(atm_idxs_per_residue_dict[res.index])
+        )
+        com_ref   = md.compute_center_of_mass(
+            traj = ref_strc.atom_slice(atm_idxs_per_residue_dict[res.index])
+        )
+        com_diff_result[:,res.index] = np.linalg.norm(
+            com_query - com_ref, 
+            axis=1
+            )
     return com_diff_result
+
+
+def compute_rmsd(
+    query_traj,
+    ref_strc,
+    rdmol,
+    exclude_hydrogen=True,
+    exclude_water=True,
+    ):
+
+    __doc__="""
+    Compute rmsd for every frame in query_traj w.r.t. ref_strc (frame 0).
+    Returns overall rmsd and per residue rmsd.
+    """
+
+    import mdtraj as md
+    import numpy as np
+    from rdkit import Chem
+
+    assert ref_strc.n_residues == query_traj.n_residues
+    assert ref_strc.n_frames == 1
+
+    water_list = np.array([], dtype=int)
+    if exclude_water:
+        params = Chem.SmilesParserParams()
+        params.removeHs = False
+        wat_rdmol = Chem.MolFromSmiles("[H]O[H]", params)
+        water_list = get_all_matches(rdmol, wat_rdmol)
+
+    atm_idxs_per_residue_dict = dict()
+    for res in ref_strc.topology.residues:
+        atm_idxs_per_residue_dict[res.index] = list()
+        for atom in res.atoms:
+            if exclude_hydrogen and atom.element.atomic_number > 1:
+                atm_idxs_per_residue_dict[res.index].append(atom.index)
+
+    N_residues = len(atm_idxs_per_residue_dict)
+
+    rmsd_result = np.zeros(
+        (
+            query_traj.n_frames, 
+        ),
+        dtype=float    
+    )
+
+    rmsd_per_residue_result = np.zeros(
+        (
+            query_traj.n_frames, 
+            N_residues
+        ),
+        dtype=float    
+    )
+    res_count = 0
+    atom_count = 0
+    for res in ref_strc.topology.residues:
+        if exclude_water and np.any(np.isin(water_list, atm_idxs_per_residue_dict[res.index])):
+            continue
+        xyz_query = query_traj.atom_slice(atm_idxs_per_residue_dict[res.index]).xyz
+        xyz_ref   = ref_strc.atom_slice(atm_idxs_per_residue_dict[res.index]).xyz
+        diff      = xyz_query - xyz_ref
+        diff2_sum = np.sum(diff**2, axis=(1,2))
+        rmsd_result[:] += diff2_sum
+        rmsd_per_residue_result[:,res_count] = np.sqrt(diff2_sum/res.n_atoms)
+        res_count += 1
+        atom_count += res.n_atoms
+
+    rmsd_result = rmsd_result/float(atom_count)
+    rmsd_result = np.sqrt(rmsd_result)
+
+    return rmsd_result, rmsd_per_residue_result
 
 
 def compute_pc_diff_per_residue(
@@ -656,10 +641,12 @@ def compute_pc_diff_per_residue(
         pc_ref_big[res.index] = eigvecs_ref_sorted
         pc_query_big[:,res.index] = eigvecs_query_sorted
             
+    N_residues = len(atm_idxs_per_residue_dict)
+
     diff_pcs_neighbors = np.zeros(
         (
             query_traj.n_frames,
-            query_traj.n_residues, 
+            N_residues, 
             N_closest_molecules,            
             3
         ), 
@@ -668,11 +655,12 @@ def compute_pc_diff_per_residue(
     diff_pcs_self = np.zeros(
         (
             query_traj.n_frames,
-            query_traj.n_residues, 
+            N_residues, 
             3
         ), 
         dtype=float
     )
+    res_count = 0
     for res in ref_strc.topology.residues:
         if exclude_water and np.any(np.isin(water_list, atm_idxs_per_residue_dict[res.index])):
             continue
@@ -706,7 +694,7 @@ def compute_pc_diff_per_residue(
         angular_diffs_self_2[...,-1] = np.pi - angular_diffs_self
         angular_diffs_self_min = np.min(angular_diffs_self_2, axis=-1)
 
-        diff_pcs_self[:,res.index] = angular_diffs_self_min
+        diff_pcs_self[:,res_count] = angular_diffs_self_min
 
         ### ============================================================================ ###
         ### CALCULATE PC ANGLES BETWEEN EACH MOLECULE AND ITS CLOSEST NEIGHBORS IN QUERY ###
@@ -773,7 +761,7 @@ def compute_pc_diff_per_residue(
         angular_diffs_query_2[...,-1] = np.pi - angular_diffs_query
         angular_diffs_query_min = np.min(angular_diffs_query_2, axis=-1)
 
-        diff_pcs_neighbors[:,res.index] = angular_diffs_query_min
+        diff_pcs_neighbors[:,res_count] = angular_diffs_query_min
 
 #        ### Serial way to compute differences
 #        ### Should give same result as np.einsum
@@ -782,11 +770,11 @@ def compute_pc_diff_per_residue(
 #                for pc_idx in [0,1,2]:
 #                    dot_ref = np.dot(
 #                        pc_ref_big[min_res_idxs_sorted[res_j],pc_idx], 
-#                        pc_ref_big[res.index,pc_idx]
+#                        pc_ref_big[res_count,pc_idx]
 #                    )
 #                    dot_query = np.dot(
 #                        pc_query_big[frame_idx,min_res_idxs_sorted[res_j],pc_idx], 
-#                        pc_query_big[frame_idx,res.index,pc_idx]
+#                        pc_query_big[frame_idx,res_count,pc_idx]
 #                    )
 #
 #                    if dot_ref > 1.:
@@ -812,6 +800,8 @@ def compute_pc_diff_per_residue(
 #                        ]
 #                    )
 #
-#                    diff_pcs_neighbors[frame_idx, res.index, res_j, pc_idx] = angular_query
+#                    diff_pcs_neighbors[frame_idx, res_count, res_j, pc_idx] = angular_query
+
+        res_count += 1
 
     return diff_pcs_neighbors, diff_pcs_self
