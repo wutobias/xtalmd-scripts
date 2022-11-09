@@ -284,7 +284,7 @@ def build_system_gaff(
         topology = topology,
         nonbondedMethod=nonbondedMethod,
         constraints=None,
-        removeCMMotion=False,
+        removeCMMotion=True,
         rigidWater=use_tip3p and has_water,
     )
 
@@ -360,7 +360,7 @@ def build_system_off(
         topology = topology,
         nonbondedMethod=nonbondedMethod,
         constraints=None,
-        removeCMMotion=False,
+        removeCMMotion=True,
         rigidWater=use_tip3p and has_water,
     )
 
@@ -585,7 +585,7 @@ stop
         params,
         nonbondedMethod=nonbondedMethod, 
         constraints=None,
-        removeCMMotion=False,
+        removeCMMotion=True,
         rigidWater=use_tip3p,
     )
 
@@ -814,7 +814,7 @@ def build_system_oplsaa(
         topology = topology,
         nonbondedMethod=nonbondedMethod,
         constraints=None,
-        removeCMMotion=False,
+        removeCMMotion=True,
         rigidWater=use_tip3p and has_water,
     )
 

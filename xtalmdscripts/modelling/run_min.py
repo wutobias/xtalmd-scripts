@@ -595,7 +595,7 @@ def run_xtal_min(
             xml_str = fopen.read()
         system = openmm.XmlSerializer.deserialize(xml_str)
 
-        integrator = openmm.LangevinIntegrator(
+        integrator = openmm.LangevinMiddleIntegrator(
             300. * unit.kelvin,
             1./unit.picoseconds,
             time_step

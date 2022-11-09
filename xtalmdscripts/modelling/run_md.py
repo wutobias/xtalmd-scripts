@@ -95,6 +95,20 @@ def parse_arguments():
     return parser.parse_args()
 
 
+def add_CMMotionRemover(system):
+
+    __doc__ = """
+    Add CMMotionRemover to system *in place*.
+    """
+
+    import openmm
+
+    forces = {system.getForce(index).__class__.__name__: system.getForce(
+        index) for index in range(system.getNumForces())}
+    if not "CMMotionRemover" in forces:
+        cmm = openmm.CMMotionRemover()
+        system.addForce(cmm)
+
 def run_nvt_md(
     xml_path, 
     pdb_path,
@@ -128,10 +142,11 @@ def run_nvt_md(
     with open(xml_path, "r") as fopen:
         xml_str = fopen.read()
     system = openmm.XmlSerializer.deserialize(xml_str)
+    add_CMMotionRemover(system)
 
     ### 1. Temperature equilibration
     ### ============================    
-    integrator = openmm.LangevinIntegrator(
+    integrator = openmm.LangevinMiddleIntegrator(
         temperature.value_in_unit_system(unit.md_unit_system),
         1./unit.picoseconds,
         time_step.value_in_unit_system(unit.md_unit_system))
@@ -167,7 +182,7 @@ def run_nvt_md(
 
     ### 2. Production run
     ### =================
-    integrator = openmm.LangevinIntegrator(
+    integrator = openmm.LangevinMiddleIntegrator(
         temperature.value_in_unit_system(unit.md_unit_system),
         1./unit.picoseconds,
         time_step.value_in_unit_system(unit.md_unit_system))
@@ -221,7 +236,8 @@ def run_nvt_md(
                 return e
             state = simulation.context.getState(
                 getEnergy=True,
-                getPositions=True
+                getPositions=True,
+                enforcePeriodicBox=False
             )
             dcdfile.writeModel(
                 positions=state.getPositions(),
@@ -274,11 +290,12 @@ def run_xtal_md(
     ### 1. Temperature equilibration
     ### ============================
     system = openmm.XmlSerializer.deserialize(xml_str)
+    add_CMMotionRemover(system)
     system.setDefaultPeriodicBoxVectors(
         *topology.getPeriodicBoxVectors()
         )
 
-    integrator = openmm.LangevinIntegrator(
+    integrator = openmm.LangevinMiddleIntegrator(
         temperature.value_in_unit_system(unit.md_unit_system),
         friction,
         time_step.value_in_unit_system(unit.md_unit_system))
@@ -318,7 +335,8 @@ def run_xtal_md(
         getPositions=True,
         getVelocities=True,
         getEnergy=True,
-        getForces=True
+        getForces=True,
+        enforcePeriodicBox=False
         )
     with open(f"{prefix}_thermalization.xml", "w") as fopen:
         fopen.write(
@@ -346,6 +364,7 @@ def run_xtal_md(
     ### =====================================
     for _ in range(100):
         system = openmm.XmlSerializer.deserialize(xml_str)
+        add_CMMotionRemover(system)
         system.setDefaultPeriodicBoxVectors(
             *state.getPeriodicBoxVectors()
             )
@@ -358,7 +377,7 @@ def run_xtal_md(
         barostat_aniso.setFrequency(25)
         system.addForce(barostat_aniso)
 
-        integrator = openmm.LangevinIntegrator(
+        integrator = openmm.LangevinMiddleIntegrator(
             temperature.value_in_unit_system(unit.md_unit_system),
             friction,
             time_step.value_in_unit_system(unit.md_unit_system))
@@ -395,7 +414,8 @@ def run_xtal_md(
             getPositions=True,
             getVelocities=True,
             getEnergy=True,
-            getForces=True
+            getForces=True,
+            enforcePeriodicBox=False
             )
         topology.setPeriodicBoxVectors(
             state.getPeriodicBoxVectors()
@@ -426,6 +446,7 @@ def run_xtal_md(
     ### ==================================
     for _ in range(100):
         system = openmm.XmlSerializer.deserialize(xml_str)
+        add_CMMotionRemover(system)
         system.setDefaultPeriodicBoxVectors(
             *state.getPeriodicBoxVectors()
             )
@@ -440,7 +461,7 @@ def run_xtal_md(
         barostat_aniso.setScaleMoleculesAsRigid(False)
         system.addForce(barostat_aniso)
 
-        integrator = openmm.LangevinIntegrator(
+        integrator = openmm.LangevinMiddleIntegrator(
             temperature.value_in_unit_system(unit.md_unit_system),
             friction,
             time_step.value_in_unit_system(unit.md_unit_system))
@@ -477,7 +498,8 @@ def run_xtal_md(
             getPositions=True,
             getVelocities=True,
             getEnergy=True,
-            getForces=True
+            getForces=True,
+            enforcePeriodicBox=False
             )
         topology.setPeriodicBoxVectors(
             state.getPeriodicBoxVectors()
