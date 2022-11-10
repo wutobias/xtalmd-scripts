@@ -634,6 +634,8 @@ def main():
     ### Loop over each xtal and put in new workbook
     ### ===========================================
     for crystal_name in input_dict:
+        print(f"Pre-Processing {crystal_name}")
+
         workbook_wrap.add_xtal(crystal_name)
 
         ref_distances = list()
