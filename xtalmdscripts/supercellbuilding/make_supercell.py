@@ -1007,8 +1007,17 @@ def get_unique_mapping(
     N_mol = len(mol_list)
 
     smiles_list = [Chem.MolToSmiles(mol, isomericSmiles=stereochemistry, allHsExplicit=True) for mol in mol_list]
-    smiles_list_unique = set(smiles_list)
-    smiles_list_unique = list(smiles_list_unique)
+    smiles_list_unique = list(set(smiles_list))
+    ### Sort smiles according to built-in
+    ### python `sorted` method.
+    smiles_list_unique_argsort = sorted(
+        range(
+            len(smiles_list_unique)
+            ), 
+        key=smiles_list_unique.__getitem__
+        )
+    _smiles_list_unique = [smiles_list_unique[i] for i in smiles_list_unique_argsort]
+    smiles_list_unique = _smiles_list_unique
 
     rdmol_list_unique  = list()
     unique_mapping     = dict()
