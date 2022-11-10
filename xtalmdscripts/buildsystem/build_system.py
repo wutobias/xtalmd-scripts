@@ -1164,14 +1164,16 @@ def main():
 
             nbforce.setExceptionParameters(i, p1, p2, q_prod, sig, eps)
 
-        for sys_idx, system in enumerate(monomer_sys_list):
+        for mol_idx in unique_mapping:
+            unique_idx = unique_mapping[mol_idx]
+            system     = monomer_sys_list[unique_idx]
+
             forces = {system.getForce(index).__class__.__name__: system.getForce(
                 index) for index in range(system.getNumForces())}
             nbforce = forces['NonbondedForce']
 
             old_q_list = list()
             new_q_list = list()
-            unique_idx = unique_mapping[sys_idx]
             partial_charges = partial_charges_list[unique_idx]
             N_atoms = len(partial_charges)
             for i in range(N_atoms):
