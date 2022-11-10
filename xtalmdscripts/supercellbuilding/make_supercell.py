@@ -530,6 +530,7 @@ def random_fill(
     atom_radii_xtal = np.array(atom_radii_xtal)
     atom_radii_xtal += radius
 
+    print("Generating 50x50x50 vdw grid...")
     grid = list()
     for a in np.linspace(0., 1., 50, True):
         for b in np.linspace(0., 1., 50, True):
@@ -581,6 +582,9 @@ def random_fill(
         min_dist = np.min(dists)
         if min_dist > 2.*radius:
             overlap = False
+    print(
+        f"Inserted {len(grid_selection)} molecules {Chem.MolToSmiles(mol)}."
+        )
 
     import copy
     mol_list_new = copy.deepcopy(mol_list)
