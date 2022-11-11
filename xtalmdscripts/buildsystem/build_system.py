@@ -1165,11 +1165,11 @@ def main():
             nbforce.setExceptionParameters(i, p1, p2, q_prod, sig, eps)
 
         for mol_idx in unique_mapping:
-            unique_idx = unique_mapping[mol_idx]
-            system     = monomer_sys_list[unique_idx]
+            unique_idx  = unique_mapping[mol_idx]
+            mono_system = monomer_sys_list[unique_idx]
 
-            forces = {system.getForce(index).__class__.__name__: system.getForce(
-                index) for index in range(system.getNumForces())}
+            forces = {mono_system.getForce(index).__class__.__name__: mono_system.getForce(
+                index) for index in range(mono_system.getNumForces())}
             nbforce = forces['NonbondedForce']
 
             old_q_list = list()
@@ -1204,9 +1204,9 @@ def main():
     with open(f"{prefix}.xml", "w") as fopen:
         fopen.write(openmm.XmlSerializer.serialize(system))
 
-    for sys_idx, system in enumerate(monomer_sys_list):
+    for sys_idx, mono_system in enumerate(monomer_sys_list):
         with open(f"{prefix}_monomer{sys_idx}.xml", "w") as fopen:
-            fopen.write(openmm.XmlSerializer.serialize(system))
+            fopen.write(openmm.XmlSerializer.serialize(mono_system))
 
 
 def entry_point():
