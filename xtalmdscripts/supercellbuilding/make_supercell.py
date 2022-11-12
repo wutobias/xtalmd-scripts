@@ -9,9 +9,10 @@ from rdkit import Chem
 from rdkit.Geometry import Point3D
 import warnings
 
-from . import xyz2mol
+import xyz2mol
 
 import argparse
+import subprocess
 
 
 def parse_arguments():

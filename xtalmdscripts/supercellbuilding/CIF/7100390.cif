@@ -1,0 +1,131 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-10-14 22:27:35 +0300 (Sat, 14 Oct 2017) $
+#$Revision: 202017 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/7/10/03/7100390.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_7100390
+loop_
+_publ_author_name
+'Bruce Foxman'
+'Volker Enkelmann'
+'Evan R. Guggenheim'
+'Chengyun Guo'
+'Magali B. Hickey'
+_publ_section_title
+;
+Conformational Polymorphism of Methacrylamide
+;
+_journal_name_full               'Chemical Communications'
+_journal_paper_doi               10.1039/b418869a
+_journal_year                    2005
+_chemical_formula_moiety         'C4 H7 N1 O1'
+_chemical_formula_sum            'C4 H7 N O'
+_chemical_formula_weight         85.11
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2yn'
+_symmetry_space_group_name_H-M   'P 1 21/n 1'
+_cell_angle_alpha                90
+_cell_angle_beta                 113.1620(13)
+_cell_angle_gamma                90
+_cell_formula_units_Z            4
+_cell_length_a                   9.0920(5)
+_cell_length_b                   6.0470(4)
+_cell_length_c                   9.4610(5)
+_cell_measurement_temperature    120
+_cell_volume                     478.23(5)
+_diffrn_ambient_temperature      120
+_exptl_crystal_density_diffrn    1.182
+_oxford_refine_ls_scale          8.4(5)
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+'_symmetry_cell_setting' value 'Monoclinic' changed to 'monoclinic'
+according to '/home/saulius/struct/CIF-dictionaries/cif_core.dic'
+dictionary named 'cif_core.dic' version 2.4.1 from 2010-06-29.
+
+Automatic conversion script
+Id: cif_fix_enum 1527 2010-12-29 10:47:43Z saulius 
+;
+_cod_original_sg_symbol_H-M      'P 21/n'
+_cod_original_formula_sum        'C4 H7 N1 O1'
+_cod_database_code               7100390
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+-x,-y,-z
+-x+1/2,y+1/2,-z+1/2
+x+1/2,-y+1/2,z+1/2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_occupancy
+_atom_site_adp_type
+_atom_site_refinement_flags_posn
+_atom_site_refinement_flags_adp
+_atom_site_refinement_flags_occupancy
+_atom_site_disorder_assembly
+_atom_site_disorder_group
+_atom_site_attached_hydrogens
+O1 O 0.66728(16) 0.1956(3) 0.04026(16) 0.0304 1.0000 Uani . . . . . .
+N1 N 0.4358(2) 0.1855(4) -0.1680(2) 0.0260 1.0000 Uani . . . . . .
+C1 C 0.5779(2) 0.2765(4) -0.0855(2) 0.0212 1.0000 Uani . . . . . .
+C2 C 0.6261(2) 0.4760(4) -0.1492(2) 0.0215 1.0000 Uani . . . . . .
+C3 C 0.7737(3) 0.5554(5) -0.0749(3) 0.0361 1.0000 Uani . . . . . .
+C4 C 0.5090(3) 0.5827(5) -0.2921(3) 0.0350 1.0000 Uani . . . . . .
+H31 H 0.807(3) 0.685(5) -0.112(3) 0.053(9) 1.0000 Uiso . . . . . .
+H32 H 0.849(2) 0.479(4) 0.018(3) 0.037(7) 1.0000 Uiso . . . . . .
+H41 H 0.562(3) 0.709(5) -0.322(3) 0.046(8) 1.0000 Uiso . . . . . .
+H42 H 0.466(3) 0.475(5) -0.380(3) 0.047(7) 1.0000 Uiso . . . . . .
+H43 H 0.419(3) 0.640(5) -0.267(3) 0.078(11) 1.0000 Uiso . . . . . .
+H11 H 0.369(3) 0.244(5) -0.257(3) 0.051(8) 1.0000 Uiso . . . . . .
+H12 H 0.405(2) 0.061(4) -0.126(3) 0.033(7) 1.0000 Uiso . . . . . .
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+O1 0.0255(7) 0.0320(11) 0.0217(8) 0.0060(8) -0.0034(6) -0.0062(8)
+N1 0.0233(9) 0.0281(12) 0.0183(9) 0.0062(8) -0.0007(7) -0.0051(9)
+C1 0.0220(10) 0.0207(13) 0.0191(10) -0.0012(9) 0.0062(7) -0.0019(10)
+C2 0.0243(9) 0.0188(12) 0.0214(9) -0.0003(9) 0.0090(7) 0.0007(10)
+C3 0.0346(12) 0.0344(18) 0.0316(13) 0.0079(12) 0.0048(10) -0.0113(13)
+C4 0.0320(13) 0.0352(17) 0.0326(14) 0.0135(13) 0.0072(10) -0.0042(13)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_site_symmetry_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_2
+_geom_bond_distance
+_geom_bond_publ_flag
+O1 . C1 . 1.247(2) yes
+N1 . C1 . 1.337(2) yes
+N1 . H11 . 0.89(3) no
+N1 . H12 . 0.94(3) no
+C1 . C2 . 1.490(3) yes
+C2 . C3 . 1.335(3) yes
+C2 . C4 . 1.498(3) yes
+C3 . H31 . 0.96(3) no
+C3 . H32 . 0.99(2) no
+C4 . H41 . 1.00(3) no
+C4 . H42 . 1.01(3) no
+C4 . H43 . 1.00(3) no
+loop_
+_cod_related_entry_id
+_cod_related_entry_database
+_cod_related_entry_code
+1 ChemSpider 6346

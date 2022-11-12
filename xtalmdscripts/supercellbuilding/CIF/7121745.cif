@@ -1,0 +1,335 @@
+#------------------------------------------------------------------------------
+#$Date: 2019-11-17 06:14:30 +0200 (Sun, 17 Nov 2019) $
+#$Revision: 228357 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/7/12/17/7121745.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_7121745
+loop_
+_publ_author_name
+'Alimi, Lukman O.'
+'van Heerden, Dewald P.'
+'Lama, Prem'
+'Smith, Vincent J.'
+'Barbour, Leonard J.'
+_publ_section_title
+;
+ Reversible thermosalience of 4-aminobenzonitrile.
+;
+_journal_issue                   48
+_journal_name_full
+'Chemical communications (Cambridge, England)'
+_journal_page_first              6208
+_journal_page_last               6211
+_journal_paper_doi               10.1039/c8cc03636e
+_journal_volume                  54
+_journal_year                    2018
+_chemical_formula_sum            'C7 H6 N2'
+_chemical_formula_weight         118.14
+_chemical_name_common            4-aminobenzonitrile
+_chemical_name_systematic        4-aminobenzonitrile
+_space_group_crystal_system      monoclinic
+_space_group_IT_number           14
+_space_group_name_Hall           '-P 2ybc'
+_space_group_name_H-M_alt        'P 1 21/c 1'
+_symmetry_space_group_name_Hall  '-P 2ybc'
+_symmetry_space_group_name_H-M   'P 1 21/c 1'
+_atom_sites_solution_hydrogens   mixed
+_audit_creation_method           SHELXL-2018/3
+_audit_update_record
+;
+2018-05-01 deposited with the CCDC.
+2018-05-24 downloaded from the CCDC.
+;
+_cell_angle_alpha                90
+_cell_angle_beta                 113.224(6)
+_cell_angle_gamma                90
+_cell_formula_units_Z            4
+_cell_length_a                   7.3455(19)
+_cell_length_b                   5.7043(15)
+_cell_length_c                   15.878(4)
+_cell_measurement_reflns_used    2144
+_cell_measurement_temperature    140(2)
+_cell_measurement_theta_max      25.93
+_cell_measurement_theta_min      2.79
+_cell_volume                     611.4(3)
+_computing_cell_refinement       'Bruker SAINT'
+_computing_data_collection       'Bruker APEX2'
+_computing_data_reduction        'Bruker SAINT'
+_computing_molecular_graphics    'Bruker SHELXTL'
+_computing_publication_material  'Bruker SHELXTL'
+_computing_structure_refinement  'SHELXL-2018/3 (Sheldrick, 2018)'
+_computing_structure_solution    'SHELXT 2018/2 (Sheldrick, 2018)'
+_diffrn_ambient_temperature      140(2)
+_diffrn_measured_fraction_theta_full 0.989
+_diffrn_measured_fraction_theta_max 0.988
+_diffrn_measurement_device_type  'Bruker APEX-II CCD'
+_diffrn_measurement_method       '\f and \w scans'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0420
+_diffrn_reflns_av_unetI/netI     0.0301
+_diffrn_reflns_Laue_measured_fraction_full 0.989
+_diffrn_reflns_Laue_measured_fraction_max 0.988
+_diffrn_reflns_limit_h_max       9
+_diffrn_reflns_limit_h_min       -9
+_diffrn_reflns_limit_k_max       6
+_diffrn_reflns_limit_k_min       -7
+_diffrn_reflns_limit_l_max       19
+_diffrn_reflns_limit_l_min       -19
+_diffrn_reflns_number            7099
+_diffrn_reflns_point_group_measured_fraction_full 0.989
+_diffrn_reflns_point_group_measured_fraction_max 0.988
+_diffrn_reflns_theta_full        25.000
+_diffrn_reflns_theta_max         26.113
+_diffrn_reflns_theta_min         3.018
+_exptl_absorpt_coefficient_mu    0.081
+_exptl_absorpt_correction_T_max  0.988
+_exptl_absorpt_correction_T_min  0.956
+_exptl_absorpt_correction_type   multi-scan
+_exptl_absorpt_process_details   SADABS
+_exptl_crystal_colour            Colourless
+_exptl_crystal_density_diffrn    1.283
+_exptl_crystal_description       Rectangular
+_exptl_crystal_F_000             248
+_exptl_crystal_size_max          0.55
+_exptl_crystal_size_mid          0.36
+_exptl_crystal_size_min          0.08
+_exptl_transmission_factor_max   0.988
+_exptl_transmission_factor_min   0.956
+_refine_diff_density_max         0.201
+_refine_diff_density_min         -0.218
+_refine_diff_density_rms         0.049
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.081
+_refine_ls_hydrogen_treatment    mixed
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     90
+_refine_ls_number_reflns         1197
+_refine_ls_number_restraints     2
+_refine_ls_restrained_S_all      1.089
+_refine_ls_R_factor_all          0.0786
+_refine_ls_R_factor_gt           0.0565
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'w=1/[\s^2^(Fo^2^)+(0.0559P)^2^+0.3405P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.1270
+_refine_ls_wR_factor_ref         0.1377
+_reflns_Friedel_coverage         0.000
+_reflns_number_gt                883
+_reflns_number_total             1197
+_reflns_threshold_expression     'I > 2\s(I)'
+_cod_data_source_file            c8cc03636e6.cif
+_cod_data_source_block           ABN_140K
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+
+'_exptl_absorpt_correction_type' value 'Multi-scan' changed to
+'multi-scan' according to
+/home/data/users/saulius/crontab/automatic-downloads/rss-feeds/RSC/lib/dictionaries/cif_core.dic
+dictionary named 'cif_core.dic' version 2.4.2 from 2011-04-26.
+
+Automatic conversion script
+Id: cif_fix_values 4973 2017-02-22 13:04:09Z antanas 
+
+ Adding full bibliography for 7121738--7121749.cif.
+;
+_cod_database_code               7121745
+_shelx_shelxl_version_number     2018/3
+_shelx_space_group_comment
+;
+The symmetry employed for this shelxl refinement is uniquely defined
+by the following loop, which should always be used as a source of
+symmetry information in preference to the above space-group names.
+They are only intended as comments.
+;
+_shelx_res_file
+;
+TITL C:\frames\guest\LA_ABN~1\140K\work\140K_aa_a.res in P2(1)/c
+    C:\frames\guest\LA_ABN~1\140K\work\140K_aa_a.res
+    created by SHELXL-2018/3 at 21:26:36 on 24-Apr-2018
+CELL 0.71073 7.3455 5.7043 15.8777 90.000 113.224 90.000
+ZERR 4.0000 0.0019 0.0015 0.0043 0.000 0.006 0.000
+LATT 1
+SYMM -X, 0.5+Y, 0.5-Z
+SFAC C H N
+UNIT 28 24 8
+BOND
+DFIX 1.02 0.02 N1 H1B
+DFIX 1.02 0.02 N1 H1A
+ACTA 50
+FMAP 2 1 53
+PLAN 20 0 0
+LIST 6 1
+TEMP -133
+L.S. 10
+WGHT    0.055900    0.340500
+FVAR       0.87981
+N1    3    0.784572    0.759692    0.772051    11.00000    0.04863    0.03474 =
+         0.02747   -0.00491    0.01699   -0.00568
+N2    3    0.726191    0.096427    0.410576    11.00000    0.05005    0.04007 =
+         0.03234   -0.00668    0.02042   -0.00868
+C4    1    0.736859    0.361097    0.544487    11.00000    0.02936    0.02608 =
+         0.02415    0.00044    0.00854    0.00043
+C3    1    0.658987    0.280396    0.606188    11.00000    0.02961    0.02593 =
+         0.02837    0.00197    0.00925   -0.00284
+AFIX  43
+H3    2    0.594708    0.132332    0.596333    11.00000   -1.20000
+AFIX   0
+C5    1    0.829281    0.581177    0.559132    11.00000    0.02990    0.02719 =
+         0.02597    0.00456    0.01155    0.00114
+AFIX  43
+H5    2    0.879743    0.640142    0.516658    11.00000   -1.20000
+AFIX   0
+C1    1    0.770711    0.630672    0.697538    11.00000    0.02870    0.02898 =
+         0.02499    0.00115    0.00844    0.00295
+C2    1    0.673859    0.411823    0.680986    11.00000    0.03324    0.03153 =
+         0.02571    0.00269    0.01345   -0.00201
+AFIX  43
+H2    2    0.618453    0.354881    0.721933    11.00000   -1.20000
+AFIX   0
+C6    1    0.847099    0.711678    0.634588    11.00000    0.03246    0.02213 =
+         0.02999   -0.00024    0.01091   -0.00189
+AFIX  43
+H6    2    0.912185    0.859224    0.644373    11.00000   -1.20000
+AFIX   0
+C7    1    0.728620    0.217334    0.468946    11.00000    0.03200    0.03339 =
+         0.02814    0.00032    0.01221   -0.00404
+H1B   2    0.759998    0.687530    0.820101    11.00000    0.05374
+H1A   2    0.869592    0.895800    0.790325    11.00000    0.06038
+HKLF 4
+
+
+
+
+REM  C:\frames\guest\LA_ABN~1\140K\work\140K_aa_a.res in P2(1)/c
+REM wR2 = 0.1377, GooF = S = 1.081, Restrained GooF = 1.089 for all data
+REM R1 = 0.0565 for 883 Fo > 4sig(Fo) and 0.0786 for all 1197 data
+REM 90 parameters refined using 2 restraints
+
+END
+
+WGHT      0.0541      0.3477
+
+REM Highest difference peak  0.201,  deepest hole -0.218,  1-sigma level  0.049
+Q1    1   0.6061  0.3610  0.5372  11.00000  0.05    0.20
+Q2    1   0.8516  0.1723  0.4466  11.00000  0.05    0.19
+Q3    1   0.9957  0.7133  0.6596  11.00000  0.05    0.18
+Q4    1   0.8620  0.6548  0.6832  11.00000  0.05    0.17
+Q5    1   0.6469  0.7976  0.7566  11.00000  0.05    0.16
+Q6    1   0.8590  0.3711  0.5624  11.00000  0.05    0.16
+Q7    1   0.5383  0.3626  0.5994  11.00000  0.05    0.16
+Q8    1   0.5243  0.4550  0.6629  11.00000  0.05    0.16
+Q9    1   0.7778  0.2833  0.5998  11.00000  0.05    0.15
+Q10   1   0.9679  0.5536  0.5768  11.00000  0.05    0.15
+Q11   1   0.8057  0.4190  0.6978  11.00000  0.05    0.15
+Q12   1   0.7232  0.6937  0.6351  11.00000  0.05    0.15
+Q13   1   0.9780  0.7135  0.8020  11.00000  0.05    0.14
+Q14   1   0.5179  0.4029  0.7129  11.00000  0.05    0.13
+Q15   1   1.0254  0.8904  0.6379  11.00000  0.05    0.13
+Q16   1   0.6964  0.5403  0.5376  11.00000  0.05    0.13
+Q17   1   0.5079  0.3646  0.7820  11.00000  0.05    0.13
+Q18   1   0.4607  0.2904  0.5251  11.00000  0.05    0.12
+Q19   1   0.5778  0.0197  0.3766  11.00000  0.05    0.12
+Q20   1   0.7685  0.2264  0.5175  11.00000  0.05    0.12
+;
+_shelx_res_checksum              11639
+loop_
+_space_group_symop_operation_xyz
+'x, y, z'
+'-x, y+1/2, -z+1/2'
+'-x, -y, -z'
+'x, -y-1/2, z-1/2'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_site_symmetry_order
+_atom_site_calc_flag
+_atom_site_refinement_flags_posn
+_atom_site_refinement_flags_adp
+N1 N 0.7846(3) 0.7597(4) 0.77205(12) 0.0363(5) Uani 1 1 d D .
+N2 N 0.7262(3) 0.0964(4) 0.41058(12) 0.0395(5) Uani 1 1 d . .
+C4 C 0.7369(3) 0.3611(4) 0.54449(13) 0.0272(5) Uani 1 1 d . .
+C3 C 0.6590(3) 0.2804(4) 0.60619(13) 0.0287(5) Uani 1 1 d . .
+H3 H 0.594708 0.132332 0.596333 0.034 Uiso 1 1 calc R U
+C5 C 0.8293(3) 0.5812(4) 0.55913(13) 0.0275(5) Uani 1 1 d . .
+H5 H 0.879743 0.640142 0.516658 0.033 Uiso 1 1 calc R U
+C1 C 0.7707(3) 0.6307(4) 0.69754(13) 0.0282(5) Uani 1 1 d . .
+C2 C 0.6739(3) 0.4118(4) 0.68099(14) 0.0296(5) Uani 1 1 d . .
+H2 H 0.618453 0.354881 0.721933 0.036 Uiso 1 1 calc R U
+C6 C 0.8471(3) 0.7117(4) 0.63459(13) 0.0286(5) Uani 1 1 d . .
+H6 H 0.912185 0.859224 0.644373 0.034 Uiso 1 1 calc R U
+C7 C 0.7286(3) 0.2173(4) 0.46895(14) 0.0311(5) Uani 1 1 d . .
+H1B H 0.760(3) 0.688(4) 0.8201(14) 0.054(7) Uiso 1 1 d D .
+H1A H 0.870(3) 0.896(4) 0.7903(18) 0.060(8) Uiso 1 1 d D .
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+N1 0.0486(12) 0.0347(11) 0.0275(10) -0.0049(9) 0.0170(9) -0.0057(9)
+N2 0.0500(12) 0.0401(12) 0.0323(10) -0.0067(10) 0.0204(9) -0.0087(9)
+C4 0.0294(10) 0.0261(11) 0.0242(10) 0.0004(9) 0.0085(8) 0.0004(8)
+C3 0.0296(10) 0.0259(11) 0.0284(11) 0.0020(10) 0.0092(8) -0.0028(9)
+C5 0.0299(10) 0.0272(11) 0.0260(10) 0.0046(9) 0.0115(9) 0.0011(9)
+C1 0.0287(11) 0.0290(12) 0.0250(10) 0.0012(9) 0.0084(8) 0.0030(9)
+C2 0.0332(11) 0.0315(12) 0.0257(11) 0.0027(10) 0.0135(9) -0.0020(9)
+C6 0.0325(11) 0.0221(10) 0.0300(11) -0.0002(9) 0.0109(9) -0.0019(9)
+C7 0.0320(11) 0.0334(12) 0.0281(11) 0.0003(10) 0.0122(9) -0.0040(9)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+N N 0.0061 0.0033 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+C3 C4 C5 119.0(2)
+C3 C4 C7 120.36(19)
+C5 C4 C7 120.57(18)
+C2 C3 C4 120.9(2)
+C6 C5 C4 120.25(19)
+N1 C1 C6 121.8(2)
+N1 C1 C2 119.98(19)
+C6 C1 C2 118.23(19)
+C3 C2 C1 120.50(19)
+C5 C6 C1 121.1(2)
+N2 C7 C4 177.6(2)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+N1 C1 1.363(3)
+N2 C7 1.150(3)
+C4 C3 1.393(3)
+C4 C5 1.402(3)
+C4 C7 1.434(3)
+C3 C2 1.372(3)
+C5 C6 1.372(3)
+C1 C6 1.403(3)
+C1 C2 1.409(3)

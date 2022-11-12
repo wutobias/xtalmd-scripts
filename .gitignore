@@ -13,6 +13,9 @@ dist
 *.psf
 *.xlsx
 *.json
+*.jpg
+*.cif
+oe_license.txt
 examples/OFFBenchmark/CIF/*.cif
 !examples/OFFBenchmark/*/*.csv
 examples/analysis/*.py

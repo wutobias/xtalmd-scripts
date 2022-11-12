@@ -1,0 +1,211 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-20 02:53:41 +0200 (Sat, 20 Feb 2016) $
+#$Revision: 176768 $
+#$URL: svn://www.crystallography.net/cod/cif/2/10/49/2104943.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2104943
+loop_
+_publ_author_name
+'Hammer, Sonja M.'
+'Alig, Edith'
+'Fink, Lothar'
+'Schmidt, Martin U.'
+_publ_section_title
+;
+ Predicted and experimental crystal structures of
+ ethyl-<i>tert</i>-butyl ether
+;
+_journal_issue                   2
+_journal_name_full               'Acta Crystallographica Section B'
+_journal_page_first              155
+_journal_page_last               162
+_journal_paper_doi               10.1107/S0108768111001169
+_journal_volume                  67
+_journal_year                    2011
+_chemical_formula_analytical     'C6 H14 O'
+_chemical_formula_moiety         'C6 H14 O'
+_chemical_formula_structural     'C6 H14 O'
+_chemical_formula_sum            'C6 H14 O'
+_chemical_formula_weight         102.17
+_chemical_name_common            'ethyl-<i>tert</i>-butyl ether'
+_chemical_name_systematic
+;
+2-ethoxy-2-methylpropane
+;
+_space_group_crystal_system      monoclinic
+_space_group_IT_number           12
+_space_group_name_Hall           '-C 2y'
+_space_group_name_H-M_alt        'C 1 2/m 1'
+_symmetry_space_group_name_Hall  '-C 2y'
+_symmetry_space_group_name_H-M   'C 1 2/m 1'
+_cell_angle_alpha                90
+_cell_angle_beta                 101.0148(15)
+_cell_angle_gamma                90
+_cell_formula_units_Z            4
+_cell_length_a                   14.7170(3)
+_cell_length_b                   7.76462(17)
+_cell_length_c                   6.22813(16)
+_cell_measurement_temperature    123(2)
+_cell_volume                     698.59(3)
+_computing_cell_refinement       '<i>TOPAS Academic</i> (Coelho, 2007)'
+_computing_data_collection       '<i>STOE WinXPOW</i> (STOE & Cie GmbH, 2005)'
+_computing_data_reduction        '<i>DASH</i> (David <i>et al.</i>, 2006)'
+_computing_molecular_graphics    '<i>Mercury</i> (Macrae <i>et al.</i>, 2008)'
+_computing_publication_material  '<i>publCIF</i> (Westrip, 2009)'
+_computing_structure_refinement  '<i>TOPAS Academic</i> (Coelho, 2007)'
+_computing_structure_solution    '<i>DASH</i> (David <i>et al.</i>, 2006)'
+_diffrn_ambient_temperature      123(2)
+_diffrn_measurement_device_type
+;
+STOE Stadi-P diffractometer
+;
+_diffrn_radiation_monochromator  'primary focussing, Ge 111'
+_diffrn_radiation_type           'Cu K\a~1~'
+_diffrn_radiation_wavelength     1.54056
+_exptl_absorpt_coefficient_mu    0.488
+_exptl_absorpt_correction_type   none
+_exptl_crystal_density_diffrn    0.971
+_exptl_crystal_description       powder
+_exptl_crystal_F_000             232.0
+_pd_char_colour                  colourless
+_pd_char_particle_morphology     'no specific habit'
+_pd_meas_2theta_range_inc        0.01
+_pd_meas_2theta_range_max        69.99
+_pd_meas_2theta_range_min        5.0
+_pd_meas_number_of_points        6500
+_pd_meas_scan_method             step
+_pd_prep_conditions              'quenched sample'
+_pd_prep_temperature             123(2)
+_pd_proc_2theta_range_inc        0.01
+_pd_proc_2theta_range_max        69.99
+_pd_proc_2theta_range_min        5.0
+_pd_proc_info_excluded_regions   none
+_pd_proc_ls_background_function  'Chebyshev with 50 terms'
+_pd_proc_ls_pref_orient_corr     'Correction based on March (1932)'
+_pd_proc_ls_profile_function
+' modified Thompson-Cox-Hastings pseudo-Voigt(Young, 1993)'
+_pd_proc_ls_prof_R_factor        0.03425
+_pd_proc_ls_prof_wR_expected     0.01679
+_pd_proc_ls_prof_wR_factor       0.04556
+_pd_proc_wavelength              1.54056
+_pd_spec_mounting                'glass capillary'
+_pd_spec_mount_mode              transmission
+_pd_spec_shape                   cylinder
+_pd_spec_size_axial              10
+_pd_spec_size_equat              0.7
+_pd_spec_size_thick              0.7
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_all   2.714
+_refine_ls_hydrogen_treatment    refall
+_refine_ls_matrix_type           fullcycle
+_refine_ls_number_constraints    0
+_refine_ls_number_parameters     114
+_refine_ls_number_restraints     32
+_refine_ls_shift/su_max          0.001
+_refine_ls_weighting_scheme      sigma
+_cod_data_source_file            og5046.cif
+_cod_data_source_block           I
+_cod_database_code               2104943
+_cod_database_fobs_code          2104943
+loop_
+_symmetry_equiv_pos_as_xyz
++x,+y,+z
++x,-y,+z
+-x,+y,-z
+-x,-y,-z
+1/2+x,1/2+y,+z
+1/2+x,1/2-y,+z
+1/2-x,1/2+y,-z
+1/2-x,1/2-y,-z
+loop_
+_atom_site_type_symbol
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+_atom_site_occupancy
+O O4 0.26110(11) 0.00000 0.3763(3) 0.0337 Uiso 1.000
+C C1 0.14543(12) 0.00000 0.5910(3) 0.0337 Uiso 1.000
+C C2 0.16127(12) 0.00000 0.3546(3) 0.0337 Uiso 1.000
+C C3 0.11775(10) 0.16530(19) 0.2431(3) 0.0337 Uiso 1.000
+C C5 0.29674(12) 0.00000 0.1785(3) 0.0337 Uiso 1.000
+C C6 0.40379(12) 0.00000 0.2339(3) 0.0337 Uiso 1.000
+H H1A 0.0702(4) 0.00000 0.5947(14) 0.0405 Uiso 1.000
+H H1B 0.1790(3) 0.1103(5) 0.6798(7) 0.0405 Uiso 1.000
+H H3A 0.0444(3) 0.1729(5) 0.2514(7) 0.0405 Uiso 1.000
+H H3B 0.1531(3) 0.2799(6) 0.3186(8) 0.0405 Uiso 1.000
+H H3C 0.1234(3) 0.1648(6) 0.0743(8) 0.0405 Uiso 1.000
+H H5A 0.2728(3) -0.1122(5) 0.0794(8) 0.0405 Uiso 1.000
+H H6A 0.4319(4) 0.00000 0.0828(12) 0.0405 Uiso 1.000
+H H6B 0.4288(3) -0.1122(5) 0.3297(8) 0.0405 Uiso 1.000
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_source
+C C 'International Tables Vol C Table 6.1.1.4'
+H H 'International Tables Vol C Table 6.1.1.4'
+O O 'International Tables Vol C Table 6.1.1.4'
+loop_
+_audit_conform_dict_name
+_audit_conform_dict_version
+cif_core.dic .
+cif_pd.dic .
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle_site_symmetry_1
+_geom_angle_site_symmetry_2
+_geom_angle_site_symmetry_3
+_geom_angle
+_geom_angle_publ_flag
+C2 O4 C5 . . . 116.89(16) no
+O4 C2 C1 . . . 104.34(15) no
+O4 C2 C3 . . . 111.65(10) no
+C1 C2 C3 . . . 107.85(11) no
+O4 C5 C6 . . . 109.50(15) no
+C2 C1 H1A . . . 110.8(5) no
+C2 C1 H1B . . . 110.6(3) no
+H1A C1 H1B . . . 110.3(4) no
+C2 C3 H3A . . . 110.7(2) no
+C2 C3 H3B . . . 111.3(3) no
+C2 C3 H3C . . . 109.7(3) no
+H3A C3 H3B . . . 109.3(3) no
+H3A C3 H3C . . . 108.0(4) no
+H3B C3 H3C . . . 107.8(4) no
+O4 C5 H5A . . . 110.9(3) no
+C6 C5 H5A . . . 109.4(3) no
+C5 C6 H6A . . . 110.1(4) no
+C5 C6 H6B . . . 110.4(3) no
+H6A C6 H6B . . . 109.2(3) no
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+_geom_bond_distance
+_geom_bond_publ_flag
+O4 C2 . . 1.450(2) no
+O4 C5 . . 1.428(3) no
+C1 C2 . . 1.534(3) no
+C2 C3 . . 1.5394(19) no
+C5 C6 . . 1.547(3) no
+C1 H1A . . 1.112(6) no
+C1 H1B . . 1.086(4) no
+C3 H3A . . 1.092(5) no
+C3 H3B . . 1.091(5) no
+C3 H3C . . 1.070(5) no
+C5 H5A . . 1.087(4) no
+C6 H6A . . 1.098(7) no
+C6 H6B . . 1.080(4) no

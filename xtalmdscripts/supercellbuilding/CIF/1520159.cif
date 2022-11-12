@@ -1,0 +1,240 @@
+#------------------------------------------------------------------------------
+#$Date: 2015-06-01 10:49:34 +0300 (Mon, 01 Jun 2015) $
+#$Revision: 137600 $
+#$URL: svn://www.crystallography.net/cod/cif/1/52/01/1520159.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_1520159
+loop_
+_publ_author_name
+'Huth, Susanne L.'
+'Threlfall, Terry L.'
+'Hursthouse, Michael B.'
+_publ_section_title
+;
+ 4-Chloroaniline - C6H6ClN
+;
+_journal_name_full               'Crystal Structure Report Archive'
+_journal_page_first              695
+_journal_year                    2008
+_chemical_formula_sum            'C6 H6 Cl N'
+_chemical_formula_weight         127.57
+_chemical_name_systematic
+;
+4-chloroaniline
+;
+_space_group_IT_number           62
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_Hall  '-P 2ac 2n'
+_symmetry_space_group_name_H-M   'P n m a'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_cell_angle_alpha                90.00
+_cell_angle_beta                 90.00
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            4
+_cell_length_a                   8.5936(2)
+_cell_length_b                   7.2391(2)
+_cell_length_c                   9.1897(3)
+_cell_measurement_reflns_used    3824
+_cell_measurement_temperature    120(2)
+_cell_measurement_theta_max      27.48
+_cell_measurement_theta_min      2.91
+_cell_volume                     571.69(3)
+_computing_cell_refinement
+'DENZO (Otwinowski & Minor, 1997) & COLLECT (Hooft, R.W.W., 1998)'
+_computing_data_collection       'COLLECT (Hooft, R.W.W., 1998)'
+_computing_data_reduction
+'DENZO (Otwinowski & Minor, 1997) & COLLECT (Hooft, R.W.W., 1998)'
+_computing_structure_refinement  'SHELXL-97 (Sheldrick, 1997)'
+_computing_structure_solution    'SHELXS-97 (Sheldrick, 1997)'
+_diffrn_ambient_temperature      120(2)
+_diffrn_measured_fraction_theta_full 0.997
+_diffrn_measured_fraction_theta_max 0.997
+_diffrn_measurement_device_type
+'Bruker-Nonius APEX II CCD camera on \k-goniostat'
+_diffrn_measurement_method       '\f & \w scans'
+_diffrn_radiation_monochromator  '10cm confocal mirrors'
+_diffrn_radiation_source         'Bruker-Nonius FR591 rotating anode'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0247
+_diffrn_reflns_av_sigmaI/netI    0.0207
+_diffrn_reflns_limit_h_max       9
+_diffrn_reflns_limit_h_min       -11
+_diffrn_reflns_limit_k_max       9
+_diffrn_reflns_limit_k_min       -9
+_diffrn_reflns_limit_l_max       9
+_diffrn_reflns_limit_l_min       -11
+_diffrn_reflns_number            5317
+_diffrn_reflns_theta_full        27.48
+_diffrn_reflns_theta_max         27.48
+_diffrn_reflns_theta_min         3.25
+_exptl_absorpt_coefficient_mu    0.539
+_exptl_absorpt_correction_T_max  0.9381
+_exptl_absorpt_correction_T_min  0.9187
+_exptl_absorpt_correction_type   multi-scan
+_exptl_absorpt_process_details   'SADABS 2007/2 (Sheldrick, G.M., 2007)'
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    1.482
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_description       'cut block'
+_exptl_crystal_F_000             264
+_exptl_crystal_size_max          0.16
+_exptl_crystal_size_mid          0.16
+_exptl_crystal_size_min          0.12
+_refine_diff_density_max         0.296
+_refine_diff_density_min         -0.231
+_refine_diff_density_rms         0.052
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.188
+_refine_ls_hydrogen_treatment    mixed
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     47
+_refine_ls_number_reflns         704
+_refine_ls_number_restraints     1
+_refine_ls_restrained_S_all      1.187
+_refine_ls_R_factor_all          0.0254
+_refine_ls_R_factor_gt           0.0244
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'calc w=1/[\s^2^(Fo^2^)+(0.0270P)^2^+0.2178P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.0647
+_refine_ls_wR_factor_ref         0.0655
+_reflns_number_gt                678
+_reflns_number_total             704
+_reflns_threshold_expression     >2sigma(I)
+_cod_data_source_file            eCrystal-695.cif
+_cod_data_source_block           2008lsh24
+_cod_depositor_comments
+;
+Citation :
+Huth, Susanne L. and Threlfall, Terry L. and Hursthouse, Michael B. (2008) 
+University of Southampton, Crystal Structure Report Archive. 
+(doi:10.5258/ecrystals/695)
+
+More at:
+http://ecrystals.chem.soton.ac.uk/695/
+
+The following automatic conversions were performed:
+
+'_symmetry_cell_setting' value 'Orthorhombic' changed to
+'orthorhombic' according to the built-in table from CIF Core
+dictionary named 'cif_core.dic' version 2.4.1 from 2010-06-29.
+
+Automatic conversion script
+Id: cif_fix_values 3392 2015-05-12 13:50:21Z andrius 
+;
+_cod_database_code               1520159
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x+1/2, -y, z+1/2'
+'-x, y+1/2, -z'
+'x+1/2, -y+1/2, -z+1/2'
+'-x, -y, -z'
+'x-1/2, y, -z-1/2'
+'x, -y-1/2, z'
+'-x-1/2, y-1/2, z-1/2'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_symmetry_multiplicity
+_atom_site_calc_flag
+_atom_site_refinement_flags
+_atom_site_disorder_assembly
+_atom_site_disorder_group
+C1 C 0.12107(17) 0.2500 0.39538(16) 0.0165(3) Uani 1 2 d S . .
+C2 C 0.18487(12) 0.08337(16) 0.44496(11) 0.0171(3) Uani 1 1 d . . .
+H2 H 0.1425 -0.0305 0.4123 0.020 Uiso 1 1 calc R . .
+C3 C 0.30970(12) 0.08281(15) 0.54162(11) 0.0163(2) Uani 1 1 d . . .
+H3 H 0.3524 -0.0305 0.5750 0.020 Uiso 1 1 calc R . .
+C4 C 0.37086(16) 0.2500 0.58855(16) 0.0148(3) Uani 1 2 d S . .
+N1 N 0.0010(2) 0.2500 0.29369(16) 0.0230(3) Uani 1 2 d SD . .
+Cl1 Cl 0.53095(4) 0.2500 0.70643(4) 0.01772(15) Uani 1 2 d S . .
+H1N H -0.0528(18) 0.148(2) 0.2862(16) 0.037(5) Uiso 1 1 d D . .
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+C1 0.0141(7) 0.0224(8) 0.0128(7) 0.000 0.0021(6) 0.000
+C2 0.0172(5) 0.0172(5) 0.0168(5) -0.0026(4) 0.0009(4) -0.0014(4)
+C3 0.0164(5) 0.0158(5) 0.0166(5) 0.0009(4) 0.0021(4) 0.0016(4)
+C4 0.0129(7) 0.0197(7) 0.0119(7) 0.000 0.0001(5) 0.000
+N1 0.0222(7) 0.0224(8) 0.0245(8) 0.000 -0.0082(6) 0.000
+Cl1 0.0163(2) 0.0199(2) 0.0169(2) 0.000 -0.00339(13) 0.000
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+N N 0.0061 0.0033 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+Cl Cl 0.1484 0.1585 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_site_symmetry_1
+_geom_angle_site_symmetry_3
+N1 C1 C2 120.55(7) . 7_565
+N1 C1 C2 120.55(7) . .
+C2 C1 C2 118.83(14) 7_565 .
+C3 C2 C1 120.75(10) . .
+C3 C2 H2 119.6 . .
+C1 C2 H2 119.6 . .
+C4 C3 C2 119.16(10) . .
+C4 C3 H3 120.4 . .
+C2 C3 H3 120.4 . .
+C3 C4 C3 121.35(14) . 7_565
+C3 C4 Cl1 119.32(7) . .
+C3 C4 Cl1 119.32(7) 7_565 .
+C1 N1 H1N 116.4(11) . .
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+C1 N1 1.392(2) .
+C1 C2 1.4012(13) 7_565
+C1 C2 1.4012(13) .
+C2 C3 1.3927(15) .
+C2 H2 0.9500 .
+C3 C4 1.3882(13) .
+C3 H3 0.9500 .
+C4 C3 1.3882(13) 7_565
+C4 Cl1 1.7510(15) .
+N1 H1N 0.875(13) .
+loop_
+_geom_hbond_atom_site_label_D
+_geom_hbond_atom_site_label_H
+_geom_hbond_atom_site_label_A
+_geom_hbond_distance_DH
+_geom_hbond_distance_HA
+_geom_hbond_distance_DA
+_geom_hbond_angle_DHA
+_geom_hbond_site_symmetry_A
+N1 H1N Cl1 0.875(13) 2.977(15) 3.7175(4) 143.5(13) 2_554

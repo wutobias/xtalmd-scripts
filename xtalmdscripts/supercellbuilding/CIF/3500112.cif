@@ -1,0 +1,356 @@
+#------------------------------------------------------------------------------
+#$Date: 2020-11-10 22:59:19 +0200 (Tue, 10 Nov 2020) $
+#$Revision: 259064 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/3/50/01/3500112.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_3500112
+loop_
+_publ_author_name
+'Thierry Maris'
+_publ_section_references
+;
+Dolomanov, O.V., Bourhis, L.J., Gildea, R.J, Howard, J.A.K. & Puschmann, H.
+ (2009), J. Appl. Cryst. 42, 339-341.
+
+Sheldrick, G.M. (2008). Acta Cryst. A64, 112-122.
+;
+_publ_section_title
+;
+ Indole in Pnma at 100 K
+;
+_journal_name_full               'Personal communication to COD'
+_journal_year                    2020
+_chemical_formula_moiety         'C8 H7 N'
+_chemical_formula_sum            'C8 H7 N'
+_chemical_formula_weight         117.15
+_chemical_name_common            indole
+_chemical_name_systematic
+;
+ 1H-Indole
+;
+_space_group_crystal_system      orthorhombic
+_space_group_IT_number           62
+_space_group_name_Hall           '-P 2ac 2n'
+_space_group_name_H-M_alt        'P n m a'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     dual
+_audit_creation_date             2014-04-04
+_audit_creation_method
+;
+Olex2 1.2
+(compiled 2014.03.20 svn.r2914 for OlexSys, GUI svn.r4816)
+;
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_formula_units_Z            4
+_cell_length_a                   7.6434(2)
+_cell_length_b                   14.6714(5)
+_cell_length_c                   5.5496(2)
+_cell_measurement_reflns_used    8039
+_cell_measurement_temperature    150
+_cell_measurement_theta_max      68.33
+_cell_measurement_theta_min      3.01
+_cell_volume                     622.33(3)
+_computing_cell_refinement       'SAINT v8.34A (Bruker, 2013)'
+_computing_data_collection       'APEX2 (Bruker, 2013)'
+_computing_data_reduction        'SAINT v8.34A (Bruker, 2013)'
+_computing_molecular_graphics    'Olex2 (Dolomanov et al., 2009)'
+_computing_publication_material  'Olex2 (Dolomanov et al., 2009)'
+_computing_structure_refinement  'XL (Sheldrick, 2008)'
+_computing_structure_solution    'XM (Sheldrick, 2008)'
+_diffrn_ambient_temperature      150
+_diffrn_measured_fraction_theta_full 0.969
+_diffrn_measured_fraction_theta_max 0.970
+_diffrn_measurement_device_type  'Bruker APEX-II CCD'
+_diffrn_measurement_method       '\f and \w scans'
+_diffrn_radiation_type           CuK\a
+_diffrn_radiation_wavelength     1.54178
+_diffrn_reflns_av_R_equivalents  0.0525
+_diffrn_reflns_av_unetI/netI     0.0220
+_diffrn_reflns_Laue_measured_fraction_full 0.969
+_diffrn_reflns_Laue_measured_fraction_max 0.970
+_diffrn_reflns_limit_h_max       9
+_diffrn_reflns_limit_h_min       -8
+_diffrn_reflns_limit_k_max       17
+_diffrn_reflns_limit_k_min       -17
+_diffrn_reflns_limit_l_max       6
+_diffrn_reflns_limit_l_min       -6
+_diffrn_reflns_number            9008
+_diffrn_reflns_point_group_measured_fraction_full 0.969
+_diffrn_reflns_point_group_measured_fraction_max 0.970
+_diffrn_reflns_theta_full        67.679
+_diffrn_reflns_theta_max         68.316
+_diffrn_reflns_theta_min         8.541
+_diffrn_source                   'Incoatec Mircosource'
+_diffrn_standards_number         0
+_exptl_absorpt_coefficient_mu    0.576
+_exptl_absorpt_correction_T_max  0.7531
+_exptl_absorpt_correction_T_min  0.6154
+_exptl_absorpt_correction_type   multi-scan
+_exptl_absorpt_process_details
+;
+SADABS-2012/1 (Bruker,2012) was used for absorption correction.
+wR2(int) was 0.1059 before and 0.0656 after correction.
+The Ratio of minimum to maximum transmission is 0.8172.
+The \l/2 correction factor is 0.0015.
+;
+_exptl_crystal_colour            colourless
+_exptl_crystal_colour_primary    colourless
+_exptl_crystal_density_diffrn    1.250
+_exptl_crystal_description       Block
+_exptl_crystal_F_000             248
+_exptl_crystal_size_max          0.364
+_exptl_crystal_size_mid          0.18
+_exptl_crystal_size_min          0.15
+_exptl_special_details
+;
+ ?
+;
+_geom_special_details
+;
+ All esds (except the esd in the dihedral angle between two l.s. planes)
+ are estimated using the full covariance matrix.  The cell esds are taken
+ into account individually in the estimation of esds in distances, angles
+ and torsion angles; correlations between esds in cell parameters are only
+ used when they are defined by crystal symmetry.  An approximate (isotropic)
+ treatment of cell esds is used for estimating esds involving l.s. planes.
+;
+_refine_diff_density_max         0.104
+_refine_diff_density_min         -0.090
+_refine_diff_density_rms         0.020
+_refine_ls_extinction_coef       .
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.129
+_refine_ls_hydrogen_treatment    constr
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     82
+_refine_ls_number_reflns         579
+_refine_ls_number_restraints     28
+_refine_ls_restrained_S_all      1.154
+_refine_ls_R_factor_all          0.0317
+_refine_ls_R_factor_gt           0.0315
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'w=1/[\s^2^(Fo^2^)+(0.0535P)^2^+0.0306P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.0862
+_refine_ls_wR_factor_ref         0.0863
+_refine_special_details
+;
+1. Fixed Uiso
+ At 1.2 times of:
+  All C(H) groups, All N(H) groups
+2. Restrained distances
+ N1-C2 = N1-C9
+ 1.38 with sigma of 0.02
+ C3-C4
+ 1.47 with sigma of 0.02
+ C4-C9
+ 1.43 with sigma of 0.02
+ C4-C5 \\sim C6-C7 \\sim C8-C9
+ with sigma of 0.02
+ C4-C6 \\sim C5-C7 \\sim C6-C8 \\sim C7-C9 \\sim C8-C4 \\sim C9-C5
+ with sigma of 0.02
+3. Restrained planarity
+ N1, C2, C3, C4, C5, C6, C7, C8, C9
+ with sigma of 0.1
+4. Others
+ Fixed Sof: N1(0.5) H1(0.5) C2(0.5) H2(0.5) C3(0.5) H3(0.5) C4(0.5) C5(0.5)
+ H5(0.5) C6(0.5) H6(0.5) C7(0.5) H7(0.5) C8(0.5) H8(0.5) C9(0.5)
+5.a Aromatic/amide H refined with riding coordinates:
+ N1(H1), C2(H2), C3(H3), C5(H5), C6(H6), C7(H7), C8(H8)
+;
+_reflns_Friedel_coverage         0.000
+_reflns_Friedel_fraction_full    .
+_reflns_Friedel_fraction_max     .
+_reflns_number_gt                573
+_reflns_number_total             579
+_reflns_special_details
+;
+ Reflections were merged by SHELXL according to the crystal
+ class for the calculation of statistics and refinement.
+ 
+ _reflns_Friedel_fraction is defined as the number of unique
+ Friedel pairs measured divided by the number that would be
+ possible theoretically, ignoring centric projections and
+ systematic absences.
+;
+_reflns_threshold_expression     'I > 2\s(I)'
+_cod_data_source_file            indole.cif
+_cod_data_source_block           indole
+_cod_database_code               3500112
+_vrf_plat088_indole
+;
+PROBLEM:  Poor Data / Parameter Ratio ....................       5.68
+RESPONSE:
+The structure is disordered with the molecule lying over a mirror plane.
+The refinement involve the complete molecules and this situation generates
+a large number of parameters. However, this is counterbalanced by the use of
+numerous restraints applied on distances and atomic displacement parameters
+that links many of these parameters.
+;
+_shelxl_version_number           2014-3
+loop_
+_space_group_symop_id
+_space_group_symop_operation_xyz
+1 'x, y, z'
+2 '-x+1/2, -y, z+1/2'
+3 'x+1/2, -y+1/2, -z+1/2'
+4 '-x, y+1/2, -z'
+5 '-x, -y, -z'
+6 'x-1/2, y, -z-1/2'
+7 '-x-1/2, y-1/2, z-1/2'
+8 'x, -y-1/2, z'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_site_symmetry_order
+_atom_site_calc_flag
+_atom_site_refinement_flags_posn
+_atom_site_refinement_flags_adp
+_atom_site_refinement_flags_occupancy
+_atom_site_disorder_assembly
+_atom_site_disorder_group
+N1 N 0.2507(12) 0.1676(6) 1.2379(14) 0.0478(14) Uani 0.5 1 d D . P A -1
+H1 H 0.3094 0.1620 1.3735 0.057 Uiso 0.5 1 calc R . P A -1
+C2 C 0.1931(12) 0.0999(8) 1.0989(17) 0.058(2) Uani 0.5 1 d D . P A -1
+H2 H 0.2090 0.0372 1.1351 0.070 Uiso 0.5 1 calc R . P A -1
+C3 C 0.1092(6) 0.1309(3) 0.9000(9) 0.0524(9) Uani 0.5 1 d D . P A -1
+H3 H 0.0586 0.0952 0.7754 0.063 Uiso 0.5 1 calc R . P A -1
+C4 C 0.11227(15) 0.22716(8) 0.9152(2) 0.0371(5) Uani 0.5 1 d D . P A -1
+C5 C 0.05234(17) 0.29838(11) 0.7706(2) 0.0418(4) Uani 0.5 1 d . . P A -1
+H5 H -0.0086 0.2863 0.6249 0.050 Uiso 0.5 1 calc R . P A -1
+C6 C 0.0834(6) 0.3866(3) 0.8436(8) 0.0440(7) Uani 0.5 1 d . . P A -1
+H6 H 0.0421 0.4351 0.7453 0.053 Uiso 0.5 1 calc R . P A -1
+C7 C 0.1718(12) 0.4078(8) 1.0529(17) 0.0466(12) Uani 0.5 1 d . . P A -1
+H7 H 0.1921 0.4696 1.0957 0.056 Uiso 0.5 1 calc R . P A -1
+C8 C 0.2306(15) 0.3378(8) 1.2002(18) 0.0464(13) Uani 0.5 1 d . . P A -1
+H8 H 0.2899 0.3513 1.3464 0.056 Uiso 0.5 1 calc R . P A -1
+C9 C 0.20202(14) 0.2466(8) 1.13170(19) 0.0371(6) Uani 0.5 1 d D . P A -1
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+N1 0.034(2) 0.069(2) 0.040(3) 0.0164(17) -0.0027(14) 0.0088(14)
+C2 0.046(2) 0.058(4) 0.071(4) 0.009(3) 0.006(2) 0.009(2)
+C3 0.0420(16) 0.054(2) 0.061(3) -0.0172(15) 0.0094(15) -0.0065(12)
+C4 0.0228(6) 0.0570(15) 0.0314(6) -0.0026(5) 0.0040(4) -0.0019(5)
+C5 0.0257(7) 0.0687(9) 0.0309(7) 0.0055(6) -0.0021(5) -0.0029(6)
+C6 0.0324(13) 0.0507(18) 0.0489(17) 0.0141(11) 0.0040(11) 0.0004(10)
+C7 0.041(2) 0.0451(16) 0.053(2) -0.0011(18) 0.0067(18) -0.0030(15)
+C8 0.033(2) 0.073(3) 0.033(2) -0.0073(17) -0.0055(15) -0.0064(15)
+C9 0.0236(5) 0.0577(16) 0.0299(6) -0.012(3) 0.0019(4) -0.003(2)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0181 0.0091 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+N N 0.0311 0.0180 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_site_symmetry_1
+_geom_angle_site_symmetry_3
+C2 N1 H1 126.4 . .
+C2 N1 C9 107.2(6) . .
+C9 N1 H1 126.4 . .
+N1 C2 H2 123.9 . .
+N1 C2 C3 112.2(8) . .
+C3 C2 H2 123.9 . .
+C2 C3 H3 126.9 . .
+C2 C3 C4 106.1(5) . .
+C4 C3 H3 126.9 . .
+C5 C4 C3 135.1(2) . .
+C5 C4 C9 119.9(5) . .
+C9 C4 C3 105.1(5) . .
+C4 C5 H5 120.7 . .
+C6 C5 C4 118.57(18) . .
+C6 C5 H5 120.7 . .
+C5 C6 H6 118.5 . .
+C5 C6 C7 123.0(5) . .
+C7 C6 H6 118.5 . .
+C6 C7 H7 120.4 . .
+C6 C7 C8 119.2(8) . .
+C8 C7 H7 120.4 . .
+C7 C8 H8 120.2 . .
+C7 C8 C9 119.6(7) . .
+C9 C8 H8 120.2 . .
+N1 C9 C4 109.4(7) . .
+N1 C9 C8 130.8(2) . .
+C8 C9 C4 119.8(6) . .
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+N1 H1 0.8800 .
+N1 C2 1.332(11) .
+N1 C9 1.352(10) .
+C2 H2 0.9500 .
+C2 C3 1.355(11) .
+C3 H3 0.9500 .
+C3 C4 1.415(5) .
+C4 C5 1.3950(18) .
+C4 C9 1.412(3) .
+C5 H5 0.9500 .
+C5 C6 1.377(6) .
+C6 H6 0.9500 .
+C6 C7 1.380(10) .
+C7 H7 0.9500 .
+C7 C8 1.388(12) .
+C8 H8 0.9500 .
+C8 C9 1.409(12) .
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion
+_geom_torsion_site_symmetry_1
+_geom_torsion_site_symmetry_2
+_geom_torsion_site_symmetry_3
+_geom_torsion_site_symmetry_4
+N1 C2 C3 C4 -0.6(5) . . . .
+C2 N1 C9 C4 -0.8(6) . . . .
+C2 N1 C9 C8 -179.2(7) . . . .
+C2 C3 C4 C5 179.0(4) . . . .
+C2 C3 C4 C9 0.1(5) . . . .
+C3 C4 C5 C6 -178.49(14) . . . .
+C3 C4 C9 N1 0.5(5) . . . .
+C3 C4 C9 C8 179.0(6) . . . .
+C4 C5 C6 C7 0.3(6) . . . .
+C5 C4 C9 N1 -178.6(5) . . . .
+C5 C4 C9 C8 0.0(6) . . . .
+C5 C6 C7 C8 -1.0(7) . . . .
+C6 C7 C8 C9 1.1(9) . . . .
+C7 C8 C9 N1 177.6(8) . . . .
+C7 C8 C9 C4 -0.6(10) . . . .
+C9 N1 C2 C3 0.9(6) . . . .
+C9 C4 C5 C6 0.2(3) . . . .
+
+_cod_database_fobs_code 3500112

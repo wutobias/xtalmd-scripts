@@ -1,0 +1,179 @@
+#------------------------------------------------------------------------------
+#$Date: 2018-09-26 20:45:16 +0300 (Wed, 26 Sep 2018) $
+#$Revision: 211179 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/2/10/79/2107937.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2107937
+loop_
+_publ_author_name
+'Reilly, Anthony M.'
+'Cooper, Richard I.'
+'Adjiman, Claire S.'
+'Bhattacharya, Saswata'
+'Boese, A. Daniel'
+'Brandenburg, Jan Gerit'
+'Bygrave, Peter J.'
+'Bylsma, Rita'
+'Campbell, Josh E.'
+'Car, Roberto'
+'Case, David H.'
+'Chadha, Renu'
+'Cole, Jason C.'
+'Cosburn, Katherine'
+'Cuppen, Herma M.'
+'Curtis, Farren'
+'Day, Graeme M.'
+'DiStasio Jr, Robert A.'
+'Dzyabchenko, Alexander'
+'van Eijck, Bouke P.'
+'Elking, Dennis M.'
+'van den Ende, Joost A.'
+'Facelli, Julio C.'
+'Ferraro, Marta B.'
+'Fusti-Molnar, Laszlo'
+'Gatsiou, Christina-Anna'
+'Gee, Thomas S.'
+'de Gelder, Ren\'e'
+'Ghiringhelli, Luca M.'
+'Goto, Hitoshi'
+'Grimme, Stefan'
+'Guo, Rui'
+'Hofmann, Detlef W. M.'
+'Hoja, Johannes'
+'Hylton, Rebecca K.'
+'Iuzzolino, Luca'
+'Jankiewicz, Wojciech'
+'de Jong, Dani\"el T.'
+'Kendrick, John'
+'de Klerk, Niek J. J.'
+'Ko, Hsin-Yu'
+'Kuleshova, Liudmila N.'
+'Li, Xiayue'
+'Lohani, Sanjaya'
+'Leusen, Frank J. J.'
+'Lund, Albert M.'
+'Lv, Jian'
+'Ma, Yanming'
+'Marom, Noa'
+'Masunov, Art\"em E.'
+'McCabe, Patrick'
+'McMahon, David P.'
+'Meekes, Hugo'
+'Metz, Michael P.'
+'Misquitta, Alston J.'
+'Mohamed, Sharmarke'
+'Monserrat, Bartomeu'
+'Needs, Richard J.'
+'Neumann, Marcus A.'
+'Nyman, Jonas'
+'Obata, Shigeaki'
+'Oberhofer, Harald'
+'Oganov, Artem R.'
+'Orendt, Anita M.'
+'Pagola, Gabriel I.'
+'Pantelides, Constantinos C.'
+'Pickard, Chris J.'
+'Podeszwa, Rafal'
+'Price, Louise S.'
+'Price, Sarah L.'
+'Pulido, Angeles'
+'Read, Murray G.'
+'Reuter, Karsten'
+'Schneider, Elia'
+'Schober, Christoph'
+'Shields, Gregory P.'
+'Singh, Pawanpreet'
+'Sugden, Isaac J.'
+'Szalewicz, Krzysztof'
+'Taylor, Christopher R.'
+'Tkatchenko, Alexandre'
+'Tuckerman, Mark E.'
+'Vacarro, Francesca'
+'Vasileiadis, Manolis'
+'Vazquez-Mayagoitia, Alvaro'
+'Vogt, Leslie'
+'Wang, Yanchao'
+'Watson, Rona E.'
+'de Wijs, Gilles A.'
+'Yang, Jack'
+'Zhu, Qiang'
+'Groom, Colin R.'
+_publ_section_title
+;
+ Report on the sixth blind test of organic crystal structure prediction
+ methods
+;
+_journal_issue                   4
+_journal_name_full               'Acta Crystallographica Section B'
+_journal_page_first              439
+_journal_page_last               459
+_journal_paper_doi               10.1107/S2052520616007447
+_journal_volume                  72
+_journal_year                    2016
+_chemical_compound_source        'see text'
+_chemical_formula_moiety         'C8 N4 S3'
+_chemical_formula_sum            'C8 N4 S3'
+_chemical_formula_weight         248.30
+_space_group_IT_number           2
+_symmetry_cell_setting           triclinic
+_symmetry_Int_Tables_number      2
+_symmetry_space_group_name_Hall  '-P 1'
+_symmetry_space_group_name_H-M   'P -1'
+_cell_angle_alpha                84.6340
+_cell_angle_beta                 81.2480
+_cell_angle_gamma                75.9230
+_cell_formula_units_Z            2
+_cell_length_a                   6.69470
+_cell_length_b                   7.26020
+_cell_length_c                   9.95230
+_cell_volume                     462.934
+_cod_data_source_file            XXII-2_Brandenburg_Grimme.cif
+_cod_data_source_block           22_list2_bpandenburg_5_a1515
+_cod_database_code               2107937
+loop_
+_space_group_symop_id
+_space_group_symop_operation_xyz
+1 x,y,z
+2 -x,-y,-z
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_thermal_displace_type
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_U_iso_or_equiv
+S1 S Uiso 0.71047 0.57570 0.24322 1.000 0.0127
+S3 S Uiso 0.25740 0.86465 0.54984 1.000 0.0127
+S5 S Uiso 0.21675 0.75095 0.15713 1.000 0.0127
+N1 N Uiso 0.15702 0.86845 0.40833 1.000 0.0127
+N3 N Uiso 0.41196 0.89288 -0.19536 1.000 0.0127
+N5 N Uiso 0.96874 0.72136 -0.08347 1.000 0.0127
+N7 N Uiso 0.81900 0.63555 0.61310 1.000 0.0127
+C1 C Uiso 0.49920 0.70388 0.34857 1.000 0.0127
+C3 C Uiso 0.29630 0.77833 0.31344 1.000 0.0127
+C5 C Uiso 0.45015 0.74732 0.04877 1.000 0.0127
+C7 C Uiso 0.64614 0.68014 0.08378 1.000 0.0127
+C9 C Uiso 0.50321 0.74158 0.48237 1.000 0.0127
+C11 C Uiso 0.42795 0.82710 -0.08512 1.000 0.0127
+C13 C Uiso 0.82042 0.70179 -0.01097 1.000 0.0127
+C15 C Uiso 0.67527 0.68552 0.55456 1.000 0.0127
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 ' International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+N N 0.0061 0.0033 ' International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+S S 0.1246 0.1234 ' International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'

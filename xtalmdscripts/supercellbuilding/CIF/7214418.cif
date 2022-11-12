@@ -1,0 +1,325 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-16 03:10:39 +0200 (Tue, 16 Feb 2016) $
+#$Revision: 176453 $
+#$URL: svn://www.crystallography.net/cod/cif/7/21/44/7214418.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_7214418
+loop_
+_publ_author_name
+'Maloney, Andrew G. P.'
+'Wood, Peter A.'
+'Parsons, Simon'
+_publ_section_title
+;
+ Competition between hydrogen bonding and dispersion interactions in the
+ crystal structures of the primary amines
+;
+_journal_issue                   19
+_journal_name_full               CrystEngComm
+_journal_page_first              3867
+_journal_paper_doi               10.1039/c3ce42639d
+_journal_volume                  16
+_journal_year                    2014
+_chemical_formula_moiety         'C2 H7 N1'
+_chemical_formula_sum            'C2 H7 N'
+_chemical_formula_weight         45.08
+_chemical_melting_point          192
+_chemical_name_systematic        ethylamine
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2ybc'
+_symmetry_space_group_name_H-M   'P 1 21/c 1'
+_atom_sites_solution_hydrogens   difmap
+_atom_sites_solution_primary     direct
+_audit_creation_date             11-02-08
+_audit_creation_method           CRYSTALS_ver_14.11
+_cell_angle_alpha                90
+_cell_angle_beta                 99.088(3)
+_cell_angle_gamma                90
+_cell_formula_units_Z            4
+_cell_length_a                   8.2633(3)
+_cell_length_b                   7.3098(3)
+_cell_length_c                   5.5317(2)
+_cell_measurement_reflns_used    1705
+_cell_measurement_temperature    180
+_cell_measurement_theta_max      26
+_cell_measurement_theta_min      2
+_cell_volume                     329.94(2)
+_computing_cell_refinement       'Apex2 (Bruker AXS, 2006)'
+_computing_data_collection       'Apex2 (Bruker AXS, 2006)'
+_computing_data_reduction        'Apex2 (Bruker AXS, 2006)'
+_computing_molecular_graphics    'CAMERON (Watkin et al., 1996)'
+_computing_publication_material  'CRYSTALS (Betteridge et al., 2003)'
+_computing_structure_refinement  'CRYSTALS (Betteridge et al., 2003)'
+_computing_structure_solution    'SIR92 (Altomare et al., 1994)'
+_diffrn_ambient_temperature      180
+_diffrn_measured_fraction_theta_full 0.999
+_diffrn_measured_fraction_theta_max 0.999
+_diffrn_measurement_device       Area
+_diffrn_measurement_device_type  'Bruker Kappa Apex2'
+_diffrn_measurement_method       \w
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_type           'Mo K\a'
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.027
+_diffrn_reflns_limit_h_max       10
+_diffrn_reflns_limit_h_min       -10
+_diffrn_reflns_limit_k_max       9
+_diffrn_reflns_limit_k_min       -9
+_diffrn_reflns_limit_l_max       6
+_diffrn_reflns_limit_l_min       -6
+_diffrn_reflns_number            3375
+_diffrn_reflns_theta_full        26.384
+_diffrn_reflns_theta_max         26.384
+_diffrn_reflns_theta_min         2.496
+_diffrn_standards_number         0
+_exptl_absorpt_coefficient_mu    0.057
+_exptl_absorpt_correction_T_max  0.99
+_exptl_absorpt_correction_T_min  0.79
+_exptl_absorpt_correction_type   multi-scan
+_exptl_absorpt_process_details   'SADABS (Siemens, 1996)'
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    0.908
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_description       cylinder
+_exptl_crystal_F_000             104
+_exptl_crystal_size_max          2.000
+_exptl_crystal_size_mid          0.200
+_exptl_crystal_size_min          0.200
+_refine_diff_density_max         0.18
+_refine_diff_density_min         -0.12
+_refine_ls_extinction_method     None
+_refine_ls_goodness_of_fit_ref   0.9250
+_refine_ls_hydrogen_treatment    'restrained refall'
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     56
+_refine_ls_number_reflns         679
+_refine_ls_number_restraints     27
+_refine_ls_R_factor_all          0.0424
+_refine_ls_R_factor_gt           0.0375
+_refine_ls_shift/su_max          0.0001792
+_refine_ls_shift/su_mean         0.0000164
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+;
+ Method, part 1, Chebychev polynomial, (Watkin, 1994, Prince, 1982) 
+ [weight] = 1.0/[A~0~*T~0~(x)+A~1~*T~1~(x) ... +A~n-1~]*T~n-1~(x)] 
+ where A~i~ are the Chebychev coefficients listed below and x= Fcalc/Fmax 
+ Method = Robust Weighting (Prince, 1982) 
+ W = [weight] * [1-(deltaF/6*sigmaF)^2^]^2^ 
+ A~i~ are: 
+ 3.12 4.17 1.15 
+;
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_all         0.0854
+_refine_ls_wR_factor_gt          0.0834
+_refine_ls_wR_factor_ref         0.0854
+_reflns_limit_h_max              10
+_reflns_limit_h_min              -10
+_reflns_limit_k_max              9
+_reflns_limit_k_min              0
+_reflns_limit_l_max              6
+_reflns_limit_l_min              0
+_reflns_number_gt                614
+_reflns_number_total             679
+_reflns_threshold_expression     I>2.0\s(I)
+_oxford_diffrn_Wilson_B_factor   0.00
+_oxford_diffrn_Wilson_scale      0.00
+_oxford_refine_ls_r_factor_ref   0.0424
+_oxford_refine_ls_scale          0.754(4)
+_oxford_reflns_number_all        679
+_oxford_reflns_threshold_expression_ref I>-10.0\s(I)
+_oxford_structure_analysis_title 'ethylamine in P2(1)/c'
+_cod_data_source_file            c3ce42639d11.cif
+_cod_data_source_block           ethylamine_phase1
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+
+'_symmetry_cell_setting' value 'Monoclinic' changed to 'monoclinic'
+according to
+/usr/data/users/saulius/crontab/automatic-downloads/rss-feeds/RSC/lib/dictionaries/cif_core.dic
+dictionary named 'cif_core.dic' version 2.4.2 from 2011-04-26.
+
+Automatic conversion script
+Id: cif_fix_values 2281 2013-09-26 08:29:07Z andrius 
+;
+_cod_original_sg_symbol_H-M      'P 1 21/c 1 '
+_cod_original_formula_sum        'C2 H7 N1'
+_cod_database_code               7214418
+#BEGIN Tags that were not found in dictionaries:
+_iucr_refine_instruction_details_constraints
+;
+BLOCK 
+CONT SCALE 
+CONT N    (    1 ,X'S,U'S)  UNTIL C    (    3 ) 
+CONT H    (   32 ,X'S,U[ISO])  UNTIL H    (   12 ) 
+END                                                                             
+;
+_iucr_refine_instruction_details_restraints
+;
+NO 
+REM   HREST   START (DO NOT REMOVE THIS LINE) 
+REM NO H   NO #H U MULT DIST 
+REM C-H 
+REM >4           1.5    .96 DISORDER 
+REM 1      1     1.2    .93 C C-H (ACETYLENE) 
+REM 1      2     1.2    .93 C-C(H)-C 
+REM 1      3     1.2    .98 (C)3-C-H 
+REM 2      1     1.2    .93 C=C-H(2) 
+REM 2      2     1.2    .97 (C)2-C-(H)2 
+REM 3      1     1.5    .96 C-C-(H)3 
+REM N-H 
+REM >4           1.5    .89 DISORDER 
+REM 1      1     1.2    .86 N-N/H 
+REM 1      2     1.2    .86 (C)2-N-H 
+REM 1      3     1.2    .89 (C)3-N-H 
+REM 2      1     1.2    .86 C-N-(H)2 
+REM 2      2     1.2    .89 (C)2-N-(H)2 
+REM 3      1     1.2    .89 C-H-(H)3 
+REM O-H 
+REM 1      1     1.5    .82 O-H 
+REM 
+REM DIST      ESD = 0.02 
+REM VIB       ESD = 0.002 
+REM ANGLE     ESD = 2.0 
+REM            H2-N-R 
+DIST 0.86, 0.02 = 
+CONT N ( 1) TO H(11) 
+CONT N ( 1) TO H(12) 
+REST 0.055, 0.002 = H(11,U[ISO]) 
+REST 0.055, 0.002 = H(12,U[ISO]) 
+ANGLE 120.0, 2.0 = 
+CONT C(2) TO N ( 1) TO H(11) 
+CONT C(2) TO N ( 1) TO H(12) 
+REM            2 H ON SP 3 
+DIST 0.97, 0.02 = 
+CONT C ( 2) TO H(22) 
+CONT C ( 2) TO H(21) 
+REST 0.053, 0.002 = H(22,U[ISO]) 
+REST 0.053, 0.002 = H(21,U[ISO]) 
+ANGLE 0.0, 2.0 = MEAN 
+CONT H(22) TO C ( 2) TO N(1) 
+CONT H(22) TO C ( 2) TO C(3) 
+CONT H(21) TO C ( 2) TO N(1) 
+CONT H(21) TO C ( 2) TO C(3) 
+ANGLE 109.54, 2.0 = 
+CONT H(22) TO C ( 2) TO H(21) 
+REM            3 H ON SP 3 
+DIST 0.96, 0.02 = 
+CONT C ( 3) TO H(32) 
+CONT C ( 3) TO H(33) 
+CONT C ( 3) TO H(31) 
+REST 0.082, 0.002 = H(32,U[ISO]) 
+REST 0.082, 0.002 = H(33,U[ISO]) 
+REST 0.082, 0.002 = H(31,U[ISO]) 
+ANGLE 109.54, 2.0 = 
+CONT C(2) TO C ( 3) TO H(32) 
+CONT C(2) TO C ( 3) TO H(33) 
+CONT C(2) TO C ( 3) TO H(31) 
+ANGLE 0.0, 2.0 = MEAN H(32) TO C ( 3) TO H(33) 
+CONT H(32) TO C ( 3) TO H(31) 
+CONT H(33) TO C ( 3) TO H(31) 
+REM   HREST   END (DO NOT REMOVE THIS LINE) 
+END                                                                             
+;
+#END Tags that were not found in dictionaries
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+-x,-y,-z
+-x,y+1/2,-z+1/2
+x,-y+1/2,z+1/2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_occupancy
+_atom_site_adp_type
+_atom_site_refinement_flags_posn
+N1 N 0.41088(10) 0.63357(12) 0.70604(15) 0.0445 1.0000 Uani D
+C2 C 0.24363(11) 0.56621(14) 0.64734(16) 0.0435 1.0000 Uani D
+C3 C 0.19329(13) 0.43052(17) 0.8279(2) 0.0531 1.0000 Uani D
+H32 H 0.1990(17) 0.486(2) 0.991(2) 0.0787(18) 1.0000 Uiso D
+H33 H 0.0850(17) 0.390(2) 0.772(2) 0.0826(19) 1.0000 Uiso D
+H31 H 0.2642(17) 0.3255(18) 0.835(2) 0.0798(19) 1.0000 Uiso D
+H22 H 0.1719(15) 0.6717(15) 0.636(2) 0.0542(17) 1.0000 Uiso D
+H21 H 0.2312(14) 0.5101(16) 0.487(2) 0.0555(17) 1.0000 Uiso D
+H11 H 0.4798(15) 0.5477(16) 0.721(2) 0.0549(17) 1.0000 Uiso D
+H12 H 0.4255(15) 0.6855(17) 0.851(2) 0.0529(17) 1.0000 Uiso D
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+N1 0.0467(4) 0.0496(5) 0.0385(4) 0.0042(3) 0.0105(3) 0.0015(3)
+C2 0.0476(5) 0.0445(5) 0.0370(4) 0.0003(4) 0.0027(3) 0.0046(4)
+C3 0.0514(5) 0.0533(6) 0.0557(6) 0.0017(4) 0.0120(4) -0.0082(4)
+loop_
+_atom_type_symbol
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_Cromer_Mann_a1
+_atom_type_scat_Cromer_Mann_b1
+_atom_type_scat_Cromer_Mann_a2
+_atom_type_scat_Cromer_Mann_b2
+_atom_type_scat_Cromer_Mann_a3
+_atom_type_scat_Cromer_Mann_b3
+_atom_type_scat_Cromer_Mann_a4
+_atom_type_scat_Cromer_Mann_b4
+_atom_type_scat_Cromer_Mann_c
+_atom_type_scat_source
+C 0.0033 0.0016 2.3100 20.8439 1.0200 10.2075 1.5886 0.5687 0.8650 51.6512
+0.2156 'International Tables Vol C 4.2.6.8 and 6.1.1.4'
+H 0.0000 0.0000 0.4930 10.5109 0.3229 26.1257 0.1402 3.1424 0.0408 57.7998
+0.0030 'International Tables Vol C 4.2.6.8 and 6.1.1.4'
+N 0.0061 0.0033 12.2126 0.0057 3.1322 9.8933 2.0125 28.9975 1.1663 0.5826
+-11.5290 'International Tables Vol C 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_publ_flag
+C2 N1 H11 111.9(8) no
+C2 N1 H12 109.8(8) no
+H11 N1 H12 103.7(11) no
+N1 C2 C3 115.18(8) yes
+N1 C2 H22 107.2(7) no
+C3 C2 H22 109.7(7) no
+N1 C2 H21 107.9(7) no
+C3 C2 H21 109.0(7) no
+H22 C2 H21 107.6(9) no
+C2 C3 H32 110.8(8) no
+C2 C3 H33 109.4(9) no
+H32 C3 H33 109.6(11) no
+C2 C3 H31 108.8(8) no
+H32 C3 H31 110.6(10) no
+H33 C3 H31 107.6(11) no
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_publ_flag
+N1 C2 1.4547(13) yes
+N1 H11 0.843(12) no
+N1 H12 0.879(12) no
+C2 C3 1.5118(15) yes
+C2 H22 0.969(11) no
+C2 H21 0.966(11) no
+C3 H32 0.985(13) no
+C3 H33 0.947(13) no
+C3 H31 0.963(13) no

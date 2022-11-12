@@ -1,0 +1,68 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-10-17 14:36:48 +0300 (Mon, 17 Oct 2016) $
+#$Revision: 187364 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/5/00/01/5000167.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_5000167
+loop_
+_publ_author_name
+'Isakov, I. V.'
+_publ_section_title
+;
+ Crystal structure of acrylamide
+;
+_journal_issue                   6
+_journal_name_full               'Journal of Structural Chemistry'
+_journal_page_first              836
+_journal_page_last               837
+_journal_paper_doi               10.1007/BF00761167
+_journal_volume                  7
+_journal_year                    1967
+_chemical_formula_sum            'C3 H5 N O'
+_chemical_name_systematic        Acrylamide
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2ybc'
+_symmetry_space_group_name_H-M   'P 1 21/c 1'
+_cell_angle_alpha                90
+_cell_angle_beta                 118.57(3)
+_cell_angle_gamma                90
+_cell_formula_units_Z            4
+_cell_length_a                   8.408(3)
+_cell_length_b                   5.792(4)
+_cell_length_c                   9.777(3)
+_cod_original_sg_symbol_H-M      'P 21/c'
+_cod_original_formula_sum        'C3 H5 N1 O1'
+_cod_database_code               5000167
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,-1/2-y,-1/2+z
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_attached_hydrogens
+C1 C 0.14800 0.35200 0.37600 2
+C2 C 0.22000 0.49200 0.48800 1
+C3 C 0.32700 0.75000 0.48200 0
+N1 N 0.39400 0.87000 0.60600 2
+O1 O 0.35000 0.75000 0.37100 0
+loop_
+_atom_type_symbol
+_atom_type_radius_bond
+C 0.68
+N 0.68
+O 0.68

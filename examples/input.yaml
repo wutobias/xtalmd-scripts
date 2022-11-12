@@ -1,0 +1,56 @@
+"oxamide" :
+
+    "experiment" :
+        "experiment-cif"           : "data/oxamide.cif"
+        "supercell-pdb"            : "build_system/oxamide_gaff1.pdb"
+        "supercell-rdkit"          : "build_system/oxamide_gaff1.json"
+        "supercell-ucinfo"         : "build_system/oxamide_gaff1.csv"
+        "sublimation-enthalpy"     : 28.0 # Value in kcal/mol, see https://webbook.nist.gov/cgi/cbook.cgi?ID=C471465&Mask=4
+        "sublimation-enthalpy-std" : 0.3 # Value in kcal/mol
+        "temperature"              : 387.
+
+    "GAFF1" :
+
+        "xtal-topology"   : "build_system/oxamide_gaff1.pdb"
+        "xtal-trajectory" : "oxamide-gaff1/run_?/*_?.dcd"
+        "xtal-output"     : "oxamide-gaff1/run_?/*_?.csv"
+
+        "gas-output-1"     : "oxamide-gaff1-gas/run_?/*_?.csv"
+        "stoichiometry-1"  : 1.
+
+    "Parsley" :
+
+        "xtal-topology"   : "build_system/oxamide_parsley.pdb"
+        "xtal-trajectory" : "oxamide-parsley/run_?/*_?.dcd"
+        "xtal-output"     : "oxamide-parsley/run_?/*_?.csv"
+
+        "gas-output-1"     : "oxamide-parsley-gas/run_?/*_?.csv"
+        "stoichiometry-1"  : 1.
+
+
+"adipamide" :
+
+    "experiment" :
+        "experiment-cif"           : "data/adipamide.cif"
+        "supercell-pdb"            : "build_system/adipamide_gaff1.pdb"
+        "supercell-rdkit"          : "build_system/adipamide_gaff1.json"
+        "supercell-ucinfo"         : "build_system/adipamide_gaff1.csv"
+        "temperature"              : 298.15
+
+    "GAFF1" :
+
+        "xtal-topology"   : "build_system/adipamide_gaff1.pdb"
+        "xtal-trajectory" : "adipamide-gaff1/run_?/*_?.dcd"
+        "xtal-output"     : "adipamide-gaff1/run_?/*_?.csv"
+
+        "gas-output-1"     : "adipamide-gaff1-gas/run_?/*_?.csv"
+        "stoichiometry-1"  : 1.
+
+    "Parsley" :
+
+        "xtal-topology"   : "build_system/adipamide_parsley.pdb"
+        "xtal-trajectory" : "adipamide-parsley/run_?/*_?.dcd"
+        "xtal-output"     : "adipamide-parsley/run_?/*_?.csv"
+
+        "gas-output-1"     : "adipamide-parsley-gas/run_?/*_?.csv"
+        "stoichiometry-1"  : 1.

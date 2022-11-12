@@ -1,0 +1,234 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-14 16:26:36 +0200 (Sun, 14 Feb 2016) $
+#$Revision: 176435 $
+#$URL: svn://www.crystallography.net/cod/cif/2/10/56/2105612.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2105612
+loop_
+_publ_author_name
+'Bianchi, R.'
+'Gervasio, G.'
+'Viscardi, G.'
+_publ_section_title
+;
+ Experimental Electron-Density Study of 4-Cyanoimidazolium-5-olate at 120
+ K
+;
+_journal_issue                   1
+_journal_name_full               'Acta Crystallographica Section B'
+_journal_page_first              66
+_journal_page_last               72
+_journal_paper_doi               10.1107/S0108768197009269
+_journal_volume                  54
+_journal_year                    1998
+_chemical_formula_sum            'C4 H3 N3 O'
+_chemical_formula_weight         109.09
+_chemical_name_systematic        ?
+_space_group_IT_number           33
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_Hall  'P 2c -2n'
+_symmetry_space_group_name_H-M   'P n a 21'
+_cell_angle_alpha                90.00000
+_cell_angle_beta                 90.00000
+_cell_angle_gamma                90.00000
+_cell_formula_units_Z            4.00
+_cell_length_a                   12.584(3)
+_cell_length_b                   9.699(2)
+_cell_length_c                   3.674(2)
+_cell_measurement_reflns_used    35
+_cell_measurement_temperature    120
+_cell_measurement_theta_max      15
+_cell_measurement_theta_min      10
+_cell_volume                     448.4(3)
+_diffrn_ambient_temperature      120
+_diffrn_measurement_device       'Siemens P4'
+_diffrn_measurement_method       2\q/\w
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_source         'sealed tube'
+_diffrn_radiation_type           'Mo K\a'
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.032
+_diffrn_reflns_limit_h_max       22
+_diffrn_reflns_limit_h_min       -22
+_diffrn_reflns_limit_k_max       17
+_diffrn_reflns_limit_k_min       -17
+_diffrn_reflns_limit_l_max       6
+_diffrn_reflns_limit_l_min       0
+_diffrn_reflns_number            2943
+_diffrn_reflns_reduction_process
+;
+;
+_diffrn_reflns_theta_max         40
+_diffrn_reflns_theta_min         1
+_diffrn_standards_decay_%        0
+_diffrn_standards_interval_count 50
+_diffrn_standards_number         2
+_exptl_absorpt_coefficient_mu    0.1241
+_exptl_absorpt_correction_type   none
+_exptl_crystal_colour            yellow
+_exptl_crystal_density_diffrn    1.6158
+_exptl_crystal_description
+;
+;
+_exptl_crystal_F_000             224.0
+_exptl_crystal_size_max          0.30
+_exptl_crystal_size_mid          0.12
+_exptl_crystal_size_min          0.08
+_refine_diff_density_max         0.25
+_refine_diff_density_min         -0.26
+_refine_ls_abs_structure_details
+;
+;
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_obs   1.851
+_refine_ls_hydrogen_treatment    refall
+_refine_ls_number_constraints    8
+_refine_ls_number_parameters     215
+_refine_ls_number_reflns         1528
+_refine_ls_R_factor_obs          0.0376
+_refine_ls_shift/su_max          0.08
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_scheme      sigma
+_refine_ls_wR_factor_obs         0.0380
+_reflns_number_observed          2943
+_cod_data_source_file            na0081.cif
+_cod_data_source_block           II
+_cod_original_formula_sum        'C4 H3 N3 O1 '
+_cod_database_code               2105612
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+-x,-y,z+1/2
+x+1/2,-y+1/2,z
+-x+1/2,y+1/2,z+1/2
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_type_symbol
+N1 0.06670(7) 0.14630(10) -0.2235(6) 0.0112(2) Uani N
+C2 0.10538(7) 0.26980(10) -0.3263(6) 0.0115(2) Uani C
+N3 0.20668(7) 0.27770(10) -0.2344(6) 0.0111(2) Uani N
+C4 0.23612(6) 0.15407(9) -0.0684(6) 0.0099(2) Uani C
+C5 0.14654(6) 0.06860(9) -0.0578(6) 0.0097(2) Uani C
+C6 0.33766(8) 0.12990(10) 0.0698(7) 0.0115(2) Uani C
+N7 0.42160(10) 0.10820(10) 0.1883(7) 0.0175(3) Uani N
+O8 0.13297(7) -0.05170(10) 0.07030000 0.0138(2) Uani O
+H1 -0.0070(10) 0.114(2) -0.290(7) 0.030(7) Uiso H
+H2 0.0600(10) 0.350(2) -0.463(7) 0.025(8) Uiso H
+H3 0.2610(10) 0.356(2) -0.293(7) 0.017(6) Uiso H
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+N1 0.0063(3) 0.0090(3) 0.0182(4) -0.0001(3) -0.0021(3) 0.0003(4)
+C2 0.0080(3) 0.0093(3) 0.0171(4) -0.0001(3) -0.0022(3) 0.0026(3)
+N3 0.0082(3) 0.0080(3) 0.0170(4) -0.0016(3) -0.0016(3) 0.0024(4)
+C4 0.0067(3) 0.0080(3) 0.0149(4) -0.0006(3) -0.0012(3) 0.0019(3)
+C5 0.0064(2) 0.0067(3) 0.0158(4) -0.0001(3) -0.0005(3) 0.0014(4)
+C6 0.0059(3) 0.0119(3) 0.0166(4) -0.0006(3) -0.0024(3) 0.0019(4)
+N7 0.0087(3) 0.0188(4) 0.0250(6) 0.0006(3) -0.0060(4) 0.0005(4)
+O8 0.0075(3) 0.0084(4) 0.0254(6) 0.0000(3) 0.0002(5) 0.0050(5)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+'N ' 'Nitrogen    ' 0.0061 0.0033 'Int. Tab. C, 4.2.6.8, 6.1.1.4'
+'C ' 'Carbon      ' 0.0033 0.0016 'Int. Tab. C, 4.2.6.8, 6.1.1.4'
+'O ' 'Oxygen      ' 0.0106 0.0060 'Int. Tab. C, 4.2.6.8, 6.1.1.4'
+'H ' 'Hydrogen    ' 0.0000 0.0000 'Int. Tab. C, 4.2.6.8, 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_publ_flag
+C2 N1 C5 110.00(10) no
+C2 N1 H1 122.7(9) no
+C5 N1 H1 126.8(8) no
+N1 C2 N3 109.20(10) no
+N1 C2 H2 125.0(10) no
+N3 C2 H2 125.7(7) no
+C2 N3 C4 108.60(10) no
+C2 N3 H3 128.4(7) no
+C4 N3 H3 123.0(10) no
+N3 C4 C5 107.90(10) no
+N3 C4 C6 123.20(10) no
+C5 C4 C6 128.90(10) no
+N1 C5 C4 104.30(10) no
+N1 C5 O8 124.10(10) no
+C4 C5 O8 131.50(10) no
+C4 C6 N7 178.90(10) no
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_publ_flag
+N1 C2 1.347(2) no
+N1 C5 1.396(2) no
+N1 H1 1.010(10) no
+C2 N3 1.3210(10) no
+C2 H2 1.09(2) no
+N3 C4 1.395(2) no
+N3 H3 1.040(10) no
+C4 C5 1.4000(10) no
+C4 C6 1.395(2) no
+C5 O8 1.270(2) no
+C6 N7 1.162(2) no
+loop_
+_geom_hbond_atom_site_label_D
+_geom_hbond_atom_site_label_H
+_geom_hbond_atom_site_label_A
+_geom_hbond_site_symmetry_A
+_geom_hbond_distance_DH
+_geom_hbond_distance_HA
+_geom_hbond_distance_DA
+_geom_hbond_angle_DHA
+N1 H1 O8 2_554 1.010(10) 1.77(2) 2.7800(10) 176.0(10)
+C2 H2 N7 3_454 1.09(2) 2.20(2) 3.151(2) 145.0(10)
+N3 H3 O8 4_554 1.04(2) 1.68(2) 2.7060(10) 165.0(10)
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion
+_geom_torsion_publ_flag
+C5 N1 C2 N3 -0.4(2) no
+C5 N1 C2 H2 180.0(10) no
+H1 N1 C2 N3 -172.0(10) no
+H1 N1 C2 H2 7(2) no
+C2 N1 C5 C4 -0.1(2) no
+C2 N1 C5 O8 179.20(10) no
+H1 N1 C5 C4 173.0(10) no
+H1 N1 C5 O8 -7.0(10) no
+N1 C2 N3 C4 0.7(2) no
+N1 C2 N3 H3 175.0(10) no
+H2 C2 N3 C4 -178.0(10) no
+H2 C2 N3 H3 -4(2) no
+C2 N3 C4 C5 -0.7(2) no
+C2 N3 C4 C6 -178.3(2) no
+H3 N3 C4 C5 -174.0(10) no
+H3 N3 C4 C6 7.0(10) no
+N3 C4 C5 N1 0.4(2) no
+N3 C4 C5 O8 -178.7(2) no
+C6 C4 C5 N1 177.9(2) no
+C6 C4 C5 O8 -1.3(3) no

@@ -1,15 +1,20 @@
 #!/usr/bin/env python
-
 import openmm
 from openmm import unit
 from openmm import app
 from openmm.app.internal.unitcell import computePeriodicBoxVectors, computeLengthsAndAngles
 import numpy as np
 from scipy import optimize
-from .utils import Logger
+from utils import Logger
+from RMSD import get_rmsd_option
+from box_constraint import constraint1, constraint2, constraint3
+from energy_plot import energy_plot
+import pandas as pd
+
+plot_y = []
+
 
 def parse_arguments():
-
     """
     Parse command line arguments.
     """
@@ -18,103 +23,102 @@ def parse_arguments():
 
     parser = argparse.ArgumentParser(
         description="Python script for minimizing unit cell."
-        )
+    )
 
-    subparser  = parser.add_subparsers(dest='command')
-    subparser.required = True
+    subparser = parser.add_subparsers(dest='command')
+    subparser.required = False
     yaml_parse = subparser.add_parser("yaml")
-    xml_parse  = subparser.add_parser("xml")
+    xml_parse = subparser.add_parser("xml")
 
     yaml_parse.add_argument(
-        '--input', 
-        "-i", 
-        type=str, 
-        help="Input yaml file", 
+        '--input',
+        "-i",
+        type=str,
+        help="Input yaml file",
         required=True
-        )
+    )
 
     xml_parse.add_argument(
-        '--input', 
-        "-i", 
-        type=str, 
-        help="Input xml file", 
+        '--input',
+        "-i",
+        type=str,
+        help="Input xml file",
         required=True
-        )
+    )
 
     xml_parse.add_argument(
-        '--pdb', 
-        "-p", 
-        type=str, 
-        help="Input pdb file", 
+        '--pdb',
+        "-p",
+        type=str,
+        help="Input pdb file",
         required=True
-        )
+    )
 
     xml_parse.add_argument(
-        '--prefix', 
-        "-pre", 
-        type=str, 
-        help="Output prefix xml and pdb files.", 
+        '--prefix',
+        "-pre",
+        type=str,
+        help="Output prefix xml and pdb files.",
         default="xtal_min",
         required=False
-        )
+    )
 
     xml_parse.add_argument(
-        '--steps', 
-        "-s", 
-        type=int, 
-        help="Number of iterations.", 
+        '--steps',
+        "-s",
+        type=int,
+        help="Number of iterations.",
         required=False,
         default=100
-        )
+    )
 
     xml_parse.add_argument(
-        '--alternating', 
-        "-a", 
+        '--alternating',
+        "-a",
         action='store_true',
-        help="Use alternating minimizations.", 
+        help="Use alternating minimizations.",
         required=False,
         default=False,
-        )
+    )
 
     xml_parse.add_argument(
-        '--use_lengths_and_angles', 
-        "-la", 
+        '--use_lengths_and_angles',
+        "-la",
         action='store_true',
-        help="Use cell length and angles for minimizing.", 
+        help="Use cell length and angles for minimizing.",
         required=False,
         default=False,
-        )
+    )
 
     xml_parse.add_argument(
-        '--method', 
-        "-m", 
-        type=str, 
-        help="Minimization method for box vectors.", 
+        '--method',
+        "-m",
+        type=str,
+        help="Minimization method for box vectors.",
         required=False,
         default="Nelder-Mead"
-        )
+    )
 
     xml_parse.add_argument(
-        '--epsilon', 
-        "-e", 
-        type=float, 
-        help="Epsilon (in nm) used for finite difference gradient calcs.", 
+        '--epsilon',
+        "-e",
+        type=float,
+        help="Epsilon (in nm) used for finite difference gradient calcs.",
         required=False,
-        default=1.e-5
-        )
+        default=1.e-4
+    )
 
     return parser.parse_args()
 
 
 class ContextWrapper(object):
-
     """
     Wrapping around openmm context and expose handy functionalities
     to facilitate minimization.
     """
-    
+
     def __init__(self, context, number_of_atoms, epsilon=1.e-5, use_lengths_and_angles=False):
-        
+
         self.context = context
         self.number_of_atoms = number_of_atoms
         self.N_crds = self.number_of_atoms * 3
@@ -122,43 +126,43 @@ class ContextWrapper(object):
 
         ### epsilon is nanometer
         self._epsilon = epsilon
-    
+
     @property
     def pos_box_flat(self):
 
         """
         Flat vector with concatenated particle and box vectors.
         """
-        
+
         state = self.context.getState(
             getPositions=True,
         )
         pos = state.getPositions(asNumpy=True)
         box = state.getPeriodicBoxVectors(asNumpy=True)
-            
+
         pos_box_flat = self.pos_box_to_flat(
-            pos.value_in_unit(unit.nanometer), 
+            pos.value_in_unit(unit.nanometer),
             box.value_in_unit(unit.nanometer)
-            )
-        
+        )
+
         return pos_box_flat
-    
+
     @property
     def box_flat(self):
 
         """
         Flat vector with box vectors.
         """
-        
+
         state = self.context.getState()
-        box   = state.getPeriodicBoxVectors(asNumpy=True)
+        box = state.getPeriodicBoxVectors(asNumpy=True)
 
         boxflat = self.box_to_flat(
             box.value_in_unit(unit.nanometer)
-            )
-        
+        )
+
         return boxflat
-        
+
     def fix_box(self, box):
 
         """
@@ -167,9 +171,9 @@ class ContextWrapper(object):
 
         box_cp = np.copy(box[:])
         ### Diagonal elements must be positive.
-        box_cp[0,0] = np.abs(box_cp[0,0])
-        box_cp[1,1] = np.abs(box_cp[1,1])
-        box_cp[2,2] = np.abs(box_cp[2,2])
+        box_cp[0, 0] = np.abs(box_cp[0, 0])
+        box_cp[1, 1] = np.abs(box_cp[1, 1])
+        box_cp[2, 2] = np.abs(box_cp[2, 2])
 
         return box_cp
 
@@ -202,32 +206,32 @@ class ContextWrapper(object):
         if self.use_lengths_and_angles:
             return computeLengthsAndAngles(box_fix)
 
-        boxflat      = np.zeros(6, dtype=float)
-        boxflat[0]   = box_fix[0,0]
-        boxflat[1:3] = box_fix[1,:][:2]
-        boxflat[3:]  = box_fix[2,:]
+        boxflat = np.zeros(6, dtype=float)
+        boxflat[0] = box_fix[0, 0]
+        boxflat[1:3] = box_fix[1, :][:2]
+        boxflat[3:] = box_fix[2, :]
 
-        return boxflat            
-    
+        return boxflat
+
     def pos_box_to_flat(self, pos, box):
 
         """
         Concatenate (N_atoms,3) position vector and box vector to flat
         vector.
         """
-        
+
         boxflat = self.box_to_flat(box)
         pos_box_flat = np.hstack((pos.flatten(), boxflat))
 
-        return pos_box_flat                
-    
+        return pos_box_flat
+
     def flat_to_pos_box(self, flat_pos_box):
 
         """
         Unravel flat concatenated vector with position and box to
         (N_atoms,3) position vector and 3x3 box vectors
         """
-        
+
         pos_flat = flat_pos_box[:self.N_crds] * unit.nanometer
         pos = pos_flat.reshape((self.number_of_atoms, 3))
         box = self.flatbox_to_box(flat_pos_box[self.N_crds:])
@@ -246,15 +250,15 @@ class ContextWrapper(object):
             box = computePeriodicBoxVectors(*box_fix)
             box = box.value_in_unit(unit.nanometer)
         else:
-            
-            box = np.zeros((3,3), dtype=float)
-            box[0,0] = box_fix[0]
-            box[1,0] = box_fix[1]
-            box[1,1] = box_fix[2]
-            box[2,:] = box_fix[3:]
 
-        return box 
-    
+            box = np.zeros((3, 3), dtype=float)
+            box[0, 0] = box_fix[0]
+            box[1, 0] = box_fix[1]
+            box[1, 1] = box_fix[2]
+            box[2, :] = box_fix[3:]
+
+        return box
+
     def reduce_flat_box(self, boxflat):
 
         """
@@ -264,19 +268,18 @@ class ContextWrapper(object):
         box_fix = self.fix_flat_box(boxflat)
         if self.use_lengths_and_angles:
             box = computePeriodicBoxVectors(*box_fix)
-            box  = box.value_in_unit(unit.nanometer)
+            box = box.value_in_unit(unit.nanometer)
         else:
-            box = np.zeros((3,3), dtype=float)
-            box[0,0] = box_fix[0]
-            box[1,0] = box_fix[1]
-            box[1,1] = box_fix[2]
-            box[2,:] = box_fix[3:]
+            box = np.zeros((3, 3), dtype=float)
+            box[0, 0] = box_fix[0]
+            box[1, 0] = box_fix[1]
+            box[1, 1] = box_fix[2]
+            box[2, :] = box_fix[3:]
 
-        box     = self.reduce_box(box)
+        box = self.reduce_box(box)
         boxflat = self.box_to_flat(box)
 
         return boxflat
-
 
     def reduce_box(self, box):
 
@@ -299,11 +302,11 @@ class ContextWrapper(object):
         box_old = self.reduce_box(box_old)
         box_new = self.reduce_box(box_new)
 
-        pos     = pos.value_in_unit(unit.nanometer)
+        pos = pos.value_in_unit(unit.nanometer)
 
         box_old_inv = np.linalg.inv(box_old)
-        pos_frac    = np.matmul(box_old_inv, pos.T).T
-        pos_new     = np.matmul(box_new, pos_frac.T).T * unit.nanometer
+        pos_frac = np.matmul(box_old_inv, pos.T).T
+        pos_new = np.matmul(box_new, pos_frac.T).T * unit.nanometer
 
         return pos_new
 
@@ -316,7 +319,7 @@ class ContextWrapper(object):
         box = self.reduce_box(box)
         pos = pos.value_in_unit(unit.nanometer)
 
-        box_inv  = np.linalg.inv(box)
+        box_inv = np.linalg.inv(box)
         pos_frac = np.matmul(box_inv, pos.T).T
 
         return pos_frac
@@ -338,7 +341,7 @@ class ContextWrapper(object):
         Compute system energy from flat boxvector. Energy in kJ/mol.
         Note this also alters the positions.
         """
-        
+
         box_new = self.flatbox_to_box(boxflat)
         box_new = self.reduce_box(box_new)
 
@@ -354,7 +357,7 @@ class ContextWrapper(object):
         system = self.context.getSystem()
         system.setDefaultPeriodicBoxVectors(
             *box_new
-            )
+        )
         self.context.reinitialize()
         self.context.setPeriodicBoxVectors(*box_new)
         self.context.setPositions(pos_new)
@@ -366,19 +369,19 @@ class ContextWrapper(object):
         system = self.context.getSystem()
         system.setDefaultPeriodicBoxVectors(
             *box_old
-            )
+        )
         self.context.reinitialize()
         self.context.setPositions(pos_old)
         self.context.setPeriodicBoxVectors(*box_old)
 
         return ene._value
-    
+
     def ene(self, pos_box_flat):
 
         """
         Compute system energy from flat position and boxvector. Energy in kJ/mol
         """
-        
+
         pos_new, box_new = self.flat_to_pos_box(pos_box_flat)
         box_new = self.reduce_box(box_new)
 
@@ -393,7 +396,7 @@ class ContextWrapper(object):
         system = self.context.getSystem()
         system.setDefaultPeriodicBoxVectors(
             *box_new
-            )
+        )
         self.context.reinitialize()
         self.context.setPeriodicBoxVectors(*box_new)
         self.context.setPositions(pos_new)
@@ -405,21 +408,26 @@ class ContextWrapper(object):
         system = self.context.getSystem()
         system.setDefaultPeriodicBoxVectors(
             *box_old
-            )
+        )
         self.context.reinitialize()
         self.context.setPeriodicBoxVectors(*box_old)
         self.context.setPositions(pos_old)
+        global orig_potential
+        orig_potential = self.context.getState(getEnergy=True).getPotentialEnergy()
+
+
+
 
         return ene._value
-    
+
     def grad_box(self, boxflat):
 
         """
         Compute energy gradient from flat box vector. Gradient in kJ/mol/nm
         """
-        
+
         epsilon = self._epsilon
-        
+
         box_new = self.flatbox_to_box(boxflat)
         box_new = self.reduce_box(box_new)
 
@@ -431,7 +439,7 @@ class ContextWrapper(object):
         pos_old = state.getPositions(asNumpy=True)
         box_old = state.getPeriodicBoxVectors(asNumpy=True)
 
-        pos_new  = self.scale_pos_to_box(pos_old, box_old, box_new)
+        pos_new = self.scale_pos_to_box(pos_old, box_old, box_new)
         pos_frac = self.get_frac_pos(pos_new, box_new)
 
         self.context.setPositions(pos_old)
@@ -439,44 +447,44 @@ class ContextWrapper(object):
         system = self.context.getSystem()
         system.setDefaultPeriodicBoxVectors(
             *box_new
-            )
+        )
         self.context.reinitialize()
         self.context.setPositions(pos_new)
         self.context.setPeriodicBoxVectors(*box_new)
 
         boxgrad_flat = np.zeros(6, dtype=float)
         grad_idx = 0
-        for r in [0,1,2]:
+        for r in [0, 1, 2]:
             ### Note that first vec must be parallel to x axis
-            for c in range(r+1):
-                box_new[r,c] += epsilon
-                box_plus      = self.reduce_box(box_new)
-                pos_new       = self.get_real_pos(pos_frac, box_plus)
-                x_new         = self.pos_box_to_flat(
-                    pos_new, 
+            for c in range(r + 1):
+                box_new[r, c] += epsilon
+                box_plus = self.reduce_box(box_new)
+                pos_new = self.get_real_pos(pos_frac, box_plus)
+                x_new = self.pos_box_to_flat(
+                    pos_new,
                     box_plus
-                    )
-                ene_plus  = self.ene(x_new)
+                )
+                ene_plus = self.ene(x_new)
 
-                box_new[r,c] -= 2. * epsilon
-                box_minus     = self.reduce_box(box_new)
-                pos_new       = self.get_real_pos(pos_frac, box_minus)
-                x_new         = self.pos_box_to_flat(
-                    pos_new, 
+                box_new[r, c] -= 2. * epsilon
+                box_minus = self.reduce_box(box_new)
+                pos_new = self.get_real_pos(pos_frac, box_minus)
+                x_new = self.pos_box_to_flat(
+                    pos_new,
                     box_minus
-                    )
+                )
                 ene_minus = self.ene(x_new)
 
-                boxgrad_flat[grad_idx] = (ene_plus - ene_minus)/(epsilon * 2.)
+                boxgrad_flat[grad_idx] = (ene_plus - ene_minus) / (epsilon * 2.)
 
-                box_new[r,c] += epsilon
+                box_new[r, c] += epsilon
 
                 grad_idx += 1
 
         system = self.context.getSystem()
         system.setDefaultPeriodicBoxVectors(
             *box_old
-            )
+        )
         self.context.reinitialize()
         self.context.setPositions(pos_old)
         self.context.setPeriodicBoxVectors(*box_old)
@@ -487,10 +495,10 @@ class ContextWrapper(object):
 
         """
         Compute energy gradient from flat position and boxvector. Gradient in kJ/mol/nm
-        """        
-        
+        """
+
         epsilon = self._epsilon
-        
+
         pos_new, box_new = self.flat_to_pos_box(pos_box_flat)
 
         box_new = self.reduce_box(box_new)
@@ -503,56 +511,56 @@ class ContextWrapper(object):
         pos_old = state.getPositions(asNumpy=True)
         box_old = state.getPeriodicBoxVectors(asNumpy=True)
 
-        pos_new  = self.scale_pos_to_box(pos_new, box_old, box_new)
+        pos_new = self.scale_pos_to_box(pos_new, box_old, box_new)
         pos_frac = self.get_frac_pos(pos_new, box_new)
 
         system = self.context.getSystem()
         system.setDefaultPeriodicBoxVectors(
             *box_new
-            )
+        )
         self.context.reinitialize()
         self.context.setPositions(pos_new)
         self.context.setPeriodicBoxVectors(*box_new)
 
         boxgrad_flat = np.zeros(6, dtype=float)
         grad_idx = 0
-        for r in [0,1,2]:
+        for r in [0, 1, 2]:
             ### Note that first vec must be parallel to x axis
-            for c in range(r+1):
-                box_new[r,c] += epsilon
-                box_plus      = self.reduce_box(box_new)
-                pos_new       = self.get_real_pos(pos_frac, box_plus)
-                x_new         = self.pos_box_to_flat(
-                    pos_new, 
+            for c in range(r + 1):
+                box_new[r, c] += epsilon
+                box_plus = self.reduce_box(box_new)
+                pos_new = self.get_real_pos(pos_frac, box_plus)
+                x_new = self.pos_box_to_flat(
+                    pos_new,
                     box_plus
-                    )
-                ene_plus  = self.ene(x_new)
+                )
+                ene_plus = self.ene(x_new)
 
-                box_new[r,c] -= 2. * epsilon
-                box_minus     = self.reduce_box(box_new)
-                pos_new       = self.get_real_pos(pos_frac, box_minus)
-                x_new         = self.pos_box_to_flat(
-                    pos_new, 
+                box_new[r, c] -= 2. * epsilon
+                box_minus = self.reduce_box(box_new)
+                pos_new = self.get_real_pos(pos_frac, box_minus)
+                x_new = self.pos_box_to_flat(
+                    pos_new,
                     box_minus
-                    )
+                )
                 ene_minus = self.ene(x_new)
 
-                boxgrad_flat[grad_idx] = (ene_plus - ene_minus)/(epsilon * 2.)
+                boxgrad_flat[grad_idx] = (ene_plus - ene_minus) / (epsilon * 2.)
 
-                box_new[r,c] += epsilon
+                box_new[r, c] += epsilon
 
                 grad_idx += 1
 
-        state   = self.context.getState(getForces=True)
-        forces  = state.getForces(asNumpy=True)._value
+        state = self.context.getState(getForces=True)
+        forces = state.getForces(asNumpy=True)._value
         forces *= -1
 
-        grad    = np.hstack((forces.flatten(), boxgrad_flat))
+        grad = np.hstack((forces.flatten(), boxgrad_flat))
 
         system = self.context.getSystem()
         system.setDefaultPeriodicBoxVectors(
             *box_old
-            )
+        )
         self.context.reinitialize()
         self.context.setPositions(pos_old)
         self.context.setPeriodicBoxVectors(*box_old)
@@ -561,20 +569,19 @@ class ContextWrapper(object):
 
 
 def run_xtal_min(
-    xml_path, 
-    pdb_path,
-    steps = 100,
-    epsilon = 1.e-5,
-    alternating = False,
-    use_lengths_and_angles = False,
-    method = "Nelder-Mead",
-    platform_name = "CPU",
-    property_dict = {
-        "Threads" : "4"
-    },
-    prefix="xtal_min"
-    ):
-
+        xml_path,
+        pdb_path,
+        steps=100,
+        epsilon=1.e-5,
+        alternating=False,
+        use_lengths_and_angles=False,
+        method="Nelder-Mead",
+        platform_name="CPU",
+        property_dict={
+            "Threads": "4"
+        },
+        prefix="xtal_min"
+):
     """
     Run xtal minimizatin. Return final context that has minimal energy.
     """
@@ -586,8 +593,8 @@ def run_xtal_min(
 
     time_step = 1. * unit.femtoseconds
     constraint_tolerance = 1.e-6
-    
-    pdbfile  = app.PDBFile(pdb_path)
+
+    pdbfile = app.PDBFile(pdb_path)
     topology = pdbfile.topology
 
     try:
@@ -597,33 +604,51 @@ def run_xtal_min(
 
         integrator = openmm.LangevinMiddleIntegrator(
             300. * unit.kelvin,
-            1./unit.picoseconds,
+            1. / unit.picoseconds,
             time_step
         )
         integrator.setConstraintTolerance(constraint_tolerance)
 
+
         platform = openmm.Platform.getPlatformByName(platform_name)
         for property_name, property_value in property_dict.items():
             platform.setPropertyDefaultValue(property_name, property_value)
-            
+
+
         context = openmm.Context(
             system,
             integrator,
             platform,
         )
-    
+
         box_reduced = topology.getPeriodicBoxVectors()
+
+        global box_vector_old
+        box_vector_old = np.array(box_reduced._value)
+
+
         context.setPositions(pdbfile.positions)
         context.setPeriodicBoxVectors(*box_reduced)
+
+        def get_openmm_min_energy(context):
+            openmm.LocalEnergyMinimizer.minimize(context, tolerance=10, maxIterations=1000000)
+            state = context.getState(getEnergy=True, getPositions=True)
+            mid_potential = state.getPotentialEnergy()
+            return mid_potential
+        global mid_potential
+        mid_potential = get_openmm_min_energy(context)
+
+
+
     except Exception as e:
         return 0, e
 
     cw = ContextWrapper(
-        context, 
+        context,
         system.getNumParticles(),
         epsilon,
         use_lengths_and_angles
-        )
+    )
     logfile = Logger(system, "")
 
     ### Alternate between openmm native minimizer
@@ -631,38 +656,40 @@ def run_xtal_min(
     if alternating:
         try:
             best_ene = 999999999999999999999.
-            best_x   = None
+            best_x = None
             for _ in range(steps):
                 openmm.LocalEnergyMinimizer.minimize(context)
                 pos_old, box_old = cw.flat_to_pos_box(
                     cw.pos_box_flat
-                    )
-                x0   = np.copy(cw.box_flat)
+                )
+
+                x0 = np.copy(cw.box_flat)
                 ene1 = cw.ene_box(x0)
                 result = optimize.minimize(
                     fun=cw.ene_box,
-                    x0=x0, 
+                    x0=x0,
                     method=method,
                     jac=cw.grad_box,
                     hess='3-point',
-                    options = {
-                        "maxiter" : steps,
-                        "disp"    : False,
-                        "gtol"    : 1.e-5,
+                    options={
+                        "maxiter": steps,
+                        "disp": False,
+                        "gtol": 1.e-5,
                     }
 
                 )
+
                 box_new = cw.flatbox_to_box(result.x)
                 pos_new = cw.scale_pos_to_box(
-                    pos_old, 
-                    box_old, 
+                    pos_old,
+                    box_old,
                     box_new
-                    )
+                )
 
                 system = context.getSystem()
                 system.setDefaultPeriodicBoxVectors(
                     *box_new
-                    )
+                )
                 context.reinitialize()
                 context.setPeriodicBoxVectors(*box_new)
                 context.setPositions(pos_new)
@@ -673,7 +700,7 @@ def run_xtal_min(
                 ene = state.getPotentialEnergy()._value
                 if ene < best_ene:
                     best_ene = ene
-                    best_x   = cw.pos_box_to_flat(pos_new, box_new)
+                    best_x = cw.pos_box_to_flat(pos_new, box_new)
                 else:
                     ### We are done.
                     break
@@ -683,7 +710,7 @@ def run_xtal_min(
             system = context.getSystem()
             system.setDefaultPeriodicBoxVectors(
                 *box
-                )
+            )
             context.reinitialize()
             context.setPeriodicBoxVectors(*box)
             context.setPositions(pos)
@@ -699,6 +726,8 @@ def run_xtal_min(
     else:
         try:
             def callback(xk):
+                energy = (cw.ene(xk))
+                plot_y.append(energy)
                 state = context.getState(
                     getPositions=True
                 )
@@ -708,7 +737,7 @@ def run_xtal_min(
                 system = context.getSystem()
                 system.setDefaultPeriodicBoxVectors(
                     *box_new
-                    )
+                )
                 context.reinitialize()
                 context.setPositions(pos_new)
                 context.setPeriodicBoxVectors(*box_new)
@@ -721,31 +750,58 @@ def run_xtal_min(
                 system = context.getSystem()
                 system.setDefaultPeriodicBoxVectors(
                     *box_old
-                    )
+                )
                 context.reinitialize()
                 context.setPositions(pos_old)
                 context.setPeriodicBoxVectors(*box_old)
 
+
             openmm.LocalEnergyMinimizer.minimize(context)
             x0 = cw.pos_box_flat
-            result = optimize.minimize(
+
+            cons = ([{'type': 'ineq', 'fun': constraint1},
+                     {'type': 'ineq', 'fun': constraint2},
+                     {'type': 'ineq', 'fun': constraint3}])
+
+
+            try:
+                result = optimize.minimize(
                 fun=cw.ene,
-                x0=x0, 
+                x0=x0,
                 method=method,
                 jac=cw.grad,
                 hess='3-point',
                 callback=callback,
-                options = {
-                    "maxiter" : steps,
-                    "disp"    : True,
-                    "gtol"    : 1.e-5,
+                options={
+                    "maxiter": steps,
+                    "disp": True,
                 }
-            )
+                )
+                global min_method
+                min_method = method
+
+
+            except:
+                result = optimize.minimize(
+                fun=cw.ene,
+                x0=x0,
+                method='trust-constr',
+                jac=cw.grad,
+                constraints=cons,
+                options={
+                    'verbose': 2,
+                    'maxiter': steps,
+                }
+                )
+                min_method = 'trust-constr'
+
             pos, box = cw.flat_to_pos_box(result.x)
+            global box_vector_new
+            box_vector_new = box
             system = context.getSystem()
             system.setDefaultPeriodicBoxVectors(
                 *box
-                )
+            )
             context.reinitialize()
             context.setPositions(pos)
             context.setPeriodicBoxVectors(*box)
@@ -753,6 +809,7 @@ def run_xtal_min(
                 getEnergy=True,
                 getPositions=True
             )
+
         except Exception as e:
             return 0, e
 
@@ -760,7 +817,6 @@ def run_xtal_min(
 
 
 def main():
-
     """
     Run the main workflow.
     """
@@ -770,21 +826,18 @@ def main():
     HAS_RAY = False
     if args.command == "xml":
 
-        input_dict = {
-            "./" : 
-                    {
-                        "input"       : args.input,
-                        "pdb"         : args.pdb,
-                        "prefix"      : args.prefix,
-                        "steps"       : args.steps,
-                        "epsilon"     : args.epsilon,
-                        "alternating" : args.alternating,
-                        "use_lengths_and_angles" : args.use_lengths_and_angles,
-                        "method"      : args.method,
-                    }
-            }
+        input_dict = {"./": {
+            "input": args.input,
+            "pdb": args.pdb,
+            "prefix": args.prefix,
+            "steps": args.steps,
+            "epsilon": args.epsilon,
+            "alternating": args.alternating,
+            "use_lengths_and_angles": args.use_lengths_and_angles,
+            "method": args.method,
+        }, "num_cpus": 4}
 
-        input_dict["num_cpus"] = 4
+        print(args.prefix)
 
     elif args.command == "yaml":
         import yaml
@@ -804,31 +857,31 @@ def main():
             ### Wrapper around `run_xtal_min` function for ray
             @ray.remote(num_cpus=input_dict["num_cpus"], num_gpus=0)
             def run_xtal_min_remote(
-                xml_path, 
-                pdb_path,
-                steps = 100,
-                epsilon = 1.e-5,
-                alternating = False,
-                use_lengths_and_angles = False,
-                method = "Nelder-Mead",
-                platform_name = "CPU",
-                property_dict = {
-                    "Threads" : "4"
-                },
-                prefix="xtal_min"):
+                    xml_path,
+                    pdb_path,
+                    steps=100,
+                    epsilon=1.e-5,
+                    alternating=False,
+                    use_lengths_and_angles=False,
+                    method="Nelder-Mead",
+                    platform_name="CPU",
+                    property_dict={
+                        "Threads": "4"
+                    },
+                    prefix="xtal_min"):
 
                 return run_xtal_min(
-                    xml_path = xml_path, 
-                    pdb_path = pdb_path,
-                    steps = steps,
-                    epsilon = epsilon,
-                    alternating = alternating,
-                    use_lengths_and_angles  = use_lengths_and_angles,
-                    method = method,
-                    platform_name = platform_name,
-                    property_dict = property_dict,
+                    xml_path=xml_path,
+                    pdb_path=pdb_path,
+                    steps=steps,
+                    epsilon=epsilon,
+                    alternating=alternating,
+                    use_lengths_and_angles=use_lengths_and_angles,
+                    method=method,
+                    platform_name=platform_name,
+                    property_dict=property_dict,
                     prefix="xtal_min"
-                    )
+                )
 
     else:
         raise NotImplementedError(f"Command {args.command} not understood.")
@@ -920,16 +973,16 @@ def main():
             epsilon = args.epsilon
 
         worker_id = min_func(
-            xml_path = input_dict[output_dir]["input"],
-            pdb_path = input_dict[output_dir]["pdb"],
-            steps = int(steps),
-            epsilon = float(epsilon),
-            alternating = bool(alternating),
-            use_lengths_and_angles = bool(use_lengths_and_angles),
-            method = method,
-            platform_name = "CPU",
-            property_dict = {
-                "Threads" : str(input_dict["num_cpus"])
+            xml_path=input_dict[output_dir]["input"],
+            pdb_path=input_dict[output_dir]["pdb"],
+            steps=int(steps),
+            epsilon=float(epsilon),
+            alternating=bool(alternating),
+            use_lengths_and_angles=bool(use_lengths_and_angles),
+            method=method,
+            platform_name="CPU",
+            property_dict={
+                "Threads": str(input_dict["num_cpus"])
             },
             prefix=prefix
         )
@@ -974,7 +1027,7 @@ def main():
         with open(f"{prefix}.xml", "w") as fopen:
             fopen.write(
                 openmm.XmlSerializer.serialize(state)
-                )
+            )
         with open(f"{prefix}.csv", "w") as fopen:
             fopen.write(file_str)
         ### Save State in pdb format
@@ -988,21 +1041,57 @@ def main():
             app.PDBFile.writeHeader(
                 pdbfile.topology,
                 fopen
-                )
+            )
             app.PDBFile.writeModel(
                 pdbfile.topology,
                 pos,
                 fopen
-                )
+            )
             app.PDBFile.writeFooter(
                 pdbfile.topology,
                 fopen
-                )
+            )
+
+    ### Calculate RMSD
+    pdb_path_1 = ".." + args.input.strip(".xml") + '.pdb'
+    pdb_path_2 = "." + args.prefix + ".pdb"
+
+    # RMSD 20
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+    rmsd_r = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "r")
+    rmsd20 = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, 20)
+    data = [{
+        'COD ID': args.input.split("/")[3].strip(".xml"),
+        'RMSD': rmsd_o,
+        'RMSD (Remove Periodicity)': rmsd_r,
+        'RMSD20': rmsd20,
+        'RMSD20 MAX': max(rmsd20),
+        'RMSD20 MIN': min(rmsd20),
+        'RMSD20 Mean': sum(rmsd20) / len(rmsd20),
+        'method': min_method,
+        'Original Energy': orig_potential,
+        'Minimized Energy (OpenMM)': mid_potential,
+        'Minimized Energy (Cell Minimization)': plot_y[-1],
+        'Original Box Vectors': box_vector_old,
+        'Minimized Box Vectors': box_vector_new,
+
+    }]
+
+
+    d = pd.DataFrame(data)
+    f = open('./minimization_results.csv', 'a')  # Open file as append mode
+    d.to_csv(f, index=False, header=False)
+    f.close()
+    print("Data saved successfully.")
+
+    # Plot Energy vs Iteration
+    energy_plot(plot_y, args.prefix)
+    print("------------------------------------------------------------------------------------------------")
+
 
 def entry_point():
-
     main()
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     entry_point()

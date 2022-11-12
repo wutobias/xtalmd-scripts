@@ -1,0 +1,94 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-03-24 02:49:30 +0200 (Thu, 24 Mar 2016) $
+#$Revision: 179598 $
+#$URL: svn://www.crystallography.net/cod/cif/4/50/62/4506226.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_4506226
+loop_
+_publ_author_name
+'Williams, P. Andrew'
+'Hughes, Colan E.'
+'Lim, Gin Keat'
+'Kariuki, Benson M.'
+'Harris, Kenneth D. M.'
+_publ_section_title
+;
+ Discovery of a New System Exhibiting Abundant Polymorphism:m-Aminobenzoic
+ Acid
+;
+_journal_issue                   6
+_journal_name_full               'Crystal Growth &amp; Design'
+_journal_page_first              3104
+_journal_paper_doi               10.1021/cg3003178
+_journal_volume                  12
+_journal_year                    2012
+_chemical_formula_sum            'C7 H7 N O2'
+_chemical_formula_weight         137.14
+_chemical_name_systematic        ' ?'
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2yab'
+_symmetry_space_group_name_H-M   'P 1 21/a 1'
+_cell_angle_alpha                90.0
+_cell_angle_beta                 94.8240(12)
+_cell_angle_gamma                90.0
+_cell_formula_units_Z            4
+_cell_length_a                   21.3393(6)
+_cell_length_b                   7.29604(16)
+_cell_length_c                   3.77733(8)
+_cell_volume                     586.02(2)
+_pd_block_id                     2011-09-14T15:02|MIII_phase1|||
+_pd_phase_name                   'mABA III'
+_cod_data_source_file            cg3003178_si_001.cif
+_cod_data_source_block           MIII_phase_1
+_cod_original_cell_volume        586.018(33)
+_cod_original_sg_symbol_H-M      P21/a
+_cod_database_code               4506226
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 +x,+y,+z
+2 -x+1/2,+y+1/2,-z
+-1 -x,-y,-z
+-2 +x+1/2,-y+1/2,+z
+loop_
+_atom_site_type_symbol
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_thermal_displace_type
+_atom_site_U_iso_or_equiv
+_atom_site_symmetry_multiplicity
+N N1 0.56655(26) 0.1471(7) 0.4808(6) 1.0 Uiso 0.0247(10) 4
+C C2 0.61825(24) 0.5932(5) 0.1746(5) 1.0 Uiso 0.0247(10) 4
+C C3 0.57946(15) 0.4539(7) 0.2708(6) 1.0 Uiso 0.0247(10) 4
+C C4 0.60490(22) 0.2876(6) 0.3832(5) 1.0 Uiso 0.0247(10) 4
+C C5 0.66909(24) 0.2604(6) 0.3986(5) 1.0 Uiso 0.0247(10) 4
+C C6 0.70786(16) 0.3998(8) 0.3026(7) 1.0 Uiso 0.0247(10) 4
+C C7 0.68245(23) 0.5662(7) 0.1905(6) 1.0 Uiso 0.0247(10) 4
+C C8 0.59109(22) 0.7715(5) 0.0545(6) 1.0 Uiso 0.0247(10) 4
+O O9 0.53318(25) 0.8048(8) 0.0773(11) 1.0 Uiso 0.0247(10) 4
+O O10 0.62729(23) 0.8885(8) -0.0712(10) 1.0 Uiso 0.0247(10) 4
+H H11 0.5910(7) 0.0555(30) 0.587(12) 1.0 Uiso 0.0346(12) 4
+H H12 0.5396(16) 0.1908(23) 0.640(10) 1.0 Uiso 0.0346(12) 4
+H H13 0.5434(18) 0.101(5) 0.276(4) 1.0 Uiso 0.0346(12) 4
+H H31 0.53433(19) 0.4727(10) 0.2599(8) 1.0 Uiso 0.0346(12) 4
+H H51 0.6869(4) 0.1436(8) 0.4776(7) 1.0 Uiso 0.0346(12) 4
+H H61 0.75299(20) 0.3810(12) 0.3136(9) 1.0 Uiso 0.0346(12) 4
+H H71 0.70974(34) 0.6641(9) 0.1227(7) 1.0 Uiso 0.0346(12) 4
+loop_
+_atom_type_symbol
+_atom_type_number_in_cell
+N 4.0
+C 28.0
+O 8.0
+H 28.0

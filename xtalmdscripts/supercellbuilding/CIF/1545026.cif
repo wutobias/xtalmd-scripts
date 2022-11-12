@@ -1,0 +1,515 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-04-05 12:28:22 +0300 (Wed, 05 Apr 2017) $
+#$Revision: 195003 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/1/54/50/1545026.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_1545026
+loop_
+_publ_author_name
+'Viglianti, Lucia'
+'Leung, Nelson L. C.'
+'Xie, Ni'
+'Gu, Xinggui'
+'Sung, Herman H. Y.'
+'Miao, Qian'
+'Williams, Ian D.'
+'Licandro, Emanuela'
+'Tang, Ben Zhong'
+_publ_section_title
+;
+ Aggregation-induced emission: mechanistic study of the
+ clusteroluminescence of tetrathienylethene
+;
+_journal_issue                   4
+_journal_name_full               'Chem. Sci.'
+_journal_page_first              2629
+_journal_paper_doi               10.1039/C6SC05192H
+_journal_volume                  8
+_journal_year                    2017
+_chemical_formula_moiety         'C10 H8 S2'
+_chemical_formula_sum            'C10 H8 S2'
+_chemical_formula_weight         192.28
+_chemical_name_systematic        (E)-1,2-di(thiophen-2-yl)ethene
+_space_group_crystal_system      monoclinic
+_space_group_IT_number           14
+_space_group_name_Hall           '-P 2ybc'
+_space_group_name_H-M_alt        'P 1 21/c 1'
+_symmetry_space_group_name_Hall  '-P 2ybc'
+_symmetry_space_group_name_H-M   'P 1 21/c 1'
+_atom_sites_solution_hydrogens   mixed
+_atom_sites_solution_primary     direct
+_audit_creation_date             2015-07-10
+_audit_creation_method
+;
+Olex2 1.2
+(compiled 2015.01.26 svn.r3150 for OlexSys, GUI svn.r4998)
+;
+_audit_update_record
+;
+2016-11-25 deposited with the CCDC.
+2017-01-11 downloaded from the CCDC.
+;
+_cell_angle_alpha                90
+_cell_angle_beta                 93.249(3)
+_cell_angle_gamma                90
+_cell_formula_units_Z            2
+_cell_length_a                   5.81321(19)
+_cell_length_b                   7.5432(3)
+_cell_length_c                   10.2777(3)
+_cell_measurement_reflns_used    1656
+_cell_measurement_temperature    99.99(10)
+_cell_measurement_theta_max      29.2570
+_cell_measurement_theta_min      4.4170
+_cell_volume                     449.95(3)
+_computing_cell_refinement
+;
+CrysAlisPro, Agilent Technologies,
+Version 1.171.37.35 (release 13-08-2014 CrysAlis171 .NET)
+(compiled Aug 13 2014,18:06:01)
+;
+_computing_data_collection
+;
+CrysAlisPro, Agilent Technologies,
+Version 1.171.37.35 (release 13-08-2014 CrysAlis171 .NET)
+(compiled Aug 13 2014,18:06:01)
+;
+_computing_data_reduction
+;
+CrysAlisPro, Agilent Technologies,
+Version 1.171.37.35 (release 13-08-2014 CrysAlis171 .NET)
+(compiled Aug 13 2014,18:06:01)
+;
+_computing_molecular_graphics    'Olex2 (Dolomanov et al., 2009)'
+_computing_publication_material  'Olex2 (Dolomanov et al., 2009)'
+_computing_structure_refinement  'ShelXL (Sheldrick, 2008)'
+_computing_structure_solution    'ShelXS (Sheldrick, 2008)'
+_diffrn_ambient_environment      N~2~
+_diffrn_ambient_temperature      99.99(10)
+_diffrn_detector                 'CCD plate'
+_diffrn_detector_area_resol_mean 10.3587
+_diffrn_detector_type            Atlas
+_diffrn_measured_fraction_theta_full 0.956
+_diffrn_measured_fraction_theta_max 0.956
+_diffrn_measurement_details
+;
+#__ type_ start__ end____ width___ exp.time_
+  1 omega  -42.00   46.00   1.0000   10.0000
+omega____ theta____ kappa____ phi______ frames
+    -       18.0886  -57.0000  -90.0000 88
+
+#__ type_ start__ end____ width___ exp.time_
+  2 omega    1.00   96.00   1.0000   10.0000
+omega____ theta____ kappa____ phi______ frames
+    -       18.0886   57.0000   60.0000 95
+
+#__ type_ start__ end____ width___ exp.time_
+  3 omega  -17.00   81.00   1.0000   10.0000
+omega____ theta____ kappa____ phi______ frames
+    -       18.0886   77.0000 -180.0000 98
+;
+_diffrn_measurement_device       'kappa diffractometer'
+_diffrn_measurement_device_type  'SuperNova, Dual, Cu at zero, Atlas'
+_diffrn_measurement_method       '\w scans'
+_diffrn_orient_matrix_UB_11      -0.0075967000
+_diffrn_orient_matrix_UB_12      0.0372046000
+_diffrn_orient_matrix_UB_13      -0.0634667000
+_diffrn_orient_matrix_UB_21      0.0516411000
+_diffrn_orient_matrix_UB_22      0.0791607000
+_diffrn_orient_matrix_UB_23      0.0247572000
+_diffrn_orient_matrix_UB_31      0.1105337000
+_diffrn_orient_matrix_UB_32      -0.0345020000
+_diffrn_orient_matrix_UB_33      -0.0116379000
+_diffrn_radiation_monochromator  mirror
+_diffrn_radiation_probe          x-ray
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0193
+_diffrn_reflns_av_unetI/netI     0.0232
+_diffrn_reflns_limit_h_max       5
+_diffrn_reflns_limit_h_min       -7
+_diffrn_reflns_limit_k_max       8
+_diffrn_reflns_limit_k_min       -9
+_diffrn_reflns_limit_l_max       12
+_diffrn_reflns_limit_l_min       -12
+_diffrn_reflns_number            2262
+_diffrn_reflns_theta_full        25.000
+_diffrn_reflns_theta_max         25.997
+_diffrn_reflns_theta_min         3.972
+_diffrn_source                   'SuperNova (Mo) X-ray Source'
+_diffrn_source_current           0.80
+_diffrn_source_power             0.040
+_diffrn_source_target            Cu
+_diffrn_source_voltage           50
+_exptl_absorpt_coefficient_mu    0.526
+_exptl_absorpt_correction_T_max  1.00000
+_exptl_absorpt_correction_T_min  0.81075
+_exptl_absorpt_correction_type   multi-scan
+_exptl_absorpt_process_details
+;
+CrysAlisPro, Agilent Technologies,
+Version 1.171.37.35 (release 13-08-2014 CrysAlis171 .NET)
+(compiled Aug 13 2014,18:06:01)
+Empirical absorption correction using spherical harmonics,
+ implemented in SCALE3 ABSPACK scaling algorithm.
+;
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    1.419
+_exptl_crystal_description       block
+_exptl_crystal_F_000             200
+_exptl_crystal_preparation       ', Luminescent'
+_exptl_crystal_size_max          0.25
+_exptl_crystal_size_mid          0.15
+_exptl_crystal_size_min          0.1
+_refine_diff_density_max         0.448
+_refine_diff_density_min         -0.543
+_refine_diff_density_rms         0.066
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.005
+_refine_ls_hydrogen_treatment    mixed
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     57
+_refine_ls_number_reflns         848
+_refine_ls_number_restraints     15
+_refine_ls_restrained_S_all      1.042
+_refine_ls_R_factor_all          0.0409
+_refine_ls_R_factor_gt           0.0368
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'w=1/[\s^2^(Fo^2^)+(0.0510P)^2^+0.4446P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.0901
+_refine_ls_wR_factor_ref         0.0930
+_reflns_Friedel_coverage         0.000
+_reflns_number_gt                773
+_reflns_number_total             848
+_reflns_threshold_expression     'I > 2\s(I)'
+_cod_data_source_file            c6sc05192h2.cif
+_cod_data_source_block           lucia5molt
+_cod_depositor_comments
+'Adding full bibliography for 1545026--1545028.cif.'
+_cod_database_code               1545026
+_shelx_space_group_comment
+;
+The symmetry employed for this shelxl refinement is uniquely defined
+by the following loop, which should always be used as a source of
+symmetry information in preference to the above space-group names.
+They are only intended as comments.
+;
+_reflns_odcompleteness_completeness 99.26
+_reflns_odcompleteness_iscentric 1
+_reflns_odcompleteness_theta     27.04
+_olex2_refinement_description
+;
+1. Fixed Uiso
+ At 1.2 times of:
+  All C(H) groups, All C(H,H) groups
+2. Restrained distances
+ C2-C1 \\sim C3-C2 \\sim C4-C3
+ with sigma of 0.02
+ S1A-C1A \\sim S1A-C3
+ with sigma of 0.02
+ S1-C1 \\sim S1-C4
+ with sigma of 0.02
+ C2A-C1A \\sim C4-C2A \\sim C4-C3
+ with sigma of 0.02
+ C5A-C1A \\sim C5-C1
+ with sigma of 0.02
+3. Restrained planarity
+ C1A, S1A, C4, C2A, C3
+ with sigma of 0.1
+4. Others
+ Fixed Sof: S1(0.9) S1A(0.1) C1(0.9) C1A(0.1) C2(0.9) H2(0.9) C2A(0.1)
+ H2A(0.1) H3B(0.1) H3A(0.9) H4B(0.1) H4A(0.9) C5(0.92) H5(0.92) C5A(0.08)
+ H5A(0.08)
+5.a Aromatic/amide H refined with riding coordinates:
+ C2(H2), C2A(H2A), C3(H3B), C4(H4B), C5(H5), C5A(H5A)
+;
+_shelx_res_file
+;
+    lucia5molt.res created by SHELXL-2014/7
+
+TITL lucia5MoLT in P21/c #14
+REM reset to P21/c #14
+CELL 0.71073 5.81321 7.543171 10.277719 90 93.2489 90
+ZERR 2 0.000187 0.00025 0.000337 0 0.0032 0
+LATT 1
+SYMM -X,0.5+Y,0.5-Z
+SFAC C H S
+UNIT 20 16 4
+SADI C2 C1 C3 C2 C4 C3
+SADI S1A C1A S1A C3
+SADI S1 C1 S1 C4
+SADI C2A C1A C4 C2A C4 C3
+SADI C5A C1A C5 C1
+FLAT C1A S1A C4 C2A C3
+
+L.S. 8
+PLAN  20
+TEMP -173
+BOND
+CONF
+fmap 2
+acta 50
+OMIT 0 52
+OMIT 2 1 1
+OMIT 0 4 0
+OMIT 0 1 3
+OMIT 2 0 4
+OMIT 2 0 6
+OMIT -2 2 3
+OMIT 0 2 2
+OMIT 0 1 5
+OMIT 1 0 0
+OMIT 5 7 4
+OMIT 6 2 4
+OMIT 1 2 3
+OMIT 6 5 0
+OMIT -3 1 3
+OMIT -2 0 4
+OMIT 1 1 7
+OMIT 3 2 2
+OMIT -1 5 4
+OMIT 0 2 6
+OMIT 5 5 1
+OMIT 1 6 0
+OMIT -1 3 3
+OMIT -3 0 4
+OMIT 2 3 3
+OMIT 4 5 3
+OMIT -2 5 3
+OMIT 1 1 9
+OMIT -4 6 7
+OMIT -6 4 1
+OMIT -6 2 2
+OMIT -7 0 2
+OMIT 3 4 2
+OMIT 1 5 1
+OMIT 0 1 9
+OMIT 1 0 4
+REM <olex2.extras>
+REM <HklSrc "%.\\lucia5MoLT.hkl">
+REM </olex2.extras>
+
+WGHT    0.051000    0.444600
+FVAR      12.80195
+PART 1
+S1    3    0.391495    0.634808    0.360531    10.90000    0.01749
+PART 0
+PART 2
+S1A   3    0.082657    0.467197    0.222696    10.10000    0.02282
+PART 0
+PART 1
+C1    1    0.138881    0.514002    0.334570    10.90000    0.01331
+PART 0
+PART 2
+C1A   1    0.202226    0.547473    0.362532    10.10000    0.00899
+PART 0
+PART 1
+C2    1    0.099242    0.466608    0.198932    10.90000    0.01314
+AFIX  43
+H2    2   -0.028904    0.401478    0.162853    10.90000   -1.20000
+AFIX   0
+PART 0
+PART 2
+C2A   1    0.406306    0.625626    0.330536    10.10000    0.01447
+AFIX  43
+H2A   2    0.510424    0.676512    0.394636    10.10000   -1.20000
+AFIX   0
+PART 0
+C3    1    0.286358    0.534546    0.127521    11.00000    0.02617    0.01877 =
+         0.01664    0.00162    0.00146    0.00561
+PART 2
+AFIX  43
+H3B   2    0.288461    0.513022    0.036523    10.10000   -1.20000
+AFIX   0
+PART 0
+PART 1
+H3A   2    0.300708    0.524084    0.037474    10.90000   -1.20000
+PART 0
+C4    1    0.450035    0.625443    0.200055    11.00000    0.01699    0.01554 =
+         0.02518    0.00420    0.00360    0.00114
+PART 2
+AFIX  43
+H4B   2    0.578864    0.681952    0.165053    10.10000   -1.20000
+AFIX   0
+PART 0
+PART 1
+H4A   2    0.587780    0.682466    0.174443    10.90000   -1.20000
+C5    1   -0.013668    0.472793    0.437504    10.92000    0.01564
+AFIX  43
+H5    2   -0.144283    0.401184    0.414842    10.92000   -1.20000
+AFIX   0
+PART 0
+PART 2
+C5A   1    0.092639    0.535753    0.487859    10.08000    0.01932
+AFIX  43
+H5A   2    0.174537    0.590155    0.559844    10.08000   -1.20000
+AFIX   0
+HKLF 4
+
+REM  lucia5MoLT in P21/c #14
+REM R1 =  0.0368 for     773 Fo > 4sig(Fo)  and  0.0409 for all     848 data
+REM     57 parameters refined using     15 restraints
+
+END
+
+WGHT      0.0490      0.3491
+
+REM Highest difference peak  0.448,  deepest hole -0.543,  1-sigma level  0.066
+Q1    1   0.0000  0.5000  0.5000  10.50000  0.05    0.45
+Q2    1   0.1360  0.4800  0.2576  11.00000  0.05    0.42
+Q3    1   0.0388  0.4526  0.1833  11.00000  0.05    0.40
+Q4    1   0.1046  0.5124  0.3842  11.00000  0.05    0.35
+Q5    1   0.4142  0.6434  0.2731  11.00000  0.05    0.33
+Q6    1   0.2252  0.5952  0.3396  11.00000  0.05    0.27
+Q7    1   0.3770  0.5740  0.1693  11.00000  0.05    0.25
+Q8    1   0.0069  0.4721  0.3889  11.00000  0.05    0.23
+Q9    1   0.3596  0.7046  0.3841  11.00000  0.05    0.22
+Q10   1   0.4282  0.5848  0.3796  11.00000  0.05    0.22
+Q11   1   0.4432  0.6744  0.1827  11.00000  0.05    0.17
+Q12   1  -0.0339  0.6007  0.1210  11.00000  0.05    0.16
+Q13   1   0.7345  0.5972  0.3390  11.00000  0.05    0.15
+Q14   1  -0.1017  0.6269  0.3417  11.00000  0.05    0.15
+Q15   1   0.5932  0.8858  0.1782  11.00000  0.05    0.14
+Q16   1   0.5602  0.7122  0.3649  11.00000  0.05    0.14
+Q17   1   0.1876  0.4336  0.5569  11.00000  0.05    0.14
+Q18   1   0.5412  0.8119  0.1682  11.00000  0.05    0.13
+Q19   1   0.2705  0.6615  0.5578  11.00000  0.05    0.13
+Q20   1   0.5316  0.6325  0.1967  11.00000  0.05    0.13
+;
+_shelx_res_checksum              45694
+_shelx_shelxl_version_number     2014/7
+_olex2_date_sample_data_collection 2015-07-02
+_olex2_submission_special_instructions 'No special instructions were received'
+loop_
+_space_group_symop_operation_xyz
+'x, y, z'
+'-x, y+1/2, -z+1/2'
+'-x, -y, -z'
+'x, -y-1/2, z-1/2'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_site_symmetry_order
+_atom_site_calc_flag
+_atom_site_refinement_flags_posn
+_atom_site_refinement_flags_occupancy
+_atom_site_disorder_assembly
+_atom_site_disorder_group
+S1 S 0.39149(12) 0.63481(9) 0.36053(8) 0.0175(2) Uiso 0.9 1 d D P A 1
+S1A S 0.0827(15) 0.4672(11) 0.2227(8) 0.023(3) Uiso 0.1 1 d D P A 2
+C1 C 0.1389(4) 0.5140(3) 0.3346(2) 0.0133(5) Uiso 0.9 1 d D P A 1
+C1A C 0.202(3) 0.547(2) 0.3625(15) 0.009(4) Uiso 0.1 1 d D P A 2
+C2 C 0.0992(6) 0.4666(4) 0.1989(3) 0.0131(10) Uiso 0.9 1 d D P A 1
+H2 H -0.0289 0.4015 0.1629 0.016 Uiso 0.9 1 calc R P A 1
+C2A C 0.406(3) 0.626(3) 0.3305(15) 0.014(7) Uiso 0.1 1 d D P A 2
+H2A H 0.5104 0.6765 0.3946 0.017 Uiso 0.1 1 calc R P A 2
+C3 C 0.2864(4) 0.5345(3) 0.1275(2) 0.0205(5) Uani 1 1 d D . . .
+H3B H 0.2885 0.5130 0.0365 0.025 Uiso 0.1 1 calc R P A 2
+H3A H 0.301(5) 0.524(4) 0.037(3) 0.025 Uiso 0.9 1 d R P B 1
+C4 C 0.4500(4) 0.6254(3) 0.2001(2) 0.0191(5) Uani 1 1 d D . . .
+H4B H 0.5789 0.6820 0.1651 0.023 Uiso 0.1 1 calc R P A 2
+H4A H 0.588(5) 0.682(4) 0.174(3) 0.023 Uiso 0.9 1 d R P C 1
+C5 C -0.0137(4) 0.4728(3) 0.4375(2) 0.0156(5) Uiso 0.92 1 d D P A 1
+H5 H -0.1443 0.4012 0.4148 0.019 Uiso 0.92 1 calc R P A 1
+C5A C 0.093(4) 0.536(3) 0.488(2) 0.019(5) Uiso 0.08 1 d D P A 2
+H5A H 0.1745 0.5902 0.5598 0.023 Uiso 0.08 1 calc R P A 2
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+C3 0.0262(11) 0.0188(10) 0.0166(10) 0.0016(8) 0.0015(8) 0.0056(8)
+C4 0.0170(10) 0.0155(10) 0.0252(11) 0.0042(7) 0.0036(8) 0.0011(8)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+S S 0.1246 0.1234 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_site_symmetry_1
+C4 S1 C1 92.47(11) .
+C3 S1A C1A 96.9(7) .
+C2 C1 S1 111.4(2) .
+C2 C1 C5 125.4(3) .
+C5 C1 S1 123.13(19) .
+C2A C1A S1A 105.7(12) .
+C2A C1A C5A 130.9(17) .
+C5A C1A S1A 123.4(16) .
+C3 C2 C1 108.7(3) .
+C4 C2A C1A 116.1(15) .
+C4 C3 S1A 109.4(3) .
+C4 C3 C2 115.1(2) .
+C3 C4 S1 112.29(17) .
+C3 C4 C2A 111.8(9) .
+C5 C5 C1 125.8(3) 3_566
+C5A C5A C1A 129(3) 3_566
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+S1 C1 1.736(3) .
+S1 C4 1.704(2) .
+S1A C1A 1.674(16) .
+S1A C3 1.658(9) .
+C1 C2 1.445(4) .
+C1 C5 1.452(3) .
+C1A C2A 1.381(14) .
+C1A C5A 1.472(17) .
+C2 C3 1.440(4) .
+C2A C4 1.379(14) .
+C3 C4 1.360(3) .
+C5 C5 1.349(4) 3_566
+C5A C5A 1.24(5) 3_566
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion
+_geom_torsion_site_symmetry_4
+S1 C1 C2 C3 0.5(3) .
+S1 C1 C5 C5 2.9(4) 3_566
+S1A C1A C2A C4 3.0(16) .
+S1A C1A C5A C5A 2(5) 3_566
+S1A C3 C4 C2A 3.6(10) .
+C1 S1 C4 C3 -0.04(17) .
+C1 C2 C3 C4 -0.6(3) .
+C1A S1A C3 C4 -1.7(7) .
+C1A C2A C4 C3 -4.5(16) .
+C2 C1 C5 C5 -175.0(3) 3_566
+C2 C3 C4 S1 0.4(3) .
+C2A C1A C5A C5A 180(3) 3_566
+C3 S1A C1A C2A -0.7(10) .
+C3 S1A C1A C5A 177.2(15) .
+C4 S1 C1 C2 -0.30(19) .
+C4 S1 C1 C5 -178.45(19) .
+C5 C1 C2 C3 178.6(2) .
+C5A C1A C2A C4 -174.7(18) .

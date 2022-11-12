@@ -1,0 +1,150 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-10-14 22:58:33 +0300 (Sat, 14 Oct 2017) $
+#$Revision: 202018 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/8/10/07/8100793.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_8100793
+loop_
+_publ_author_name
+'Schlenker, Julie C.'
+'Staples, Richard J.'
+_publ_section_title
+;
+Crystal structure of 6-methylnicotinamide, C~7~H~8~N~2~O
+;
+_journal_issue                   4
+_journal_name_full
+'Zeitschrift f\"ur Kristallographie - New Crystal Structures'
+_journal_page_first              555
+_journal_page_last               556
+_journal_volume                  217
+_journal_year                    2002
+_chemical_formula_moiety         C7H8NO
+_chemical_formula_structural     'C7 H8 N2 O'
+_chemical_formula_sum            'C7 H8 N2 O'
+_chemical_formula_weight         136.15
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2yn'
+_symmetry_space_group_name_H-M   'P 1 21/n 1'
+_cell_angle_alpha                90.00
+_cell_angle_beta                 99.202(2)
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            4
+_cell_length_a                   8.8355(9)
+_cell_length_b                   7.4643(7)
+_cell_length_c                   10.4284(10)
+_cell_measurement_temperature    213(2)
+_cell_volume                     678.91(11)
+_diffrn_ambient_temperature      213(2)
+_exptl_crystal_density_diffrn    1.332
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+'_symmetry_cell_setting' value 'Monoclinic' changed to 'monoclinic'
+according to '/home/saulius/struct/CIF-dictionaries/cif_core.dic'
+dictionary named 'cif_core.dic' version 2.4.1 from
+2010-06-29.
+
+'_geom_bond_publ_flag' value 'Y' changed to 'y' according to
+'/home/saulius/struct/CIF-dictionaries/cif_core.dic' dictionary named
+'cif_core.dic' version 2.4.1 from 2010-06-29 (4 times).
+
+Automatic conversion script
+Id: cif_fix_enum 1527 2010-12-29 10:47:43Z saulius 
+;
+_cod_original_sg_symbol_H-M      'P 21/n'
+_cod_original_formula_sum        'C7 H8 N2 O1'
+_cod_database_code               8100793
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x+1/2, y+1/2, -z+1/2'
+'-x, -y, -z'
+'x-1/2, -y-1/2, z-1/2'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_symmetry_multiplicity
+_atom_site_calc_flag
+_atom_site_refinement_flags
+_atom_site_disorder_assembly
+_atom_site_disorder_group
+O1 O 0.82541(15) 0.0828(2) 0.40554(12) 0.0349(4) Uani 1 4 d . . .
+N1 N 0.39671(18) 0.3026(2) 0.40276(15) 0.0298(4) Uani 1 4 d . . .
+N2 N 0.88245(17) 0.0799(2) 0.62294(14) 0.0309(4) Uani 1 4 d . . .
+H2A H 0.9732 0.0359 0.6209 0.037 Uiso 1 4 calc R . .
+H2B H 0.8533 0.1023 0.6971 0.037 Uiso 1 4 calc R . .
+C1 C 0.3418(2) 0.3193(3) 0.51523(19) 0.0272(5) Uani 1 4 d . . .
+C2 C 0.4281(2) 0.2720(3) 0.63328(18) 0.0316(5) Uani 1 4 d . . .
+H2 H 0.3870 0.2847 0.7106 0.038 Uiso 1 4 calc R . .
+C3 C 0.5743(2) 0.2063(3) 0.63660(18) 0.0318(5) Uani 1 4 d . . .
+H3 H 0.6341 0.1752 0.7163 0.038 Uiso 1 4 calc R . .
+C4 C 0.6329(2) 0.1860(3) 0.52150(17) 0.0225(4) Uani 1 4 d . . .
+C5 C 0.5390(2) 0.2361(3) 0.40881(18) 0.0285(5) Uani 1 4 d . . .
+H4 H 0.5773 0.2227 0.3303 0.034 Uiso 1 4 calc R . .
+C6 C 0.1815(2) 0.3914(3) 0.5069(2) 0.0383(6) Uani 1 4 d . . .
+H6A H 0.1645 0.4839 0.4408 0.057 Uiso 1 4 calc R . .
+H6B H 0.1684 0.4417 0.5902 0.057 Uiso 1 4 calc R . .
+H6C H 0.1084 0.2951 0.4843 0.057 Uiso 1 4 calc R . .
+C7 C 0.7883(2) 0.1127(2) 0.51272(17) 0.0237(5) Uani 1 4 d . . .
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+O1 0.0279(8) 0.0527(10) 0.0257(7) 0.0021(7) 0.0087(6) 0.0093(7)
+N1 0.0241(9) 0.0368(11) 0.0287(9) 0.0035(7) 0.0051(7) 0.0021(7)
+N2 0.0222(9) 0.0450(11) 0.0256(9) -0.0013(8) 0.0045(7) 0.0080(8)
+C1 0.0224(10) 0.0234(11) 0.0367(11) -0.0052(8) 0.0068(8) -0.0035(8)
+C2 0.0288(11) 0.0416(14) 0.0265(10) -0.0048(9) 0.0107(8) 0.0015(9)
+C3 0.0292(11) 0.0426(14) 0.0236(10) 0.0003(9) 0.0046(8) 0.0027(9)
+C4 0.0211(10) 0.0226(11) 0.0240(9) -0.0005(8) 0.0041(7) -0.0030(8)
+C5 0.0247(11) 0.0367(13) 0.0256(10) 0.0001(9) 0.0078(8) 0.0014(9)
+C6 0.0279(12) 0.0406(15) 0.0475(13) -0.0037(11) 0.0093(10) 0.0034(10)
+C7 0.0222(10) 0.0237(11) 0.0259(10) 0.0024(8) 0.0062(8) -0.0018(8)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+_geom_bond_publ_flag
+O1 C7 1.235(2) . y
+N1 C5 1.344(2) . y
+N1 C1 1.345(2) . y
+N2 C7 1.329(2) . y
+N2 H2A 0.8700 . ?
+N2 H2B 0.8700 . ?
+C1 C2 1.386(3) . ?
+C1 C6 1.504(3) . ?
+C2 C3 1.377(3) . ?
+C2 H2 0.9400 . ?
+C3 C4 1.389(2) . ?
+C3 H3 0.9400 . ?
+C4 C5 1.377(3) . ?
+C4 C7 1.495(3) . ?
+C5 H4 0.9400 . ?
+C6 H6A 0.9700 . ?
+C6 H6B 0.9700 . ?
+C6 H6C 0.9700 . ?
+loop_
+_cod_related_entry_id
+_cod_related_entry_database
+_cod_related_entry_code
+1 ChemSpider 86975

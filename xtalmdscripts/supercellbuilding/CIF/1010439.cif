@@ -1,0 +1,52 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-10-13 02:32:00 +0300 (Fri, 13 Oct 2017) $
+#$Revision: 201954 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/1/01/04/1010439.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_1010439
+loop_
+_publ_author_name
+'John, A S'
+_publ_section_title              'The Crystal Structure of Ice'
+_journal_coden_ASTM              PNASA6
+_journal_name_full
+;
+Proceedings of the National Academy of Sciences, U.S.A.
+;
+_journal_page_first              193
+_journal_page_last               197
+_journal_paper_doi               10.1073/pnas.4.7.193
+_journal_volume                  4
+_journal_year                    1918
+_chemical_compound_source        I
+_chemical_formula_structural     'H2 O'
+_chemical_formula_sum            'H2 O'
+_chemical_name_mineral           Ice
+_chemical_name_systematic        Ice
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                120
+_cell_formula_units_Z            4
+_cell_length_a                   4.74
+_cell_length_b                   4.74
+_cell_length_c                   6.65
+_cell_volume                     129.4
+_cod_database_code               1010439
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+? ? ? ?
+loop_
+_cod_related_entry_id
+_cod_related_entry_database
+_cod_related_entry_code
+1 ChemSpider 937

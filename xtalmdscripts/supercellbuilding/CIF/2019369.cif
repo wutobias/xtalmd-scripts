@@ -1,0 +1,181 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-20 00:18:51 +0200 (Sat, 20 Feb 2016) $
+#$Revision: 176760 $
+#$URL: svn://www.crystallography.net/cod/cif/2/01/93/2019369.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided the Crystal Eye server at
+# http://wwmm.ch.cam.ac.uk/crystaleye/, created by Nick Day at the
+# Peter Murray-Rust laboratory.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2019369
+loop_
+_publ_author_name
+'Birkedal, Henrik'
+'Madsen, Dennis'
+'Mathiesen, Ragnvald H.'
+'Knudsen, Kenneth'
+'Weber, Hans-Peter'
+'Pattison, Philip'
+'Schwarzenbach, Dieter'
+_publ_section_title
+;
+ The charge density of urea from synchrotron diffraction data
+;
+_journal_issue                   5
+_journal_name_full
+'Acta Crystallographica Section A Foundations of Crystallography'
+_journal_page_first              371
+_journal_page_last               381
+_journal_paper_doi               10.1107/S0108767304015120
+_journal_volume                  60
+_journal_year                    2004
+_chemical_formula_moiety         'C H4 N2 O'
+_chemical_formula_sum            'C H4 N2 O'
+_chemical_formula_weight         60.06
+_chemical_name_common            urea
+_chemical_name_systematic
+;
+ ?
+;
+_space_group_IT_number           113
+_symmetry_cell_setting           tetragonal
+_symmetry_space_group_name_Hall  'P -4 2ab'
+_symmetry_space_group_name_H-M   'P -4 21 m'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_atom_type_scat_source
+;
+Charge density refinement.
+;
+_cell_angle_alpha                90.00
+_cell_angle_beta                 90.00
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            2
+_cell_length_a                   5.5780(6)
+_cell_length_b                   5.5780(6)
+_cell_length_c                   4.6860(7)
+_cell_measurement_reflns_used    17
+_cell_measurement_temperature    123(2)
+_cell_volume                     145.80(3)
+_computing_cell_refinement       'KM6-CH software'
+_computing_data_collection       'KM6-CH software'
+_computing_data_reduction        XD_RED
+_computing_structure_refinement  VALRAY
+_diffrn_ambient_temperature      123(2)
+_diffrn_measured_fraction_theta_full 0.938
+_diffrn_measured_fraction_theta_max 0.938
+_diffrn_measurement_device_type
+;
+KM6-CH six-circle \k diffractometer operated as standard four-circle
+\k diffractometer with detector circle in the vertical plane to profit
+from the linear polarization of the synchrotron beam.
+;
+_diffrn_measurement_method       \w-scan
+_diffrn_radiation_monochromator  'Si(111) double crystal monochromator'
+_diffrn_radiation_source         'bending magnet'
+_diffrn_radiation_type           synchrotron
+_diffrn_radiation_wavelength     0.59960(10)
+_diffrn_reflns_av_R_equivalents  0.0141
+_diffrn_reflns_limit_h_max       15
+_diffrn_reflns_limit_h_min       -15
+_diffrn_reflns_limit_k_max       0
+_diffrn_reflns_limit_k_min       -15
+_diffrn_reflns_limit_l_max       0
+_diffrn_reflns_limit_l_min       -13
+_diffrn_reflns_number            3942
+_diffrn_reflns_theta_full        59.82
+_diffrn_reflns_theta_max         59.82
+_diffrn_reflns_theta_min         3.67
+_exptl_absorpt_correction_type   none
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    1.368
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_description       block
+_exptl_crystal_F_000             64
+_exptl_crystal_size_max          0.23
+_exptl_crystal_size_mid          0.13
+_exptl_crystal_size_min          0.09
+_refine_ls_extinction_coef       '0.0000016(3) rad^2'
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.1661
+_refine_ls_hydrogen_treatment    refall
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     77
+_refine_ls_number_reflns         1045
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      1.1661
+_refine_ls_R_factor_all          0.0204
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details     w=1/[\s^2^(Fo^2]
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_ref         0.0104
+_reflns_number_gt                817
+_reflns_number_total             1045
+_reflns_threshold_expression     >2sigma(I)
+_cod_data_source_file            xc5013sup1.cif
+_cod_data_source_block           I
+_cod_database_code               2019369
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x, -y, z'
+'y, -x, -z'
+'-y, x, -z'
+'-x+1/2, y+1/2, -z'
+'x+1/2, -y+1/2, -z'
+'-y+1/2, -x+1/2, z'
+'y+1/2, x+1/2, z'
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_type_symbol
+C 0.0 0.5 0.32821(3) 0.01238(2) Uani 1 C
+O 0.0 0.5 0.59634(10) 0.01527(2) Uani 1 O
+N 0.14468(7) 0.64468(7) 0.17901(10) 0.02273(3) Uani 1 N
+H1 0.2557(4) 0.7557(4) 0.2841(4) 0.0365(6) Uani 1 H
+H2 0.1431(4) 0.6431(4) -0.0348(3) 0.0333(5) Uani 1 H
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+O 0.01958(4) 0.01958(4) 0.00665(3) 0.00164(8) 0.000 0.000
+C 0.01519(4) 0.01519(4) 0.00675(4) -0.00035(6) 0.000 0.000
+N 0.02931(6) 0.02931(6) 0.00956(4) -0.01570(7) 0.00002(3) 0.00002(3)
+H1 0.0440(11) 0.0440(11) 0.0216(7) -0.0222(8) -0.0031(9) -0.0031(9)
+H2 0.0430(10) 0.0430(10) 0.0140(6) -0.0158(8) 0.0019(8) 0.0019(8)
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+O C N 121.49(2)
+C N H1 119.16(12)
+C N H2 120.78(13)
+H1 N H2 120.06(17)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+O C 1.2565(5)
+C N 1.3384(4)
+N H1 1.005(2)
+N H2 1.0020(15)

@@ -1,0 +1,100 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-03-26 19:27:03 +0200 (Sat, 26 Mar 2016) $
+#$Revision: 180435 $
+#$URL: svn://www.crystallography.net/cod/cif/7/21/04/7210454.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_7210454
+loop_
+_publ_author_name
+'Schmidt, Christiane'
+'Y\"ur\"ud\"u, Caner'
+'Wachsmuth, Anika'
+'Ulrich, Joachim'
+_publ_section_title
+;
+ Modeling the morphology of benzoic acid crystals grown from aqueous
+ solution
+;
+_journal_issue                   4
+_journal_name_full               CrystEngComm
+_journal_page_first              1159
+_journal_page_last               1169
+_journal_paper_doi               10.1039/c0ce00540a
+_journal_volume                  13
+_journal_year                    2011
+_chemical_formula_sum            'C7 H6 O2'
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_Int_Tables_number      14
+_symmetry_space_group_name_Hall  '-P 2ybc'
+_symmetry_space_group_name_H-M   'P 1 21/c 1'
+_audit_creation_date             2010-05-04
+_audit_creation_method           'Materials Studio'
+_cell_angle_alpha                90.0000
+_cell_angle_beta                 97.3700
+_cell_angle_gamma                90.0000
+_cell_formula_units_Z            4
+_cell_length_a                   5.5000
+_cell_length_b                   5.1280
+_cell_length_c                   21.9500
+_cell_volume                     613.963
+_cod_data_source_file            c0ce00540a.txt
+_cod_data_source_block           ba_uc
+_cod_original_sg_symbol_H-M      P21/C
+_cod_database_code               7210454
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+-x,y+1/2,-z+1/2
+-x,-y,-z
+x,-y+1/2,z+1/2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+O1 O 0.22064 0.23696 0.01332 0.00000 Uiso 1.00
+O2 O -0.08982 0.14031 0.06505 0.00000 Uiso 1.00
+C3 C 0.09965 0.27110 0.05756 0.00000 Uiso 1.00
+C4 C 0.18133 0.47507 0.10366 0.00000 Uiso 1.00
+C5 C 0.38488 0.62730 0.09740 0.00000 Uiso 1.00
+C6 C 0.45784 0.81631 0.14087 0.00000 Uiso 1.00
+C7 C 0.33190 0.85380 0.18992 0.00000 Uiso 1.00
+C8 C 0.12901 0.70271 0.19618 0.00000 Uiso 1.00
+C9 C 0.05342 0.51411 0.15323 0.00000 Uiso 1.00
+H10 H 0.47610 0.60100 0.06330 0.00000 Uiso 1.00
+H11 H 0.59850 0.90260 0.13570 0.00000 Uiso 1.00
+H12 H 0.38540 0.98510 0.22030 0.00000 Uiso 1.00
+H13 H 0.05150 0.72400 0.23090 0.00000 Uiso 1.00
+H14 H -0.09070 0.41650 0.15730 0.00000 Uiso 1.00
+H15 H 0.18130 0.12200 -0.01510 0.00000 Uiso 1.00
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+O1 C3 1.258
+O1 H15 0.865
+O2 C3 1.268
+C3 C4 1.484
+C4 C5 1.386
+C4 C9 1.384
+C5 C6 1.383
+C5 H10 0.963
+C6 C7 1.366
+C6 H11 0.911
+C7 C8 1.380
+C7 H12 0.967
+C8 C9 1.377
+C8 H13 0.926
+C9 H14 0.951

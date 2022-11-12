@@ -1,0 +1,178 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-03-21 11:32:05 +0200 (Tue, 21 Mar 2017) $
+#$Revision: 194385 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/2/10/80/2108038.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2108038
+loop_
+_publ_author_name
+'Merlino, Stefano'
+'Sartori, Franco'
+_publ_section_title
+;
+ The structures of m-cyanoaniline and p-cyanoaniline
+;
+_journal_name_full               'Acta Crystallographica Section B'
+_journal_page_first              1476
+_journal_page_last               1480
+_journal_paper_doi               10.1107/S0567740882006177
+_journal_volume                  38
+_journal_year                    1982
+_chemical_formula_sum            'C7 H6 N2'
+_chemical_formula_weight         118.14
+_space_group_IT_number           33
+_symmetry_cell_setting           orthorhombic
+_symmetry_Int_Tables_number      33
+_symmetry_space_group_name_Hall  'P 2c -2n'
+_symmetry_space_group_name_H-M   'P n a 21'
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_formula_units_Z            4
+_cell_length_a                   8.27(1)
+_cell_length_b                   16.94(2)
+_cell_length_c                   4.89(1)
+_cell_volume                     685.1(18)
+_diffrn_ambient_temperature      293
+_diffrn_radiation_probe          x-ray
+_diffrn_radiation_type           CuK\a
+_diffrn_radiation_wavelength     1.54184
+_exptl_absorpt_coefficient_mu    0.59
+_exptl_crystal_density_diffrn    1.14
+_exptl_crystal_F_000             248
+_refine_ls_number_reflns         548
+_refine_ls_R_factor_gt           0.065
+_cod_data_source_file            Acta-Cryst-1982-B38-1476-1480-1.cif
+_cod_data_source_block           MCA
+_cod_original_formula_sum        'H6 C7 N2'
+_cod_database_code               2108038
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,-y,1/2+z
+3 1/2-x,1/2+y,1/2+z
+4 1/2+x,1/2-y,z
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_thermal_displace_type
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_U_iso_or_equiv
+_atom_site_calc_flag
+_atom_site_refinement_flags
+_atom_site_disorder_assembly
+_atom_site_disorder_group
+N1 N Uiso 0.3812(6) 0.4901(2) 0.210(3) 1.000 0.0524 . . . .
+N2 N Uiso 0.2167(7) 0.8240(3) -0.03110 1.000 0.0884 . . . .
+C1 C Uiso 0.2752(6) 0.5518(2) 0.281(2) 1.000 0.0341 . . . .
+C2 C Uiso 0.2923(5) 0.6258(3) 0.149(2) 1.000 0.0391 . . . .
+C3 C Uiso 0.1909(6) 0.6899(2) 0.230(3) 1.000 0.0400 . . . .
+C4 C Uiso 0.0755(7) 0.6808(3) 0.433(3) 1.000 0.0496 . . . .
+C5 C Uiso 0.0621(7) 0.6063(3) 0.561(3) 1.000 0.0548 . . . .
+C6 C Uiso 0.1608(7) 0.5435(3) 0.487(3) 1.000 0.0439 . . . .
+C7 C Uiso 0.2038(7) 0.7640(3) 0.080(3) 1.000 0.0570 . . . .
+H1 H Uiso 0.36600 0.63700 -0.02000 1.000 0.0887 . . . .
+H2 H Uiso 0.01200 0.73000 0.48000 1.000 0.0887 . . . .
+H3 H Uiso -0.01200 0.60300 0.76700 1.000 0.0887 . . . .
+H4 H Uiso 0.14100 0.50300 0.60000 1.000 0.0887 . . . .
+H5 H Uiso 0.41500 0.49500 -0.01300 1.000 0.0887 . . . .
+H6 H Uiso 0.36100 0.45000 0.22300 1.000 0.0887 . . . .
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_site_symmetry_1
+_geom_angle_site_symmetry_2
+_geom_angle_site_symmetry_3
+_geom_angle_publ_flag
+H5 N1 H6 103.00 . . . no
+C1 N1 H5 110.00 . . . no
+C1 N1 H6 123.00 . . . no
+N1 C1 C2 118.8(7) . . . yes
+N1 C1 C6 121.9(6) . . . yes
+C2 C1 C6 119.2(5) . . . no
+C1 C2 C3 119.2(7) . . . no
+C4 C3 C7 120.4(6) . . . no
+C2 C3 C4 121.2(6) . . . no
+C2 C3 C7 118.2(9) . . . no
+C3 C4 C5 118.1(6) . . . no
+C4 C5 C6 121.5(10) . . . no
+C1 C6 C5 120.8(8) . . . no
+N2 C7 C3 177.6(11) . . . yes
+C1 C2 H1 125.00 . . . no
+C3 C2 H1 115.00 . . . no
+C3 C4 H2 115.00 . . . no
+C5 C4 H2 126.00 . . . no
+C4 C5 H3 117.00 . . . no
+C6 C5 H3 119.00 . . . no
+C1 C6 H4 130.00 . . . no
+C5 C6 H4 109.00 . . . no
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+_geom_bond_publ_flag
+N1 C1 1.408(8) . . yes
+N2 C7 1.157(10) . . yes
+N1 H5 1.1300 . . no
+N1 H6 0.7000 . . no
+C1 C6 1.389(14) . . no
+C1 C2 1.417(9) . . no
+C2 C3 1.428(8) . . no
+C3 C4 1.386(16) . . no
+C3 C7 1.458(12) . . no
+C4 C5 1.413(12) . . no
+C5 C6 1.389(10) . . no
+C2 H1 1.0400 . . no
+C4 H2 1.0100 . . no
+C5 H3 1.1800 . . no
+C6 H4 0.9000 . . no
+loop_
+_geom_hbond_atom_site_label_D
+_geom_hbond_atom_site_label_H
+_geom_hbond_atom_site_label_A
+_geom_hbond_distance_DH
+_geom_hbond_distance_HA
+_geom_hbond_distance_DA
+_geom_hbond_angle_DHA
+_geom_hbond_site_symmetry_A
+_geom_hbond_publ_flag
+N1 H5 N1 1.1300 2.1800 3.155(18) 143.00 2_664 yes
+N1 H6 N2 0.7000 2.5300 3.190(10) 157.00 3_545 yes
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion
+_geom_torsion_site_symmetry_1
+_geom_torsion_site_symmetry_2
+_geom_torsion_site_symmetry_3
+_geom_torsion_site_symmetry_4
+_geom_torsion_publ_flag
+N1 C1 C2 C3 -176.7(9) . . . . no
+C6 C1 C2 C3 -0.3(12) . . . . no
+N1 C1 C6 C5 177.3(10) . . . . no
+C2 C1 C6 C5 1.0(14) . . . . no
+C1 C2 C3 C4 -0.6(14) . . . . no
+C1 C2 C3 C7 -176.3(8) . . . . no
+C2 C3 C4 C5 0.8(16) . . . . no
+C7 C3 C4 C5 176.4(10) . . . . no
+C3 C4 C5 C6 -0.1(16) . . . . no
+C4 C5 C6 C1 -0.8(16) . . . . no

@@ -1,0 +1,732 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-03-24 14:44:50 +0200 (Thu, 24 Mar 2016) $
+#$Revision: 179672 $
+#$URL: svn://www.crystallography.net/cod/cif/4/51/25/4512518.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_4512518
+loop_
+_publ_author_name
+'B\;ak, Joanna M.'
+'Gajda, Roman'
+'Wo\'zniak, Krzysztof'
+_publ_section_title
+;
+ New High Pressure Crystal Structures of 2,2-Dimethylbutane and
+ 2,3-Dimethylaniline: Combined X-ray, Raman, and Theoretical Studies
+;
+_journal_issue                   1
+_journal_name_full               'Crystal Growth &amp; Design'
+_journal_page_first              45
+_journal_paper_doi               10.1021/cg500998g
+_journal_volume                  15
+_journal_year                    2015
+_chemical_formula_moiety         'C6 H14'
+_chemical_formula_sum            'C6 H14'
+_chemical_formula_weight         86.17
+_chemical_name_systematic
+;
+ ? 
+;
+_space_group_crystal_system      orthorhombic
+_space_group_IT_number           62
+_space_group_name_Hall           '-P 2ac 2n'
+_space_group_name_H-M_alt        'P n m a'
+_symmetry_space_group_name_Hall  '-P 2ac 2n'
+_symmetry_space_group_name_H-M   'P n m a'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_audit_creation_date             2014-03-12
+_audit_creation_method
+;
+Olex2 1.2
+(compiled 2014.02.28 svn.r2899 for OlexSys, GUI svn.r4781)
+;
+_cell_angle_alpha                90.00
+_cell_angle_beta                 90.00
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            4
+_cell_length_a                   9.8263(12)
+_cell_length_b                   8.162(5)
+_cell_length_c                   6.9926(8)
+_cell_measurement_reflns_used    682
+_cell_measurement_temperature    294.0(5)
+_cell_measurement_theta_max      21.4540
+_cell_measurement_theta_min      2.8150
+_cell_volume                     560.8(4)
+_computing_molecular_graphics    'Olex2 (Dolomanov et al., 2009)'
+_computing_publication_material  'Olex2 (Dolomanov et al., 2009)'
+_computing_structure_refinement  'XL (Sheldrick, 2008)'
+_computing_structure_solution    'XS (Sheldrick, 2008)'
+_diffrn_ambient_temperature      294.0(5)
+_diffrn_measured_fraction_theta_full 0.583
+_diffrn_measured_fraction_theta_max 0.583
+_diffrn_measurement_device_type  'SuperNova, Single source at offset, Eos'
+_diffrn_measurement_method       '\w scans'
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_type           AgK\a
+_diffrn_radiation_wavelength     0.56085
+_diffrn_reflns_av_R_equivalents  0.0000
+_diffrn_reflns_av_unetI/netI     0.0314
+_diffrn_reflns_limit_h_max       12
+_diffrn_reflns_limit_h_min       0
+_diffrn_reflns_limit_k_max       5
+_diffrn_reflns_limit_k_min       0
+_diffrn_reflns_limit_l_max       8
+_diffrn_reflns_limit_l_min       0
+_diffrn_reflns_number            1911
+_diffrn_reflns_theta_full        20.74
+_diffrn_reflns_theta_max         20.74
+_diffrn_reflns_theta_min         2.82
+_diffrn_source                   'Enhance (Ag) X-ray Source'
+_exptl_absorpt_coefficient_mu    0.038
+_exptl_absorpt_correction_T_max  0.595
+_exptl_absorpt_correction_T_min  0.518
+_exptl_absorpt_correction_type   gaussian
+_exptl_absorpt_process_details
+;
+CrysAlisPro, Agilent Technologies,
+Version 1.171.36.32 (release 02-08-2013 CrysAlis171 .NET)
+(compiled Aug  2 2013,16:46:58)
+Numerical absorption correction based on gaussian integration over
+            a multifaceted crystal model (Absorb Angel (2004) J. Appl. Cryst. 37:486-492)
+;
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    1.021
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_F_000             200
+_exptl_crystal_preparation       'mounted in a diamond-anvil cell '
+_exptl_crystal_size_max          0.190
+_exptl_crystal_size_mid          0.175
+_exptl_crystal_size_min          0.169
+_refine_diff_density_max         0.175
+_refine_diff_density_min         -0.116
+_refine_diff_density_rms         0.029
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.160
+_refine_ls_hydrogen_treatment    mixed
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     63
+_refine_ls_number_reflns         374
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      1.160
+_refine_ls_R_factor_all          0.0768
+_refine_ls_R_factor_gt           0.0499
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'calc w=1/[\s^2^(Fo^2^)+(0.0225P)^2^+0.2565P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.0860
+_refine_ls_wR_factor_ref         0.0940
+_reflns_number_gt                286
+_reflns_number_total             374
+_reflns_threshold_expression     >2sigma(I)
+_cod_data_source_file            cg500998g_si_002.cif
+_cod_data_source_block           DMB
+_cod_depositor_comments
+'Adding full bibliography for 4512517--4512518.cif.'
+_cod_database_code               4512518
+#BEGIN Tags that were not found in dictionaries:
+_olex2_refinement_description
+;
+1. Fixed Uiso
+ At 1.2 times of:
+  All C(H) groups
+;
+_shelx_res_file
+;
+TITL s4b22 in Pnma #62
+CELL 0.56086 9.8263 8.1615 6.9926 90 90 90
+ZERR 4 0.0012 0.0051 0.0008 0 0 0
+LATT 1
+SYMM 0.5-X,-Y,0.5+Z
+SYMM 0.5+X,0.5-Y,0.5-Z
+SYMM -X,0.5+Y,-Z
+ 
+SFAC C H
+UNIT 24 56
+ 
+L.S. 44
+PLAN  4
+REM reset to Pnma #62
+BOND
+MORE -1
+CONF
+fmap 2
+acta
+REM <HKL>C:/Users/romanbg/Documents/Pressure/22dmb/22dmb_s4a/s4b_new/Olex/s4b2
+REM 2.hkl</HKL>
+ 
+WGHT    0.022500    0.256500
+FVAR       1.25957
+C2    1    0.874364    0.750000    0.150714    10.50000    0.03270    0.02874 =
+         0.02400    0.00000   -0.00171    0.00000
+C3    1    0.981721    0.750000    0.470372    10.50000    0.02887    0.04103 =
+         0.02509    0.00000   -0.00105    0.00000
+H3    2    1.035542    0.652039    0.426560    11.00000   -1.20000
+C4    1    0.976020    0.750000    0.688391    10.50000    0.04418    0.05398 =
+         0.02451    0.00000   -0.00591    0.00000
+C1    1    0.844207    0.750000    0.365923    10.50000    0.02781    0.02210 =
+         0.02105    0.00000   -0.00070    0.00000
+C5    1    0.762248    0.597608    0.415972    11.00000    0.03856    0.02973 =
+         0.03272    0.00172   -0.00152   -0.00349
+H4A   2    1.067778    0.750000    0.744819    10.50000    0.04936
+H2A   2    0.933525    0.656461    0.115655    11.00000    0.04554
+H2B   2    0.794061    0.750000    0.074811    10.50000    0.03065
+H4B   2    0.924335    0.650503    0.736244    11.00000    0.06999
+H5A   2    0.741911    0.594963    0.550350    11.00000    0.04706
+H5B   2    0.675009    0.590765    0.341487    11.00000    0.04028
+H5C   2    0.813352    0.498303    0.385485    11.00000    0.05942
+HKLF 4
+ 
+REM  s4b22 in Pnma #62
+REM R1 =  0.0499 for    286 Fo > 4sig(Fo)  and  0.0768 for all    374 data
+REM     63 parameters refined using      0 restraints
+ 
+END  
+     
+WGHT      0.0223      0.2580 
+REM Highest difference peak  0.175,  deepest hole -0.116,  1-sigma level  0.029
+Q1    1   0.8619  0.7500  0.2736  10.50000  0.05    0.18
+Q2    1   0.9018  0.7500  0.4191  10.50000  0.05    0.16
+Q3    1   0.7936  0.7500  0.3934  10.50000  0.05    0.11
+Q4    1   1.0138  0.7500  0.8210  10.50000  0.05    0.10
+
+REM The information below was added by Olex2.
+REM
+REM R1 = 0.0499 for 286 Fo > 4sig(Fo) and 0.0768 for all 408 data
+REM n/a parameters refined using n/a restraints
+REM Highest difference peak 0.18, deepest hole -0.12
+REM Mean Shift 0, Max Shift 0.
+
+REM +++ Tabular Listing of Refinement Information +++
+REM R1_all = 0.0768
+REM R1_gt = 0.0499
+REM wR_ref = 0.0940
+REM GOOF = 1.160
+REM Shift_max = 0
+REM Shift_mean = 0
+REM Reflections_all = 408
+REM Reflections_gt = 286
+REM Parameters = n/a
+REM Hole = -0.12
+REM Peak = 0.18
+REM Flack = n/a
+
+;
+#END Tags that were not found in dictionaries
+loop_
+_space_group_symop_id
+_space_group_symop_operation_xyz
+1 'x, y, z'
+2 '-x+1/2, -y, z+1/2'
+3 'x+1/2, -y+1/2, -z+1/2'
+4 '-x, y+1/2, -z'
+5 '-x, -y, -z'
+6 'x-1/2, y, -z-1/2'
+7 '-x-1/2, y-1/2, z-1/2'
+8 'x, -y-1/2, z'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_calc_flag
+_atom_site_site_symmetry_order
+_atom_site_refinement_flags_posn
+_atom_site_refinement_flags_adp
+_atom_site_refinement_flags_occupancy
+C2 C 0.8744(4) 0.7500 0.1507(4) 0.028(2) Uani 1 d 2 S T P
+C3 C 0.9817(3) 0.7500 0.4704(4) 0.032(2) Uani 1 d 2 S T P
+H3 H 1.036(2) 0.652(5) 0.427(3) 0.038 Uiso 1 d 1 R . .
+C4 C 0.9760(4) 0.7500 0.6884(4) 0.041(2) Uani 1 d 2 S T P
+C1 C 0.8442(3) 0.7500 0.3659(3) 0.024(2) Uani 1 d 2 S T P
+C5 C 0.7622(3) 0.5976(6) 0.4160(3) 0.0337(15) Uani 1 d 1 . . .
+H4A H 1.068(3) 0.7500 0.745(4) 0.049(10) Uiso 1 d 2 S T P
+H2A H 0.934(2) 0.656(5) 0.116(3) 0.046(8) Uiso 1 d 1 . . .
+H2B H 0.794(3) 0.7500 0.075(4) 0.031(8) Uiso 1 d 2 S T P
+H4B H 0.924(2) 0.651(5) 0.736(3) 0.070(11) Uiso 1 d 1 . . .
+H5A H 0.7419(19) 0.595(4) 0.550(3) 0.047(7) Uiso 1 d 1 . . .
+H5B H 0.675(2) 0.591(4) 0.341(3) 0.040(6) Uiso 1 d 1 . . .
+H5C H 0.813(3) 0.498(7) 0.385(3) 0.059(11) Uiso 1 d 1 . . .
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+C2 0.0327(19) 0.029(7) 0.0240(14) 0.000 -0.0017(13) 0.000
+C3 0.0289(17) 0.041(8) 0.0251(15) 0.000 -0.0011(11) 0.000
+C4 0.044(2) 0.054(8) 0.0245(15) 0.000 -0.0059(14) 0.000
+C1 0.0278(16) 0.022(8) 0.0210(13) 0.000 -0.0007(11) 0.000
+C5 0.0386(14) 0.030(5) 0.0327(11) 0.0017(17) -0.0015(10) -0.0035(19)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0015 0.0009 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_site_symmetry_1
+C4 C3 C1 116.3(3) .
+C2 C1 C3 107.3(2) .
+C5 C1 C2 109.13(15) .
+C5 C1 C2 109.13(15) 8_575
+C5 C1 C3 110.86(16) .
+C5 C1 C3 110.86(16) 8_575
+C5 C1 C5 109.6(4) 8_575
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+C2 C1 1.534(4) .
+C3 C4 1.526(4) .
+C3 C1 1.536(4) .
+C1 C5 1.522(4) 8_575
+C1 C5 1.522(4) .
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion
+_geom_torsion_site_symmetry_4
+C4 C3 C1 C2 180.0 .
+C4 C3 C1 C5 -61.0(2) .
+C4 C3 C1 C5 61.0(2) 8_575
+loop_
+_refln_index_h
+_refln_index_k
+_refln_index_l
+_refln_F_squared_meas
+_refln_F_squared_sigma
+2 0 0 160.77 2.59
+3 0 0 0.32 0.36
+4 0 0 1178.09 7.23
+5 0 0 0.89 0.68
+6 0 0 19.41 1.8
+7 0 0 -1.12 2.17
+9 0 0 0.9 4.04
+10 0 0 69.14 7.12
+11 0 0 0.58 3.63
+12 0 0 11.68 4.35
+2 1 0 3899.44 16.33
+3 1 0 0.15 0.44
+4 1 0 2.22 0.52
+5 1 0 0.36 0.55
+6 1 0 12.15 1
+7 1 0 0.23 1.28
+8 1 0 122.52 5.57
+9 1 0 3.71 3.05
+10 1 0 172.66 7.38
+11 1 0 1.57 3.51
+12 1 0 0.94 3.86
+4 2 0 89.04 2.85
+5 2 0 0.56 0.89
+6 2 0 491.31 5.59
+7 2 0 0.27 1.55
+8 2 0 70.92 3.59
+9 2 0 -1.79 3.05
+10 2 0 3.51 3.13
+11 2 0 8.32 4.01
+12 2 0 5.42 4.21
+6 3 0 34.44 4.09
+7 3 0 2.73 3.1
+8 3 0 441.82 8.26
+9 3 0 1.11 2.98
+10 3 0 19.76 3.84
+11 3 0 -1.09 3.85
+8 4 0 21.01 4.95
+9 4 0 -21.28 5.45
+10 4 0 3.98 4.8
+11 4 0 -5.55 5.95
+0 0 1 0.03 0.22
+1 0 1 1507.61 7.88
+2 0 1 996.41 4.62
+3 0 1 302.16 2.55
+4 0 1 394.88 2.9
+5 0 1 798.89 4.86
+6 0 1 122.46 2.71
+7 0 1 10.08 1.74
+8 0 1 5.04 1.92
+9 0 1 15.07 2.63
+10 0 1 3.92 2.73
+11 0 1 1.02 3.81
+12 0 1 21.43 5.03
+0 1 1 1397.02 13.03
+1 1 1 1015.01 7.24
+2 1 1 1297.84 5.75
+3 1 1 394.16 2.54
+4 1 1 377.57 2.35
+5 1 1 173.9 1.53
+6 1 1 1.7 0.67
+7 1 1 31.74 1.72
+8 1 1 40.58 3.03
+9 1 1 101.65 4.53
+10 1 1 19.62 2.68
+11 1 1 -0.23 2.84
+12 1 1 5.81 3.39
+2 2 1 639.03 12.25
+3 2 1 501.27 6.98
+4 2 1 96.19 2.23
+5 2 1 146.32 2.24
+6 2 1 231.96 3.35
+7 2 1 107.33 2.78
+8 2 1 5.59 1.66
+9 2 1 17.02 2.31
+10 2 1 4.37 2.7
+11 2 1 8.3 3.87
+12 2 1 11.18 4.46
+5 3 1 95.38 6.08
+6 3 1 78.63 3.3
+7 3 1 410.23 7.68
+8 3 1 0.92 2.11
+9 3 1 -0.53 2.51
+10 3 1 -1.11 2.91
+11 3 1 15.2 3.57
+7 4 1 80.74 6.87
+9 4 1 17.94 3.73
+10 4 1 1.02 3.85
+11 4 1 6.5 4.18
+0 0 2 289.69 3.51
+1 0 2 1375.82 5.11
+2 0 2 363.1 2.89
+3 0 2 1678.7 6.31
+4 0 2 725.02 4.24
+5 0 2 1.32 0.74
+6 0 2 24.59 1.72
+7 0 2 3.91 1.74
+8 0 2 32.02 3.52
+9 0 2 15.42 3.34
+10 0 2 6.72 4.87
+12 0 2 10.64 6.42
+0 1 2 0.23 0.3
+1 1 2 107.69 1.23
+2 1 2 51.61 0.85
+3 1 2 65.19 0.96
+4 1 2 9.25 0.56
+5 1 2 113.18 1.62
+6 1 2 34.64 1.19
+7 1 2 2.36 1
+8 1 2 3.22 1.43
+9 1 2 15.51 2.2
+10 1 2 3.29 2.32
+11 1 2 1.56 2.67
+0 2 2 144.18 10.27
+1 2 2 257.23 4.52
+2 2 2 70.41 2.35
+3 2 2 1.04 0.8
+4 2 2 32.05 1.22
+5 2 2 107.43 2.55
+6 2 2 25.76 1.93
+7 2 2 47.59 2.62
+8 2 2 1.65 1.59
+9 2 2 8.87 2.31
+10 2 2 10.37 2.96
+11 2 2 25.19 3.97
+3 3 2 27.66 3.8
+4 3 2 36.11 4.2
+5 3 2 5.24 2.15
+6 3 2 1.97 1.74
+7 3 2 35.68 2.5
+8 3 2 7.1 1.96
+9 3 2 131.48 5.36
+10 3 2 2.45 2.61
+11 3 2 31.65 3.74
+6 4 2 47.78 5.89
+8 4 2 9.1 3.11
+9 4 2 22.63 3.84
+10 4 2 15.17 3.41
+11 4 2 18.78 6.7
+0 0 3 0.36 0.56
+1 0 3 22.66 0.9
+2 0 3 604.39 4.23
+3 0 3 6.02 0.75
+4 0 3 62.5 1.68
+5 0 3 43.97 1.99
+6 0 3 65.45 3.06
+7 0 3 2.21 1.78
+8 0 3 0.4 2.09
+9 0 3 48.68 5.13
+10 0 3 54.36 5.94
+11 0 3 3.94 5.39
+0 1 3 3274 9.83
+1 1 3 2.09 0.33
+2 1 3 1.23 0.41
+3 1 3 25.81 0.79
+4 1 3 119.91 1.56
+5 1 3 4.03 0.76
+6 1 3 0.76 0.93
+7 1 3 72.09 2.33
+8 1 3 43.88 2.29
+9 1 3 1.16 1.92
+10 1 3 14.59 2.53
+11 1 3 10.87 4.5
+0 2 3 0.3 0.68
+1 2 3 6.15 0.63
+2 2 3 118.26 1.8
+3 2 3 3.25 0.62
+4 2 3 7.35 0.8
+5 2 3 28.51 1.56
+6 2 3 4.92 1.41
+7 2 3 1.56 1.94
+8 2 3 66.88 4.84
+9 2 3 54.7 4.57
+10 2 3 -2.07 3.38
+11 2 3 -2.99 3.88
+1 3 3 4.27 4.44
+2 3 3 502.91 8.17
+3 3 3 24.25 2.17
+4 3 3 177.2 5.8
+5 3 3 0.21 1.66
+6 3 3 250.3 7.69
+7 3 3 26.16 2.88
+8 3 3 12.46 2.89
+9 3 3 3.46 2.41
+10 3 3 10.53 3.45
+11 3 3 38.13 5.38
+5 4 3 34.31 5.75
+6 4 3 -0.55 3.94
+7 4 3 -4.54 4.4
+8 4 3 73.25 7.99
+9 4 3 39.16 5.63
+10 4 3 3.58 3.92
+10 5 3 2.74 5.98
+0 0 4 690.11 6.98
+1 0 4 290.8 3.29
+2 0 4 548.47 5.07
+3 0 4 11.53 1.16
+4 0 4 114.03 2.54
+5 0 4 217.7 4.6
+6 0 4 5.95 1.65
+7 0 4 15.77 2.47
+8 0 4 21.79 2.96
+9 0 4 136.09 5.56
+10 0 4 42.88 4.93
+11 0 4 7.69 4.37
+0 1 4 0.3 0.64
+1 1 4 562.92 3.16
+2 1 4 261.14 2.56
+3 1 4 119.36 1.97
+4 1 4 88.34 1.82
+5 1 4 66.51 2.02
+6 1 4 75.24 2.06
+7 1 4 13.17 1.63
+8 1 4 -0.37 1.56
+9 1 4 45.41 2.64
+10 1 4 2.21 2.27
+11 1 4 5.74 2.99
+0 2 4 23.05 1.24
+1 2 4 1.35 0.58
+2 2 4 42.69 1.42
+3 2 4 150.1 2.67
+4 2 4 327.24 4.36
+5 2 4 3.65 1.35
+6 2 4 15.59 1.71
+7 2 4 32.8 2.74
+8 2 4 4.34 2.02
+9 2 4 10.45 4.07
+10 2 4 3.97 3.12
+0 3 4 1.6 1.5
+1 3 4 196.9 4.63
+2 3 4 160.85 5.47
+3 3 4 180.38 4.83
+4 3 4 28.41 2.37
+5 3 4 1.8 1.86
+6 3 4 123.57 6.01
+7 3 4 87.03 8.14
+8 3 4 20.95 3.58
+9 3 4 3.67 3.93
+10 3 4 9.74 3.14
+3 4 4 240.4 10.87
+4 4 4 310.71 12.91
+5 4 4 1.76 2.63
+6 4 4 29.83 5.82
+7 4 4 69.69 7.95
+8 4 4 1.99 3.5
+9 4 4 5.89 3.96
+8 5 4 5.78 6
+9 5 4 15.85 6.64
+0 0 5 1.41 1.39
+1 0 5 85.62 2.35
+2 0 5 143.82 3.4
+3 0 5 284.49 4.75
+4 0 5 13.2 1.63
+5 0 5 2.12 2.03
+6 0 5 165.92 5.54
+7 0 5 23.11 3.79
+8 0 5 7.87 3.38
+9 0 5 1.05 3.27
+10 0 5 11.01 4.09
+0 1 5 18.2 1.5
+1 1 5 61.11 1.82
+2 1 5 55.39 1.79
+3 1 5 125.86 2.64
+4 1 5 457.34 4.92
+5 1 5 24.49 1.73
+6 1 5 3.77 1.33
+7 1 5 69.78 3.82
+8 1 5 -1.64 2.14
+9 1 5 1.94 2.34
+10 1 5 13.61 3.23
+0 2 5 0.49 1.57
+1 2 5 97.54 3.26
+2 2 5 141.5 2.98
+3 2 5 111.34 2.72
+4 2 5 54.51 2.39
+5 2 5 55.78 2.32
+6 2 5 102.99 3.1
+7 2 5 5.13 1.76
+8 2 5 2.35 2.18
+9 2 5 15.48 2.66
+0 3 5 85.96 4.79
+1 3 5 77.23 3.14
+2 3 5 188.4 4.66
+3 3 5 51.42 3.77
+4 3 5 132.17 6.24
+5 3 5 228.6 6.39
+6 3 5 13.17 2.7
+7 3 5 7.82 3.58
+8 3 5 16.58 4.45
+9 3 5 49.73 6.73
+2 4 5 111.96 5.53
+3 4 5 79.65 4
+4 4 5 65.44 4.95
+5 4 5 48.65 4.81
+6 4 5 64 7.49
+7 4 5 -0.09 4.71
+8 4 5 8.55 4.21
+9 4 5 10.61 7.08
+7 5 5 12.75 6.37
+8 5 5 -2.12 6.35
+0 0 6 2.86 2.41
+1 0 6 23.93 1.99
+2 0 6 237.96 4.82
+3 0 6 9.76 1.61
+4 0 6 105.75 4.69
+5 0 6 5.7 2.45
+6 0 6 154.39 5.86
+7 0 6 12.02 3.73
+8 0 6 1.23 3.63
+9 0 6 4.52 5.62
+0 1 6 -0.3 1.83
+1 1 6 0.55 1.12
+2 1 6 46.72 1.94
+3 1 6 26.39 1.72
+4 1 6 14.42 1.83
+5 1 6 4.48 1.71
+6 1 6 12.24 2.14
+7 1 6 7.92 2.28
+8 1 6 50.29 3.84
+9 1 6 37.16 5.37
+0 2 6 242.22 6.26
+1 2 6 2.17 1.54
+2 2 6 3.16 1.33
+3 2 6 2.24 1.38
+4 2 6 4.73 1.65
+5 2 6 10.22 2.02
+6 2 6 12.6 2.36
+7 2 6 17.77 2.92
+8 2 6 53.26 4.1
+0 3 6 -0.28 2.91
+1 3 6 1.91 1.71
+2 3 6 86.14 2.8
+3 3 6 17.89 1.73
+4 3 6 3.51 1.66
+5 3 6 0.87 2.05
+6 3 6 3.51 2.69
+7 3 6 4.25 4.86
+8 3 6 12.4 6.44
+0 4 6 341.66 10.5
+1 4 6 1.79 3.09
+2 4 6 -0.43 2.73
+3 4 6 -0.73 2.99
+4 4 6 31.46 4.28
+5 4 6 6.92 3.53
+6 4 6 6.11 5.41
+7 4 6 6.92 5.87
+5 5 6 2.85 3.89
+0 0 7 1.84 2.83
+1 0 7 14.16 2.42
+2 0 7 4.46 1.74
+3 0 7 2.91 2.21
+4 0 7 6.5 2.67
+5 0 7 3.32 2.84
+6 0 7 2.33 3.05
+7 0 7 10.13 4.05
+0 1 7 7.51 2.35
+1 1 7 15.72 2.05
+2 1 7 15.43 1.62
+3 1 7 4.62 1.55
+4 1 7 8.11 1.9
+5 1 7 29.98 2.31
+6 1 7 5.72 2.2
+7 1 7 48.95 3.47
+0 2 7 -0.71 2.82
+1 2 7 3.35 1.91
+2 2 7 1.3 1.82
+3 2 7 7.93 1.86
+4 2 7 5.04 2.41
+5 2 7 25.46 3.04
+6 2 7 7.37 2.72
+7 2 7 0.76 4.03
+0 3 7 13.71 3.4
+1 3 7 49.24 3.05
+2 3 7 7.97 2.09
+3 3 7 73.44 3.99
+4 3 7 14.11 2.13
+5 3 7 16.14 2.51
+6 3 7 13.91 2.82
+0 4 7 -3.44 3.52
+1 4 7 -3.22 2.42
+2 4 7 -3.2 2.31
+3 4 7 -1.91 5.06
+4 4 7 -0.51 3.82
+5 4 7 21.28 4.54
+4 5 7 2.3 3.81
+0 0 8 9.49 3.6
+1 0 8 43.51 3.02
+2 0 8 6.97 2.95
+3 0 8 25.52 3.02
+4 0 8 90.39 5.18
+5 0 8 -3.57 3.05
+0 1 8 -1.2 3.17
+1 1 8 7.44 2.18
+2 1 8 20.49 2.54
+3 1 8 30.65 2.87
+4 1 8 16.6 2.27
+5 1 8 26.61 2.71
+0 2 8 8.08 3.5
+1 2 8 5.54 2.58
+2 2 8 50.56 3.94
+3 2 8 9.71 2.84
+4 2 8 33.11 3.52
+0 3 8 4.78 3.65
+1 3 8 8.48 2.71
+2 3 8 13.4 2.52
+3 3 8 9.62 2.82
+0 4 8 15.53 4.26
+1 4 8 3.99 2.97
+2 4 8 41.14 5.09

@@ -1,0 +1,172 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-10-13 14:42:48 +0300 (Fri, 13 Oct 2017) $
+#$Revision: 201982 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/4/02/06/4020664.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_4020664
+loop_
+_publ_author_name
+'Yong-Hua Yang'
+'Min Shi'
+_publ_section_title
+;
+ Ring-Expanding Reaction of Cyclopropyl Amides with
+ Triphenylphosphine and Carbon Tetrahalide
+;
+_journal_name_full               'Journal of Organic Chemistry'
+_journal_page_first              8645
+_journal_page_last               8648
+_journal_paper_doi               10.1021/jo0516988
+_journal_volume                  70
+_journal_year                    2005
+_chemical_formula_sum            'C12 H15 N O3'
+_chemical_formula_weight         221.25
+_space_group_IT_number           2
+_symmetry_cell_setting           triclinic
+_symmetry_space_group_name_Hall  '-P 1'
+_symmetry_space_group_name_H-M   'P -1'
+_cell_angle_alpha                98.452(2)
+_cell_angle_beta                 101.450(2)
+_cell_angle_gamma                114.134(2)
+_cell_formula_units_Z            2
+_cell_length_a                   8.4864(11)
+_cell_length_b                   8.5814(11)
+_cell_length_c                   8.6437(12)
+_cell_measurement_temperature    293(2)
+_cell_volume                     544.40(12)
+_diffrn_ambient_temperature      293(2)
+_exptl_crystal_density_diffrn    1.350
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+'_symmetry_cell_setting' value 'Triclinic' changed to 'triclinic'
+according to '/home/saulius/struct/CIF-dictionaries/cif_core.dic'
+dictionary named 'cif_core.dic' version 2.4.1 from 2010-06-29.
+
+Automatic conversion script
+Id: cif_fix_enum 1527 2010-12-29 10:47:43Z saulius 
+;
+_cod_database_code               4020664
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x, -y, -z'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_symmetry_multiplicity
+_atom_site_calc_flag
+_atom_site_refinement_flags
+_atom_site_disorder_assembly
+_atom_site_disorder_group
+N1 N 0.33906(16) 0.06845(15) 0.40113(14) 0.0385(4) Uani 1 1 d . . .
+O1 O -0.00246(17) -0.19780(14) 0.76171(14) 0.0546(4) Uani 1 1 d . . .
+O2 O 0.29334(19) 0.42400(14) 0.84453(15) 0.0643(4) Uani 1 1 d . . .
+O3 O 0.23256(18) -0.23223(14) 0.30459(15) 0.0609(4) Uani 1 1 d . . .
+C1 C 0.27498(18) 0.07874(18) 0.53890(16) 0.0366(4) Uani 1 1 d . . .
+C2 C 0.16667(19) -0.07463(18) 0.57911(17) 0.0391(4) Uani 1 1 d . . .
+C3 C 0.10348(19) -0.05667(19) 0.71170(17) 0.0401(4) Uani 1 1 d . . .
+C4 C 0.1410(2) 0.1067(2) 0.80627(18) 0.0435(4) Uani 1 1 d . . .
+C5 C 0.2477(2) 0.2559(2) 0.76500(18) 0.0446(4) Uani 1 1 d . . .
+C6 C 0.3165(2) 0.2427(2) 0.63359(18) 0.0439(4) Uani 1 1 d . . .
+C7 C 0.3097(2) -0.08055(19) 0.29375(18) 0.0423(4) Uani 1 1 d . . .
+C8 C 0.3874(3) -0.0312(2) 0.1569(2) 0.0516(5) Uani 1 1 d . . .
+C9 C 0.4806(2) 0.1668(2) 0.1990(2) 0.0540(5) Uani 1 1 d . . .
+H7 H 0.4344 0.2095 0.1115 0.065 Uiso 1 1 calc R . .
+H6 H 0.6093 0.2098 0.2161 0.065 Uiso 1 1 calc R . .
+C10 C 0.4425(2) 0.2294(2) 0.3542(2) 0.0472(4) Uani 1 1 d . . .
+C11 C -0.0429(3) -0.3689(2) 0.6733(3) 0.0581(5) Uani 1 1 d . . .
+C12 C 0.2275(4) 0.4478(3) 0.9797(3) 0.0654(6) Uani 1 1 d . . .
+H1 H 0.138(2) -0.183(2) 0.5161(19) 0.044(4) Uiso 1 1 d . . .
+H2 H 0.092(2) 0.119(3) 0.899(2) 0.057(5) Uiso 1 1 d . . .
+H3 H 0.387(3) 0.352(3) 0.612(2) 0.057(5) Uiso 1 1 d . . .
+H4 H 0.470(3) -0.082(3) 0.150(3) 0.072(6) Uiso 1 1 d . . .
+H5 H 0.282(3) -0.082(3) 0.058(3) 0.076(6) Uiso 1 1 d . . .
+H8 H 0.558(3) 0.300(3) 0.439(3) 0.074(6) Uiso 1 1 d . . .
+H9 H 0.373(3) 0.288(3) 0.335(2) 0.067(6) Uiso 1 1 d . . .
+H10 H -0.123(3) -0.442(3) 0.719(3) 0.073(6) Uiso 1 1 d . . .
+H11 H 0.069(3) -0.384(3) 0.685(3) 0.081(7) Uiso 1 1 d . . .
+H12 H -0.108(3) -0.391(3) 0.560(3) 0.075(6) Uiso 1 1 d . . .
+H13 H 0.262(3) 0.397(3) 1.063(3) 0.088(7) Uiso 1 1 d . . .
+H14 H 0.095(4) 0.393(3) 0.944(3) 0.082(7) Uiso 1 1 d . . .
+H15 H 0.276(3) 0.570(4) 1.017(3) 0.094(8) Uiso 1 1 d . . .
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+N1 0.0446(7) 0.0272(6) 0.0383(6) 0.0112(5) 0.0142(5) 0.0092(5)
+O1 0.0749(8) 0.0308(6) 0.0543(7) 0.0163(5) 0.0342(6) 0.0114(5)
+O2 0.0933(10) 0.0295(7) 0.0608(8) 0.0044(5) 0.0384(7) 0.0140(6)
+O3 0.0857(9) 0.0274(6) 0.0652(8) 0.0109(5) 0.0404(7) 0.0133(6)
+C1 0.0396(7) 0.0294(7) 0.0352(7) 0.0101(5) 0.0086(5) 0.0106(6)
+C2 0.0465(8) 0.0265(7) 0.0375(7) 0.0080(6) 0.0109(6) 0.0106(6)
+C3 0.0446(8) 0.0305(8) 0.0400(7) 0.0139(6) 0.0118(6) 0.0104(6)
+C4 0.0520(9) 0.0367(8) 0.0385(8) 0.0110(6) 0.0162(7) 0.0150(7)
+C5 0.0546(9) 0.0289(8) 0.0412(8) 0.0060(6) 0.0122(6) 0.0120(6)
+C6 0.0523(9) 0.0272(8) 0.0426(8) 0.0104(6) 0.0158(6) 0.0075(6)
+C7 0.0484(8) 0.0308(8) 0.0429(8) 0.0089(6) 0.0146(6) 0.0127(6)
+C8 0.0626(10) 0.0444(9) 0.0441(9) 0.0124(7) 0.0227(8) 0.0171(8)
+C9 0.0664(10) 0.0425(9) 0.0540(9) 0.0198(7) 0.0273(8) 0.0185(8)
+C10 0.0563(10) 0.0304(8) 0.0503(9) 0.0164(7) 0.0228(8) 0.0097(7)
+C11 0.0750(12) 0.0292(8) 0.0665(12) 0.0176(8) 0.0337(10) 0.0123(8)
+C12 0.0934(16) 0.0388(10) 0.0594(11) 0.0025(8) 0.0319(11) 0.0245(10)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+_geom_bond_publ_flag
+N1 C7 1.3628(19) . ?
+N1 C1 1.4096(18) . ?
+N1 C10 1.4690(18) . ?
+O1 C3 1.3710(17) . ?
+O1 C11 1.418(2) . ?
+O2 C5 1.3598(19) . ?
+O2 C12 1.415(2) . ?
+O3 C7 1.2226(19) . ?
+C1 C6 1.384(2) . ?
+C1 C2 1.404(2) . ?
+C2 C3 1.373(2) . ?
+C2 H1 0.914(18) . ?
+C3 C4 1.390(2) . ?
+C4 C5 1.379(2) . ?
+C4 H2 0.98(2) . ?
+C5 C6 1.387(2) . ?
+C6 H3 0.95(2) . ?
+C7 C8 1.498(2) . ?
+C8 C9 1.500(2) . ?
+C8 H4 0.97(2) . ?
+C8 H5 0.99(2) . ?
+C9 C10 1.514(2) . ?
+C9 H7 0.9700 . ?
+C9 H6 0.9700 . ?
+C10 H8 0.98(2) . ?
+C10 H9 0.92(2) . ?
+C11 H10 0.92(2) . ?
+C11 H11 1.00(2) . ?
+C11 H12 0.97(2) . ?
+C12 H13 0.96(3) . ?
+C12 H14 0.98(3) . ?
+C12 H15 0.93(3) . ?
+loop_
+_cod_related_entry_id
+_cod_related_entry_database
+_cod_related_entry_code
+1 ChemSpider 9833351

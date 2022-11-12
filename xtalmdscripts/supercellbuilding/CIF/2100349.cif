@@ -1,0 +1,218 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-20 02:53:41 +0200 (Sat, 20 Feb 2016) $
+#$Revision: 176768 $
+#$URL: svn://www.crystallography.net/cod/cif/2/10/03/2100349.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2100349
+loop_
+_publ_author_name
+'Budzianowski, Armand'
+'Katrusiak, Andrzej'
+_publ_contact_author_address
+;Faculty of Crystal Chemistry,
+Adam Mickiewicz University,
+Grunwaldzka 6, 60-780 Poznan
+Poland
+;
+_publ_contact_author_email       katran@amu.edu.pl
+_publ_contact_author_fax         48618658008
+_publ_contact_author_name        'Andrzej Katrusiak'
+_publ_contact_author_phone       48618291443
+_publ_section_title
+;
+ Pressure-frozen benzene I revisited
+;
+_journal_coeditor_code           AV5045
+_journal_date_accepted           2005-11-14
+_journal_date_recd_electronic    2005-10-03
+_journal_issue                   1
+_journal_name_full               'Acta Crystallographica Section B'
+_journal_page_first              94
+_journal_page_last               101
+_journal_paper_doi               10.1107/S010876810503747X
+_journal_volume                  62
+_journal_year                    2006
+_chemical_formula_sum            'C6 H6'
+_chemical_formula_weight         78.11
+_chemical_name_common            benzene
+_chemical_name_systematic
+;
+benzene
+;
+_space_group_IT_number           61
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_Hall  '-P 2ac 2ab'
+_symmetry_space_group_name_H-M   'P b c a'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_audit_creation_method           'SHELXL-97 and enCIFer'
+_cell_angle_alpha                90.00
+_cell_angle_beta                 90.00
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            4
+_cell_length_a                   7.221(4)
+_cell_length_b                   9.05(2)
+_cell_length_c                   6.590(5)
+_cell_measurement_reflns_used    530
+_cell_measurement_temperature    296(2)
+_cell_measurement_theta_max      29.44
+_cell_measurement_theta_min      4.76
+_cell_volume                     430.7(10)
+_computing_cell_refinement
+'CrysAlis RED 1.171.24 beta (Oxford Diffraction Poland, 2004)'
+_computing_data_collection
+'CrysAlis CCD 1.171.23 beta (Oxford Diffraction Poland, 2004)'
+_computing_data_reduction
+'CrysAlis RED 1.171.24 beta (Oxford Diffraction Poland, 2004)'
+_computing_structure_refinement  'SHELXL-97 (Sheldrick, 1997)'
+_computing_structure_solution    'SHELXS-97 (Sheldrick, 1990)'
+_diffrn_ambient_temperature      296(2)
+_diffrn_detector_area_resol_mean 16.4
+_diffrn_measured_fraction_theta_full 0.212
+_diffrn_measured_fraction_theta_max 0.212
+_diffrn_measurement_device_type  KM4-CCD
+_diffrn_measurement_method
+;HP omega scans - for more details see:
+A. Budzianowski, A. Katrusiak in High-Pressure Crystallography
+(Eds.: A. Katrusiak, P. F. McMillan),
+Dordrecht: Kluwer Acad. Publ., 2004 pp.157-168
+;
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_source         'fine-focus sealed tube'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.1514
+_diffrn_reflns_av_sigmaI/netI    0.0682
+_diffrn_reflns_limit_h_max       9
+_diffrn_reflns_limit_h_min       -9
+_diffrn_reflns_limit_k_max       5
+_diffrn_reflns_limit_k_min       -5
+_diffrn_reflns_limit_l_max       8
+_diffrn_reflns_limit_l_min       -8
+_diffrn_reflns_number            1400
+_diffrn_reflns_theta_full        29.44
+_diffrn_reflns_theta_max         29.44
+_diffrn_reflns_theta_min         4.76
+_exptl_absorpt_coefficient_mu    0.068
+_exptl_absorpt_correction_T_max  0.850
+_exptl_absorpt_correction_T_min  0.479
+_exptl_absorpt_correction_type   integration
+_exptl_absorpt_process_details
+;Crystal absorption, DAC absorption and
+gasket shadowing absorption has been applied
+A. Katrusiak, Z. Kristallogr. 2004, 219, 461-467
+;
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    1.205
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_F_000             168
+_exptl_crystal_size_rad          0.1
+_refine_diff_density_max         0.130
+_refine_diff_density_min         -0.123
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.013
+_refine_ls_hydrogen_treatment    mixed
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     13
+_refine_ls_number_reflns         126
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      1.013
+_refine_ls_R_factor_all          0.1754
+_refine_ls_R_factor_gt           0.1418
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'calc w=1/[\s^2^(Fo^2^)+(0.0000P)^2^+7.9840P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.2351
+_refine_ls_wR_factor_ref         0.2476
+_reflns_number_gt                108
+_reflns_number_total             126
+_reflns_threshold_expression     >2sigma(I)
+_cod_data_source_file            av5045.cif
+_cod_data_source_block           III
+_cod_original_cell_volume        430.65(10)
+_cod_database_code               2100349
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x+1/2, -y, z+1/2'
+'-x, y+1/2, -z+1/2'
+'x+1/2, -y+1/2, -z'
+'-x, -y, -z'
+'x-1/2, y, -z-1/2'
+'x, -y-1/2, z-1/2'
+'-x-1/2, y-1/2, z'
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_calc_flag
+_atom_site_refinement_flags
+_atom_site_occupancy
+_atom_site_type_symbol
+C1 -0.0565(15) 0.145(3) 0.0049(19) 0.040(4) Uiso d . 1 C
+H1 -0.0920 0.2438 0.0067 0.048 Uiso calc R 1 H
+C2 0.0835(13) 0.096(2) 0.1399(15) 0.021(3) Uiso d . 1 C
+H2 0.1369 0.1585 0.2348 0.025 Uiso calc R 1 H
+C3 0.1374(18) -0.053(3) 0.123(2) 0.048(5) Uiso d . 1 C
+H3 0.2329 -0.0880 0.2049 0.057 Uiso calc R 1 H
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle_site_symmetry_1
+_geom_angle
+C3 C1 C2 5 121(2)
+C3 C1 H1 5 119.4
+C2 C1 H1 . 119.4
+C1 C2 C3 . 116.8(14)
+C1 C2 H2 . 121.6
+C3 C2 H2 . 121.6
+C1 C3 C2 5 122.0(16)
+C1 C3 H3 5 119.0
+C2 C3 H3 . 119.0
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_2
+_geom_bond_distance
+C1 C3 5 1.32(2)
+C1 C2 . 1.419(16)
+C1 H1 . 0.9300
+C2 C3 . 1.41(3)
+C2 H2 . 0.9300
+C3 C1 5 1.32(2)
+C3 H3 . 0.9300
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion_site_symmetry_1
+_geom_torsion_site_symmetry_4
+_geom_torsion
+C3 C1 C2 C3 5 . 3(2)
+C1 C2 C3 C1 . 5 -3(2)

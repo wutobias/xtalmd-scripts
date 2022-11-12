@@ -1,0 +1,222 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-03-21 03:48:20 +0200 (Mon, 21 Mar 2016) $
+#$Revision: 178445 $
+#$URL: svn://www.crystallography.net/cod/cif/4/02/66/4026675.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_4026675
+loop_
+_publ_author_name
+'Brian C. Tlach'
+'Aim\'ee L. Tomlinson'
+'Achala Bhuwalka'
+'Malika Jeffries-EL'
+_publ_section_title
+;
+ Tuning the Optical and Electronic Properties of 4,8-Disubstituted
+ Benzobisoxazoles via Alkyne Substitution
+;
+_journal_name_full               'Journal of Organic Chemistry'
+_journal_page_first              8670
+_journal_page_last               8681
+_journal_paper_doi               10.1021/jo201078w
+_journal_volume                  76
+_journal_year                    2011
+_chemical_formula_sum            'C8 H4 N2 O2'
+_chemical_formula_weight         160.13
+_chemical_name_systematic
+;
+ ?
+;
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2ybc'
+_symmetry_space_group_name_H-M   'P 1 21/c 1'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_audit_creation_method           SHELXL-97
+_cell_angle_alpha                90.00
+_cell_angle_beta                 98.475(10)
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            2
+_cell_length_a                   7.331(5)
+_cell_length_b                   3.716(2)
+_cell_length_c                   12.129(8)
+_cell_measurement_reflns_used    783
+_cell_measurement_temperature    173(2)
+_cell_measurement_theta_max      27.88
+_cell_measurement_theta_min      2.81
+_cell_volume                     326.8(4)
+_computing_cell_refinement       'Bruker SMART'
+_computing_data_collection       'Bruker SMART'
+_computing_data_reduction        'Bruker SAINT'
+_computing_molecular_graphics    'Bruker SHELXTL'
+_computing_publication_material  'Bruker SHELXTL'
+_computing_structure_refinement  'SHELXL-97 (Sheldrick, 1997)'
+_computing_structure_solution    'SHELXS-97 (Sheldrick, 1990)'
+_diffrn_ambient_temperature      173(2)
+_diffrn_measured_fraction_theta_full 0.988
+_diffrn_measured_fraction_theta_max 0.988
+_diffrn_measurement_device_type  'CCD area detector'
+_diffrn_measurement_method       'phi and omega scans'
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_source         'fine-focus sealed tube'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0373
+_diffrn_reflns_av_sigmaI/netI    0.0271
+_diffrn_reflns_limit_h_max       8
+_diffrn_reflns_limit_h_min       -8
+_diffrn_reflns_limit_k_max       4
+_diffrn_reflns_limit_k_min       -4
+_diffrn_reflns_limit_l_max       14
+_diffrn_reflns_limit_l_min       -14
+_diffrn_reflns_number            2697
+_diffrn_reflns_theta_full        24.99
+_diffrn_reflns_theta_max         24.99
+_diffrn_reflns_theta_min         2.81
+_exptl_absorpt_coefficient_mu    0.122
+_exptl_absorpt_correction_T_max  0.9644
+_exptl_absorpt_correction_T_min  0.9530
+_exptl_absorpt_correction_type   multi-scan
+_exptl_crystal_colour            colorless
+_exptl_crystal_density_diffrn    1.627
+_exptl_crystal_density_meas      ?
+_exptl_crystal_description       prism
+_exptl_crystal_F_000             164
+_exptl_crystal_size_max          0.40
+_exptl_crystal_size_mid          0.30
+_exptl_crystal_size_min          0.30
+_refine_diff_density_max         0.379
+_refine_diff_density_min         -0.305
+_refine_diff_density_rms         0.081
+_refine_ls_extinction_coef       0.080(19)
+_refine_ls_extinction_expression Fc^*^=kFc[1+0.001xFc^2^\l^3^/sin(2\q)]^-1/4^
+_refine_ls_extinction_method     SHELXL
+_refine_ls_goodness_of_fit_ref   1.160
+_refine_ls_hydrogen_treatment    constr
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     56
+_refine_ls_number_reflns         573
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      1.160
+_refine_ls_R_factor_all          0.0718
+_refine_ls_R_factor_gt           0.0644
+_refine_ls_shift/su_max          0.012
+_refine_ls_shift/su_mean         0.003
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'calc w=1/[\s^2^(Fo^2^)+(0.0386P)^2^+1.4661P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.1627
+_refine_ls_wR_factor_ref         0.1670
+_reflns_number_gt                499
+_reflns_number_total             573
+_reflns_threshold_expression     >2sigma(I)
+_cod_data_source_file            jo201078w_si_002.cif
+_cod_data_source_block           jef04
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+
+'_exptl_crystal_density_meas' value 'none' was changed to '?' - the
+value is perceived as not measured.
+
+Automatic conversion script
+Id: cif_fix_values 3008 2015-01-20 13:52:24Z robertas 
+;
+_cod_database_code               4026675
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x, y+1/2, -z+1/2'
+'-x, -y, -z'
+'x, -y-1/2, z-1/2'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_symmetry_multiplicity
+_atom_site_calc_flag
+_atom_site_refinement_flags
+O1 O 0.1573(3) 0.2752(8) 0.4893(2) 0.0251(9) Uani 1 1 d .
+N1 N 0.7799(4) -0.0743(10) 0.6767(3) 0.0246(9) Uani 1 1 d .
+C1 C 0.4533(5) 0.1333(11) 0.6065(3) 0.0212(10) Uani 1 1 d .
+H1 H 0.4212 0.2212 0.6747 0.025 Uiso 1 1 calc R
+C2 C 0.6246(5) -0.0166(10) 0.5964(3) 0.0191(9) Uani 1 1 d .
+C3 C 0.3358(5) 0.1396(10) 0.5064(3) 0.0198(9) Uani 1 1 d .
+C4 C 0.8966(5) -0.2212(11) 0.6225(3) 0.0248(10) Uani 1 1 d .
+H4 H 1.0157 -0.2900 0.6581 0.030 Uiso 1 1 calc R
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+O1 0.0198(14) 0.0297(17) 0.0260(15) 0.0013(12) 0.0039(11) 0.0061(12)
+N1 0.0226(18) 0.0281(19) 0.0227(17) 0.0026(15) 0.0022(14) -0.0008(15)
+C1 0.025(2) 0.021(2) 0.0199(19) -0.0027(15) 0.0091(15) 0.0003(16)
+C2 0.0203(19) 0.0185(19) 0.0184(18) 0.0018(15) 0.0027(15) 0.0008(16)
+C3 0.0168(18) 0.0184(19) 0.025(2) 0.0015(16) 0.0062(15) 0.0019(16)
+C4 0.0180(19) 0.029(2) 0.027(2) 0.0042(18) -0.0003(16) 0.0015(17)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+N N 0.0061 0.0033 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+O O 0.0106 0.0060 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_site_symmetry_1
+_geom_angle_site_symmetry_3
+C4 O1 C3 102.9(3) 3_656 .
+C4 N1 C2 104.2(3) . .
+C3 C1 C2 112.4(3) . .
+C3 C1 H1 123.8 . .
+C2 C1 H1 123.8 . .
+C1 C2 C3 121.2(3) . 3_656
+C1 C2 N1 130.5(3) . .
+C3 C2 N1 108.4(3) 3_656 .
+C1 C3 O1 126.1(3) . .
+C1 C3 C2 126.4(3) . 3_656
+O1 C3 C2 107.5(3) . 3_656
+N1 C4 O1 117.1(3) . 3_656
+N1 C4 H4 121.5 . .
+O1 C4 H4 121.5 3_656 .
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+O1 C4 1.370(5) 3_656
+O1 C3 1.389(5) .
+N1 C4 1.275(5) .
+N1 C2 1.402(5) .
+C1 C3 1.382(5) .
+C1 C2 1.395(5) .
+C1 H1 0.9500 .
+C2 C3 1.398(5) 3_656
+C3 C2 1.398(5) 3_656
+C4 O1 1.370(5) 3_656
+C4 H4 0.9500 .

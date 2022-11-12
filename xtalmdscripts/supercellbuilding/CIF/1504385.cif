@@ -1,0 +1,221 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-18 17:37:37 +0200 (Thu, 18 Feb 2016) $
+#$Revision: 176729 $
+#$URL: svn://www.crystallography.net/cod/cif/1/50/43/1504385.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_1504385
+loop_
+_publ_author_name
+'Olejniczak, Anna'
+'Katrusiak, Andrzej'
+_publ_section_title
+;
+ Supramolecular reaction between pressure-frozen acetonitrile phases alpha
+ and beta.
+;
+_journal_issue                   24
+_journal_name_full               'The journal of physical chemistry. B'
+_journal_page_first              7183
+_journal_page_last               7190
+_journal_paper_doi               10.1021/jp800753n
+_journal_volume                  112
+_journal_year                    2008
+_chemical_formula_moiety         'C2 H3 N1'
+_chemical_formula_sum            'C2 H3 N'
+_chemical_formula_weight         41.05
+_chemical_melting_point          228
+_chemical_name_common            acetonitrile
+_chemical_name_systematic
+;
+acetonitrile
+;
+_space_group_IT_number           36
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_Hall  'C 2c -2'
+_symmetry_space_group_name_H-M   'C m c 21'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_audit_creation_method           SHELXL-97
+_cell_angle_alpha                90.00
+_cell_angle_beta                 90.00
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            4
+_cell_length_a                   5.833(7)
+_cell_length_b                   5.082(2)
+_cell_length_c                   7.563(5)
+_cell_measurement_pressure       1500000
+_cell_measurement_reflns_used    152
+_cell_measurement_temperature    296(2)
+_cell_measurement_theta_max      28.74
+_cell_measurement_theta_min      5.32
+_cell_volume                     224.2(3)
+_computing_cell_refinement       'CrysAlis (Oxford Diffraction, 2002)'
+_computing_data_collection       'CrysAlis (Oxford Diffraction, 2002)'
+_computing_data_reduction        'CrysAlis (Oxford Diffraction, 2002)'
+_computing_molecular_graphics
+;X-Seed (Barbour, 2001) 
+and POV-Ray (Persistence of Vision, 2004)
+;
+_computing_publication_material  'SHELXL-97 (Sheldrick, 1997)'
+_computing_structure_refinement  'SHELXL-97 (Sheldrick, 1997)'
+_computing_structure_solution    'SHELXS-97 (Sheldrick, 1997)'
+_diffrn_ambient_temperature      296(2)
+_diffrn_detector_area_resol_mean 16.4
+_diffrn_measured_fraction_theta_full 0.471
+_diffrn_measured_fraction_theta_max 0.471
+_diffrn_measurement_device_type  'Kuma KM4CCD \k geometry'
+_diffrn_measurement_method
+;HP omega scans - for more details see:
+A. Budzianowski, A. Katrusiak in High-Pressure Crystallography
+(Eds.: A. Katrusiak, P. F. McMillan),
+Dordrecht: Kluwer Acad. Publ., 2004 pp.157-168
+;
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_source         'fine-focus sealed tube'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0753
+_diffrn_reflns_av_sigmaI/netI    0.0311
+_diffrn_reflns_limit_h_max       3
+_diffrn_reflns_limit_h_min       -3
+_diffrn_reflns_limit_k_max       6
+_diffrn_reflns_limit_k_min       -6
+_diffrn_reflns_limit_l_max       9
+_diffrn_reflns_limit_l_min       -9
+_diffrn_reflns_number            674
+_diffrn_reflns_theta_full        28.74
+_diffrn_reflns_theta_max         28.74
+_diffrn_reflns_theta_min         5.32
+_exptl_absorpt_coefficient_mu    0.079
+_exptl_absorpt_correction_T_max  0.95
+_exptl_absorpt_correction_T_min  0.58
+_exptl_absorpt_correction_type   integration
+_exptl_absorpt_process_details
+;
+Katrusiak, A. (2003). REDSHADE - Program for correcting
+reflections intensities for DAC absorption, gasket shadowing
+and sample crystal absorption. Adam Mickiewicz University, Pozna\'n.
+Katrusiak, A. (2004). Z. Kristallogr. 219, 461-467
+;
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    1.216
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_description       plate
+_exptl_crystal_F_000             88
+_exptl_crystal_size_max          0.44
+_exptl_crystal_size_mid          0.44
+_exptl_crystal_size_min          0.18
+_refine_diff_density_max         0.095
+_refine_diff_density_min         -0.106
+_refine_diff_density_rms         0.023
+_refine_ls_abs_structure_details 'Flack H D (1983), Acta Cryst. A39, 876-881'
+_refine_ls_abs_structure_Flack   4(6)
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.220
+_refine_ls_hydrogen_treatment    mixed
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     24
+_refine_ls_number_reflns         152
+_refine_ls_number_restraints     3
+_refine_ls_restrained_S_all      1.206
+_refine_ls_R_factor_all          0.0369
+_refine_ls_R_factor_gt           0.0353
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'calc w=1/[\s^2^(Fo^2^)+(0.0147P)^2^+0.1178P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.0757
+_refine_ls_wR_factor_ref         0.0777
+_reflns_number_gt                146
+_reflns_number_total             152
+_reflns_threshold_expression     >2sigma(I)
+_cod_data_source_file            jp800753n-file002.cif
+_cod_data_source_block           acn150B
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+
+'_symmetry_cell_setting' value 'Orthorhombic' changed to
+'orthorhombic' according to
+/home/saulius/struct/CIF-dictionaries/cif_core.dic dictionary named
+'cif_core.dic' version 2.4.1 from 2010-06-29.
+
+Automatic conversion script
+Id: cif_fix_values 1715 2011-07-08 13:25:40Z adriana 
+;
+_cod_original_sg_symbol_H-M      'C mc2(1)'
+_cod_database_code               1504385
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x, -y, z+1/2'
+'x, -y, z+1/2'
+'-x, y, z'
+'x+1/2, y+1/2, z'
+'-x+1/2, -y+1/2, z+1/2'
+'x+1/2, -y+1/2, z+1/2'
+'-x+1/2, y+1/2, z'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_symmetry_multiplicity
+_atom_site_calc_flag
+_atom_site_refinement_flags
+N1 N 0.0000 0.4455(5) -0.0994(4) 0.042(2) Uani 1 2 d S
+C1 C 0.0000 0.2762(6) 0.0014(7) 0.0323(13) Uani 1 2 d S
+C2 C 0.0000 0.0635(5) 0.1276 0.036(2) Uani 1 2 d SD
+H1 H 0.0000 -0.101(4) 0.063(4) 0.044 Uiso 1 2 d SD
+H2 H 0.140(2) 0.087(4) 0.195(3) 0.044 Uiso 1 1 d D
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+N1 0.046(7) 0.0412(18) 0.0384(17) 0.0009(14) 0.000 0.000
+C1 0.032(5) 0.0348(14) 0.0304(13) -0.0094(12) 0.000 0.000
+C2 0.049(8) 0.0325(18) 0.0278(19) 0.0011(15) 0.000 0.000
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+N N 0.0061 0.0033 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+N1 C1 C2 179.9(4)
+C1 C2 H1 108(2)
+C1 C2 H2 104.9(13)
+H1 C2 H2 111.8(18)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+N1 C1 1.150(4)
+C1 C2 1.442(4)
+C2 H1 0.97(3)
+C2 H2 0.97(3)

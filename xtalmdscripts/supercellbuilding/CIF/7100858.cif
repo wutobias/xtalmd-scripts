@@ -1,0 +1,137 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-10-14 22:27:35 +0300 (Sat, 14 Oct 2017) $
+#$Revision: 202017 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/7/10/08/7100858.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_7100858
+loop_
+_publ_author_name
+'A. Nangia'
+'N. Jagadeesh Babu'
+'L. Sreenivas Reddy'
+_publ_section_title
+;
+Carboxamide pyridine N-oxide heterosynthon for crystal
+engineering and pharmaceutical cocrystals
+;
+_journal_name_full               'Chemical Communications'
+_journal_paper_doi               10.1039/b515510j
+_journal_year                    2006
+_chemical_formula_moiety         'C6 H6 N2 O2'
+_chemical_formula_sum            'C6 H6 N2 O2'
+_chemical_formula_weight         138.13
+_chemical_name_common            Isonicotinamide-N-oxide
+_space_group_IT_number           33
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_Hall  'P 2c -2n'
+_symmetry_space_group_name_H-M   'P n a 21'
+_cell_angle_alpha                90.00
+_cell_angle_beta                 90.00
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            4
+_cell_length_a                   13.467(3)
+_cell_length_b                   11.722(3)
+_cell_length_c                   3.7370(10)
+_cell_measurement_temperature    100(2)
+_cell_volume                     589.9(3)
+_diffrn_ambient_temperature      100(2)
+_exptl_crystal_density_diffrn    1.555
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+'_symmetry_cell_setting' value 'Orthorhombic' changed to 'orthorhombic'
+according to '/home/saulius/struct/CIF-dictionaries/cif_core.dic'
+dictionary named 'cif_core.dic' version 2.4.1 from 2010-06-29.
+
+Automatic conversion script
+Id: cif_fix_enum 1527 2010-12-29 10:47:43Z saulius 
+;
+_cod_database_code               7100858
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x, -y, z+1/2'
+'x+1/2, -y+1/2, z'
+'-x+1/2, y+1/2, z+1/2'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_symmetry_multiplicity
+_atom_site_calc_flag
+_atom_site_refinement_flags
+_atom_site_disorder_assembly
+_atom_site_disorder_group
+O1 O 0.3416(2) 0.5345(3) 0.2867(12) 0.0176(9) Uani 1 1 d . . .
+O2 O -0.0551(2) 0.6835(3) 1.0129(13) 0.0200(10) Uani 1 1 d . . .
+N1 N 0.2668(3) 0.5855(3) 0.4447(13) 0.0129(10) Uani 1 1 d . . .
+N2 N 0.0138(3) 0.8581(3) 0.9760(15) 0.0167(10) Uani 1 1 d . . .
+C1 C 0.2662(3) 0.7015(4) 0.4838(17) 0.0130(10) Uani 1 1 d . . .
+H1 H 0.3219 0.7449 0.4076 0.016 Uiso 1 1 calc R . .
+C2 C 0.1865(3) 0.7550(4) 0.6309(15) 0.0120(11) Uani 1 1 d . . .
+H2 H 0.1863 0.8359 0.6479 0.014 Uiso 1 1 calc R . .
+C3 C 0.1060(4) 0.6942(4) 0.7560(17) 0.0143(11) Uani 1 1 d . . .
+C4 C 0.1093(3) 0.5755(4) 0.7281(17) 0.0138(12) Uani 1 1 d . . .
+H4 H 0.0560 0.5308 0.8175 0.017 Uiso 1 1 calc R . .
+C5 C 0.1892(4) 0.5237(4) 0.5726(16) 0.0174(13) Uani 1 1 d . . .
+H5 H 0.1905 0.4429 0.5534 0.021 Uiso 1 1 calc R . .
+C6 C 0.0140(3) 0.7455(4) 0.9270(16) 0.0145(12) Uani 1 1 d . . .
+H2A H -0.041(4) 0.890(4) 1.041(14) 0.005(13) Uiso 1 1 d . . .
+H2B H 0.064(5) 0.898(5) 0.93(2) 0.04(2) Uiso 1 1 d . . .
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+O1 0.0061(15) 0.0171(18) 0.030(2) -0.001(2) 0.0027(18) 0.0059(14)
+O2 0.0093(16) 0.0137(16) 0.037(3) -0.007(2) 0.008(2) -0.0013(13)
+N1 0.0110(19) 0.012(2) 0.016(2) 0.000(2) -0.002(2) 0.0004(16)
+N2 0.011(2) 0.0090(19) 0.030(3) 0.004(2) 0.010(2) 0.0039(18)
+C1 0.012(2) 0.011(2) 0.016(3) -0.001(2) -0.003(3) -0.0053(18)
+C2 0.013(2) 0.009(2) 0.014(3) -0.004(2) -0.001(2) -0.0001(19)
+C3 0.015(2) 0.016(2) 0.012(2) 0.003(2) -0.001(2) -0.0011(19)
+C4 0.005(2) 0.013(2) 0.023(3) -0.001(3) -0.003(2) -0.0033(18)
+C5 0.012(2) 0.010(2) 0.029(4) -0.001(2) -0.002(2) 0.001(2)
+C6 0.007(2) 0.017(2) 0.020(3) -0.002(2) -0.004(2) 0.0033(19)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+_geom_bond_publ_flag
+O1 N1 1.311(5) . ?
+O2 C6 1.223(6) . ?
+N1 C5 1.359(6) . ?
+N1 C1 1.367(6) . ?
+N2 C6 1.333(6) . ?
+N2 H2A 0.86(5) . ?
+N2 H2B 0.84(6) . ?
+C1 C2 1.360(7) . ?
+C1 H1 0.9500 . ?
+C2 C3 1.380(7) . ?
+C2 H2 0.9500 . ?
+C3 C4 1.395(6) . ?
+C3 C6 1.518(7) . ?
+C4 C5 1.365(7) . ?
+C4 H4 0.9500 . ?
+C5 H5 0.9500 . ?
+loop_
+_cod_related_entry_id
+_cod_related_entry_database
+_cod_related_entry_code
+1 ChemSpider 65782

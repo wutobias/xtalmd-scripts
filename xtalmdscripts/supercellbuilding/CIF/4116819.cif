@@ -1,0 +1,212 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-03-22 12:11:15 +0200 (Tue, 22 Mar 2016) $
+#$Revision: 178939 $
+#$URL: svn://www.crystallography.net/cod/cif/4/11/68/4116819.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_4116819
+loop_
+_publ_author_name
+'Venkat R. Thalladi'
+'Hans-Christoph Weiss'
+'Dieter Bl\"aser'
+'Roland Boese'
+'Ashwini Nangia'
+'Gautam R. Desiraju'
+_publ_section_title
+;
+ C-H...F Interactions in the Crystal Structures of Some Fluorobenzenes
+;
+_journal_name_full               'Journal of the American Chemical Society'
+_journal_page_first              8702
+_journal_page_last               8710
+_journal_paper_doi               10.1021/ja981198e
+_journal_volume                  120
+_journal_year                    1998
+_chemical_compound_source        Aldrich
+_chemical_formula_moiety         'C6 H5 F'
+_chemical_formula_sum            'C6 H5 F'
+_chemical_formula_weight         96.10
+_chemical_melting_point          231
+_chemical_name_common            fluorobenzene
+_chemical_name_systematic        fluorobenzene
+_space_group_IT_number           96
+_symmetry_cell_setting           tetragonal
+_symmetry_space_group_name_Hall  'P 4nw 2abw'
+_symmetry_space_group_name_H-M   'P 43 21 2'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_audit_creation_method           SHELXL
+_cell_angle_alpha                90.00
+_cell_angle_beta                 90.00
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            4
+_cell_length_a                   5.799(2)
+_cell_length_b                   5.799(2)
+_cell_length_c                   14.530(7)
+_cell_measurement_reflns_used    50
+_cell_measurement_temperature    123(2)
+_cell_measurement_theta_max      25
+_cell_measurement_theta_min      20
+_cell_volume                     488.6(3)
+_computing_cell_refinement       'Siemens P3-PC diffractometer program V.4.24'
+_computing_data_collection       'Siemens P3-PC diffractometer program V.4.24'
+_computing_data_reduction        'Siemens XDISK V.4.20.2 PC'
+_computing_molecular_graphics    'SHELXL-93 (Sheldrick, 1993)'
+_computing_publication_material  'SHELXL-93 (Sheldrick, 1993)'
+_computing_structure_refinement  'SHELXL-93 (Sheldrick, 1993)'
+_computing_structure_solution    'SHELXS-86 (Sheldrick, 1990)'
+_diffrn_ambient_temperature      123(2)
+_diffrn_measurement_device       'Nicolet R3m/V four circle diffractometer'
+_diffrn_measurement_method       'Wyckoff scan mode'
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_source         'fine-focus sealed tube'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0320
+_diffrn_reflns_av_sigmaI/netI    0.0220
+_diffrn_reflns_limit_h_max       0
+_diffrn_reflns_limit_h_min       -8
+_diffrn_reflns_limit_k_max       8
+_diffrn_reflns_limit_k_min       0
+_diffrn_reflns_limit_l_max       20
+_diffrn_reflns_limit_l_min       0
+_diffrn_reflns_number            858
+_diffrn_reflns_theta_max         30.04
+_diffrn_reflns_theta_min         3.78
+_diffrn_standards_decay_%        0
+_diffrn_standards_interval_count 100
+_diffrn_standards_number         2
+_exptl_absorpt_coefficient_mu    0.101
+_exptl_absorpt_correction_type   none
+_exptl_crystal_density_diffrn    1.306
+_exptl_crystal_density_method    none
+_exptl_crystal_description       cylindric
+_exptl_crystal_F_000             200
+_exptl_crystal_size_max          '0.3 mm diameter'
+_refine_diff_density_max         0.273
+_refine_diff_density_min         -0.127
+_refine_diff_density_rms         0.050
+_refine_ls_abs_structure_details 'Flack H D (1983), Acta Cryst. A39, 876-881'
+_refine_ls_abs_structure_Flack   -0.92(144)
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_all   1.060
+_refine_ls_goodness_of_fit_obs   1.084
+_refine_ls_hydrogen_treatment    refall
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     44
+_refine_ls_number_reflns         718
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      1.060
+_refine_ls_restrained_S_obs      1.084
+_refine_ls_R_factor_all          0.0464
+_refine_ls_R_factor_obs          0.0407
+_refine_ls_shift/esd_max         0.000
+_refine_ls_shift/esd_mean        0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'w=1/[\s^2^(Fo^2^)+(0.0615P)^2^+0.0730P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_all         0.1100
+_refine_ls_wR_factor_obs         0.1056
+_reflns_number_observed          637
+_reflns_number_total             718
+_reflns_observed_criterion       >2sigma(I)
+_cod_data_source_file            ja981198e_1.cif
+_cod_data_source_block           1
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+
+'_refine_ls_weighting_scheme' value 'calc
+w=1/[\s^2^(Fo^2^)+(0.0615P)^2^+0.0730P] where P=(Fo^2^+2Fc^2^)/3' was
+changed to 'calc'. New tag '_refine_ls_weighting_details' was
+created. The value of the new tag was set to
+'w=1/[\s^2^(Fo^2^)+(0.0615P)^2^+0.0730P] where P=(Fo^2^+2Fc^2^)/3'.
+
+Automatic conversion script
+Id: cif_fix_values 3143 2015-03-26 13:38:13Z robertas 
+;
+_cod_original_cell_volume        488.6(4)
+_cod_database_code               4116819
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x, -y, z+1/2'
+'-y+1/2, x+1/2, z+3/4'
+'y+1/2, -x+1/2, z+1/4'
+'-x+1/2, y+1/2, -z+3/4'
+'x+1/2, -y+1/2, -z+1/4'
+'y, x, -z'
+'-y, -x, -z+1/2'
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+F1 0.0393(4) 0.0393(4) 0.0390(6) -0.0012(4) 0.0012(4) -0.0101(5)
+C1 0.0285(5) 0.0285(5) 0.0238(7) -0.0027(4) 0.0027(4) -0.0002(6)
+C2 0.0389(7) 0.0276(6) 0.0232(5) 0.0001(4) -0.0010(5) 0.0076(5)
+C3 0.0287(6) 0.0387(7) 0.0288(6) -0.0066(5) -0.0040(5) 0.0061(5)
+C4 0.0317(5) 0.0317(5) 0.0338(8) -0.0056(5) 0.0056(5) -0.0023(8)
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+_atom_site_occupancy
+_atom_site_calc_flag
+_atom_site_refinement_flags
+F1 F 0.82408(15) 0.82408(15) 0.0000 0.0392(3) Uani 1 d S
+C1 C 0.9904(2) 0.9904(2) 0.0000 0.0269(4) Uani 1 d S
+C2 C 1.1809(3) 0.9591(2) 0.05517(9) 0.0299(3) Uani 1 d .
+H2 H 1.1905(31) 0.8267(32) 0.0905(12) 0.041(5) Uiso 1 d .
+C3 C 1.3490(2) 1.1297(3) 0.05493(9) 0.0321(3) Uani 1 d .
+H3 H 1.4752(37) 1.1179(36) 0.0911(13) 0.047(5) Uiso 1 d .
+C4 C 1.3239(2) 1.3239(2) 0.0000 0.0324(4) Uani 1 d S
+H4 H 1.4364(32) 1.4364(32) 0.0000 0.037(6) Uiso 1 d S
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+F F 0.0171 0.0103 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_site_symmetry_3
+F1 C1 C2 118.30(8) .
+F1 C1 C2 118.30(8) 7
+C2 C1 C2 123.4(2) 7
+C1 C2 C3 117.88(13) .
+C4 C3 C2 120.37(14) .
+C3 C4 C3 120.1(2) 7
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+F1 C1 1.364(2) .
+C1 C2 1.377(2) .
+C1 C2 1.377(2) 7
+C2 C3 1.389(2) .
+C3 C4 1.388(2) .
+C4 C3 1.388(2) 7

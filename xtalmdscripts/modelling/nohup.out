@@ -1,0 +1,2434 @@
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/2022053_parsley_1.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/2022053_parsley_1.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        13062     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -7.69684D+04    |proj g|=  2.99185D+04
+
+At iterate    1    f= -7.72635D+04    |proj g|=  3.04975D+04
+
+At iterate    2    f= -7.78061D+04    |proj g|=  4.18007D+04
+
+At iterate    3    f= -7.80582D+04    |proj g|=  2.77041D+04
+
+At iterate    4    f= -7.81226D+04    |proj g|=  1.19378D+04
+
+At iterate    5    f= -7.82468D+04    |proj g|=  1.02950D+04
+
+At iterate    6    f= -7.83715D+04    |proj g|=  9.25754D+03
+
+At iterate    7    f= -7.85119D+04    |proj g|=  8.97458D+03
+
+At iterate    8    f= -7.87454D+04    |proj g|=  1.03230D+04
+
+At iterate    9    f= -7.87549D+04    |proj g|=  6.23393D+03
+
+At iterate   10    f= -7.88556D+04    |proj g|=  1.45265D+04
+
+At iterate   11    f= -7.89067D+04    |proj g|=  1.18299D+04
+
+At iterate   12    f= -7.89148D+04    |proj g|=  7.06187D+03
+
+At iterate   13    f= -7.90619D+04    |proj g|=  1.63815D+04
+
+At iterate   14    f= -7.90858D+04    |proj g|=  2.24545D+04
+
+At iterate   15    f= -7.91253D+04    |proj g|=  2.99118D+04
+
+At iterate   16    f= -7.92920D+04    |proj g|=  2.79068D+04
+
+At iterate   17    f= -7.93972D+04    |proj g|=  1.94709D+04
+
+At iterate   18    f= -7.94064D+04    |proj g|=  1.39702D+04
+
+At iterate   19    f= -7.94367D+04    |proj g|=  8.58789D+03
+
+At iterate   20    f= -7.95091D+04    |proj g|=  1.48681D+04
+
+At iterate   21    f= -7.95578D+04    |proj g|=  1.06321D+04
+
+At iterate   22    f= -7.97003D+04    |proj g|=  1.16028D+04
+
+At iterate   23    f= -7.97426D+04    |proj g|=  6.26817D+03
+
+At iterate   24    f= -7.97833D+04    |proj g|=  6.88142D+03
+
+At iterate   25    f= -7.98695D+04    |proj g|=  8.62554D+03
+
+At iterate   26    f= -7.99137D+04    |proj g|=  5.64332D+03
+
+At iterate   27    f= -7.99959D+04    |proj g|=  3.45993D+03
+
+At iterate   28    f= -8.01135D+04    |proj g|=  6.45040D+03
+
+At iterate   29    f= -8.02510D+04    |proj g|=  1.17426D+04
+
+At iterate   30    f= -8.03645D+04    |proj g|=  6.16074D+03
+
+At iterate   31    f= -8.04518D+04    |proj g|=  3.76933D+03
+
+At iterate   32    f= -8.04888D+04    |proj g|=  5.92904D+03
+
+At iterate   33    f= -8.05284D+04    |proj g|=  9.79250D+03
+
+At iterate   34    f= -8.05304D+04    |proj g|=  5.91216D+03
+
+At iterate   35    f= -8.05511D+04    |proj g|=  1.02622D+04
+
+At iterate   36    f= -8.05784D+04    |proj g|=  7.13549D+03
+
+At iterate   37    f= -8.06439D+04    |proj g|=  5.92896D+03
+
+At iterate   38    f= -8.06775D+04    |proj g|=  5.39435D+03
+
+At iterate   39    f= -8.06780D+04    |proj g|=  5.78798D+03
+
+At iterate   40    f= -8.07083D+04    |proj g|=  2.87748D+03
+
+At iterate   41    f= -8.07288D+04    |proj g|=  3.99522D+03
+
+At iterate   42    f= -8.07485D+04    |proj g|=  8.80744D+03
+
+At iterate   43    f= -8.07679D+04    |proj g|=  4.58181D+03
+
+At iterate   44    f= -8.07819D+04    |proj g|=  4.28888D+03
+
+At iterate   45    f= -8.07986D+04    |proj g|=  4.54259D+03
+
+At iterate   46    f= -8.08282D+04    |proj g|=  1.28235D+04
+
+At iterate   47    f= -8.08485D+04    |proj g|=  1.42938D+04
+
+At iterate   48    f= -8.08809D+04    |proj g|=  6.25530D+03
+
+At iterate   49    f= -8.08965D+04    |proj g|=  2.70015D+03
+
+At iterate   50    f= -8.09071D+04    |proj g|=  1.11945D+04
+
+At iterate   51    f= -8.09226D+04    |proj g|=  4.02600D+03
+
+At iterate   52    f= -8.09488D+04    |proj g|=  2.53900D+03
+
+At iterate   53    f= -8.09720D+04    |proj g|=  4.49129D+03
+
+At iterate   54    f= -8.09958D+04    |proj g|=  1.22569D+04
+
+At iterate   55    f= -8.10276D+04    |proj g|=  6.40277D+03
+
+At iterate   56    f= -8.10369D+04    |proj g|=  1.87825D+03
+
+At iterate   57    f= -8.10437D+04    |proj g|=  4.04753D+03
+
+At iterate   58    f= -8.10553D+04    |proj g|=  5.95448D+03
+
+At iterate   59    f= -8.10659D+04    |proj g|=  3.21308D+03
+
+At iterate   60    f= -8.10670D+04    |proj g|=  2.29907D+03
+
+At iterate   61    f= -8.10834D+04    |proj g|=  7.42713D+03
+
+At iterate   62    f= -8.10898D+04    |proj g|=  1.01601D+04
+
+At iterate   63    f= -8.11154D+04    |proj g|=  6.06010D+03
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/1100989_parsley_1.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/1100989_parsley_1.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/7154682_sage_2.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/7154682_sage_2.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/4116140_parsley_1.1.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/4116140_parsley_1.1.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/2014075_parsley_1.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/2014075_parsley_1.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/4506226_parsley_1.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/4506226_parsley_1.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/1519191_parsley_1.3.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/1519191_parsley_1.3.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/2220312_sage_2.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/2220312_sage_2.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/2105612_parsley_1.3.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/2105612_parsley_1.3.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/2208405_sage_2.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/2208405_sage_2.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/2238806_parsley_1.2.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/2238806_parsley_1.2.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/7236728_sage_2.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/7236728_sage_2.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        12966     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f=  7.43179D+03    |proj g|=  4.61916D+03
+
+At iterate    1    f=  7.41021D+03    |proj g|=  8.01610D+02
+
+At iterate    2    f=  7.40451D+03    |proj g|=  2.82757D+02
+
+At iterate    3    f=  7.37787D+03    |proj g|=  1.42695D+03
+
+At iterate    4    f=  7.30281D+03    |proj g|=  3.49838D+03
+
+At iterate    5    f=  7.29256D+03    |proj g|=  2.17051D+03
+
+At iterate    6    f=  7.27809D+03    |proj g|=  3.07907D+03
+
+At iterate    7    f=  7.21203D+03    |proj g|=  2.51900D+03
+
+At iterate    8    f=  7.17258D+03    |proj g|=  2.11925D+03
+
+At iterate    9    f=  7.12896D+03    |proj g|=  1.14096D+03
+
+At iterate   10    f=  7.12400D+03    |proj g|=  1.23063D+03
+
+At iterate   11    f=  7.11283D+03    |proj g|=  1.20352D+03
+
+At iterate   12    f=  7.10986D+03    |proj g|=  2.99326D+03
+
+At iterate   13    f=  7.10843D+03    |proj g|=  1.02200D+03
+
+At iterate   14    f=  7.10696D+03    |proj g|=  1.99638D+03
+
+At iterate   15    f=  7.10220D+03    |proj g|=  1.10746D+03
+
+At iterate   16    f=  7.09949D+03    |proj g|=  1.77521D+03
+
+At iterate   17    f=  7.09901D+03    |proj g|=  1.50209D+03
+
+At iterate   18    f=  7.09846D+03    |proj g|=  1.07109D+03
+
+At iterate   19    f=  7.09838D+03    |proj g|=  9.56980D+02
+
+At iterate   20    f=  7.09833D+03    |proj g|=  9.42286D+02
+
+At iterate   21    f=  7.09728D+03    |proj g|=  1.27004D+03
+
+At iterate   22    f=  7.09592D+03    |proj g|=  9.67852D+02
+
+At iterate   23    f=  7.09521D+03    |proj g|=  6.03973D+02
+
+At iterate   24    f=  7.09429D+03    |proj g|=  4.60171D+02
+
+At iterate   25    f=  7.09326D+03    |proj g|=  1.02711D+03
+
+At iterate   26    f=  7.09297D+03    |proj g|=  3.16434D+03
+
+At iterate   27    f=  7.09187D+03    |proj g|=  2.16315D+03
+
+At iterate   28    f=  7.09032D+03    |proj g|=  1.58402D+03
+
+At iterate   29    f=  7.08986D+03    |proj g|=  1.09883D+03
+
+At iterate   30    f=  7.08933D+03    |proj g|=  1.17404D+03
+
+At iterate   31    f=  7.08877D+03    |proj g|=  1.33862D+03
+
+At iterate   32    f=  7.08863D+03    |proj g|=  1.42415D+03
+
+At iterate   33    f=  7.08863D+03    |proj g|=  1.42284D+03
+  ys=-1.952E-06  -gs= 1.074E-04 BFGS update SKIPPED
+
+At iterate   34    f=  7.08863D+03    |proj g|=  1.42287D+03
+
+At iterate   35    f=  7.08863D+03    |proj g|=  1.42250D+03
+  ys=-4.544E-05  -gs= 3.804E-03 BFGS update SKIPPED
+
+At iterate   36    f=  7.08863D+03    |proj g|=  1.42327D+03
+  ys=-4.322E-10  -gs= 3.392E-06 BFGS update SKIPPED
+
+At iterate   37    f=  7.08863D+03    |proj g|=  1.42327D+03
+
+At iterate   38    f=  7.08843D+03    |proj g|=  5.34238D+02
+
+At iterate   39    f=  7.08810D+03    |proj g|=  5.53780D+02
+
+At iterate   40    f=  7.08738D+03    |proj g|=  1.55618D+03
+
+At iterate   41    f=  7.08700D+03    |proj g|=  1.55946D+03
+
+At iterate   42    f=  7.08566D+03    |proj g|=  1.19655D+03
+
+At iterate   43    f=  7.08401D+03    |proj g|=  2.82132D+03
+
+At iterate   44    f=  7.08311D+03    |proj g|=  4.75150D+03
+
+At iterate   45    f=  7.08274D+03    |proj g|=  2.39150D+03
+
+At iterate   46    f=  7.08207D+03    |proj g|=  1.96687D+03
+
+At iterate   47    f=  7.08159D+03    |proj g|=  1.33304D+03
+
+At iterate   48    f=  7.07932D+03    |proj g|=  1.54730D+03
+
+At iterate   49    f=  7.07565D+03    |proj g|=  2.09146D+03
+
+At iterate   50    f=  7.07486D+03    |proj g|=  1.83600D+03
+
+At iterate   51    f=  7.07166D+03    |proj g|=  1.22538D+03
+
+At iterate   52    f=  7.07013D+03    |proj g|=  2.27211D+03
+
+At iterate   53    f=  7.06980D+03    |proj g|=  2.39958D+03
+
+At iterate   54    f=  7.06970D+03    |proj g|=  9.92778D+02
+
+At iterate   55    f=  7.06945D+03    |proj g|=  1.86189D+03
+
+At iterate   56    f=  7.06832D+03    |proj g|=  2.27708D+03
+
+At iterate   57    f=  7.06619D+03    |proj g|=  2.28396D+03
+
+At iterate   58    f=  7.06375D+03    |proj g|=  2.11018D+03
+
+At iterate   59    f=  7.06177D+03    |proj g|=  1.86093D+03
+
+At iterate   60    f=  7.06142D+03    |proj g|=  1.65651D+03
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/2203255_sage_2.0.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+At iterate   61    f=  7.06098D+03    |proj g|=  1.17321D+03
+
+At iterate   62    f=  7.05782D+03    |proj g|=  1.84594D+03
+
+At iterate   63    f=  7.05591D+03    |proj g|=  1.49398D+03
+
+At iterate   64    f=  7.05574D+03    |proj g|=  1.41705D+03
+
+At iterate   65    f=  7.05495D+03    |proj g|=  1.46942D+03
+
+At iterate   66    f=  7.05440D+03    |proj g|=  1.61881D+03
+
+At iterate   67    f=  7.05331D+03    |proj g|=  2.75557D+03
+
+At iterate   68    f=  7.05180D+03    |proj g|=  1.39617D+03
+
+At iterate   69    f=  7.05109D+03    |proj g|=  1.24686D+03
+
+At iterate   70    f=  7.05077D+03    |proj g|=  1.10586D+03
+
+At iterate   71    f=  7.05048D+03    |proj g|=  9.53357D+02
+
+At iterate   72    f=  7.05030D+03    |proj g|=  3.41958D+02
+
+At iterate   73    f=  7.04997D+03    |proj g|=  4.75431D+02
+
+At iterate   74    f=  7.04966D+03    |proj g|=  1.20520D+03
+
+At iterate   75    f=  7.04906D+03    |proj g|=  1.35643D+03
+
+At iterate   76    f=  7.04860D+03    |proj g|=  1.25276D+03
+
+At iterate   77    f=  7.04755D+03    |proj g|=  1.61445D+03
+
+At iterate   78    f=  7.04676D+03    |proj g|=  1.78873D+03
+
+At iterate   79    f=  7.04513D+03    |proj g|=  1.03665D+03
+
+At iterate   80    f=  7.04422D+03    |proj g|=  9.92948D+02
+
+At iterate   81    f=  7.04352D+03    |proj g|=  1.04748D+03
+
+At iterate   82    f=  7.04179D+03    |proj g|=  7.11694D+02
+
+At iterate   83    f=  7.04003D+03    |proj g|=  1.35246D+03
+
+At iterate   84    f=  7.03983D+03    |proj g|=  1.69488D+03
+
+At iterate   85    f=  7.03804D+03    |proj g|=  1.14521D+03
+
+At iterate   86    f=  7.03663D+03    |proj g|=  7.34202D+02
+
+At iterate   87    f=  7.03599D+03    |proj g|=  1.05013D+03
+
+At iterate   88    f=  7.03551D+03    |proj g|=  5.05155D+02
+
+At iterate   89    f=  7.03511D+03    |proj g|=  1.89838D+03
+
+At iterate   90    f=  7.03510D+03    |proj g|=  1.68756D+03
+
+At iterate   91    f=  7.03496D+03    |proj g|=  1.72885D+03
+
+At iterate   92    f=  7.03485D+03    |proj g|=  8.59382D+02
+
+At iterate   93    f=  7.03431D+03    |proj g|=  3.09844D+02
+
+At iterate   94    f=  7.03408D+03    |proj g|=  2.90446D+02
+
+At iterate   95    f=  7.03358D+03    |proj g|=  1.01170D+03
+
+At iterate   96    f=  7.03288D+03    |proj g|=  7.74218D+02
+
+At iterate   97    f=  7.03235D+03    |proj g|=  9.17181D+02
+
+At iterate   98    f=  7.03159D+03    |proj g|=  1.01147D+03
+
+At iterate   99    f=  7.03098D+03    |proj g|=  7.80998D+02
+
+At iterate  100    f=  7.03030D+03    |proj g|=  5.67235D+02
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+12966    100    195      1     3     0   5.672D+02   7.030D+03
+  F =   7030.3003619724823     
+
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT                 
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        14406     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -1.11119D+05    |proj g|=  1.25323D+04
+
+At iterate    1    f= -1.11128D+05    |proj g|=  5.90623D+03
+
+At iterate    2    f= -1.11142D+05    |proj g|=  5.40206D+03
+
+At iterate    3    f= -1.11167D+05    |proj g|=  1.57947D+03
+
+At iterate    4    f= -1.11170D+05    |proj g|=  1.56171D+03
+
+At iterate    5    f= -1.11199D+05    |proj g|=  8.97238D+03
+
+At iterate    6    f= -1.11222D+05    |proj g|=  9.53998D+03
+
+At iterate    7    f= -1.11248D+05    |proj g|=  9.87689D+03
+
+At iterate    8    f= -1.11313D+05    |proj g|=  1.01761D+04
+
+At iterate    9    f= -1.11367D+05    |proj g|=  5.96375D+03
+
+At iterate   10    f= -1.11430D+05    |proj g|=  5.81519D+03
+
+At iterate   11    f= -1.11437D+05    |proj g|=  5.77771D+03
+
+At iterate   12    f= -1.11437D+05    |proj g|=  5.80434D+03
+  ys=-8.081E-04  -gs= 4.997E-02 BFGS update SKIPPED
+
+At iterate   13    f= -1.11437D+05    |proj g|=  5.80606D+03
+
+At iterate   14    f= -1.11439D+05    |proj g|=  3.19518D+03
+
+At iterate   15    f= -1.11447D+05    |proj g|=  1.22681D+03
+
+At iterate   16    f= -1.11458D+05    |proj g|=  4.41416D+03
+
+At iterate   17    f= -1.11468D+05    |proj g|=  2.66126D+03
+
+At iterate   18    f= -1.11479D+05    |proj g|=  5.36506D+03
+
+At iterate   19    f= -1.11490D+05    |proj g|=  3.09568D+03
+
+At iterate   20    f= -1.11499D+05    |proj g|=  2.03514D+03
+
+At iterate   21    f= -1.11520D+05    |proj g|=  7.38662D+03
+
+At iterate   22    f= -1.11531D+05    |proj g|=  6.77680D+03
+
+At iterate   23    f= -1.11538D+05    |proj g|=  6.54661D+03
+
+At iterate   24    f= -1.11552D+05    |proj g|=  8.05305D+03
+
+At iterate   25    f= -1.11569D+05    |proj g|=  8.18824D+03
+
+At iterate   26    f= -1.11606D+05    |proj g|=  4.16875D+03
+
+At iterate   27    f= -1.11631D+05    |proj g|=  2.02312D+03
+
+At iterate   28    f= -1.11637D+05    |proj g|=  1.62534D+03
+
+At iterate   29    f= -1.11646D+05    |proj g|=  2.13675D+03
+
+At iterate   30    f= -1.11651D+05    |proj g|=  1.57486D+03
+
+At iterate   31    f= -1.11660D+05    |proj g|=  1.11832D+03
+
+At iterate   32    f= -1.11666D+05    |proj g|=  7.65210D+02
+
+At iterate   33    f= -1.11678D+05    |proj g|=  2.69688D+03
+
+At iterate   34    f= -1.11680D+05    |proj g|=  4.56665D+03
+
+At iterate   35    f= -1.11688D+05    |proj g|=  2.69031D+03
+
+At iterate   36    f= -1.11692D+05    |proj g|=  2.27322D+03
+
+At iterate   37    f= -1.11697D+05    |proj g|=  1.54883D+03
+
+At iterate   38    f= -1.11699D+05    |proj g|=  3.05882D+03
+
+At iterate   39    f= -1.11700D+05    |proj g|=  2.96670D+03
+
+At iterate   40    f= -1.11700D+05    |proj g|=  2.37771D+03
+
+At iterate   41    f= -1.11703D+05    |proj g|=  1.36155D+03
+
+At iterate   42    f= -1.11704D+05    |proj g|=  1.22916D+03
+
+At iterate   43    f= -1.11704D+05    |proj g|=  1.49114D+03
+
+At iterate   44    f= -1.11705D+05    |proj g|=  1.40044D+03
+
+At iterate   45    f= -1.11706D+05    |proj g|=  3.63967D+03
+
+At iterate   46    f= -1.11711D+05    |proj g|=  3.07700D+03
+
+At iterate   47    f= -1.11733D+05    |proj g|=  3.05270D+03
+
+At iterate   48    f= -1.11735D+05    |proj g|=  2.09302D+03
+
+At iterate   49    f= -1.11742D+05    |proj g|=  1.61976D+03
+
+At iterate   50    f= -1.11759D+05    |proj g|=  3.49870D+03
+
+At iterate   51    f= -1.11774D+05    |proj g|=  4.13925D+03
+
+At iterate   52    f= -1.11791D+05    |proj g|=  1.84903D+03
+
+At iterate   53    f= -1.11810D+05    |proj g|=  3.94661D+03
+
+At iterate   54    f= -1.11810D+05    |proj g|=  3.94722D+03
+  ys=-6.612E-12  -gs= 7.549E-08 BFGS update SKIPPED
+
+At iterate   55    f= -1.11810D+05    |proj g|=  3.94722D+03
+
+At iterate   56    f= -1.11811D+05    |proj g|=  1.84105D+03
+
+At iterate   57    f= -1.11815D+05    |proj g|=  1.72540D+03
+
+At iterate   58    f= -1.11817D+05    |proj g|=  1.41821D+03
+
+At iterate   59    f= -1.11818D+05    |proj g|=  1.35278D+03
+
+At iterate   60    f= -1.11821D+05    |proj g|=  3.23303D+03
+
+At iterate   61    f= -1.11826D+05    |proj g|=  3.27362D+03
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/1100992_parsley_1.1.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+At iterate   62    f= -1.11835D+05    |proj g|=  3.10249D+03
+
+At iterate   63    f= -1.11839D+05    |proj g|=  8.45613D+02
+
+At iterate   64    f= -1.11842D+05    |proj g|=  1.65932D+03
+
+At iterate   65    f= -1.11843D+05    |proj g|=  2.34957D+03
+
+At iterate   66    f= -1.11848D+05    |proj g|=  3.75140D+03
+
+At iterate   67    f= -1.11852D+05    |proj g|=  3.46971D+03
+
+At iterate   68    f= -1.11856D+05    |proj g|=  2.64743D+03
+
+At iterate   69    f= -1.11866D+05    |proj g|=  3.62343D+03
+
+At iterate   70    f= -1.11879D+05    |proj g|=  2.56374D+03
+
+At iterate   71    f= -1.11886D+05    |proj g|=  2.69764D+03
+
+At iterate   72    f= -1.11892D+05    |proj g|=  1.28384D+03
+
+At iterate   73    f= -1.11893D+05    |proj g|=  4.42488D+02
+
+At iterate   74    f= -1.11894D+05    |proj g|=  1.11580D+03
+
+At iterate   75    f= -1.11898D+05    |proj g|=  8.11292D+02
+
+At iterate   76    f= -1.11919D+05    |proj g|=  3.82768D+03
+
+At iterate   77    f= -1.11926D+05    |proj g|=  1.57018D+03
+
+At iterate   78    f= -1.11931D+05    |proj g|=  1.49483D+03
+
+At iterate   79    f= -1.11936D+05    |proj g|=  3.02035D+03
+
+At iterate   80    f= -1.11939D+05    |proj g|=  1.83624D+03
+
+At iterate   81    f= -1.11945D+05    |proj g|=  6.58092D+02
+
+At iterate   82    f= -1.11949D+05    |proj g|=  6.89928D+02
+
+At iterate   83    f= -1.11955D+05    |proj g|=  1.37535D+03
+
+At iterate   84    f= -1.11958D+05    |proj g|=  1.37267D+03
+
+At iterate   85    f= -1.11961D+05    |proj g|=  1.65189D+03
+
+At iterate   86    f= -1.11964D+05    |proj g|=  2.33711D+03
+
+At iterate   87    f= -1.11965D+05    |proj g|=  2.81758D+03
+
+At iterate   88    f= -1.11965D+05    |proj g|=  3.03724D+03
+
+At iterate   89    f= -1.11965D+05    |proj g|=  2.79486D+03
+
+At iterate   90    f= -1.11971D+05    |proj g|=  2.67776D+03
+
+At iterate   91    f= -1.11977D+05    |proj g|=  1.76184D+03
+
+At iterate   92    f= -1.11979D+05    |proj g|=  1.64508D+03
+
+At iterate   93    f= -1.11980D+05    |proj g|=  1.50797D+03
+
+At iterate   94    f= -1.11980D+05    |proj g|=  2.00698D+03
+
+At iterate   95    f= -1.11980D+05    |proj g|=  1.71622D+03
+
+At iterate   96    f= -1.11982D+05    |proj g|=  1.74971D+03
+
+At iterate   97    f= -1.11982D+05    |proj g|=  1.01384D+03
+
+At iterate   98    f= -1.11983D+05    |proj g|=  9.82767D+02
+
+At iterate   99    f= -1.11983D+05    |proj g|=  1.69784D+03
+
+At iterate  100    f= -1.11983D+05    |proj g|=  4.71894D+02
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+14406    100    186      1     2     0   4.719D+02  -1.120D+05
+  F =  -111983.32505707511     
+
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT                 
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/1513282_sage_2.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/1513282_sage_2.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/7241270_sage_2.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/7241270_sage_2.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/2107938_sage_2.0.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+ Warning:  more than 10 function and gradient
+   evaluations in the last line search.  Termination
+   may possibly be caused by a bad search direction.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =         4326     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -5.71336D+03    |proj g|=  9.39248D+03
+
+At iterate    1    f= -5.80189D+03    |proj g|=  4.96585D+03
+
+At iterate    2    f= -5.88163D+03    |proj g|=  7.98763D+03
+
+At iterate    3    f= -5.88180D+03    |proj g|=  6.07905D+03
+
+At iterate    4    f= -5.88281D+03    |proj g|=  4.59790D+03
+
+At iterate    5    f= -5.89699D+03    |proj g|=  2.83942D+03
+
+At iterate    6    f= -5.94194D+03    |proj g|=  1.89335D+03
+
+At iterate    7    f= -5.99437D+03    |proj g|=  4.30551D+03
+
+At iterate    8    f= -6.02021D+03    |proj g|=  4.46462D+03
+
+At iterate    9    f= -6.05415D+03    |proj g|=  5.12390D+03
+
+At iterate   10    f= -6.06393D+03    |proj g|=  3.66670D+03
+
+At iterate   11    f= -6.09153D+03    |proj g|=  4.27292D+03
+
+At iterate   12    f= -6.14566D+03    |proj g|=  7.53172D+03
+
+At iterate   13    f= -6.24726D+03    |proj g|=  9.41779D+03
+
+At iterate   14    f= -6.24993D+03    |proj g|=  1.05571D+04
+
+At iterate   15    f= -6.25186D+03    |proj g|=  9.22108D+03
+
+At iterate   16    f= -6.25479D+03    |proj g|=  1.00285D+04
+  ys=-4.074E+00  -gs= 3.078E+01 BFGS update SKIPPED
+
+At iterate   17    f= -6.25479D+03    |proj g|=  9.62151D+03
+
+At iterate   18    f= -6.32498D+03    |proj g|=  7.11018D+03
+
+At iterate   19    f= -6.38237D+03    |proj g|=  3.65564D+03
+
+At iterate   20    f= -6.40588D+03    |proj g|=  3.46290D+03
+
+At iterate   21    f= -6.42718D+03    |proj g|=  2.35282D+03
+
+At iterate   22    f= -6.44309D+03    |proj g|=  3.24890D+03
+
+At iterate   23    f= -6.45284D+03    |proj g|=  1.25313D+03
+
+At iterate   24    f= -6.45876D+03    |proj g|=  1.81397D+03
+
+At iterate   25    f= -6.46415D+03    |proj g|=  2.17799D+03
+
+At iterate   26    f= -6.47002D+03    |proj g|=  6.14817D+03
+
+At iterate   27    f= -6.47714D+03    |proj g|=  3.57882D+03
+
+At iterate   28    f= -6.48273D+03    |proj g|=  3.93368D+03
+
+At iterate   29    f= -6.48345D+03    |proj g|=  3.41976D+03
+
+At iterate   30    f= -6.48479D+03    |proj g|=  3.65416D+03
+
+At iterate   31    f= -6.48535D+03    |proj g|=  2.14126D+03
+
+At iterate   32    f= -6.48541D+03    |proj g|=  2.13411D+03
+
+At iterate   33    f= -6.49955D+03    |proj g|=  2.14107D+03
+
+At iterate   34    f= -6.50947D+03    |proj g|=  1.41108D+03
+
+At iterate   35    f= -6.51429D+03    |proj g|=  1.43120D+03
+
+At iterate   36    f= -6.52082D+03    |proj g|=  1.23351D+03
+
+At iterate   37    f= -6.52318D+03    |proj g|=  2.74547D+03
+
+At iterate   38    f= -6.52327D+03    |proj g|=  2.56519D+03
+
+At iterate   39    f= -6.52397D+03    |proj g|=  3.25590D+03
+
+At iterate   40    f= -6.52630D+03    |proj g|=  1.84030D+03
+
+At iterate   41    f= -6.52842D+03    |proj g|=  1.31057D+03
+
+At iterate   42    f= -6.53106D+03    |proj g|=  1.70518D+03
+
+At iterate   43    f= -6.53204D+03    |proj g|=  1.21919D+03
+
+At iterate   44    f= -6.53207D+03    |proj g|=  9.75800D+02
+
+At iterate   45    f= -6.53486D+03    |proj g|=  7.06114D+02
+
+At iterate   46    f= -6.53831D+03    |proj g|=  6.31024D+02
+
+At iterate   47    f= -6.53996D+03    |proj g|=  1.42421D+03
+
+At iterate   48    f= -6.54043D+03    |proj g|=  4.04073D+02
+
+At iterate   49    f= -6.54162D+03    |proj g|=  1.57626D+03
+
+At iterate   50    f= -6.54162D+03    |proj g|=  1.57790D+03
+  ys=-9.952E-08  -gs= 6.923E-05 BFGS update SKIPPED
+
+At iterate   51    f= -6.54162D+03    |proj g|=  1.57790D+03
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+ 4326     51    125      1     2     0   1.578D+03  -6.542D+03
+  F =  -6541.6227311758466     
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/2202092_parsley_1.1.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+ Warning:  more than 10 function and gradient
+   evaluations in the last line search.  Termination
+   may possibly be caused by a bad search direction.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        11046     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f=  4.94808D+04    |proj g|=  4.54045D+03
+
+At iterate    1    f=  4.94800D+04    |proj g|=  3.70272D+03
+
+At iterate    2    f=  4.94779D+04    |proj g|=  2.20404D+03
+
+At iterate    3    f=  4.94705D+04    |proj g|=  4.71621D+03
+
+At iterate    4    f=  4.94627D+04    |proj g|=  2.80104D+03
+
+At iterate    5    f=  4.94555D+04    |proj g|=  1.81613D+03
+
+At iterate    6    f=  4.94530D+04    |proj g|=  2.57757D+03
+
+At iterate    7    f=  4.94503D+04    |proj g|=  1.90186D+03
+
+At iterate    8    f=  4.94468D+04    |proj g|=  2.28664D+03
+
+At iterate    9    f=  4.94446D+04    |proj g|=  2.15677D+03
+
+At iterate   10    f=  4.94445D+04    |proj g|=  2.36390D+03
+
+At iterate   11    f=  4.94423D+04    |proj g|=  2.22869D+03
+
+At iterate   12    f=  4.94412D+04    |proj g|=  1.62904D+03
+
+At iterate   13    f=  4.94392D+04    |proj g|=  2.70428D+03
+
+At iterate   14    f=  4.94391D+04    |proj g|=  1.77807D+03
+
+At iterate   15    f=  4.94370D+04    |proj g|=  1.96969D+03
+
+At iterate   16    f=  4.94323D+04    |proj g|=  2.29942D+03
+
+At iterate   17    f=  4.94295D+04    |proj g|=  1.54947D+03
+
+At iterate   18    f=  4.94257D+04    |proj g|=  1.87025D+03
+
+At iterate   19    f=  4.94257D+04    |proj g|=  1.87040D+03
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+11046     19     53      1     0     0   1.870D+03   4.943D+04
+  F =   49425.746203195384     
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =         8646     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -6.50715D+03    |proj g|=  7.20966D+03
+
+At iterate    1    f= -6.53750D+03    |proj g|=  2.72729D+03
+
+At iterate    2    f= -6.54530D+03    |proj g|=  2.32285D+03
+
+At iterate    3    f= -6.55168D+03    |proj g|=  1.21039D+03
+
+At iterate    4    f= -6.57584D+03    |proj g|=  4.59026D+03
+
+At iterate    5    f= -6.63754D+03    |proj g|=  3.49473D+03
+
+At iterate    6    f= -6.68537D+03    |proj g|=  2.66428D+03
+
+At iterate    7    f= -6.70876D+03    |proj g|=  3.80607D+03
+
+At iterate    8    f= -6.72887D+03    |proj g|=  2.74375D+03
+
+At iterate    9    f= -6.73721D+03    |proj g|=  2.20333D+03
+
+At iterate   10    f= -6.74663D+03    |proj g|=  2.05965D+03
+
+At iterate   11    f= -6.75155D+03    |proj g|=  2.12031D+03
+
+At iterate   12    f= -6.75645D+03    |proj g|=  1.61062D+03
+
+At iterate   13    f= -6.76208D+03    |proj g|=  4.15498D+03
+
+At iterate   14    f= -6.76705D+03    |proj g|=  8.94529D+02
+
+At iterate   15    f= -6.76959D+03    |proj g|=  8.98204D+02
+
+At iterate   16    f= -6.77020D+03    |proj g|=  8.91918D+02
+
+At iterate   17    f= -6.77247D+03    |proj g|=  1.69402D+03
+
+At iterate   18    f= -6.77443D+03    |proj g|=  1.71076D+03
+
+At iterate   19    f= -6.77474D+03    |proj g|=  1.46956D+03
+
+At iterate   20    f= -6.77476D+03    |proj g|=  1.18991D+03
+
+At iterate   21    f= -6.77489D+03    |proj g|=  1.36713D+03
+
+At iterate   22    f= -6.77491D+03    |proj g|=  1.24413D+03
+
+At iterate   23    f= -6.77497D+03    |proj g|=  9.22974D+02
+
+At iterate   24    f= -6.77500D+03    |proj g|=  3.89215D+02
+
+At iterate   25    f= -6.77577D+03    |proj g|=  1.01820D+03
+
+At iterate   26    f= -6.77762D+03    |proj g|=  1.18647D+03
+
+At iterate   27    f= -6.77808D+03    |proj g|=  1.99762D+03
+
+At iterate   28    f= -6.77833D+03    |proj g|=  3.47204D+03
+
+At iterate   29    f= -6.78020D+03    |proj g|=  3.06366D+03
+
+At iterate   30    f= -6.78539D+03    |proj g|=  1.61859D+03
+
+At iterate   31    f= -6.79022D+03    |proj g|=  2.20534D+03
+
+At iterate   32    f= -6.79600D+03    |proj g|=  2.32441D+03
+
+At iterate   33    f= -6.80175D+03    |proj g|=  4.44019D+03
+
+At iterate   34    f= -6.80405D+03    |proj g|=  2.93085D+03
+
+At iterate   35    f= -6.81008D+03    |proj g|=  2.06055D+03
+
+At iterate   36    f= -6.81235D+03    |proj g|=  1.32844D+03
+
+At iterate   37    f= -6.81934D+03    |proj g|=  3.04355D+03
+
+At iterate   38    f= -6.82699D+03    |proj g|=  2.81637D+03
+
+At iterate   39    f= -6.83439D+03    |proj g|=  1.29046D+03
+
+At iterate   40    f= -6.84022D+03    |proj g|=  2.26780D+03
+
+At iterate   41    f= -6.84749D+03    |proj g|=  1.29711D+03
+
+At iterate   42    f= -6.84758D+03    |proj g|=  9.06860D+02
+
+At iterate   43    f= -6.84914D+03    |proj g|=  8.09933D+02
+
+At iterate   44    f= -6.85118D+03    |proj g|=  3.33100D+03
+
+At iterate   45    f= -6.85627D+03    |proj g|=  1.59680D+03
+
+At iterate   46    f= -6.86272D+03    |proj g|=  3.09507D+03
+
+At iterate   47    f= -6.86548D+03    |proj g|=  2.07995D+03
+
+At iterate   48    f= -6.86607D+03    |proj g|=  1.45819D+03
+
+At iterate   49    f= -6.86806D+03    |proj g|=  1.25655D+03
+
+At iterate   50    f= -6.86944D+03    |proj g|=  1.01951D+03
+
+At iterate   51    f= -6.87017D+03    |proj g|=  7.50315D+02
+
+At iterate   52    f= -6.87256D+03    |proj g|=  1.64254D+03
+
+At iterate   53    f= -6.87287D+03    |proj g|=  1.71973D+03
+
+At iterate   54    f= -6.87489D+03    |proj g|=  1.39730D+03
+
+At iterate   55    f= -6.87690D+03    |proj g|=  1.38602D+03
+
+At iterate   56    f= -6.87798D+03    |proj g|=  1.88755D+03
+
+At iterate   57    f= -6.87851D+03    |proj g|=  1.69476D+03
+
+At iterate   58    f= -6.88001D+03    |proj g|=  1.50255D+03
+
+At iterate   59    f= -6.88263D+03    |proj g|=  8.09301D+02
+
+At iterate   60    f= -6.88453D+03    |proj g|=  8.91435D+02
+
+At iterate   61    f= -6.88578D+03    |proj g|=  9.10524D+02
+
+At iterate   62    f= -6.88790D+03    |proj g|=  9.49532D+02
+
+At iterate   63    f= -6.88809D+03    |proj g|=  1.04579D+03
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/4507232_sage_2.0.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+ Warning:  more than 10 function and gradient
+   evaluations in the last line search.  Termination
+   may possibly be caused by a bad search direction.
+
+At iterate   64    f= -6.88948D+03    |proj g|=  2.31401D+03
+
+At iterate   65    f= -6.88963D+03    |proj g|=  1.23275D+03
+
+At iterate   66    f= -6.89046D+03    |proj g|=  1.65091D+03
+
+At iterate   67    f= -6.89125D+03    |proj g|=  1.64900D+03
+
+At iterate   68    f= -6.89255D+03    |proj g|=  6.89833D+02
+
+At iterate   69    f= -6.89425D+03    |proj g|=  8.22985D+02
+
+At iterate   70    f= -6.89509D+03    |proj g|=  9.08056D+02
+
+At iterate   71    f= -6.89788D+03    |proj g|=  8.40284D+02
+
+At iterate   72    f= -6.90200D+03    |proj g|=  7.19390D+02
+
+At iterate   73    f= -6.90542D+03    |proj g|=  2.53290D+03
+
+At iterate   74    f= -6.90779D+03    |proj g|=  8.81728D+02
+
+At iterate   75    f= -6.90936D+03    |proj g|=  1.35195D+03
+
+At iterate   76    f= -6.91180D+03    |proj g|=  1.35257D+03
+
+At iterate   77    f= -6.91646D+03    |proj g|=  2.12638D+03
+
+At iterate   78    f= -6.91944D+03    |proj g|=  9.70023D+02
+
+At iterate   79    f= -6.92189D+03    |proj g|=  9.79855D+02
+
+At iterate   80    f= -6.92391D+03    |proj g|=  9.55795D+02
+
+At iterate   81    f= -6.92686D+03    |proj g|=  7.89554D+02
+
+At iterate   82    f= -6.93092D+03    |proj g|=  4.76808D+02
+
+At iterate   83    f= -6.93371D+03    |proj g|=  7.07835D+02
+
+At iterate   84    f= -6.93535D+03    |proj g|=  5.18964D+02
+
+At iterate   85    f= -6.93844D+03    |proj g|=  1.23970D+03
+
+At iterate   86    f= -6.94013D+03    |proj g|=  6.99677D+02
+
+At iterate   87    f= -6.94225D+03    |proj g|=  3.97254D+02
+
+At iterate   88    f= -6.94762D+03    |proj g|=  1.01016D+03
+
+At iterate   89    f= -6.95312D+03    |proj g|=  2.46232D+03
+
+At iterate   90    f= -6.95717D+03    |proj g|=  1.78287D+03
+
+At iterate   91    f= -6.95920D+03    |proj g|=  1.09452D+03
+
+At iterate   92    f= -6.96786D+03    |proj g|=  1.15799D+03
+
+At iterate   93    f= -6.96928D+03    |proj g|=  4.97457D+02
+
+At iterate   94    f= -6.96979D+03    |proj g|=  1.55720D+03
+
+At iterate   95    f= -6.96979D+03    |proj g|=  1.58319D+03
+  ys=-4.222E-04  -gs= 3.504E-02 BFGS update SKIPPED
+
+At iterate   96    f= -6.96983D+03    |proj g|=  1.03023D+03
+
+At iterate   97    f= -6.96983D+03    |proj g|=  1.08625D+03
+
+At iterate   98    f= -6.96983D+03    |proj g|=  1.08640D+03
+  ys=-3.552E-13  -gs= 5.157E-09 BFGS update SKIPPED
+
+At iterate   99    f= -6.96983D+03    |proj g|=  1.08640D+03
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+ 8646     99    184      1     2     0   1.086D+03  -6.970D+03
+  F =  -6969.8287664951986     
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+./run_min.py:966: UserWarning: .///MIN/2103490_parsley_1.0.0_min.xml already exists. Skipping.
+  warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
+/MIN/2103490_parsley_1.0.0_min
+Traceback (most recent call last):
+  File "./run_min.py", line 1130, in <module>
+    entry_point()
+  File "./run_min.py", line 1126, in entry_point
+    main()
+  File "./run_min.py", line 1095, in main
+    rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
+NameError: name 'box_vector_old' is not defined
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/1513289_sage_2.0.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+ Warning:  more than 10 function and gradient
+   evaluations in the last line search.  Termination
+   may possibly be caused by a bad search direction.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        10374     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f=  5.44611D+03    |proj g|=  2.17652D+03
+
+At iterate    1    f=  5.44100D+03    |proj g|=  6.95840D+02
+
+At iterate    2    f=  5.43937D+03    |proj g|=  1.55964D+03
+
+At iterate    3    f=  5.43819D+03    |proj g|=  9.14260D+02
+
+At iterate    4    f=  5.43789D+03    |proj g|=  1.65717D+03
+
+At iterate    5    f=  5.43457D+03    |proj g|=  1.51260D+03
+
+At iterate    6    f=  5.43058D+03    |proj g|=  3.28829D+03
+
+At iterate    7    f=  5.42978D+03    |proj g|=  4.37565D+03
+
+At iterate    8    f=  5.42867D+03    |proj g|=  3.18232D+03
+
+At iterate    9    f=  5.42830D+03    |proj g|=  2.92967D+03
+
+At iterate   10    f=  5.42829D+03    |proj g|=  3.32306D+03
+
+At iterate   11    f=  5.42829D+03    |proj g|=  3.30980D+03
+
+At iterate   12    f=  5.42829D+03    |proj g|=  3.30996D+03
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+10374     12     55      1     0     0   3.310D+03   5.428D+03
+  F =   5428.2910682949805     
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        11094     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -2.25965D+04    |proj g|=  2.28841D+04
+
+At iterate    1    f= -2.31438D+04    |proj g|=  2.78859D+03
+
+At iterate    2    f= -2.32045D+04    |proj g|=  7.74011D+03
+
+At iterate    3    f= -2.33906D+04    |proj g|=  9.67775D+03
+
+At iterate    4    f= -2.34753D+04    |proj g|=  5.86741D+03
+
+At iterate    5    f= -2.35868D+04    |proj g|=  8.89731D+03
+
+At iterate    6    f= -2.37047D+04    |proj g|=  9.53690D+03
+
+At iterate    7    f= -2.38103D+04    |proj g|=  1.51848D+04
+
+At iterate    8    f= -2.38120D+04    |proj g|=  1.39823D+04
+
+At iterate    9    f= -2.38537D+04    |proj g|=  1.36872D+04
+
+At iterate   10    f= -2.38888D+04    |proj g|=  2.01926D+04
+
+At iterate   11    f= -2.39482D+04    |proj g|=  1.13965D+04
+
+At iterate   12    f= -2.40113D+04    |proj g|=  4.76724D+03
+
+At iterate   13    f= -2.40307D+04    |proj g|=  6.08217D+03
+
+At iterate   14    f= -2.40445D+04    |proj g|=  6.11184D+03
+
+At iterate   15    f= -2.40526D+04    |proj g|=  4.85616D+03
+
+At iterate   16    f= -2.40704D+04    |proj g|=  4.25389D+03
+
+At iterate   17    f= -2.40779D+04    |proj g|=  5.67511D+03
+
+At iterate   18    f= -2.40939D+04    |proj g|=  4.46785D+03
+
+At iterate   19    f= -2.41399D+04    |proj g|=  1.03518D+04
+
+At iterate   20    f= -2.41627D+04    |proj g|=  4.74009D+03
+
+At iterate   21    f= -2.41716D+04    |proj g|=  3.68715D+03
+
+At iterate   22    f= -2.41717D+04    |proj g|=  6.30905D+03
+
+At iterate   23    f= -2.41720D+04    |proj g|=  5.83541D+03
+
+At iterate   24    f= -2.41838D+04    |proj g|=  3.96646D+03
+
+At iterate   25    f= -2.41945D+04    |proj g|=  3.00809D+03
+
+At iterate   26    f= -2.41970D+04    |proj g|=  1.37063D+03
+
+At iterate   27    f= -2.42010D+04    |proj g|=  3.88727D+03
+
+At iterate   28    f= -2.42099D+04    |proj g|=  2.10754D+03
+
+At iterate   29    f= -2.42234D+04    |proj g|=  8.55719D+03
+
+At iterate   30    f= -2.42335D+04    |proj g|=  3.87687D+03
+
+At iterate   31    f= -2.42470D+04    |proj g|=  1.21547D+03
+
+At iterate   32    f= -2.42499D+04    |proj g|=  1.07860D+03
+
+At iterate   33    f= -2.42503D+04    |proj g|=  1.57450D+03
+
+At iterate   34    f= -2.42503D+04    |proj g|=  1.57282D+03
+  ys=-3.178E-08  -gs= 1.584E-05 BFGS update SKIPPED
+
+At iterate   35    f= -2.42503D+04    |proj g|=  1.57347D+03
+
+At iterate   36    f= -2.42504D+04    |proj g|=  7.61489D+02
+
+At iterate   37    f= -2.42521D+04    |proj g|=  3.73999D+03
+
+At iterate   38    f= -2.42568D+04    |proj g|=  3.44174D+03
+
+At iterate   39    f= -2.42668D+04    |proj g|=  4.84545D+03
+
+At iterate   40    f= -2.42699D+04    |proj g|=  5.92422D+03
+
+At iterate   41    f= -2.42830D+04    |proj g|=  3.44672D+03
+
+At iterate   42    f= -2.42918D+04    |proj g|=  2.50992D+03
+
+At iterate   43    f= -2.42921D+04    |proj g|=  3.55091D+03
+
+At iterate   44    f= -2.42977D+04    |proj g|=  5.11369D+03
+
+At iterate   45    f= -2.43026D+04    |proj g|=  2.01494D+03
+
+At iterate   46    f= -2.43090D+04    |proj g|=  2.53970D+03
+
+At iterate   47    f= -2.43130D+04    |proj g|=  3.64710D+03
+
+At iterate   48    f= -2.43170D+04    |proj g|=  1.27793D+03
+
+At iterate   49    f= -2.43198D+04    |proj g|=  2.07149D+03
+
+At iterate   50    f= -2.43228D+04    |proj g|=  2.68581D+03
+
+At iterate   51    f= -2.43269D+04    |proj g|=  9.75318D+02
+
+At iterate   52    f= -2.43287D+04    |proj g|=  3.93292D+03
+
+At iterate   53    f= -2.43308D+04    |proj g|=  3.58219D+03
+
+At iterate   54    f= -2.43416D+04    |proj g|=  3.16801D+03
+
+At iterate   55    f= -2.43462D+04    |proj g|=  2.40170D+03
+
+At iterate   56    f= -2.43509D+04    |proj g|=  1.40078D+03
+
+At iterate   57    f= -2.43565D+04    |proj g|=  2.00614D+03
+
+At iterate   58    f= -2.43623D+04    |proj g|=  3.25287D+03
+
+At iterate   59    f= -2.43678D+04    |proj g|=  2.70260D+03
+
+At iterate   60    f= -2.43724D+04    |proj g|=  2.07659D+03
+
+At iterate   61    f= -2.43763D+04    |proj g|=  2.22177D+03
+
+At iterate   62    f= -2.43792D+04    |proj g|=  2.25275D+03
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/2105612_parsley_1.1.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+At iterate   63    f= -2.43896D+04    |proj g|=  3.25819D+03
+
+At iterate   64    f= -2.44059D+04    |proj g|=  2.81910D+03
+
+At iterate   65    f= -2.44316D+04    |proj g|=  2.67573D+03
+
+At iterate   66    f= -2.44444D+04    |proj g|=  1.55125D+03
+
+At iterate   67    f= -2.44536D+04    |proj g|=  1.66263D+03
+
+At iterate   68    f= -2.44560D+04    |proj g|=  1.40348D+03
+
+At iterate   69    f= -2.44579D+04    |proj g|=  7.27879D+02
+
+At iterate   70    f= -2.44603D+04    |proj g|=  1.32771D+03
+
+At iterate   71    f= -2.44610D+04    |proj g|=  3.20699D+03
+
+At iterate   72    f= -2.44623D+04    |proj g|=  4.26592D+03
+
+At iterate   73    f= -2.44653D+04    |proj g|=  2.03188D+03
+
+At iterate   74    f= -2.44705D+04    |proj g|=  8.59581D+02
+
+At iterate   75    f= -2.44768D+04    |proj g|=  1.05660D+03
+
+At iterate   76    f= -2.44854D+04    |proj g|=  4.21665D+03
+
+At iterate   77    f= -2.44877D+04    |proj g|=  1.17254D+03
+
+At iterate   78    f= -2.44885D+04    |proj g|=  2.33121D+03
+
+At iterate   79    f= -2.44902D+04    |proj g|=  3.07415D+03
+
+At iterate   80    f= -2.44934D+04    |proj g|=  1.78694D+03
+
+At iterate   81    f= -2.44991D+04    |proj g|=  2.03688D+03
+
+At iterate   82    f= -2.45012D+04    |proj g|=  1.98026D+03
+
+At iterate   83    f= -2.45033D+04    |proj g|=  1.41449D+03
+
+At iterate   84    f= -2.45065D+04    |proj g|=  1.09006D+03
+
+At iterate   85    f= -2.45099D+04    |proj g|=  3.19368D+03
+
+At iterate   86    f= -2.45130D+04    |proj g|=  4.56497D+03
+
+At iterate   87    f= -2.45139D+04    |proj g|=  2.56415D+03
+
+At iterate   88    f= -2.45178D+04    |proj g|=  2.00487D+03
+
+At iterate   89    f= -2.45196D+04    |proj g|=  6.63388D+02
+
+At iterate   90    f= -2.45206D+04    |proj g|=  1.37677D+03
+
+At iterate   91    f= -2.45214D+04    |proj g|=  1.63495D+03
+
+At iterate   92    f= -2.45222D+04    |proj g|=  2.78056D+03
+
+At iterate   93    f= -2.45245D+04    |proj g|=  1.38239D+03
+
+At iterate   94    f= -2.45259D+04    |proj g|=  1.45198D+03
+
+At iterate   95    f= -2.45266D+04    |proj g|=  1.28594D+03
+
+At iterate   96    f= -2.45277D+04    |proj g|=  4.76856D+02
+
+At iterate   97    f= -2.45287D+04    |proj g|=  1.79221D+03
+
+At iterate   98    f= -2.45299D+04    |proj g|=  5.58426D+02
+
+At iterate   99    f= -2.45304D+04    |proj g|=  1.82206D+03
+
+At iterate  100    f= -2.45312D+04    |proj g|=  1.19163D+03
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+11094    100    146      1     1     0   1.192D+03  -2.453D+04
+  F =  -24531.247183208950     
+
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT                 
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        12606     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -1.25177D+04    |proj g|=  9.46622D+03
+
+At iterate    1    f= -1.25834D+04    |proj g|=  2.60375D+03
+
+At iterate    2    f= -1.25934D+04    |proj g|=  1.93246D+03
+
+At iterate    3    f= -1.26231D+04    |proj g|=  9.28775D+02
+
+At iterate    4    f= -1.26377D+04    |proj g|=  2.70234D+03
+
+At iterate    5    f= -1.26563D+04    |proj g|=  2.23635D+03
+
+At iterate    6    f= -1.26954D+04    |proj g|=  2.38230D+03
+
+At iterate    7    f= -1.27471D+04    |proj g|=  4.96252D+03
+
+At iterate    8    f= -1.27654D+04    |proj g|=  3.14804D+03
+
+At iterate    9    f= -1.28034D+04    |proj g|=  4.82044D+03
+
+At iterate   10    f= -1.28201D+04    |proj g|=  5.34754D+03
+
+At iterate   11    f= -1.28272D+04    |proj g|=  4.79326D+03
+
+At iterate   12    f= -1.28424D+04    |proj g|=  3.41670D+03
+
+At iterate   13    f= -1.28532D+04    |proj g|=  6.67573D+03
+
+At iterate   14    f= -1.28620D+04    |proj g|=  1.98829D+03
+
+At iterate   15    f= -1.28622D+04    |proj g|=  1.70998D+03
+
+At iterate   16    f= -1.28639D+04    |proj g|=  2.25545D+03
+
+At iterate   17    f= -1.28643D+04    |proj g|=  2.37722D+03
+
+At iterate   18    f= -1.28720D+04    |proj g|=  2.34552D+03
+
+At iterate   19    f= -1.28905D+04    |proj g|=  2.08310D+03
+
+At iterate   20    f= -1.29114D+04    |proj g|=  1.56221D+03
+
+At iterate   21    f= -1.29530D+04    |proj g|=  4.51964D+03
+
+At iterate   22    f= -1.29702D+04    |proj g|=  3.65225D+03
+
+At iterate   23    f= -1.29770D+04    |proj g|=  4.14770D+03
+
+At iterate   24    f= -1.29915D+04    |proj g|=  4.49042D+03
+
+At iterate   25    f= -1.29921D+04    |proj g|=  4.49258D+03
+
+At iterate   26    f= -1.29989D+04    |proj g|=  4.12297D+03
+
+At iterate   27    f= -1.30012D+04    |proj g|=  3.18293D+03
+
+At iterate   28    f= -1.30050D+04    |proj g|=  2.60400D+03
+
+At iterate   29    f= -1.30182D+04    |proj g|=  1.18696D+03
+
+At iterate   30    f= -1.30271D+04    |proj g|=  2.19593D+03
+
+At iterate   31    f= -1.30274D+04    |proj g|=  2.61591D+03
+
+At iterate   32    f= -1.30278D+04    |proj g|=  2.28236D+03
+
+At iterate   33    f= -1.30283D+04    |proj g|=  2.14911D+03
+
+At iterate   34    f= -1.30285D+04    |proj g|=  1.86738D+03
+
+At iterate   35    f= -1.30285D+04    |proj g|=  1.86669D+03
+
+At iterate   36    f= -1.30302D+04    |proj g|=  1.41826D+03
+
+At iterate   37    f= -1.30313D+04    |proj g|=  5.84565D+02
+
+At iterate   38    f= -1.30326D+04    |proj g|=  1.55556D+03
+
+At iterate   39    f= -1.30330D+04    |proj g|=  1.33299D+03
+
+At iterate   40    f= -1.30352D+04    |proj g|=  1.99064D+03
+
+At iterate   41    f= -1.30356D+04    |proj g|=  7.07666D+02
+
+At iterate   42    f= -1.30358D+04    |proj g|=  5.97771D+02
+
+At iterate   43    f= -1.30367D+04    |proj g|=  6.68869D+02
+
+At iterate   44    f= -1.30376D+04    |proj g|=  2.07939D+03
+
+At iterate   45    f= -1.30384D+04    |proj g|=  2.72078D+03
+
+At iterate   46    f= -1.30394D+04    |proj g|=  2.95628D+03
+
+At iterate   47    f= -1.30395D+04    |proj g|=  2.08065D+03
+
+At iterate   48    f= -1.30400D+04    |proj g|=  1.93874D+03
+
+At iterate   49    f= -1.30406D+04    |proj g|=  2.11095D+03
+
+At iterate   50    f= -1.30409D+04    |proj g|=  1.68323D+03
+
+At iterate   51    f= -1.30409D+04    |proj g|=  1.29841D+03
+
+At iterate   52    f= -1.30412D+04    |proj g|=  2.89836D+02
+
+At iterate   53    f= -1.30412D+04    |proj g|=  8.79923D+02
+
+At iterate   54    f= -1.30414D+04    |proj g|=  6.52249D+02
+
+At iterate   55    f= -1.30418D+04    |proj g|=  1.14216D+03
+
+At iterate   56    f= -1.30423D+04    |proj g|=  5.22420D+02
+
+At iterate   57    f= -1.30424D+04    |proj g|=  1.96346D+03
+
+At iterate   58    f= -1.30424D+04    |proj g|=  1.93779D+03
+
+At iterate   59    f= -1.30425D+04    |proj g|=  2.02677D+03
+
+At iterate   60    f= -1.30428D+04    |proj g|=  5.19172D+02
+
+At iterate   61    f= -1.30430D+04    |proj g|=  7.26988D+02
+
+At iterate   62    f= -1.30436D+04    |proj g|=  1.12668D+03
+
+At iterate   63    f= -1.30440D+04    |proj g|=  2.37800D+03
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/7151616_parsley_1.2.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+ Warning:  more than 10 function and gradient
+   evaluations in the last line search.  Termination
+   may possibly be caused by a bad search direction.
+
+At iterate   64    f= -1.30444D+04    |proj g|=  1.27073D+03
+
+At iterate   65    f= -1.30446D+04    |proj g|=  9.30534D+02
+
+At iterate   66    f= -1.30449D+04    |proj g|=  8.56010D+02
+
+At iterate   67    f= -1.30452D+04    |proj g|=  8.15863D+02
+
+At iterate   68    f= -1.30462D+04    |proj g|=  1.61373D+03
+
+At iterate   69    f= -1.30465D+04    |proj g|=  1.61418D+03
+
+At iterate   70    f= -1.30472D+04    |proj g|=  2.43817D+03
+
+At iterate   71    f= -1.30479D+04    |proj g|=  1.12155D+03
+
+At iterate   72    f= -1.30492D+04    |proj g|=  8.65473D+02
+
+At iterate   73    f= -1.30503D+04    |proj g|=  7.99725D+02
+
+At iterate   74    f= -1.30526D+04    |proj g|=  2.35407D+03
+
+At iterate   75    f= -1.30535D+04    |proj g|=  7.38459D+02
+
+At iterate   76    f= -1.30537D+04    |proj g|=  9.53077D+02
+
+At iterate   77    f= -1.30545D+04    |proj g|=  3.93094D+02
+
+At iterate   78    f= -1.30554D+04    |proj g|=  1.47780D+03
+
+At iterate   79    f= -1.30567D+04    |proj g|=  5.29333D+02
+
+At iterate   80    f= -1.30578D+04    |proj g|=  6.90299D+02
+
+At iterate   81    f= -1.30587D+04    |proj g|=  6.48325D+02
+
+At iterate   82    f= -1.30601D+04    |proj g|=  8.52732D+02
+
+At iterate   83    f= -1.30613D+04    |proj g|=  1.02550D+03
+
+At iterate   84    f= -1.30617D+04    |proj g|=  1.25055D+03
+
+At iterate   85    f= -1.30624D+04    |proj g|=  1.01171D+03
+
+At iterate   86    f= -1.30625D+04    |proj g|=  1.41654D+03
+
+At iterate   87    f= -1.30626D+04    |proj g|=  1.51867D+03
+
+At iterate   88    f= -1.30627D+04    |proj g|=  1.25207D+03
+
+At iterate   89    f= -1.30629D+04    |proj g|=  6.96064D+02
+
+At iterate   90    f= -1.30630D+04    |proj g|=  1.02865D+03
+
+At iterate   91    f= -1.30632D+04    |proj g|=  7.13128D+02
+
+At iterate   92    f= -1.30632D+04    |proj g|=  1.59448D+03
+
+At iterate   93    f= -1.30637D+04    |proj g|=  1.12876D+03
+
+At iterate   94    f= -1.30638D+04    |proj g|=  1.69165D+03
+
+At iterate   95    f= -1.30638D+04    |proj g|=  1.69155D+03
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+12606     95    161      1     0     0   1.692D+03  -1.306D+04
+  F =  -13063.825828035680     
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/7110463_parsley_1.2.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+ Warning:  more than 10 function and gradient
+   evaluations in the last line search.  Termination
+   may possibly be caused by a bad search direction.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =         9006     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -3.38542D+04    |proj g|=  3.53679D+03
+
+At iterate    1    f= -3.38634D+04    |proj g|=  6.29325D+02
+
+At iterate    2    f= -3.38664D+04    |proj g|=  5.37378D+02
+
+At iterate    3    f= -3.38764D+04    |proj g|=  4.43802D+03
+
+At iterate    4    f= -3.38816D+04    |proj g|=  1.21125D+03
+
+At iterate    5    f= -3.38839D+04    |proj g|=  1.45051D+03
+
+At iterate    6    f= -3.38867D+04    |proj g|=  1.42516D+03
+
+At iterate    7    f= -3.38880D+04    |proj g|=  1.62569D+03
+
+At iterate    8    f= -3.38999D+04    |proj g|=  4.72765D+03
+
+At iterate    9    f= -3.39046D+04    |proj g|=  7.37579D+03
+
+At iterate   10    f= -3.39057D+04    |proj g|=  9.00406D+03
+
+At iterate   11    f= -3.39059D+04    |proj g|=  9.72710D+03
+  ys=-6.927E-02  -gs= 3.932E+00 BFGS update SKIPPED
+
+At iterate   12    f= -3.39059D+04    |proj g|=  9.72419D+03
+  ys=-1.611E-06  -gs= 6.571E-04 BFGS update SKIPPED
+
+At iterate   13    f= -3.39059D+04    |proj g|=  9.72276D+03
+
+At iterate   14    f= -3.39073D+04    |proj g|=  9.73558D+03
+
+At iterate   15    f= -3.39134D+04    |proj g|=  7.20409D+03
+
+At iterate   16    f= -3.39268D+04    |proj g|=  1.23558D+04
+
+At iterate   17    f= -3.39268D+04    |proj g|=  1.23626D+04
+  ys=-6.372E-08  -gs= 9.848E-05 BFGS update SKIPPED
+
+At iterate   18    f= -3.39268D+04    |proj g|=  1.23626D+04
+  ys=-6.638E-11  -gs= 9.830E-07 BFGS update SKIPPED
+
+At iterate   19    f= -3.39268D+04    |proj g|=  1.23626D+04
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+ 9006     19     98      1     4     0   1.236D+04  -3.393D+04
+  F =  -33926.815199688404     
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/2237525_parsley_1.0.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+ Warning:  more than 10 function and gradient
+   evaluations in the last line search.  Termination
+   may possibly be caused by a bad search direction.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        10374     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f=  1.64400D+04    |proj g|=  1.27738D+04
+
+At iterate    1    f=  1.63825D+04    |proj g|=  8.68352D+03
+
+At iterate    2    f=  1.63056D+04    |proj g|=  5.83645D+03
+
+At iterate    3    f=  1.62395D+04    |proj g|=  4.90344D+03
+
+At iterate    4    f=  1.62082D+04    |proj g|=  1.20803D+04
+
+At iterate    5    f=  1.62082D+04    |proj g|=  1.20803D+04
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+10374      5     22      1     0     0   1.208D+04   1.621D+04
+  F =   16208.249360166146     
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/2004882_parsley_1.1.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+ Warning:  more than 10 function and gradient
+   evaluations in the last line search.  Termination
+   may possibly be caused by a bad search direction.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =         8646     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -1.33144D+05    |proj g|=  1.31043D+04
+
+At iterate    1    f= -1.33149D+05    |proj g|=  4.97780D+03
+
+At iterate    2    f= -1.33156D+05    |proj g|=  3.92033D+03
+
+At iterate    3    f= -1.33160D+05    |proj g|=  2.87982D+03
+
+At iterate    4    f= -1.33160D+05    |proj g|=  1.69099D+03
+
+At iterate    5    f= -1.33160D+05    |proj g|=  4.06009D+03
+
+At iterate    6    f= -1.33160D+05    |proj g|=  4.32246D+03
+
+At iterate    7    f= -1.33161D+05    |proj g|=  4.21021D+03
+
+At iterate    8    f= -1.33161D+05    |proj g|=  2.58785D+03
+
+At iterate    9    f= -1.33162D+05    |proj g|=  2.43895D+03
+
+At iterate   10    f= -1.33165D+05    |proj g|=  1.27990D+03
+
+At iterate   11    f= -1.33166D+05    |proj g|=  1.63483D+03
+
+At iterate   12    f= -1.33166D+05    |proj g|=  1.51315D+03
+
+At iterate   13    f= -1.33167D+05    |proj g|=  2.72508D+03
+
+At iterate   14    f= -1.33167D+05    |proj g|=  2.83807D+03
+
+At iterate   15    f= -1.33168D+05    |proj g|=  4.88618D+03
+
+At iterate   16    f= -1.33169D+05    |proj g|=  3.88690D+03
+
+At iterate   17    f= -1.33169D+05    |proj g|=  7.52515D+03
+
+At iterate   18    f= -1.33169D+05    |proj g|=  7.22841D+03
+
+At iterate   19    f= -1.33169D+05    |proj g|=  7.22343D+03
+  ys=-3.898E-07  -gs= 5.633E-04 BFGS update SKIPPED
+
+At iterate   20    f= -1.33169D+05    |proj g|=  7.22351D+03
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+ 8646     20     66      1     1     0   7.224D+03  -1.332D+05
+  F =  -133169.19803524073     
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/2203255_parsley_1.3.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+ Warning:  more than 10 function and gradient
+   evaluations in the last line search.  Termination
+   may possibly be caused by a bad search direction.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        12966     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -6.95474D+03    |proj g|=  4.46542D+03
+
+At iterate    1    f= -6.97760D+03    |proj g|=  1.48418D+03
+
+At iterate    2    f= -6.98353D+03    |proj g|=  8.24590D+02
+
+At iterate    3    f= -7.01218D+03    |proj g|=  1.31085D+03
+
+At iterate    4    f= -7.03631D+03    |proj g|=  3.05255D+03
+
+At iterate    5    f= -7.03896D+03    |proj g|=  3.18400D+03
+
+At iterate    6    f= -7.04595D+03    |proj g|=  3.08214D+03
+
+At iterate    7    f= -7.15401D+03    |proj g|=  8.24303D+03
+
+At iterate    8    f= -7.15763D+03    |proj g|=  8.87824D+03
+
+At iterate    9    f= -7.15763D+03    |proj g|=  8.87733D+03
+
+At iterate   10    f= -7.15877D+03    |proj g|=  8.71217D+03
+
+At iterate   11    f= -7.18723D+03    |proj g|=  9.30453D+03
+
+At iterate   12    f= -7.18727D+03    |proj g|=  9.32732D+03
+  ys=-9.723E-04  -gs= 5.414E-02 BFGS update SKIPPED
+
+At iterate   13    f= -7.18727D+03    |proj g|=  9.32743D+03
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+12966     13     61      1     1     0   9.327D+03  -7.187D+03
+  F =  -7187.2675276779501     
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        13446     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -5.23372D+04    |proj g|=  3.79253D+03
+
+At iterate    1    f= -5.23474D+04    |proj g|=  1.62465D+03
+
+At iterate    2    f= -5.23508D+04    |proj g|=  3.13737D+03
+
+At iterate    3    f= -5.23539D+04    |proj g|=  3.21902D+03
+
+At iterate    4    f= -5.23542D+04    |proj g|=  2.62023D+03
+
+At iterate    5    f= -5.23544D+04    |proj g|=  1.05300D+03
+
+At iterate    6    f= -5.23555D+04    |proj g|=  1.29979D+03
+
+At iterate    7    f= -5.23569D+04    |proj g|=  1.22976D+03
+
+At iterate    8    f= -5.23572D+04    |proj g|=  1.70964D+03
+
+At iterate    9    f= -5.23574D+04    |proj g|=  3.03868D+03
+
+At iterate   10    f= -5.23592D+04    |proj g|=  2.80778D+03
+
+At iterate   11    f= -5.23622D+04    |proj g|=  1.72779D+03
+
+At iterate   12    f= -5.23697D+04    |proj g|=  2.48048D+03
+
+At iterate   13    f= -5.23786D+04    |proj g|=  4.56408D+03
+
+At iterate   14    f= -5.23831D+04    |proj g|=  3.06833D+03
+
+At iterate   15    f= -5.23831D+04    |proj g|=  3.08554D+03
+  ys=-2.472E-04  -gs= 7.904E-02 BFGS update SKIPPED
+
+At iterate   16    f= -5.23831D+04    |proj g|=  3.08131D+03
+
+At iterate   17    f= -5.23850D+04    |proj g|=  3.03452D+03
+
+At iterate   18    f= -5.23866D+04    |proj g|=  3.37715D+03
+
+At iterate   19    f= -5.23887D+04    |proj g|=  2.94467D+03
+
+At iterate   20    f= -5.23916D+04    |proj g|=  2.91560D+03
+
+At iterate   21    f= -5.23927D+04    |proj g|=  1.55500D+03
+
+At iterate   22    f= -5.23947D+04    |proj g|=  1.68373D+03
+
+At iterate   23    f= -5.23990D+04    |proj g|=  3.93264D+03
+
+At iterate   24    f= -5.24007D+04    |proj g|=  2.77228D+03
+
+At iterate   25    f= -5.24014D+04    |proj g|=  1.80262D+03
+
+At iterate   26    f= -5.24032D+04    |proj g|=  2.78500D+03
+
+At iterate   27    f= -5.24049D+04    |proj g|=  3.25297D+03
+
+At iterate   28    f= -5.24071D+04    |proj g|=  2.17172D+03
+
+At iterate   29    f= -5.24111D+04    |proj g|=  3.18310D+03
+
+At iterate   30    f= -5.24189D+04    |proj g|=  1.86362D+03
+
+At iterate   31    f= -5.24205D+04    |proj g|=  4.03403D+03
+
+At iterate   32    f= -5.24208D+04    |proj g|=  1.37132D+03
+
+At iterate   33    f= -5.24211D+04    |proj g|=  1.87480D+03
+
+At iterate   34    f= -5.24224D+04    |proj g|=  1.45007D+03
+
+At iterate   35    f= -5.24227D+04    |proj g|=  1.49543D+03
+
+At iterate   36    f= -5.24237D+04    |proj g|=  1.01599D+03
+
+At iterate   37    f= -5.24247D+04    |proj g|=  1.67906D+03
+
+At iterate   38    f= -5.24267D+04    |proj g|=  9.65429D+02
+
+At iterate   39    f= -5.24301D+04    |proj g|=  2.04951D+03
+
+At iterate   40    f= -5.24308D+04    |proj g|=  2.72911D+03
+
+At iterate   41    f= -5.24318D+04    |proj g|=  1.96119D+03
+
+At iterate   42    f= -5.24322D+04    |proj g|=  2.47351D+03
+
+At iterate   43    f= -5.24323D+04    |proj g|=  1.41302D+03
+
+At iterate   44    f= -5.24324D+04    |proj g|=  1.26036D+03
+
+At iterate   45    f= -5.24325D+04    |proj g|=  1.55451D+03
+
+At iterate   46    f= -5.24325D+04    |proj g|=  1.53815D+03
+
+At iterate   47    f= -5.24325D+04    |proj g|=  1.45919D+03
+
+At iterate   48    f= -5.24326D+04    |proj g|=  2.10868D+03
+
+At iterate   49    f= -5.24326D+04    |proj g|=  2.04848D+03
+
+At iterate   50    f= -5.24333D+04    |proj g|=  2.04408D+03
+
+At iterate   51    f= -5.24336D+04    |proj g|=  3.45661D+03
+
+At iterate   52    f= -5.24340D+04    |proj g|=  2.33479D+03
+
+At iterate   53    f= -5.24349D+04    |proj g|=  1.56196D+03
+
+At iterate   54    f= -5.24360D+04    |proj g|=  1.64164D+03
+
+At iterate   55    f= -5.24368D+04    |proj g|=  2.46957D+03
+
+At iterate   56    f= -5.24371D+04    |proj g|=  4.47207D+03
+
+At iterate   57    f= -5.24375D+04    |proj g|=  2.39616D+03
+
+At iterate   58    f= -5.24388D+04    |proj g|=  1.72087D+03
+
+At iterate   59    f= -5.24404D+04    |proj g|=  1.10602D+03
+
+At iterate   60    f= -5.24462D+04    |proj g|=  3.48433D+03
+
+At iterate   61    f= -5.24466D+04    |proj g|=  1.32293D+03
+
+At iterate   62    f= -5.24482D+04    |proj g|=  2.81836D+03
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.
+RUNNING THE L-BFGS-B CODE
+
+           * * *
+
+Machine precision = 2.220D-16
+ N =        14406     M =           10
+
+At X0         0 variables are exactly at the bounds
+
+At iterate    0    f= -8.23414D+01    |proj g|=  1.72334D+03
+
+At iterate    1    f= -8.36266D+01    |proj g|=  4.56261D+03
+
+At iterate    2    f= -8.69451D+01    |proj g|=  1.46136D+03
+
+At iterate    3    f= -8.90303D+01    |proj g|=  3.80743D+03
+
+At iterate    4    f= -8.95194D+01    |proj g|=  2.33736D+03
+
+At iterate    5    f= -8.98782D+01    |proj g|=  1.49141D+03
+
+At iterate    6    f= -8.99162D+01    |proj g|=  8.37822D+02
+
+At iterate    7    f= -9.00172D+01    |proj g|=  3.99160D+02
+
+At iterate    8    f= -9.04946D+01    |proj g|=  8.22370D+02
+
+At iterate    9    f= -9.15073D+01    |proj g|=  1.39442D+03
+
+At iterate   10    f= -9.25734D+01    |proj g|=  1.52276D+03
+
+At iterate   11    f= -9.48668D+01    |proj g|=  2.66067D+03
+
+At iterate   12    f= -9.57499D+01    |proj g|=  3.10753D+03
+
+At iterate   13    f= -9.96369D+01    |proj g|=  1.84735D+03
+
+At iterate   14    f= -1.04034D+02    |proj g|=  1.14173D+03
+
+At iterate   15    f= -1.04881D+02    |proj g|=  4.14885D+02
+
+At iterate   16    f= -1.05819D+02    |proj g|=  4.43862D+02
+
+At iterate   17    f= -1.07779D+02    |proj g|=  5.86192D+02
+
+At iterate   18    f= -1.08093D+02    |proj g|=  2.79934D+03
+
+At iterate   19    f= -1.08692D+02    |proj g|=  3.45197D+03
+
+At iterate   20    f= -1.13955D+02    |proj g|=  2.86730D+03
+
+At iterate   21    f= -1.17070D+02    |proj g|=  1.26999D+03
+
+At iterate   22    f= -1.19666D+02    |proj g|=  2.66144D+03
+
+At iterate   23    f= -1.20633D+02    |proj g|=  1.74091D+03
+
+At iterate   24    f= -1.22646D+02    |proj g|=  2.09842D+03
+
+At iterate   25    f= -1.22801D+02    |proj g|=  9.46249D+02
+
+At iterate   26    f= -1.23345D+02    |proj g|=  1.35483D+03
+
+At iterate   27    f= -1.23468D+02    |proj g|=  1.39418D+03
+
+At iterate   28    f= -1.23469D+02    |proj g|=  1.39266D+03
+
+At iterate   29    f= -1.23470D+02    |proj g|=  1.37784D+03
+
+At iterate   30    f= -1.23498D+02    |proj g|=  1.38667D+03
+
+At iterate   31    f= -1.23648D+02    |proj g|=  1.10506D+03
+
+At iterate   32    f= -1.23892D+02    |proj g|=  1.30396D+03
+
+At iterate   33    f= -1.24189D+02    |proj g|=  1.17683D+03
+
+At iterate   34    f= -1.24731D+02    |proj g|=  1.53811D+03
+
+At iterate   35    f= -1.24883D+02    |proj g|=  1.13030D+03
+
+At iterate   36    f= -1.25131D+02    |proj g|=  1.41358D+03
+
+At iterate   37    f= -1.25683D+02    |proj g|=  1.56992D+03
+
+At iterate   38    f= -1.26193D+02    |proj g|=  7.82687D+02
+
+At iterate   39    f= -1.26594D+02    |proj g|=  1.25192D+03
+
+At iterate   40    f= -1.26664D+02    |proj g|=  1.12208D+03
+
+At iterate   41    f= -1.26978D+02    |proj g|=  8.76735D+02
+
+At iterate   42    f= -1.27392D+02    |proj g|=  1.17635D+03
+
+At iterate   43    f= -1.27732D+02    |proj g|=  1.37907D+03
+
+At iterate   44    f= -1.27913D+02    |proj g|=  9.78971D+02
+
+At iterate   45    f= -1.28187D+02    |proj g|=  9.14822D+02
+
+At iterate   46    f= -1.28342D+02    |proj g|=  3.66207D+02
+
+At iterate   47    f= -1.28600D+02    |proj g|=  5.89432D+02
+
+At iterate   48    f= -1.28811D+02    |proj g|=  9.67873D+02
+
+At iterate   49    f= -1.29005D+02    |proj g|=  9.41176D+02
+
+At iterate   50    f= -1.29689D+02    |proj g|=  1.25548D+03
+
+At iterate   51    f= -1.30466D+02    |proj g|=  9.29172D+02
+
+At iterate   52    f= -1.30619D+02    |proj g|=  8.58753D+02
+
+At iterate   53    f= -1.31148D+02    |proj g|=  5.27257D+02
+
+At iterate   54    f= -1.32210D+02    |proj g|=  5.09139D+02
+
+At iterate   55    f= -1.35886D+02    |proj g|=  7.63469D+02
+
+At iterate   56    f= -1.37410D+02    |proj g|=  1.17640D+03
+
+At iterate   57    f= -1.40715D+02    |proj g|=  1.72451D+03
+
+At iterate   58    f= -1.40732D+02    |proj g|=  2.61644D+03
+
+At iterate   59    f= -1.44160D+02    |proj g|=  1.47890D+03
+
+At iterate   60    f= -1.45098D+02    |proj g|=  1.17274D+03
+
+At iterate   61    f= -1.45638D+02    |proj g|=  1.57604D+03
+
+At iterate   62    f= -1.45807D+02    |proj g|=  8.02383D+02
+
+At iterate   63    f= -1.46760D+02    |proj g|=  6.99729D+02
+/home/yu-tang/anaconda3/envs/xtalmd/lib/python3.7/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method L-BFGS-B does not use Hessian information (hess).
+  RuntimeWarning)
+/MIN/1504357_parsley_1.1.0_min
+Data saved successfully.
+------------------------------------------------------------------------------------------------
+ This problem is unconstrained.
+
+ Warning:  more than 10 function and gradient
+   evaluations in the last line search.  Termination
+   may possibly be caused by a bad search direction.
+
+At iterate   64    f= -1.49429D+02    |proj g|=  1.39981D+03
+
+At iterate   65    f= -1.51487D+02    |proj g|=  1.82146D+03
+
+At iterate   66    f= -1.54182D+02    |proj g|=  1.09382D+03
+
+At iterate   67    f= -1.55761D+02    |proj g|=  9.43911D+02
+
+At iterate   68    f= -1.56150D+02    |proj g|=  1.21350D+03
+
+At iterate   69    f= -1.56922D+02    |proj g|=  1.74590D+03
+
+At iterate   70    f= -1.58235D+02    |proj g|=  1.18576D+03
+
+At iterate   71    f= -1.59681D+02    |proj g|=  7.38467D+02
+
+At iterate   72    f= -1.60126D+02    |proj g|=  3.47656D+02
+
+At iterate   73    f= -1.60153D+02    |proj g|=  5.57911D+02
+
+At iterate   74    f= -1.60209D+02    |proj g|=  6.18869D+02
+
+At iterate   75    f= -1.60570D+02    |proj g|=  4.32607D+02
+
+At iterate   76    f= -1.60620D+02    |proj g|=  5.23803D+02
+
+At iterate   77    f= -1.61168D+02    |proj g|=  4.67423D+02
+
+At iterate   78    f= -1.61642D+02    |proj g|=  6.37269D+02
+
+At iterate   79    f= -1.62186D+02    |proj g|=  7.48055D+02
+
+At iterate   80    f= -1.62194D+02    |proj g|=  7.23502D+02
+
+At iterate   81    f= -1.62257D+02    |proj g|=  6.66165D+02
+
+At iterate   82    f= -1.62425D+02    |proj g|=  5.57934D+02
+
+At iterate   83    f= -1.62582D+02    |proj g|=  8.05661D+02
+
+At iterate   84    f= -1.62890D+02    |proj g|=  4.00360D+02
+
+At iterate   85    f= -1.62966D+02    |proj g|=  4.82200D+02
+
+At iterate   86    f= -1.63351D+02    |proj g|=  9.36877D+02
+
+At iterate   87    f= -1.63493D+02    |proj g|=  7.85826D+02
+
+At iterate   88    f= -1.63616D+02    |proj g|=  9.02459D+02
+
+At iterate   89    f= -1.63812D+02    |proj g|=  8.79090D+02
+
+At iterate   90    f= -1.63926D+02    |proj g|=  7.89164D+02
+
+At iterate   91    f= -1.64013D+02    |proj g|=  8.91288D+02
+
+At iterate   92    f= -1.64136D+02    |proj g|=  3.33246D+02
+
+At iterate   93    f= -1.64207D+02    |proj g|=  1.83551D+02
+
+At iterate   94    f= -1.64463D+02    |proj g|=  4.99460D+02
+
+At iterate   95    f= -1.64463D+02    |proj g|=  4.97582D+02
+  ys=-2.625E-08  -gs= 3.111E-05 BFGS update SKIPPED
+
+At iterate   96    f= -1.64463D+02    |proj g|=  4.97582D+02
+
+           * * *
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+14406     96    173      1     1     0   4.976D+02  -1.645D+02
+  F =  -164.46339468960923     
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH             
+Warning: importing 'simtk.openmm' is deprecated.  Import 'openmm' instead.

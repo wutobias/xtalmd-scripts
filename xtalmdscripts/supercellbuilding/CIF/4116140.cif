@@ -1,0 +1,195 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-10-13 14:42:48 +0300 (Fri, 13 Oct 2017) $
+#$Revision: 201982 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/4/11/61/4116140.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_4116140
+loop_
+_publ_author_name
+'Venkat R. Thalladi'
+'Markus N\"usse'
+'Roland Boese'
+_publ_section_title
+;
+ The Melting Point Alternation in \a,\w-Alkanedicarboxylic Acids
+;
+_journal_name_full               'Journal of the American Chemical Society'
+_journal_page_first              9227
+_journal_page_last               9236
+_journal_paper_doi               10.1021/ja0011459
+_journal_volume                  122
+_journal_year                    2000
+_chemical_compound_source        Fluka
+_chemical_formula_moiety         'C3 H4 O4'
+_chemical_formula_structural     'C3 H4 O4'
+_chemical_formula_sum            'C3 H4 O4'
+_chemical_formula_weight         104.06
+_chemical_melting_point          408.6
+_chemical_name_common            'Malonic acid '
+_chemical_name_systematic
+; 
+ Propane-1,3-dioic acid 
+;
+_space_group_IT_number           2
+_symmetry_cell_setting           triclinic
+_symmetry_space_group_name_Hall  '-P 1'
+_symmetry_space_group_name_H-M   'P -1'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_audit_creation_method           SHELXL
+_cell_angle_alpha                108.083(2)
+_cell_angle_beta                 101.280(2)
+_cell_angle_gamma                95.230(2)
+_cell_formula_units_Z            2
+_cell_length_a                   5.1604(6)
+_cell_length_b                   5.3319(5)
+_cell_length_c                   8.1838(9)
+_cell_measurement_temperature    130(2)
+_cell_volume                     207.11(4)
+_computing_structure_refinement  'SHELXL-93 (Sheldrick, 1993)'
+_computing_structure_solution    'SHELXS-86 (Sheldrick, 1990)'
+_diffrn_ambient_temperature      130(2)
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_source         'fine-focus sealed tube'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0383
+_diffrn_reflns_av_sigmaI/netI    0.0598
+_diffrn_reflns_limit_h_max       6
+_diffrn_reflns_limit_h_min       -4
+_diffrn_reflns_limit_k_max       6
+_diffrn_reflns_limit_k_min       -2
+_diffrn_reflns_limit_l_max       10
+_diffrn_reflns_limit_l_min       -8
+_diffrn_reflns_number            1736
+_diffrn_reflns_theta_max         28.31
+_diffrn_reflns_theta_min         2.69
+_exptl_absorpt_coefficient_mu    0.161
+_exptl_crystal_density_diffrn    1.669
+_exptl_crystal_F_000             108
+_refine_diff_density_max         0.449
+_refine_diff_density_min         -0.493
+_refine_diff_density_rms         0.134
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_all   1.005
+_refine_ls_goodness_of_fit_obs   1.131
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     72
+_refine_ls_number_reflns         745
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      1.005
+_refine_ls_restrained_S_obs      1.131
+_refine_ls_R_factor_all          0.0891
+_refine_ls_R_factor_obs          0.0755
+_refine_ls_shift/esd_max         0.001
+_refine_ls_shift/esd_mean        0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'w=1/[\s^2^(Fo^2^)+(0.1424P)^2^+0.0000P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_all         0.1963
+_refine_ls_wR_factor_obs         0.1864
+_reflns_number_observed          547
+_reflns_number_total             745
+_reflns_observed_criterion       >2sigma(I)
+_cod_data_source_file            ja0011459_02.cif
+_cod_data_source_block           disa31m
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+
+'_refine_ls_weighting_scheme' value 'calc
+w=1/[\s^2^(Fo^2^)+(0.1424P)^2^+0.0000P] where P=(Fo^2^+2Fc^2^)/3' was
+changed to 'calc'. New tag '_refine_ls_weighting_details' was
+created. The value of the new tag was set to
+'w=1/[\s^2^(Fo^2^)+(0.1424P)^2^+0.0000P] where P=(Fo^2^+2Fc^2^)/3'.
+
+Automatic conversion script
+Id: cif_fix_values 3143 2015-03-26 13:38:13Z robertas 
+;
+_cod_database_code               4116140
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x, -y, -z'
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+O1 0.052(2) 0.0377(12) 0.037(2) 0.0206(11) 0.0222(14) 0.0283(11)
+O2 0.043(2) 0.0473(14) 0.024(2) 0.0171(11) 0.0124(12) 0.0291(11)
+C1 0.018(2) 0.0203(12) 0.026(2) 0.0060(11) 0.0003(13) 0.0043(11)
+C2 0.018(2) 0.0250(13) 0.025(2) 0.0064(12) 0.0041(13) 0.0065(11)
+C3 0.023(2) 0.0222(12) 0.022(2) 0.0108(12) 0.0018(13) 0.0078(11)
+O3 0.0190(12) 0.0259(10) 0.0310(14) 0.0111(9) 0.0058(10) 0.0092(8)
+O4 0.0217(12) 0.0240(10) 0.0331(15) 0.0042(9) 0.0070(10) 0.0077(8)
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+_atom_site_occupancy
+_atom_site_calc_flag
+_atom_site_refinement_flags
+O1 O -0.0861(5) 0.0619(4) 0.6849(3) 0.0370(8) Uani 1 d .
+O2 O -0.2330(5) 0.2441(5) 0.4808(3) 0.0346(8) Uani 1 d .
+H1 H -0.1269(90) 0.1467(76) 0.4270(56) 0.040(11) Uiso 1 d .
+C1 C -0.2171(6) 0.2141(5) 0.6342(4) 0.0225(8) Uani 1 d .
+C2 C -0.3735(6) 0.3886(5) 0.7460(4) 0.0231(8) Uani 1 d .
+H2A H -0.4414(6) 0.2962(5) 0.8208(4) 0.028 Uiso 1 calc R
+H2B H -0.5293(6) 0.4233(5) 0.6688(4) 0.028 Uiso 1 calc R
+C3 C -0.1978(6) 0.6506(5) 0.8620(4) 0.0219(8) Uani 1 d .
+O3 O 0.0434(4) 0.6926(4) 0.8753(3) 0.0246(7) Uani 1 d .
+O4 O -0.3325(4) 0.8226(4) 0.9482(3) 0.0273(7) Uani 1 d .
+H4 H -0.2195(100) 0.9693(93) 1.0111(61) 0.058(12) Uiso 1 d .
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+O O 0.0106 0.0060 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+O1 C1 O2 123.9(3)
+O1 C1 C2 122.6(3)
+O2 C1 C2 113.5(3)
+C1 C2 C3 110.1(2)
+O3 C3 O4 124.5(3)
+O3 C3 C2 123.0(3)
+O4 C3 C2 112.5(3)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+O1 C1 1.219(4)
+O2 C1 1.302(4)
+C1 C2 1.501(4)
+C2 C3 1.511(4)
+C3 O3 1.221(4)
+C3 O4 1.315(4)
+loop_
+_cod_related_entry_id
+_cod_related_entry_database
+_cod_related_entry_code
+1 ChemSpider 844

@@ -1,0 +1,208 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-10-14 22:27:35 +0300 (Sat, 14 Oct 2017) $
+#$Revision: 202017 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/7/20/61/7206161.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_7206161
+loop_
+_publ_author_name
+'Thakur, Tejender S.'
+'Kirchner, Michael T.'
+'Bl\"aser, Dieter'
+'Boese, Roland'
+'Desiraju, Gautam R.'
+_publ_section_title
+;
+ Nature and strength of C-HO interactions involving formyl hydrogen
+ atoms: computational and experimental studies of small aldehydes.
+;
+_journal_issue                   31
+_journal_name_full               'Physical chemistry chemical physics : PCCP'
+_journal_page_first              14076
+_journal_page_last               14091
+_journal_paper_doi               10.1039/c0cp02236e
+_journal_volume                  13
+_journal_year                    2011
+_chemical_absolute_configuration unk
+_chemical_formula_sum            'C H2 O'
+_chemical_formula_weight         30.03
+_chemical_name_common            formaldehyde
+_chemical_name_systematic
+;
+formaldehyde
+;
+_space_group_IT_number           114
+_symmetry_cell_setting           tetragonal
+_symmetry_space_group_name_Hall  'P -4 2n'
+_symmetry_space_group_name_H-M   'P -4 21 c'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_audit_creation_method           SHELXL-97
+_cell_angle_alpha                90.00
+_cell_angle_beta                 90.00
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            8
+_cell_length_a                   8.7411(10)
+_cell_length_b                   8.7411(10)
+_cell_length_c                   4.4740(9)
+_cell_measurement_reflns_used    542
+_cell_measurement_temperature    148(2)
+_cell_measurement_theta_max      27.04
+_cell_measurement_theta_min      3.29
+_cell_volume                     341.84(9)
+_computing_cell_refinement       'BRUKER AXS SMART APEX 2 Vers. 3.0-2009'
+_computing_data_collection       'BRUKER AXS SMART APEX 2 Vers. 3.0-2009'
+_computing_data_reduction        'BRUKER AXS SMART APEX 2 Vers. 3.0-2009'
+_computing_molecular_graphics    'BRUKER AXS SHELXTL (c) 2008 / Vers. 2008/4'
+_computing_publication_material  'BRUKER AXS SHELXTL (c) 2008 / Vers. 2008/4'
+_computing_structure_refinement  'BRUKER AXS SHELXTL (c) 2008 / Vers. 2008/4'
+_computing_structure_solution    'BRUKER AXS SMART APEX 2 Vers. 3.0-2009'
+_diffrn_ambient_temperature      148(2)
+_diffrn_detector_area_resol_mean 512
+_diffrn_measured_fraction_theta_full 0.770
+_diffrn_measured_fraction_theta_max 0.770
+_diffrn_measurement_device_type
+;
+Siemens SMART three axis goniometer with APEX II area detector system
+;
+_diffrn_measurement_method
+;
+Data collection strategy APEX 2 / COSMO
+with chi = 0
+;
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_source         'fine-focus sealed tube'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0637
+_diffrn_reflns_av_sigmaI/netI    0.0438
+_diffrn_reflns_limit_h_max       12
+_diffrn_reflns_limit_h_min       -6
+_diffrn_reflns_limit_k_max       12
+_diffrn_reflns_limit_k_min       -12
+_diffrn_reflns_limit_l_max       3
+_diffrn_reflns_limit_l_min       -4
+_diffrn_reflns_number            1492
+_diffrn_reflns_theta_full        31.70
+_diffrn_reflns_theta_max         31.70
+_diffrn_reflns_theta_min         3.30
+_exptl_absorpt_coefficient_mu    0.106
+_exptl_absorpt_correction_type   none
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    1.167
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_description       cylindric
+_exptl_crystal_F_000             128
+_exptl_crystal_size_max          0.30
+_exptl_crystal_size_mid          0.30
+_exptl_crystal_size_min          0.30
+_refine_diff_density_max         0.066
+_refine_diff_density_min         -0.057
+_refine_diff_density_rms         0.016
+_refine_ls_abs_structure_details 'Flack H D (1983), Acta Cryst. A39, 876-881'
+_refine_ls_abs_structure_Flack   -0.1(14)
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   0.953
+_refine_ls_hydrogen_treatment    refall
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     27
+_refine_ls_number_reflns         436
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      0.953
+_refine_ls_R_factor_all          0.0338
+_refine_ls_R_factor_gt           0.0252
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'calc w=1/[\s^2^(Fo^2^)+(0.0235P)^2^+0.0000P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.0599
+_refine_ls_wR_factor_ref         0.0620
+_reflns_number_gt                352
+_reflns_number_total             436
+_reflns_threshold_expression     >2sigma(I)
+_cod_data_source_file            c0cp02236e.txt
+_cod_data_source_block           formaldehyd_0m
+_cod_original_sg_symbol_H-M      P-421c
+_cod_database_code               7206161
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x, -y, z'
+'y, -x, -z'
+'-y, x, -z'
+'-x+1/2, y+1/2, -z+1/2'
+'x+1/2, -y+1/2, -z+1/2'
+'-y+1/2, -x+1/2, z+1/2'
+'y+1/2, x+1/2, z+1/2'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_symmetry_multiplicity
+_atom_site_calc_flag
+_atom_site_refinement_flags
+_atom_site_disorder_assembly
+_atom_site_disorder_group
+O1 O 0.24394(7) 0.04398(7) 0.37503(18) 0.0438(3) Uani 1 1 d . . .
+C1 C 0.24702(9) 0.01339(10) 0.6352(3) 0.0419(3) Uani 1 1 d . . .
+H1 H 0.3253(10) -0.0578(12) 0.723(2) 0.042(3) Uiso 1 1 d . . .
+H2 H 0.1698(13) 0.0648(13) 0.788(3) 0.062(4) Uiso 1 1 d . . .
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+O1 0.0497(3) 0.0533(3) 0.0285(7) 0.0024(3) 0.0020(6) -0.0063(3)
+C1 0.0441(4) 0.0444(4) 0.0371(9) -0.0028(6) -0.0036(12) -0.0017(4)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+O O 0.0106 0.0060 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_site_symmetry_1
+_geom_angle_site_symmetry_3
+_geom_angle_publ_flag
+O1 C1 H1 122.3(5) . . ?
+O1 C1 H2 121.2(6) . . ?
+H1 C1 H2 116.5(8) . . ?
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_site_symmetry_2
+_geom_bond_publ_flag
+O1 C1 1.1948(13) . ?
+C1 H1 1.004(10) . ?
+C1 H2 1.059(12) . ?
+loop_
+_cod_related_entry_id
+_cod_related_entry_database
+_cod_related_entry_code
+1 ChemSpider 692

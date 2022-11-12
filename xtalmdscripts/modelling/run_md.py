@@ -4,7 +4,7 @@ import openmm
 from openmm import unit
 import numpy as np
 from scipy import optimize
-from .utils import Logger
+from utils import Logger
 
 def parse_arguments():
 
@@ -83,6 +83,7 @@ def parse_arguments():
         default=10
         )
 
+
     xml_parse.add_argument(
         '--temperature', 
         "-t", 
@@ -132,9 +133,10 @@ def run_nvt_md(
 
     ### better not go higher than 1 fs
     time_step = 1.0 * unit.femtoseconds
-    ### The default 1.e-5 seems to be too high and will crash
+    ### The default 1.e-5 seems to be too high and will crash (constraint_tolerance)
     ### with the flexible barostat.
     constraint_tolerance = 1.e-6
+
 
     pdbfile  = app.PDBFile(pdb_path)
     topology = pdbfile.topology

@@ -1,0 +1,203 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-19 16:29:56 +0200 (Fri, 19 Feb 2016) $
+#$Revision: 176759 $
+#$URL: svn://www.crystallography.net/cod/cif/2/00/44/2004431.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2004431
+loop_
+_publ_author_name
+'Thomson, M. A.'
+'Kar, M.'
+'Anderson, O. P.'
+'Lenz, T. G.'
+'Vaughan, J. D.'
+_publ_section_title
+;
+ 2-Phenylmaleic Anhydride
+;
+_journal_issue                   1
+_journal_name_full               'Acta Crystallographica Section C'
+_journal_page_first              168
+_journal_page_last               169
+_journal_paper_doi               10.1107/S0108270195009620
+_journal_volume                  52
+_journal_year                    1996
+_chemical_formula_moiety         'C10 H6 O3'
+_chemical_formula_sum            'C10 H6 O3'
+_chemical_formula_weight         174.16
+_space_group_IT_number           2
+_symmetry_cell_setting           triclinic
+_symmetry_space_group_name_Hall  '-P 1'
+_symmetry_space_group_name_H-M   'P -1'
+_atom_type_scat_source           IntTabIV
+_cell_angle_alpha                107.48(3)
+_cell_angle_beta                 102.07(3)
+_cell_angle_gamma                102.23(3)
+_cell_formula_units_Z            2
+_cell_length_a                   6.547(2)
+_cell_length_b                   7.057(3)
+_cell_length_c                   9.687(4)
+_cell_measurement_reflns_used    25
+_cell_measurement_temperature    155
+_cell_measurement_theta_max      19.96
+_cell_measurement_theta_min      10.18
+_cell_volume                     398.9(3)
+_diffrn_measurement_device       'Siemens R3m'
+_diffrn_measurement_method       \q/2\q
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0116
+_diffrn_reflns_limit_h_max       8
+_diffrn_reflns_limit_h_min       -8
+_diffrn_reflns_limit_k_max       9
+_diffrn_reflns_limit_k_min       -9
+_diffrn_reflns_limit_l_max       0
+_diffrn_reflns_limit_l_min       -12
+_diffrn_reflns_number            1547
+_diffrn_reflns_theta_max         25
+_diffrn_standards_decay_%        none
+_diffrn_standards_interval_count 97
+_diffrn_standards_number         3
+_exptl_absorpt_coefficient_mu    0.101
+_exptl_absorpt_correction_type   none
+_exptl_crystal_colour            colorless
+_exptl_crystal_density_diffrn    1.45
+_exptl_crystal_description       prism
+_exptl_crystal_size_max          0.54
+_exptl_crystal_size_mid          0.45
+_exptl_crystal_size_min          0.34
+_refine_diff_density_max         0.28
+_refine_diff_density_min         -0.36
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_obs   1.207
+_refine_ls_hydrogen_treatment    'H atoms: see text'
+_refine_ls_number_parameters     148
+_refine_ls_number_reflns         1320
+_refine_ls_R_factor_obs          0.049
+_refine_ls_shift/esd_max         0.006
+_refine_ls_structure_factor_coef F
+_refine_ls_weighting_details     'w = 1/[\s^2^(F) + 0.00341F^2^]'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_obs         0.074
+_reflns_number_observed          1320
+_reflns_number_total             1408
+_reflns_observed_criterion       F>2.5\s(F)
+_cod_data_source_file            pt1002.cif
+_cod_data_source_block           pt1002a
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+
+'_refine_ls_weighting_scheme' value 'w = 1/[\s^2^(F) + 0.00341F^2^]'
+was changed to 'calc'. New tag '_refine_ls_weighting_details' was
+created. The value of the new tag was set to 'w = 1/[\s^2^(F) +
+0.00341F^2^]'.
+
+Automatic conversion script
+Id: cif_fix_values 3143 2015-03-26 13:38:13Z robertas 
+;
+_cod_original_cell_volume        399.0(2)
+_cod_database_code               2004431
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+-x,-y,-z
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+C(1) .0240(10) .0260(10) .0280(10) .0020(10) .0040(10) .0080(10)
+C(2) .0280(10) .0290(10) .0330(10) .0000(10) -.0010(10) .0080(10)
+C(3) .0420(10) .0260(10) .0270(10) .0050(10) .0000(10) .0040(10)
+C(4) .0440(10) .0340(10) .0240(10) .0140(10) .0110(10) .0060(10)
+C(5) .0260(10) .0300(10) .0270(10) .0080(10) .0070(10) .0090(10)
+C(6) .0220(10) .0200(10) .0250(10) .0030(10) .0050(10) .0090(10)
+C(7) .0190(10) .0230(10) .0230(10) .0020(10) .0050(10) .0100(10)
+C(8) .0190(10) .0270(10) .0250(10) .0020(10) .0030(10) .0080(10)
+O(1) .0220(10) .0360(10) .0240(10) .0000(10) .0010(10) .0060(10)
+C(10) .0290(10) .0280(10) .0230(10) .0020(10) .0060(10) .0090(10)
+C(11) .0200(10) .0290(10) .0250(10) .0020(10) .0070(10) .0090(10)
+O(2) .0450(10) .0420(10) .0220(10) .0040(10) .0100(10) .0040(10)
+O(3) .0200(10) .0480(10) .0360(10) .0060(10) .0090(10) .0090(10)
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+C(1) -.2100(2) .1843(2) -.0410(2) .028(1)
+C(2) -.3208(3) .0537(2) -.1893(2) .034(1)
+C(3) -.2056(3) -.0012(2) -.2922(2) .035(1)
+C(4) .0200(3) .0757(2) -.2469(2) .035(1)
+C(5) .1319(2) .2062(2) -.0984(2) .028(1)
+C(6) .0182(2) .2615(2) .0063(1) .023(1)
+C(7) .1300(2) .3998(2) .1638(2) .022(1)
+C(8) .3737(2) .4799(2) .2322(2) .025(1)
+O(1) .4192(2) .6050(2) .3817(1) .030(1)
+C(9) .2219(2) .6106(2) .4126(2) .028(1)
+C(10) .0451(2) .4801(2) .2737(1) .025(1)
+O(2) .2190(2) .7101(2) .5353(1) .040(1)
+O(3) .5174(2) .4506(2) .1795(1) .037(1)
+H(1) -.2907 .2220 .0298 .033
+H(2) -.4774 .0014 -.2206 .040
+H(3) -.2821 -.0923 -.3947 .042
+H(4) .0997 .0387 -.3185 .041
+H(5) .2885 .2584 -.0680 .034
+H(10) -.1082 .4561 .2634 .030
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_publ_flag
+C(2) C(1) C(6) 120.60(10) yes
+C(2) C(3) C(4) 119.80(10) yes
+C(4) C(5) C(6) 120.30(10) yes
+C(1) C(6) C(7) 119.20(10) yes
+C(6) C(7) C(8) 124.60(10) yes
+C(8) C(7) C(10) 106.20(10) yes
+C(7) C(8) O(3) 131.10(10) yes
+C(8) O(1) C(9) 108.20(10) yes
+O(1) C(9) O(2) 120.60(10) yes
+C(7) C(10) C(9) 109.60(10) yes
+C(1) C(2) C(3) 120.10(10) yes
+C(3) C(4) C(5) 120.40(10) yes
+C(1) C(6) C(5) 118.80(10) yes
+C(5) C(6) C(7) 122.00(10) yes
+C(6) C(7) C(10) 129.30(10) yes
+C(7) C(8) O(1) 108.40(10) yes
+O(1) C(8) O(3) 120.50(10) yes
+O(1) C(9) C(10) 107.70(10) yes
+C(10) C(9) O(2) 131.60(10) yes
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_publ_flag
+C(1) C(2) 1.387(2) yes
+C(1) C(6) 1.399(2) yes
+C(2) C(3) 1.385(2) yes
+C(3) C(4) 1.384(2) yes
+C(4) C(5) 1.390(2) yes
+C(5) C(6) 1.392(2) yes
+C(6) C(7) 1.466(2) yes
+C(7) C(8) 1.502(2) yes
+C(7) C(10) 1.335(2) yes
+C(8) O(1) 1.380(2) yes
+C(8) O(3) 1.186(2) yes
+O(1) C(9) 1.392(2) yes
+C(9) C(10) 1.467(2) yes
+C(9) O(2) 1.192(2) yes

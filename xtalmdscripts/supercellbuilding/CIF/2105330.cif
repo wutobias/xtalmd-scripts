@@ -1,0 +1,82 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-20 02:53:41 +0200 (Sat, 20 Feb 2016) $
+#$Revision: 176768 $
+#$URL: svn://www.crystallography.net/cod/cif/2/10/53/2105330.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2105330
+loop_
+_publ_author_name
+'D. O. Hughes'
+'R. W. H. Small'
+_publ_section_title
+;
+ The Crystal and Molecular Structure of Difluoroacetamide
+;
+_journal_name_full               'Acta Crystallographica Sect. B'
+_journal_page_first              2520
+_journal_page_last               2524
+_journal_paper_doi               10.1107/S0567740872006405
+_journal_volume                  28
+_journal_year                    1972
+_chemical_formula_sum            'C2 H3 F2 N O'
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2ybc'
+_symmetry_space_group_name_H-M   'P 1 21/c 1'
+_cell_angle_alpha                90
+_cell_angle_beta                 128.3(1)
+_cell_angle_gamma                90
+_cell_formula_units_Z            4
+_cell_length_a                   5.143(5)
+_cell_length_b                   12.809(2)
+_cell_length_c                   7.037(4)
+_cell_volume                     363.8(7)
+_cod_data_source_file            prev_ja301318a_2.cif
+_cod_data_source_block           8
+_cod_original_cell_volume        363.802
+_cod_original_sg_symbol_H-M      'P 21/c'
+_cod_database_code               2105330
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+-x,1/2+y,1/2-z
+-x,-y,-z
+x,-1/2-y,-1/2+z
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_B_11
+_atom_site_aniso_B_22
+_atom_site_aniso_B_33
+_atom_site_aniso_B_23
+_atom_site_aniso_B_13
+_atom_site_aniso_B_12
+C1 0.0411(31) 0.00312(27) 0.0140(14) -0.0034(15) 0.0297(36) -0.0030(10)
+C2 0.0274(27) 0.00232(25) 0.0127(14) -0.0005(12) 0.0236(33) -0.00043(87)
+N 0.0405(29) 0.00496(30) 0.0225(15) -0.0079(14) 0.0469(36) -0.00879(99)
+O 0.0431(25) 0.00512(26) 0.0265(13) -0.0081(12) 0.0525(32) -0.01049(90)
+F1 0.1135(38) 0.00895(33) 0.0333(14) -0.0293(17) 0.1092(41) -0.0187(10)
+F2 0.0479(26) 0.00940(34) 0.0302(14) -0.0053(14) 0.0219(32) -0.0155(11)
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.35894(122) 0.17780(37) 0.50523(80)
+C2 C 0.21460(106) 0.10113(32) 0.29345(75)
+N N -0.07514(106) 0.06122(34) 0.20490(76)
+O O 0.36986(89) 0.08551(29) 0.21691(67)
+F1 F 0.24012(111) 0.15598(32) 0.62387(67)
+F2 F 0.68788(90) 0.16614(34) 0.66476(69)
+H1 H 0.84500 0.07200 0.28100
+H2 H 0.82000 0.02600 0.08000
+H3 H 0.31900 0.25900 0.46000

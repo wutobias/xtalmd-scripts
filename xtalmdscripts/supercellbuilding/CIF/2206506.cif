@@ -1,0 +1,331 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-14 16:26:36 +0200 (Sun, 14 Feb 2016) $
+#$Revision: 176435 $
+#$URL: svn://www.crystallography.net/cod/cif/2/20/65/2206506.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2206506
+loop_
+_publ_author_name
+'Kubo, Kanji'
+'Matsumoto, Taisuke'
+'Mori, Akira'
+_publ_section_title
+;
+ 2,7-Dibromo-2,4,6-cycloheptatrien-1-one (2,7-dibromotropone)
+;
+_journal_issue                   8
+_journal_name_full               'Acta Crystallographica Section E'
+_journal_page_first              o2542
+_journal_page_last               o2544
+_journal_paper_doi               10.1107/S1600536805020210
+_journal_volume                  61
+_journal_year                    2005
+_chemical_formula_iupac          'C7 H4 Br2 O '
+_chemical_formula_moiety         'C7 H4 Br2 O '
+_chemical_formula_sum            'C7 H4 Br2 O'
+_chemical_formula_weight         263.92
+_space_group_IT_number           11
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2yb'
+_symmetry_space_group_name_H-M   'P 1 21/m 1'
+_cell_angle_alpha                90
+_cell_angle_beta                 93.274(2)
+_cell_angle_gamma                90
+_cell_formula_units_Z            2
+_cell_length_a                   4.0100(10)
+_cell_length_b                   14.829(5)
+_cell_length_c                   6.111(2)
+_cell_measurement_reflns_used    1084
+_cell_measurement_temperature    123.1
+_cell_measurement_theta_max      27.5
+_cell_measurement_theta_min      3.3
+_cell_volume                     362.79(19)
+_computing_cell_refinement       CrystalClear
+_computing_data_collection       'CrystalClear (Rigaku, 1999)'
+_computing_data_reduction
+;
+CrystalStructure (Rigaku/MSC & Rigaku, 2004)
+;
+_computing_molecular_graphics    'program( reference)?'
+_computing_publication_material  CrystalStructure
+_computing_structure_refinement  'SHELXL97 (Sheldrick, 1997)'
+_computing_structure_solution    'SIR97 (Altomare <i>et al.</i>, 1999)'
+_diffrn_detector_area_resol_mean 7.31
+_diffrn_measured_fraction_theta_full 0.9862
+_diffrn_measured_fraction_theta_max 0.9862
+_diffrn_measurement_device_type  'Rigaku Saturn'
+_diffrn_measurement_method       \w
+_diffrn_radiation_type           'Mo K\a'
+_diffrn_radiation_wavelength     0.7107
+_diffrn_reflns_av_R_equivalents  0.031
+_diffrn_reflns_limit_h_max       5
+_diffrn_reflns_limit_h_min       -5
+_diffrn_reflns_limit_k_max       19
+_diffrn_reflns_limit_k_min       -19
+_diffrn_reflns_limit_l_max       7
+_diffrn_reflns_limit_l_min       -7
+_diffrn_reflns_number            4008
+_diffrn_reflns_theta_full        27.47
+_diffrn_reflns_theta_max         27.47
+_exptl_absorpt_coefficient_mu    11.123
+_exptl_absorpt_correction_T_max  0.801
+_exptl_absorpt_correction_T_min  0.606
+_exptl_absorpt_correction_type   multi-scan
+_exptl_absorpt_process_details   '(Jacobson, 1998)'
+_exptl_crystal_colour            yellow
+_exptl_crystal_density_diffrn    2.416
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_description       platelet
+_exptl_crystal_F_000             248.00
+_exptl_crystal_size_max          0.13
+_exptl_crystal_size_mid          0.03
+_exptl_crystal_size_min          0.02
+_refine_diff_density_max         0.64
+_refine_diff_density_min         -0.42
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.040
+_refine_ls_hydrogen_treatment    constr
+_refine_ls_number_parameters     50
+_refine_ls_number_reflns         859
+_refine_ls_R_factor_gt           0.0190
+_refine_ls_shift/su_max          0.0000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'w = 1/[\s^2^(Fo^2^)+(0.0297P)^2^+0.1070P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_ref         0.0470
+_reflns_number_gt                684
+_reflns_number_total             859
+_reflns_threshold_expression     F^2^>2\s(F^2^)
+_cod_data_source_file            ob6539.cif
+_cod_data_source_block           I
+_cod_original_cell_volume        362.8(2)
+_cod_original_formula_sum        'C7 H4 Br2 O '
+_cod_database_code               2206506
+_cod_database_fobs_code          2206506
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 +X,+Y,+Z
+2 -X,1/2+Y,-Z
+3 -X,-Y,-Z
+4 +X,1/2-Y,+Z
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_calc_flag
+_atom_site_refinement_flags
+_atom_site_occupancy
+_atom_site_type_symbol
+Br1 0.12126(5) 0.063640(10) 0.78602(3) 0.01954(10) Uani d . 1.00 Br
+O1 -0.0639(6) 0.2500 0.8574(4) 0.0223(5) Uani d S 1.00 O
+C1 0.1221(7) 0.2500 0.7057(5) 0.0145(6) Uani d S 1.00 C
+C2 0.2383(5) 0.16450(10) 0.6136(3) 0.0142(4) Uani d . 1.00 C
+C3 0.4002(5) 0.14540(10) 0.4314(3) 0.0156(4) Uani d . 1.00 C
+C4 0.5244(5) 0.20440(10) 0.2710(3) 0.0167(4) Uani d . 1.00 C
+H1 0.4363 0.0843 0.4069 0.019 Uiso c R 1.00 H
+H2 0.6167 0.1769 0.1519 0.020 Uiso c R 1.00 H
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+Br1 0.02500(10) 0.01260(10) 0.02180(10) -0.00130(8) 0.00841(9) 0.00360(7)
+O1 0.0293(12) 0.0190(11) 0.0203(11) 0.0000 0.0150(9) 0.0000
+C1 0.0147(13) 0.0140(10) 0.0143(13) 0.0000 0.0014(10) 0.0000
+C2 0.0129(9) 0.0136(9) 0.0159(9) -0.0034(7) 0.0003(7) 0.0014(7)
+C3 0.0170(10) 0.0113(9) 0.0187(10) -0.0001(8) 0.0021(8) -0.0015(8)
+C4 0.0180(9) 0.0198(11) 0.0127(9) 0.0010(8) 0.0044(7) -0.0021(8)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.003 0.002
+;
+International Tables for Crystallography
+(1992, Vol. C, Tables 4.2.6.8 and 6.1.1.4)
+;
+H H 0.000 0.000
+;
+International Tables for Crystallography
+(1992, Vol. C, Table 6.1.1.4)
+;
+O O 0.011 0.006
+;
+International Tables for Crystallography
+(1992, Vol. C, Tables 4.2.6.8 and 6.1.1.4)
+;
+Br Br -0.290 2.459
+;
+International Tables for Crystallography
+(1992, Vol. C, Tables 4.2.6.8 and 6.1.1.4)
+;
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle_site_symmetry_1
+_geom_angle_site_symmetry_2
+_geom_angle_site_symmetry_3
+_geom_angle
+_geom_angle_publ_flag
+Br1 C2 C1 . . . 111.8(2) yes
+Br1 C2 C3 . . . 115.9(2) yes
+O1 C1 C2 . . . 120.60(10) yes
+O1 C1 C2 . . 4_555 120.60(10) ?
+C1 C2 C3 . . . 132.2(2) yes
+C2 C1 C2 4_555 . . 118.8(2) yes
+C1 C2 Br1 . 4_555 4_555 111.8(2) ?
+C1 C2 C3 . 4_555 4_555 132.2(2) ?
+C2 C3 C4 . . . 129.9(2) yes
+C3 C4 C4 . . 4_555 127.9(2) yes
+C4 C4 C3 . 4_555 4_555 127.9(2) ?
+C2 C3 H1 . . . 115.0374 ?
+H1 C3 C4 . . . 115.0391 ?
+C3 C4 H2 . . . 116.0533 ?
+H2 C4 C4 . . 4_555 116.0481 ?
+C4 C4 H2 . 4_555 4_555 116.0481 ?
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_2
+_geom_bond_distance
+_geom_bond_publ_flag
+Br1 C2 . 1.903(2) yes
+O1 C1 . 1.223(4) yes
+C1 C2 . 1.474(3) yes
+C1 C2 4_555 1.474(3) ?
+C2 C3 . 1.350(3) yes
+C3 C4 . 1.425(3) yes
+C4 C4 4_555 1.352(3) yes
+C3 H1 . 0.9300 ?
+C4 H2 . 0.9300 ?
+loop_
+_geom_contact_atom_site_label_1
+_geom_contact_atom_site_label_2
+_geom_contact_distance
+_geom_contact_site_symmetry_2
+_geom_contact_publ_flag
+Br1 O1 2.9010(7) . ?
+Br1 C1 2.8068(5) . ?
+Br1 C3 2.774(2) . ?
+O1 Br1 2.9010(7) 4_555 ?
+O1 C1 3.342(4) 1_455 ?
+O1 C2 3.344(3) 1_455 ?
+O1 C2 2.346(3) . ?
+O1 C2 3.344(3) 4_455 ?
+O1 C2 2.346(3) 4_555 ?
+O1 C4 3.170(3) 1_456 ?
+O1 C4 3.425(3) 1_556 ?
+O1 C4 3.170(3) 4_456 ?
+O1 C4 3.425(3) 4_556 ?
+C1 Br1 2.8068(5) 4_555 ?
+C1 O1 3.342(4) 1_655 ?
+C1 C3 2.583(3) . ?
+C1 C3 2.583(3) 4_555 ?
+C1 C4 3.540(3) 1_455 yes
+C1 C4 3.256(4) . ?
+C1 C4 3.540(3) 4_455 ?
+C1 C4 3.256(4) 4_555 ?
+C2 O1 3.344(3) 1_655 ?
+C2 C2 2.537(3) 4_555 ?
+C2 C3 3.490(3) 1_455 yes
+C2 C3 3.114(3) 4_555 ?
+C2 C4 3.499(3) 1_455 yes
+C2 C4 2.515(3) . ?
+C2 C4 3.123(3) 4_555 ?
+C3 C2 3.490(3) 1_655 ?
+C3 C2 3.114(3) 4_555 ?
+C3 C3 3.103(3) 4_555 ?
+C3 C4 2.495(3) 4_555 ?
+C4 O1 3.425(3) 1_554 ?
+C4 O1 3.170(3) 1_654 ?
+C4 C1 3.540(3) 1_655 ?
+C4 C2 3.499(3) 1_655 ?
+C4 C2 3.123(3) 4_555 ?
+C4 C3 2.495(3) 4_555 ?
+Br1 H1 3.5040 1_455 ?
+Br1 H1 2.7188 . ?
+Br1 H1 3.3020 3_556 ?
+Br1 H1 3.0971 3_656 ?
+Br1 H2 3.5252 1_456 ?
+Br1 H2 3.3550 1_556 ?
+O1 H2 2.5132 1_456 no
+O1 H2 3.3616 1_556 ?
+O1 H2 2.5132 4_456 no
+O1 H2 3.3616 4_556 ?
+C1 H1 3.3492 . ?
+C1 H1 3.3492 4_555 ?
+C1 H2 3.4532 1_556 ?
+C1 H2 3.4532 4_556 ?
+C2 H1 3.5893 1_455 ?
+C2 H1 1.9367 . ?
+C2 H2 3.2842 . ?
+C2 H2 3.5478 1_556 ?
+C3 H1 3.5967 3_656 ?
+C3 H2 3.5207 1_455 ?
+C3 H2 2.0149 . ?
+C3 H2 3.2847 4_555 ?
+C4 H1 2.0043 . ?
+C4 H1 3.2649 4_555 ?
+C4 H2 1.9487 4_555 ?
+H1 Br1 3.5040 1_655 ?
+H1 Br1 3.3020 3_556 ?
+H1 Br1 3.0971 3_656 ?
+H1 C2 3.5893 1_655 ?
+H1 C3 3.5967 3_656 ?
+H1 C4 3.2649 4_555 ?
+H2 Br1 3.3550 1_554 ?
+H2 Br1 3.5252 1_654 ?
+H2 O1 3.3616 1_554 ?
+H2 O1 2.5132 1_654 ?
+H2 C1 3.4532 1_554 ?
+H2 C2 3.5478 1_554 ?
+H2 C3 3.5207 1_655 ?
+H2 C3 3.2847 4_555 ?
+H2 C4 1.9487 4_555 ?
+Br1 Br1 3.4115(3) 3_557 yes
+loop_
+_geom_hbond_atom_site_label_D
+_geom_hbond_atom_site_label_H
+_geom_hbond_atom_site_label_A
+_geom_hbond_site_symmetry_A
+_geom_hbond_distance_DH
+_geom_hbond_distance_HA
+_geom_hbond_distance_DA
+_geom_hbond_angle_DHA
+_geom_hbond_publ_flag
+C4 H2 O1 1_654 0.93 2.5132 3.170(3) 128 yes
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion_site_symmetry_4
+_geom_torsion
+_geom_torsion_publ_flag
+O1 C1 C2 Br1 . -9.0(4) yes
+O1 C1 C2 C3 . 169.1(3) yes
+Br1 C2 C3 C4 . -179.2(2) yes
+C1 C2 C3 C4 . 2.8(4) yes
+C3 C2 C1 C2 4_555 -11.8(5) yes
+Br1 C2 C1 Br1 4_555 154.0(10) ?
+C2 C3 C4 C4 4_555 4.0(4) yes

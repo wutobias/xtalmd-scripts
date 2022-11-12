@@ -1,0 +1,234 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-20 18:35:30 +0200 (Sat, 20 Feb 2016) $
+#$Revision: 176787 $
+#$URL: svn://www.crystallography.net/cod/cif/2/21/20/2212018.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2212018
+loop_
+_publ_author_name
+'Zhang, Min'
+'Su, Ping'
+'Xu, Xing-Man'
+_publ_section_title
+;
+ 1,4-Bis(bromomethyl)benzene
+;
+_journal_coeditor_code           BH2075
+_journal_issue                   2
+_journal_name_full               'Acta Crystallographica Section E'
+_journal_page_first              o951
+_journal_page_last               o952
+_journal_paper_doi               10.1107/S1600536807002954
+_journal_volume                  63
+_journal_year                    2007
+_chemical_formula_iupac          'C8 H8 Br2'
+_chemical_formula_moiety         'C8 H8 Br2'
+_chemical_formula_sum            'C8 H8 Br2'
+_chemical_formula_weight         263.96
+_chemical_name_systematic
+;
+1,4-Bis(bromomethyl)benzene
+;
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2ybc'
+_symmetry_space_group_name_H-M   'P 1 21/c 1'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_audit_creation_method           SHELXL97
+_cell_angle_alpha                90.00
+_cell_angle_beta                 98.8850(10)
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            2
+_cell_length_a                   8.7424(7)
+_cell_length_b                   4.6275(4)
+_cell_length_c                   10.8189(9)
+_cell_measurement_reflns_used    1976
+_cell_measurement_temperature    297(2)
+_cell_measurement_theta_max      28.02
+_cell_measurement_theta_min      2.36
+_cell_volume                     432.43(6)
+_computing_cell_refinement       SMART
+_computing_data_collection       'SMART (Bruker, 2001)'
+_computing_data_reduction        'SAINT-Plus (Bruker, 2001)'
+_computing_molecular_graphics    'PLATON (Spek, 2003)'
+_computing_publication_material  PLATON
+_computing_structure_refinement  'SHELXL97 (Sheldrick, 1997)'
+_computing_structure_solution    'SHELXS97 (Sheldrick, 1997)'
+_diffrn_ambient_temperature      298(2)
+_diffrn_measured_fraction_theta_full 0.989
+_diffrn_measured_fraction_theta_max 0.989
+_diffrn_measurement_device_type  'Bruker SMART APEX CCD area-detector'
+_diffrn_measurement_method       '0.3\% wide \w exposures'
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_source         'fine focus sealed Siemens Mo tube'
+_diffrn_radiation_type           'Mo k\a'
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0428
+_diffrn_reflns_av_sigmaI/netI    0.0378
+_diffrn_reflns_limit_h_max       10
+_diffrn_reflns_limit_h_min       -10
+_diffrn_reflns_limit_k_max       5
+_diffrn_reflns_limit_k_min       -5
+_diffrn_reflns_limit_l_max       13
+_diffrn_reflns_limit_l_min       -13
+_diffrn_reflns_number            3213
+_diffrn_reflns_theta_full        25.99
+_diffrn_reflns_theta_max         25.99
+_diffrn_reflns_theta_min         3.81
+_diffrn_standards_decay_%        0
+_diffrn_standards_interval_count 0
+_diffrn_standards_interval_time  0
+_diffrn_standards_number         0
+_exptl_absorpt_coefficient_mu    9.295
+_exptl_absorpt_correction_T_max  0.1569
+_exptl_absorpt_correction_T_min  0.082
+_exptl_absorpt_correction_type   multi-scan
+_exptl_absorpt_process_details   '(SADABS; Sheldrick, 1996)'
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    2.027
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_description       plate
+_exptl_crystal_F_000             252
+_exptl_crystal_size_max          0.30
+_exptl_crystal_size_mid          0.30
+_exptl_crystal_size_min          0.20
+_refine_diff_density_max         0.771
+_refine_diff_density_min         -0.850
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.055
+_refine_ls_hydrogen_treatment    constr
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     46
+_refine_ls_number_reflns         848
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      1.055
+_refine_ls_R_factor_all          0.0524
+_refine_ls_R_factor_gt           0.0475
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'calc w = 1/[\s^2^(Fo^2^)+(0.1099P)^2^] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.1458
+_refine_ls_wR_factor_ref         0.1486
+_reflns_number_gt                712
+_reflns_number_total             848
+_reflns_threshold_expression     I>2\s(I)
+_cod_data_source_file            bh2075.cif
+_cod_data_source_block           I
+_cod_original_sg_symbol_H-M      'P 21/c'
+_cod_database_code               2212018
+_cod_database_fobs_code          2212018
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x, y+1/2, -z+1/2'
+'-x, -y, -z'
+'x, -y-1/2, z-1/2'
+loop_
+_atom_site_type_symbol
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_calc_flag
+_atom_site_refinement_flags
+_atom_site_occupancy
+Br Br1 0.12045(5) 0.07974(12) 0.16966(4) 0.0578(4) Uani d . 1
+C C1 0.3699(5) 0.1456(10) 0.0280(4) 0.0435(10) Uani d . 1
+C C2 0.5155(6) 0.1886(11) 0.1000(5) 0.0493(11) Uani d . 1
+H H2 0.5257 0.3154 0.1675 0.059 Uiso calc R 1
+C C3 0.6432(6) 0.0451(11) 0.0720(5) 0.0511(12) Uani d . 1
+H H3 0.7393 0.0760 0.1205 0.061 Uiso calc R 1
+C C4 0.2306(7) 0.3049(12) 0.0570(6) 0.0585(13) Uani d . 1
+H H4A 0.1613 0.3442 -0.0202 0.070 Uiso calc R 1
+H H4B 0.2627 0.4885 0.0959 0.070 Uiso calc R 1
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+Br1 0.0532(5) 0.0686(5) 0.0573(5) -0.0004(2) 0.0272(3) -0.00340(19)
+C1 0.044(3) 0.041(2) 0.049(2) 0.0051(19) 0.022(2) 0.0073(18)
+C2 0.054(3) 0.049(2) 0.049(2) -0.001(2) 0.019(2) -0.005(2)
+C3 0.048(3) 0.056(3) 0.051(3) -0.002(2) 0.013(2) 0.002(2)
+C4 0.053(3) 0.050(3) 0.079(3) 0.008(2) 0.031(3) 0.010(3)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+Br Br -0.2901 2.4595 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle_site_symmetry_1
+_geom_angle_site_symmetry_3
+_geom_angle
+_geom_angle_publ_flag
+C3 C1 C2 3_655 . 118.9(4) no
+C3 C1 C4 3_655 . 120.3(5) no
+C2 C1 C4 . . 120.8(4) no
+C3 C2 C1 . . 120.6(5) no
+C3 C2 H2 . . 119.7 no
+C1 C2 H2 . . 119.7 no
+C2 C3 C1 . 3_655 120.5(5) no
+C2 C3 H3 . . 119.7 no
+C1 C3 H3 3_655 . 119.7 no
+C1 C4 Br1 . . 111.2(3) no
+C1 C4 H4A . . 109.4 no
+Br1 C4 H4A . . 109.4 no
+C1 C4 H4B . . 109.4 no
+Br1 C4 H4B . . 109.4 no
+H4A C4 H4B . . 108.0 no
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_2
+_geom_bond_distance
+_geom_bond_publ_flag
+Br1 C4 . 1.965(6) no
+C1 C3 3_655 1.387(7) no
+C1 C2 . 1.400(7) no
+C1 C4 . 1.498(7) no
+C2 C3 . 1.372(7) no
+C2 H2 . 0.9300 no
+C3 C1 3_655 1.387(7) no
+C3 H3 . 0.9300 no
+C4 H4A . 0.9700 no
+C4 H4B . 0.9700 no
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion_site_symmetry_1
+_geom_torsion_site_symmetry_4
+_geom_torsion
+_geom_torsion_publ_flag
+C3 C1 C2 C3 3_655 . 0.2(8) no
+C4 C1 C2 C3 . . -179.1(5) no
+C1 C2 C3 C1 . 3_655 -0.2(8) no
+C3 C1 C4 Br1 3_655 . 88.2(5) no
+C2 C1 C4 Br1 . . -92.5(5) no

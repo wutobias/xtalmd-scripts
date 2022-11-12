@@ -1,0 +1,268 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-13 14:50:18 +0200 (Sat, 13 Feb 2016) $
+#$Revision: 176428 $
+#$URL: svn://www.crystallography.net/cod/cif/4/51/35/4513593.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_4513593
+loop_
+_publ_author_name
+'Dobrzycki, Lukasz'
+'Taraszewska, Paulina'
+'Boese, Roland'
+'Cyra\'nski, Micha\/l K.'
+_publ_section_title
+;
+ Pyrrolidine and Its Hydrates in the Solid State
+;
+_journal_issue                   10
+_journal_name_full               'Crystal Growth &amp; Design'
+_journal_page_first              4804
+_journal_paper_doi               10.1021/acs.cgd.5b00527
+_journal_volume                  15
+_journal_year                    2015
+_chemical_formula_sum            'C4 H9 N'
+_chemical_formula_weight         71.12
+_chemical_name_common            'pyrrolidine LT phase at 135K'
+_chemical_name_systematic
+; 
+ Pyrrolidine - low temperature phase at 135K
+;
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2ybc'
+_symmetry_space_group_name_H-M   'P 1 21/c 1'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_cell_angle_alpha                90.00
+_cell_angle_beta                 110.561(6)
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            4
+_cell_length_a                   8.6611(17)
+_cell_length_b                   5.2080(9)
+_cell_length_c                   10.672(2)
+_cell_measurement_reflns_used    1794
+_cell_measurement_temperature    135(2)
+_cell_measurement_theta_max      26.390
+_cell_measurement_theta_min      2.615
+_cell_volume                     450.72(15)
+_computing_cell_refinement       'SAINT V8.27B (Bruker AXS Inc., 2012)'
+_computing_data_collection       'APEX2 v2013.2-0 (Bruker AXS Inc., 2012)'
+_computing_data_reduction        'SAINT V8.27B (Bruker AXS Inc., 2012)'
+_computing_molecular_graphics    'Diamond 2.1 (Branderburg & Putz, 2012)'
+_computing_publication_material  'APEX2 v2013.2-0 (Bruker AXS Inc., 2012)'
+_computing_structure_refinement  'SHELXL-97 (Sheldrick, 2008)'
+_computing_structure_solution    'SHELXS-97 (Sheldrick, 2008)'
+_diffrn_ambient_temperature      135(2)
+_diffrn_detector_area_resol_mean 10.4167
+_diffrn_measured_fraction_theta_full 0.984
+_diffrn_measured_fraction_theta_max 0.984
+_diffrn_measurement_device_type  'Bruker D8 Venture CMOS area-detector'
+_diffrn_measurement_method       'phi scan'
+_diffrn_radiation_monochromator  'Bruker Triumph'
+_diffrn_radiation_source         'fine-focus sealed tube'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0000
+_diffrn_reflns_av_sigmaI/netI    0.0286
+_diffrn_reflns_limit_h_max       9
+_diffrn_reflns_limit_h_min       -10
+_diffrn_reflns_limit_k_max       6
+_diffrn_reflns_limit_k_min       0
+_diffrn_reflns_limit_l_max       12
+_diffrn_reflns_limit_l_min       0
+_diffrn_reflns_number            786
+_diffrn_reflns_theta_full        25.04
+_diffrn_reflns_theta_max         25.04
+_diffrn_reflns_theta_min         2.51
+_exptl_absorpt_coefficient_mu    0.063
+_exptl_absorpt_correction_T_max  0.9813
+_exptl_absorpt_correction_T_min  0.9631
+_exptl_absorpt_correction_type   multi-scan
+_exptl_absorpt_process_details
+;
+SADABS V2012/1 (Bruker AXS Inc.) 
+;
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    1.048
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_description       cylindical
+_exptl_crystal_F_000             160
+_exptl_crystal_size_max          0.60
+_exptl_crystal_size_mid          0.30
+_exptl_crystal_size_min          0.30
+_refine_diff_density_max         0.225
+_refine_diff_density_min         -0.212
+_refine_diff_density_rms         0.053
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.189
+_refine_ls_hydrogen_treatment    mixed
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     50
+_refine_ls_number_reflns         786
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      1.189
+_refine_ls_R_factor_all          0.0673
+_refine_ls_R_factor_gt           0.0601
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'calc w=1/[\s^2^(Fo^2^)+(0.0630P)^2^+0.4606P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.1721
+_refine_ls_wR_factor_ref         0.1769
+_reflns_number_gt                625
+_reflns_number_total             786
+_reflns_threshold_expression     >2sigma(I)
+_cod_data_source_file            cg5b00527_si_001.cif
+_cod_data_source_block           Pyrrolidine_LT_135K
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+
+'_symmetry_cell_setting' value 'Monoclinic' changed to 'monoclinic'
+according to
+/usr/data/users/saulius/crontab/automatic-downloads/rss-feeds/ACS/lib/dictionaries/cif_core.dic
+dictionary named 'cif_core.dic' version 2.4.2 from 2011-04-26.
+
+Automatic conversion script
+Id: cif_fix_values 3271 2015-04-21 07:52:19Z andrius 
+
+ Adding full bibliography for 4513593--4513603.cif.
+;
+_cod_original_cell_volume        450.73(15)
+_cod_original_sg_symbol_H-M      P21/c
+_cod_database_code               4513593
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x, y+1/2, -z+1/2'
+'-x, -y, -z'
+'x, -y-1/2, z-1/2'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_occupancy
+_atom_site_symmetry_multiplicity
+_atom_site_calc_flag
+_atom_site_refinement_flags
+N1 N 0.6060(3) 0.5215(4) 0.3048(2) 0.0305(6) Uani 1 1 d .
+H1N H 0.540(3) 0.405(6) 0.266(3) 0.030(8) Uiso 1 1 d .
+C2 C 0.6870(3) 0.4279(5) 0.4408(2) 0.0332(7) Uani 1 1 d .
+H2A H 0.6051 0.3500 0.4749 0.040 Uiso 1 1 calc R
+H2B H 0.7423 0.5710 0.5008 0.040 Uiso 1 1 calc R
+C3 C 0.8138(3) 0.2268(5) 0.4360(2) 0.0331(7) Uani 1 1 d .
+H3A H 0.7687 0.0511 0.4320 0.040 Uiso 1 1 calc R
+H3B H 0.9159 0.2406 0.5155 0.040 Uiso 1 1 calc R
+C4 C 0.8477(3) 0.2899(5) 0.3078(3) 0.0367(7) Uani 1 1 d .
+H4A H 0.9655 0.3320 0.3283 0.044 Uiso 1 1 calc R
+H4B H 0.8179 0.1434 0.2447 0.044 Uiso 1 1 calc R
+C5 C 0.7390(3) 0.5216(5) 0.2491(3) 0.0342(7) Uani 1 1 d .
+H5A H 0.8041 0.6819 0.2736 0.041 Uiso 1 1 calc R
+H5B H 0.6926 0.5090 0.1503 0.041 Uiso 1 1 calc R
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+N1 0.0280(11) 0.0236(12) 0.0361(12) -0.0005(9) 0.0063(9) 0.0005(9)
+C2 0.0354(14) 0.0354(15) 0.0325(14) -0.0012(11) 0.0168(11) 0.0090(11)
+C3 0.0356(14) 0.0327(15) 0.0296(13) 0.0008(11) 0.0098(10) 0.0109(11)
+C4 0.0394(15) 0.0349(16) 0.0407(15) -0.0021(12) 0.0201(12) 0.0026(12)
+C5 0.0461(16) 0.0261(14) 0.0356(14) -0.0010(10) 0.0208(12) -0.0012(11)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+N N 0.0061 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+C2 N1 C5 103.39(19)
+C2 N1 H1N 104.9(19)
+C5 N1 H1N 107.3(19)
+N1 C2 C3 107.17(19)
+N1 C2 H2A 110.3
+C3 C2 H2A 110.3
+N1 C2 H2B 110.3
+C3 C2 H2B 110.3
+H2A C2 H2B 108.5
+C2 C3 C4 104.3(2)
+C2 C3 H3A 110.9
+C4 C3 H3A 110.9
+C2 C3 H3B 110.9
+C4 C3 H3B 110.9
+H3A C3 H3B 108.9
+C5 C4 C3 104.7(2)
+C5 C4 H4A 110.8
+C3 C4 H4A 110.8
+C5 C4 H4B 110.8
+C3 C4 H4B 110.8
+H4A C4 H4B 108.9
+N1 C5 C4 107.0(2)
+N1 C5 H5A 110.3
+C4 C5 H5A 110.3
+N1 C5 H5B 110.3
+C4 C5 H5B 110.3
+H5A C5 H5B 108.6
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+N1 C2 1.457(3)
+N1 C5 1.471(3)
+N1 H1N 0.84(3)
+C2 C3 1.532(3)
+C2 H2A 0.9900
+C2 H2B 0.9900
+C3 C4 1.532(4)
+C3 H3A 0.9900
+C3 H3B 0.9900
+C4 C5 1.523(4)
+C4 H4A 0.9900
+C4 H4B 0.9900
+C5 H5A 0.9900
+C5 H5B 0.9900
+loop_
+_geom_hbond_atom_site_label_D
+_geom_hbond_atom_site_label_H
+_geom_hbond_atom_site_label_A
+_geom_hbond_distance_DH
+_geom_hbond_distance_HA
+_geom_hbond_distance_DA
+_geom_hbond_angle_DHA
+_geom_hbond_site_symmetry_A
+N1 H1N N1 0.84(3) 2.34(3) 3.164(2) 167(3) 2_645
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion
+C5 N1 C2 C3 -35.7(3)
+N1 C2 C3 C4 21.9(3)
+C2 C3 C4 C5 0.2(3)
+C2 N1 C5 C4 35.8(3)
+C3 C4 C5 N1 -22.0(3)

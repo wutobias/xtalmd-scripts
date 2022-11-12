@@ -1,0 +1,148 @@
+#------------------------------------------------------------------------------
+#$Date: 2022-09-28 18:08:17 +0300 (Wed, 28 Sep 2022) $
+#$Revision: 278247 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/2/10/13/2101393.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2101393
+loop_
+_publ_author_name
+'Wojtczak, A.'
+'Cody, V.'
+_publ_section_title
+;
+ Structure-activity relationships of inotropic bipyridines:
+ crystallographic analysis of four milrinone analogues
+;
+_journal_issue                   6
+_journal_name_full               'Acta Crystallographica Section B'
+_journal_page_first              981
+_journal_page_last               986
+_journal_paper_doi               10.1107/S0108768195000395
+_journal_volume                  51
+_journal_year                    1995
+_chemical_formula_moiety         'C13 H11 N3 O1'
+_chemical_formula_sum            'C13 H11 N3 O'
+_chemical_formula_weight         225.25
+_space_group_IT_number           2
+_space_group_name_Hall           '-P 1'
+_space_group_name_H-M_alt        'P -1'
+_symmetry_cell_setting           triclinic
+_symmetry_space_group_name_Hall  '-P 1'
+_symmetry_space_group_name_H-M   'P -1'
+_cell_angle_alpha                81.31(2)
+_cell_angle_beta                 85.28(2)
+_cell_angle_gamma                66.02(2)
+_cell_formula_units_Z            2
+_cell_length_a                   6.7040(10)
+_cell_length_b                   6.8460(10)
+_cell_length_c                   13.273(3)
+_cell_volume                     550.06(19)
+_diffrn_radiation_type           Mo
+_diffrn_radiation_wavelength     0.71073
+_exptl_absorpt_coefficient_mu    0.084
+_exptl_crystal_density_diffrn    1.360
+_exptl_crystal_F_000             236
+_cod_data_source_file            bk0018.cif
+_cod_data_source_block           bk0018b
+_cod_original_cell_volume        550.0(2)
+_cod_original_formula_sum        'C13 H11 N3 O1'
+_cod_database_code               2101393
+loop_
+_space_group_symop_id
+_space_group_symop_operation_xyz
+1 x,y,z
+2 -x,-y,-z
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C(1) .4874(3) .8758(3) .80740(10)
+C(2) .7107(3) .7840(2) .81850(10)
+C(21) .8741(3) .7910(3) .73650(10)
+N(3) .7935(2) .6876(2) .91220(10)
+C(4) .6742(3) .6698(2) .99980(10)
+O(4) .7671(2) .5666(2) 1.08070(10)
+C(5) .4424(3) .7755(3) .98860(10)
+C(51) .3052(3) .7706(3) 1.07650(10)
+N(52) .1915(3) .7678(2) 1.14590(10)
+C(6) .3547(3) .8733(3) .89410(10)
+C(1') .3827(3) .9779(3) .70700(10)
+C(2') .3830(3) .8548(3) .63200(10)
+C(21') .4964(4) .6134(3) .6440(2)
+C(3') .2685(3) .9661(3) .54370(10)
+N(4') .1618(3) 1.1803(2) .52530(10)
+C(5') .1647(3) 1.2942(3) .59810(10)
+C(6') .2701(3) 1.2013(3) .68950(10)
+H(21A) .822(4) .795(3) .672(2)
+H(21B) 1.015(4) .667(3) .748(2)
+H(21C) .897(4) .919(3) .738(2)
+H(6) .194(4) .944(3) .8870(10)
+H(21'A) .658(4) .563(3) .635(2)
+H(21'B) .438(4) .554(4) .596(2)
+H(21'C) .484(4) .548(3) .714(2)
+H(3') .261(4) .885(3) .489(2)
+H(5') .086(4) 1.451(3) .584(2)
+H(6') .266(4) 1.292(3) .742(2)
+H(N3) .947(4) .604(3) .9160(10)
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+C(2) C(1) C(6) 118.3(2)
+C(2) C(1) C(1') 122.7(2)
+C(6) C(1) C(1') 119.0(2)
+C(1) C(2) N(3) 119.1(2)
+C(1) C(2) C(21) 125.1(2)
+C(21) C(2) N(3) 115.7(2)
+C(2) N(3) C(4) 126.0(2)
+N(3) C(4) O(4) 120.8(2)
+N(3) C(4) C(5) 114.5(2)
+O(4) C(4) C(5) 124.7(2)
+C(4) C(5) C(6) 120.4(2)
+C(4) C(5) C(51) 118.4(2)
+C(51) C(5) C(6) 121.2(2)
+C(5) C(51) N(52) 178.6(2)
+C(5) C(6) C(1) 121.6(2)
+C(1) C(1') C(2') 121.8(2)
+C(1) C(1') C(6') 119.3(2)
+C(2') C(1') C(6') 118.8(2)
+C(1') C(2') C(3') 117.0(2)
+C(1') C(2') C(21') 122.9(2)
+C(21') C(2') C(3') 120.1(2)
+C(2') C(3') N(4') 125.0(2)
+C(3') N(4') C(5') 116.8(2)
+N(4') C(5') C(6') 123.4(2)
+C(1') C(6') C(5') 119.1(2)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+C(1) C(2) 1.379(2)
+C(1) C(6) 1.398(2)
+C(1) C(1') 1.494(2)
+C(2) N(3) 1.363(2)
+C(2) C(21) 1.489(3)
+N(3) C(4) 1.374(2)
+C(4) C(5) 1.432(2)
+C(4) O(4) 1.251(2)
+C(5) C(6) 1.384(2)
+C(5) C(51) 1.430(2)
+C(51) N(52) 1.150(2)
+C(1') C(2') 1.398(3)
+C(1') C(6') 1.395(2)
+C(2') C(3') 1.395(2)
+C(2') C(21') 1.501(2)
+C(3') N(4') 1.338(2)
+N(4') C(5') 1.336(3)
+C(5') C(6') 1.385(2)

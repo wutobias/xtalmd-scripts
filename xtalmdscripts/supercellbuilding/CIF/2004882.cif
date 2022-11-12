@@ -1,0 +1,230 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-19 16:29:56 +0200 (Fri, 19 Feb 2016) $
+#$Revision: 176759 $
+#$URL: svn://www.crystallography.net/cod/cif/2/00/48/2004882.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2004882
+loop_
+_publ_author_name
+'Frampton, C. S.'
+_publ_section_title
+;
+ 1,1-Diamino-2,2-dicyanoethene
+;
+_journal_issue                   5
+_journal_name_full               'Acta Crystallographica Section C'
+_journal_page_first              1218
+_journal_page_last               1220
+_journal_paper_doi               10.1107/S0108270195015721
+_journal_volume                  52
+_journal_year                    1996
+_chemical_formula_iupac          'C4 H4 N4'
+_chemical_formula_sum            'C4 H4 N4'
+_chemical_formula_weight         108.10
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2ybc'
+_symmetry_space_group_name_H-M   'P 1 21/c 1'
+_cell_angle_alpha                90.
+_cell_angle_beta                 100.345(9)
+_cell_angle_gamma                90.
+_cell_formula_units_Z            4
+_cell_length_a                   8.444(2)
+_cell_length_b                   5.015(2)
+_cell_length_c                   12.5573(9)
+_cell_measurement_reflns_used    25
+_cell_measurement_temperature    290.0
+_cell_measurement_theta_max      18.5
+_cell_measurement_theta_min      13.1
+_cell_volume                     523.1(2)
+_computing_cell_refinement       'MSC/AFC Diffractometer Control Software'
+_computing_data_collection
+;
+MSC/AFC Diffractometer Control Software
+(Molecular Structure Corporation, 1993a)
+;
+_computing_data_reduction
+'TEXSAN (Molecular Structure Corporation, 1993b)'
+_computing_molecular_graphics    TEXSAN
+_computing_publication_material  TEXSAN
+_computing_structure_refinement  TEXSAN
+_computing_structure_solution    'SHELXS86 (Sheldrick, 1990)'
+_diffrn_ambient_temperature      290.0
+_diffrn_measurement_device       'Rigaku AFC-7R'
+_diffrn_measurement_method       \w/2\q
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_source         'RU 200 Rigaku rotating Mo anode'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.7107
+_diffrn_reflns_av_R_equivalents  0.0096
+_diffrn_reflns_limit_h_max       10
+_diffrn_reflns_limit_h_min       0
+_diffrn_reflns_limit_k_max       6
+_diffrn_reflns_limit_k_min       0
+_diffrn_reflns_limit_l_max       15
+_diffrn_reflns_limit_l_min       -16
+_diffrn_reflns_number            1220
+_diffrn_reflns_theta_max         27.00
+_diffrn_reflns_theta_min         3.30
+_diffrn_standards_decay_%        0.70
+_diffrn_standards_interval_count 150
+_diffrn_standards_number         3
+_exptl_absorpt_coefficient_mu    0.097
+_exptl_absorpt_correction_T_max  0.990
+_exptl_absorpt_correction_T_min  0.965
+_exptl_absorpt_correction_type   analytical
+_exptl_absorpt_process_details   Tompa_analytical
+_exptl_crystal_colour            'pale pink'
+_exptl_crystal_density_diffrn    1.372
+_exptl_crystal_density_meas      ?
+_exptl_crystal_description       plate
+_exptl_crystal_F_000             224
+_exptl_crystal_size_max          0.40
+_exptl_crystal_size_mid          0.38
+_exptl_crystal_size_min          0.11
+_refine_diff_density_max         0.13
+_refine_diff_density_min         -0.12
+_refine_ls_extinction_coef       84.58906
+_refine_ls_extinction_method     'Zachariasen type II, Gaussian isotropic'
+_refine_ls_goodness_of_fit_obs   2.590
+_refine_ls_hydrogen_treatment    refall
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     90
+_refine_ls_number_reflns         899
+_refine_ls_R_factor_all          0.0474
+_refine_ls_R_factor_obs          0.0320
+_refine_ls_shift/esd_max         <0.0001
+_refine_ls_shift/esd_mean        0.0000
+_refine_ls_structure_factor_coef F
+_refine_ls_weighting_scheme      'sigma; w = 1/[\s^2^(F~o~)]'
+_refine_ls_wR_factor_all         0.0403
+_refine_ls_wR_factor_obs         0.0390
+_reflns_number_observed          899
+_reflns_number_total             1145
+_reflns_observed_criterion       I>2.5\s(I)
+_cod_data_source_file            ha1153.cif
+_cod_data_source_block           ha1153
+_cod_original_sg_symbol_H-M      'P 21/c'
+_cod_database_code               2004882
+loop_
+_symmetry_equiv_pos_as_xyz
+'   +x,   +y,   +z'
+'   -x,1/2+y,1/2-z'
+'   -x,   -y,   -z'
+'   +x,1/2-y,1/2+z'
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+N(1) 0.0620(8) 0.0531(8) 0.0399(7) 0.0085(7) 0.0058(6) 0.0043(6)
+N(2) 0.0592(8) 0.0574(8) 0.0405(7) 0.0152(6) 0.0106(6) 0.0047(6)
+N(3) 0.0759(9) 0.0544(8) 0.0704(9) 0.0114(8) 0.0173(7) -0.0006(7)
+N(4) 0.0697(9) 0.0870(10) 0.0385(7) 0.0137(8) 0.0076(6) 0.0004(7)
+C(1) 0.0389(6) 0.0407(7) 0.0406(7) -0.0048(6) 0.0059(5) 0.0029(5)
+C(2) 0.0433(7) 0.0428(7) 0.0407(7) -0.0016(6) 0.0052(5) -0.0007(6)
+C(3) 0.0517(8) 0.0420(7) 0.0459(8) -0.0046(7) 0.0083(6) -0.0020(6)
+C(4) 0.0490(8) 0.0538(8) 0.0413(7) 0.0014(6) 0.0094(6) -0.0058(6)
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+N(1) 0.1947(2) 0.5781(3) -0.05932(10) 0.0521 Uani
+N(2) 0.3630(2) 0.2739(3) 0.0370(1) 0.0522 Uani
+N(3) 0.0368(2) 0.9761(3) 0.1368(1) 0.0664 Uani
+N(4) 0.3822(2) 0.4032(3) 0.31350(10) 0.0651 Uani
+C(1) 0.2642(2) 0.4808(3) 0.03629(10) 0.0402 Uani
+C(2) 0.2355(2) 0.5932(3) 0.1342(1) 0.0425 Uani
+C(3) 0.1264(2) 0.8045(3) 0.1359(1) 0.0466 Uani
+C(4) 0.3151(2) 0.4892(3) 0.2333(1) 0.0478 Uani
+H(1) 0.127(2) 0.717(4) -0.065(1) 0.071(5) Uiso
+H(2) 0.213(2) 0.492(3) -0.121(2) 0.072(5) Uiso
+H(3) 0.413(2) 0.204(4) 0.099(1) 0.073(5) Uiso
+H(4) 0.385(2) 0.208(3) -0.031(1) 0.066(5) Uiso
+loop_
+_atom_type_symbol
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C 0.003 0.002 'International Tables'
+H 0.000 0.000 'International Tables'
+N 0.006 0.003 'International Tables'
+loop_
+_diffrn_standard_refln_index_h
+_diffrn_standard_refln_index_k
+_diffrn_standard_refln_index_l
+0 1 4
+-1 1 4
+1 0 4
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+_geom_angle_publ_flag
+N(1) C(1) N(2) 117.80(10) yes
+N(1) C(1) C(2) 121.50(10) yes
+N(2) C(1) C(2) 120.70(10) yes
+C(1) C(2) C(3) 121.90(10) yes
+C(1) C(2) C(4) 119.60(10) yes
+C(3) C(2) C(4) 118.50(10) yes
+N(3) C(3) C(2) 179.60(10) yes
+N(4) C(4) C(2) 178.90(10) yes
+C(1) N(1) H(1) 122.0(10) no
+C(1) N(1) H(2) 118.0(10) no
+H(1) N(1) H(2) 119.0(10) no
+C(1) N(2) H(3) 121.0(10) no
+C(1) N(2) H(4) 119.0(10) no
+H(3) N(2) H(4) 119.0(10) no
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+_geom_bond_publ_flag
+C(1) C(2) 1.413(2) yes
+N(1) C(1) 1.331(2) yes
+N(2) C(1) 1.330(2) yes
+C(2) C(3) 1.407(2) yes
+C(2) C(4) 1.404(2) yes
+N(3) C(3) 1.148(2) yes
+N(4) C(4) 1.148(2) yes
+N(1) H(1) 0.90(2) yes
+N(1) H(2) 0.92(2) yes
+N(2) H(3) 0.89(2) yes
+N(2) H(4) 0.96(2) yes
+loop_
+_geom_contact_atom_site_label_1
+_geom_contact_atom_site_label_2
+_geom_contact_distance
+_geom_contact_site_symmetry_2
+_geom_contact_publ_flag
+N(3) H(1) 2.15(2) 3_575 yes
+N(4) H(4) 2.03(2) 4 yes
+N(4) H(3) 2.41(2) 2_655 yes
+N(4) H(2) 2.66(2) 4 yes
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion
+_geom_torsion_publ_flag
+N(1) C(1) C(2) C(3) 3.2(2) yes
+N(1) C(1) C(2) C(4) -178.10(10) yes
+N(2) C(1) C(2) C(3) -177.20(10) yes
+N(2) C(1) C(2) C(4) 1.5(2) yes

@@ -1,0 +1,258 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-10-13 08:28:26 +0300 (Fri, 13 Oct 2017) $
+#$Revision: 201972 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/2/10/06/2100662.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2100662
+loop_
+_publ_author_name
+'Marcin Podsiad{\l}o'
+'Andrzej Katrusiak'
+_publ_contact_author_fax         +48(61)8658008
+_publ_contact_author_phone       +48(61)8291443
+_publ_section_title
+;
+ Pressure-frozen 1,2,3-trichloropropane
+;
+_journal_issue                   6
+_journal_name_full               'Acta Crystallographica Section B'
+_journal_page_first              1071
+_journal_page_last               1077
+_journal_paper_doi               10.1107/S0108768106030229
+_journal_volume                  62
+_journal_year                    2006
+_chemical_formula_moiety         C3H5Cl3
+_chemical_formula_sum            'C3 H5 Cl3'
+_chemical_formula_weight         147.42
+_chemical_melting_point          259
+_chemical_name_common            1,2,3-trichloropropane
+_chemical_name_systematic
+;
+1,2,3-trichloropropane
+;
+_space_group_IT_number           14
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_Hall  '-P 2yn'
+_symmetry_space_group_name_H-M   'P 1 21/n 1'
+_atom_sites_solution_hydrogens   geom
+_atom_sites_solution_primary     direct
+_atom_sites_solution_secondary   difmap
+_audit_creation_method           SHELXL-97
+_cell_angle_alpha                90.00
+_cell_angle_beta                 96.21(3)
+_cell_angle_gamma                90.00
+_cell_formula_units_Z            4
+_cell_length_a                   5.1404(10)
+_cell_length_b                   11.363(2)
+_cell_length_c                   9.885(2)
+_cell_measurement_reflns_used    3519
+_cell_measurement_temperature    295(2)
+_cell_measurement_theta_max      30
+_cell_measurement_theta_min      3
+_cell_volume                     574.00(19)
+_computing_cell_refinement       'CrysAlis (Oxford Diffraction, 2004)'
+_computing_data_collection       'CrysAlis (Oxford Diffraction, 2004)'
+_computing_data_reduction        'CrysAlis (Oxford Diffraction, 2004)'
+_computing_molecular_graphics    'XP (Siemens, 1990)'
+_computing_publication_material  'SHELXL-97 (Sheldrick, 1997)'
+_computing_structure_refinement  'SHELXL-97 (Sheldrick, 1997)'
+_computing_structure_solution    'SHELXS-97 (Sheldrick, 1990)'
+_diffrn_ambient_temperature      293(2)
+_diffrn_measured_fraction_theta_full 0.402
+_diffrn_measured_fraction_theta_max 0.402
+_diffrn_measurement_device_type  'Kuma KM4CCD \k geometry'
+_diffrn_measurement_method       '\w scans'
+_diffrn_radiation_monochromator  graphite
+_diffrn_radiation_source         'fine-focus sealed tube'
+_diffrn_radiation_type           MoK\a
+_diffrn_radiation_wavelength     0.71073
+_diffrn_reflns_av_R_equivalents  0.0823
+_diffrn_reflns_av_sigmaI/netI    0.0386
+_diffrn_reflns_limit_h_max       7
+_diffrn_reflns_limit_h_min       -6
+_diffrn_reflns_limit_k_max       6
+_diffrn_reflns_limit_k_min       -6
+_diffrn_reflns_limit_l_max       13
+_diffrn_reflns_limit_l_min       -13
+_diffrn_reflns_number            4431
+_diffrn_reflns_theta_full        30.11
+_diffrn_reflns_theta_max         30.11
+_diffrn_reflns_theta_min         2.74
+_exptl_absorpt_coefficient_mu    1.444
+_exptl_absorpt_correction_T_max  0.61
+_exptl_absorpt_correction_T_min  0.20
+_exptl_absorpt_correction_type   analytical
+_exptl_absorpt_process_details
+;
+Katrusiak, A. (2003). REDSHADE - Program for correcting
+reflections intensities for DAC absorption, gasket shadowing
+and sample crystal absorption. Adam Mickiewicz University, Pozna\'n.
+Katrusiak, A. (2004). Z. Kristallogr. 219, 461-467
+;
+_exptl_crystal_colour            colourless
+_exptl_crystal_density_diffrn    1.706
+_exptl_crystal_density_method    'not measured'
+_exptl_crystal_description       cylinder
+_exptl_crystal_F_000             296
+_exptl_crystal_size_max          0.46
+_exptl_crystal_size_mid          0.41
+_exptl_crystal_size_min          0.26
+_refine_diff_density_max         0.322
+_refine_diff_density_min         -0.340
+_refine_ls_extinction_method     none
+_refine_ls_goodness_of_fit_ref   1.033
+_refine_ls_hydrogen_treatment    mixed
+_refine_ls_matrix_type           full
+_refine_ls_number_parameters     77
+_refine_ls_number_reflns         679
+_refine_ls_number_restraints     0
+_refine_ls_restrained_S_all      1.033
+_refine_ls_R_factor_all          0.0798
+_refine_ls_R_factor_gt           0.0625
+_refine_ls_shift/su_max          0.000
+_refine_ls_shift/su_mean         0.000
+_refine_ls_structure_factor_coef Fsqd
+_refine_ls_weighting_details
+'calc w=1/[\s^2^(Fo^2^)+(0.1174P)^2^+0.0000P] where P=(Fo^2^+2Fc^2^)/3'
+_refine_ls_weighting_scheme      calc
+_refine_ls_wR_factor_gt          0.1508
+_refine_ls_wR_factor_ref         0.1668
+_reflns_number_gt                520
+_reflns_number_total             679
+_reflns_threshold_expression     >4sigma(I)
+_cod_data_source_file            av5065.cif
+_cod_data_source_block           1tcp
+_cod_depositor_comments
+;
+The following automatic conversions were performed:
+'_symmetry_cell_setting' value 'Monoclinic' changed to 'monoclinic'
+according to '/home/saulius/struct/CIF-dictionaries/cif_core.dic'
+dictionary named 'cif_core.dic' version 2.4.1 from 2010-06-29.
+
+Automatic conversion script
+Id: cif_fix_enum 1527 2010-12-29 10:47:43Z saulius 
+
+The following automatic conversions were performed:
+
+'_symmetry_cell_setting' value 'Monoclinic' changed to 'monoclinic'
+according to /home/saulius/struct/CIF-dictionaries/cif_core.dic
+dictionary named 'cif_core.dic' version 2.4.1 from 2010-06-29.
+
+Automatic conversion script
+Id: cif_fix_values 1715 2011-07-08 13:25:40Z adriana 
+;
+_cod_original_cell_volume        574.0(2)
+_cod_original_sg_symbol_H-M      'P 2(1) / n'
+_cod_database_code               2100662
+_cod_database_fobs_code          2100662
+loop_
+_symmetry_equiv_pos_as_xyz
+'x, y, z'
+'-x+1/2, y+1/2, -z+1/2'
+'-x, -y, -z'
+'x-1/2, -y-1/2, z-1/2'
+loop_
+_atom_site_type_symbol
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_adp_type
+_atom_site_calc_flag
+_atom_site_occupancy
+Cl Cl3 0.25665(19) 0.0386(2) 0.85740(13) 0.0608(14) Uani d 1
+Cl Cl1 -0.2553(2) 0.1045(2) 0.52854(10) 0.0575(13) Uani d 1
+Cl Cl2 -0.27487(19) 0.3235(3) 0.74680(10) 0.0518(14) Uani d 1
+C C2 0.0000(7) 0.2277(9) 0.7403(4) 0.033(4) Uani d 1
+H H2A 0.159(6) 0.253(7) 0.769(3) 0.020(8) Uiso d 1
+C C3 -0.0271(8) 0.1301(9) 0.8416(4) 0.048(4) Uani d 1
+H H3A -0.176(11) 0.052(9) 0.823(5) 0.066(16) Uiso d 1
+H H3B -0.032(7) 0.179(8) 0.924(4) 0.039(11) Uiso d 1
+C C1 0.0201(8) 0.1870(10) 0.5959(4) 0.048(4) Uani d 1
+H H1A 0.167(10) 0.139(10) 0.586(4) 0.054(14) Uiso d 1
+H H1B 0.039(9) 0.260(11) 0.539(5) 0.057(16) Uiso d 1
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+Cl3 0.0493(6) 0.053(5) 0.0782(9) 0.0134(10) -0.0036(5) 0.0111(10)
+Cl1 0.0621(7) 0.054(4) 0.0535(7) 0.0042(10) -0.0076(4) -0.0087(8)
+Cl2 0.0564(7) 0.034(4) 0.0655(7) 0.0119(9) 0.0095(5) -0.0011(7)
+C2 0.0378(17) 0.006(13) 0.055(2) -0.005(3) 0.0010(14) 0.000(3)
+C3 0.050(2) 0.053(14) 0.042(2) 0.004(4) 0.0067(15) 0.006(3)
+C1 0.046(2) 0.051(13) 0.048(2) -0.010(4) 0.0079(15) -0.001(3)
+loop_
+_atom_type_symbol
+_atom_type_description
+_atom_type_scat_dispersion_real
+_atom_type_scat_dispersion_imag
+_atom_type_scat_source
+C C 0.0033 0.0016 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+H H 0.0000 0.0000 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+Cl Cl 0.1484 0.1585 'International Tables Vol C Tables 4.2.6.8 and 6.1.1.4'
+loop_
+_geom_angle_atom_site_label_1
+_geom_angle_atom_site_label_2
+_geom_angle_atom_site_label_3
+_geom_angle
+C3 C2 C1 114.9(8)
+C3 C2 Cl2 107.1(3)
+C1 C2 Cl2 110.7(4)
+C3 C2 H2A 100(4)
+C1 C2 H2A 104(2)
+Cl2 C2 H2A 120(4)
+C2 C3 Cl3 110.7(3)
+C2 C3 H3A 124(3)
+Cl3 C3 H3A 95(4)
+C2 C3 H3B 99(5)
+Cl3 C3 H3B 110(3)
+H3A C3 H3B 119(5)
+C2 C1 Cl1 112.6(3)
+C2 C1 H1A 114(3)
+Cl1 C1 H1A 106(5)
+C2 C1 H1B 107(5)
+Cl1 C1 H1B 110(3)
+H1A C1 H1B 107(6)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_distance
+Cl3 C3 1.784(7)
+Cl1 C1 1.766(7)
+Cl2 C2 1.791(7)
+C2 C3 1.510(10)
+C2 C1 1.515(7)
+C2 H2A 0.88(4)
+C3 H3A 1.17(8)
+C3 H3B 0.99(6)
+C1 H1A 0.95(8)
+C1 H1B 1.01(10)
+loop_
+_geom_torsion_atom_site_label_1
+_geom_torsion_atom_site_label_2
+_geom_torsion_atom_site_label_3
+_geom_torsion_atom_site_label_4
+_geom_torsion
+C1 C2 C3 Cl3 63.2(5)
+Cl2 C2 C3 Cl3 -173.4(3)
+C3 C2 C1 Cl1 59.2(6)
+Cl2 C2 C1 Cl1 -62.2(8)
+loop_
+_cod_related_entry_id
+_cod_related_entry_database
+_cod_related_entry_code
+1 ChemSpider 7013
