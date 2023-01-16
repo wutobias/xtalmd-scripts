@@ -71,7 +71,7 @@ Perform MD simulation by previous energy minimized structure for 2 nanoseconds a
 
 Note: for each subprocess python, please modify the environment to your suitable environment 
 
-        `run(['/home/yu-tang/anaconda3/envs/xtalmd/bin/python',
+        `run(['**/home/yu-tang/anaconda3/envs/xtalmd/bin/python**',
              './run_md.py', 'xml',
              '-i', '../build_system/MM/' + f,
              '-p', './MIN/' + f.strip(".xml") + '_min.pdb',
