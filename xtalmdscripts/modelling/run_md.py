@@ -5,6 +5,7 @@ from openmm import unit
 import numpy as np
 from scipy import optimize
 from utils import Logger
+from mdtraj.reporters import HDF5Reporter
 
 def parse_arguments():
 
@@ -533,7 +534,7 @@ def run_xtal_md(
     ### 1 nanosecond is 1000000 steps
     write_at = 1000 * 20  # Save every 20 picosends
     N_steps_nanosecond = 1000000
-    for i in range(nanoseconds):
+     for i in range(nanoseconds):
         filehandle_dcd = open(f"{prefix}_production_{i}.dcd", "wb")
         filehandle_logger = open(f"{prefix}_production_{i}.csv", "w")
         dcdfile = app.dcdfile.DCDFile(
