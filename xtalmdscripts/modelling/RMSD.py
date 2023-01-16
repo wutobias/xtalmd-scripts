@@ -5,6 +5,8 @@ from pyxtal.operations import angle, create_matrix
 from pyxtal.constants import deg, rad, ltype_keywords
 
 
+# This script will calculate RMSD with different options
+# Calculate the number of atoms in the unitcell for RMSD calculation
 def cal_number_of_atom(pdb_path_1):
     monomer_path = ".." + pdb_path_1.strip(".pdb") + "_monomer0.pdb"
     cif_file = open(monomer_path, 'r')
@@ -15,18 +17,20 @@ def cal_number_of_atom(pdb_path_1):
     return count
 
 
+# Calculate the number of atoms in the supercell for RMSD calculation
 def cal_number_of_molecule_in_supercell(pdb_path_1):
     cif_file = open(pdb_path_1, 'r')
     count = 0
     for line in cif_file.readlines():
         if line.startswith("HETATM"):
             count += 1
-
     number_of_atom = cal_number_of_atom(pdb_path_1)
     number_of_molecule_in_supercell = count/number_of_atom
 
     return number_of_molecule_in_supercell
 
+
+# Remove periodicity to avoid periodic boundary conditions misleading RMSD calculation
 def rmv_periodicity(pos1Array, pos2Array, box_vector_new):
     """Calculate Remove Periodicity RMSD
 
@@ -39,7 +43,6 @@ def rmv_periodicity(pos1Array, pos2Array, box_vector_new):
     """
 
     box_parameter_new = matrix2para(box_vector_new, radians=False)
-
     pos2Array_r = pos2Array.copy()
     for i in range(len(pos1Array)):
         for j in range(3):
@@ -55,6 +58,8 @@ def rmv_periodicity(pos1Array, pos2Array, box_vector_new):
 
     return pos2Array_r
 
+
+# Transform box vectors(matrix) to box parameter(matrix)
 def matrix2para(matrix, radians=False):
     """
     Given a 3x3 matrix representing a unit cell, outputs a list of lattice
@@ -92,7 +97,7 @@ def matrix2para(matrix, radians=False):
     return cell_para
 
 
-# RMSD 20
+# RMSD 20 calculation options
 def get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, option):
     """Calculate Remove Periodicity RMSD
 
@@ -132,7 +137,7 @@ def get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, opti
         if atom.element.atomic_number != 1:
             non_H_idxs.append(atom_idx)
 
-    # Tobias RMSD
+    # Tobias RMSD (option = o)
     if option == "o":
         diff = np.linalg.norm(
             pos1Array[non_H_idxs] - pos2Array[non_H_idxs],
@@ -145,8 +150,7 @@ def get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, opti
         )
 
 
-
-    # Remove Periodicity RMSD
+    # Remove Periodicity RMSD (option = r)
     elif option == "r":
 
         # remove periodicity
@@ -164,10 +168,7 @@ def get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, opti
         )
 
 
-
-
-
-    # RMSD_20 Calculation
+    # RMSD_20 Calculation (option = 20)
     elif isinstance(option, int):
 
         n = option
@@ -232,11 +233,6 @@ def get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, opti
                 )
             )
             rmsd[target] = rmsd_target
-
-
     return rmsd
-
-
-
 
 
