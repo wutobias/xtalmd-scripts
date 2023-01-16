@@ -2,6 +2,8 @@
 import os
 from subprocess import run
 
+# This script will run the subprocess to control make_supercell.py and build supercell
+# System with specifying size of supercell from previous downloaded CIF files
 count = 0
 for f in os.listdir('CIF'):
     print(f)
