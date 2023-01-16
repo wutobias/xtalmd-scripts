@@ -74,7 +74,9 @@ Perform MD simulation by previous energy minimized structure for 2 nanoseconds a
 A bunch of examples for the different things this package can do, have a look at the [examples](examples/README.md).
 
 
-## Current Issues (Check `Independent study report.pdf`)
+## Current Issues 
+
+`Independent study report.pdf` have already listed the current progresses and issues that need to be solved
 
 1. Figure out different bonds can contribute to different energy for different forcefields and
 why different forcefield exists so different minimized energy with a relatively similar
