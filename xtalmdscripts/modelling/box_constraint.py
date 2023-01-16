@@ -1,3 +1,4 @@
+# constraint for trust-constr minimization to avoid openFF Periodic Boundary Conditions
 def constraint1(x):
     box_vector = x[-6:]
     value1 = box_vector[0] - 2 * abs(box_vector[1])
