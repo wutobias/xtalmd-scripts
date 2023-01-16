@@ -48,7 +48,20 @@ The program `BOSS` must be installed and available in `PATH` in order to use thi
 ### OpenEye Toolkits
 Some of the optional system building routines can only be used together with OpenEye toolkit, which requires a license.
 
-## Examples
+## Instruction 
+1. run `python xtalmdscripts/supercellbuilding/COD_import.py`
+Download list of desired structures from COD using list of COD IDs in `COD_ID_List.txt` and `COD_import.py` script. This downloads CIF files from COD and converts to PDB format using pybel. These are output in the `xtalmdscripts/supercellbuilding/CIF` and `xtalmdscripts/supercellbuilding` directories.
+2. run `python xtalmdscripts/supercellbuilding/make_supercell.py`
+Create supercell from CIF file. This is done in the `xtalmdscripts/supercellbuilding/make_supercell.py` script and output in the `xtalmdscripts/supercellbuilding/supercell` directory. This step can be skipped because step3 would build the supercell and molecular mechanics atomic-level systems at the same time.
+3. run `python xtalmdscripts/build_system/subprocess_build_system.py`
+Build supercell and molecular mechanics atomic-level systems at the same time from CIF file via subprocess to control `xtalmdscripts/build_system/build_system.py`. This cell is created to be large enought to satisfy that periodic boundary conditions are greater than 2.0 nm. This is done in the `xtalmdscripts/build_system/subprocess_build_system.py` script and output in the `xtalmdscripts/build_system/MM` directory. 
+4. run `python xtalmdscripts/modelling/subprocess_run_min.py`
+Paramaterize using openFF a in openMM via subprocess to control `xtalmdscripts/modelling/subprocess_run_min.py`. Perform energy minimization by 'L-BFGS-B' or 'trust-constr' (with period boundary constraint) and record the initial and final energy values as well as the RMSD20 between initial and final state. The energy v.s. iterations for each minimization would also be plotted after minimization. This is done in the `xtalmdscripts/modelling/subprocess_run_min.py` script and output in the `xtalmdscripts/build_system/MIN` and `xtalmdscripts/build_system/minimization_results.csv`. 
+5. run `python xtalmdscripts/modelling/subprocess_run_md.py`
+Perform MD simulation by previous energy minimized structure for 2 nanoseconds and calculate centroids, RMSDF and B-factor after MD simulation.
+
+
+## Examples for fine-tuning each parameter
 
 A bunch of examples for the different things this package can do, have a look at the [examples](examples/README.md).
 
