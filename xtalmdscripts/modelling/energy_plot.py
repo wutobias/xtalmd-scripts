@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-
+# This script will plot Energy vs Iteration
 def energy_plot(plot_y, prefix):
     plt.ylabel('Energy', fontsize=14)
     plt.xlabel('Iteration', fontsize=14)
