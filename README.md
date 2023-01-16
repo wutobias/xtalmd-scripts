@@ -63,17 +63,28 @@ Build supercell and molecular mechanics atomic-level systems at the same time fr
 
 4. run `python xtalmdscripts/modelling/subprocess_run_min.py`
 
-Paramaterize using openFF a in openMM via subprocess to control `xtalmdscripts/modelling/subprocess_run_min.py`. Perform energy minimization by 'L-BFGS-B' or 'trust-constr' (with period boundary constraint) and record the initial and final energy values as well as the RMSD20 between initial and final state. The energy v.s. iterations for each minimization would also be plotted after minimization. This is done in the `xtalmdscripts/modelling/subprocess_run_min.py` script and output in the `xtalmdscripts/build_system/MIN` and `xtalmdscripts/build_system/minimization_results.csv`. 
+Paramaterize using openFF a in openMM via subprocess to control `xtalmdscripts/modelling/subprocess_run_min.py`. Perform energy minimization by 'L-BFGS-B' or 'trust-constr' (with period boundary constraint) and record the initial and final energy values as well as the RMSD20 between initial and final state. The energy v.s. iterations for each minimization would also be plotted after minimization. This is done in the `xtalmdscripts/modelling/subprocess_run_min.py` script and output in the `xtalmdscripts/modelling/MIN` and `xtalmdscripts/modelling/minimization_results.csv`. 
 
 5. run `python xtalmdscripts/modelling/subprocess_run_md.py`
 
-Perform MD simulation by previous energy minimized structure for 2 nanoseconds and calculate centroids, RMSDF and B-factor after MD simulation.
-
+Perform MD simulation by previous energy minimized structure for 2 nanoseconds and calculate centroids, RMSDF and B-factor after MD simulation. This is done in the `xtalmdscripts/modelling/subprocess_run_md.py` script and output in the `xtalmdscripts/modelling/run_0`. 
 
 ## Examples for fine-tuning each parameter
 
 A bunch of examples for the different things this package can do, have a look at the [examples](examples/README.md).
 
+
+## Current Issues (Check `Independent study report.pdf`)
+
+1. Figure out different bonds can contribute to different energy for different forcefields and
+why different forcefield exists so different minimized energy with a relatively similar
+RMSD20.
+
+2. Further B-factor data analysis to estimate the performance of OpenFF is by observing how
+atoms move in MD simulation. This can help us estimate the performance of OpenFF in the
+crystal structure prediction.
+
 ## Authors
 
 Tobias Hüfner (UC San Diego)
+
