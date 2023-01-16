@@ -48,7 +48,7 @@ The program `BOSS` must be installed and available in `PATH` in order to use thi
 ### OpenEye Toolkits
 Some of the optional system building routines can only be used together with OpenEye toolkit, which requires a license.
 
-## Instruction 
+## Instructions
 1. run `python xtalmdscripts/supercellbuilding/COD_import.py`
 
 Download list of desired structures from COD using list of COD IDs in `COD_ID_List.txt` and `COD_import.py` script. This downloads CIF files from COD and converts to PDB format using pybel. These are output in the `xtalmdscripts/supercellbuilding/CIF` and `xtalmdscripts/supercellbuilding` directories.
