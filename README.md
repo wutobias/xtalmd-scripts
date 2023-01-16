@@ -69,9 +69,9 @@ Paramaterize using openFF a in openMM via subprocess to control `xtalmdscripts/m
 
 Perform MD simulation by previous energy minimized structure for 2 nanoseconds and calculate centroids, RMSDF and B-factor after MD simulation. This is done in the `xtalmdscripts/modelling/subprocess_run_md.py` script and output in the `xtalmdscripts/modelling/run_0`. 
 
-Note: for each subprocess python, please modify the environment to your suitable environment 
+Note: for each subprocess python, please modify the environment to your suitable environment.
 
-('**/home/yu-tang/anaconda3/envs/xtalmd/bin/python'**)
+This line: ('**/home/yu-tang/anaconda3/envs/xtalmd/bin/python'**)
 
         `run(['/home/yu-tang/anaconda3/envs/xtalmd/bin/python',
              './run_md.py', 'xml',
