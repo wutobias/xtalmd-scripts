@@ -105,7 +105,7 @@ def parse_arguments():
         type=float,
         help="Epsilon (in nm) used for finite difference gradient calcs.",
         required=False,
-        default=1.e-4
+        default=1.e-3
     )
 
     return parser.parse_args()
@@ -412,9 +412,6 @@ class ContextWrapper(object):
         self.context.reinitialize()
         self.context.setPeriodicBoxVectors(*box_old)
         self.context.setPositions(pos_old)
-        global orig_potential
-        orig_potential = self.context.getState(getEnergy=True).getPotentialEnergy()
-
 
 
 
@@ -621,15 +618,19 @@ def run_xtal_min(
             platform,
         )
 
+        # OpenMM state parameter setting
         box_reduced = topology.getPeriodicBoxVectors()
-
         global box_vector_old
         box_vector_old = np.array(box_reduced._value)
-
-
         context.setPositions(pdbfile.positions)
         context.setPeriodicBoxVectors(*box_reduced)
 
+        # Derive initial energy
+        global orig_potential
+        orig_potential = context.getState(getEnergy=True).getPotentialEnergy()
+        print(orig_potential)
+
+        # Derive OpenMM minimization energy
         def get_openmm_min_energy(context):
             openmm.LocalEnergyMinimizer.minimize(context, tolerance=10, maxIterations=1000000)
             state = context.getState(getEnergy=True, getPositions=True)
@@ -637,7 +638,6 @@ def run_xtal_min(
             return mid_potential
         global mid_potential
         mid_potential = get_openmm_min_energy(context)
-
 
 
     except Exception as e:
@@ -755,16 +755,49 @@ def run_xtal_min(
                 context.setPositions(pos_old)
                 context.setPeriodicBoxVectors(*box_old)
 
+            def callback_tr(xk, energy):
+                energy = (cw.ene(xk))
+                plot_y.append(energy)
+                state = context.getState(
+                    getPositions=True
+                )
+                pos_old = state.getPositions(asNumpy=True).value_in_unit(unit.nanometer)
+                box_old = state.getPeriodicBoxVectors(asNumpy=True).value_in_unit(unit.nanometer)
+                pos_new, box_new = cw.flat_to_pos_box(xk)
+                system = context.getSystem()
+                system.setDefaultPeriodicBoxVectors(
+                    *box_new
+                )
+                context.reinitialize()
+                context.setPositions(pos_new)
+                context.setPeriodicBoxVectors(*box_new)
+                state = context.getState(
+                    getEnergy=True,
+                    getPositions=True
+                )
+                logfile.write(state)
 
-            openmm.LocalEnergyMinimizer.minimize(context)
+                system = context.getSystem()
+                system.setDefaultPeriodicBoxVectors(
+                    *box_old
+                )
+                context.reinitialize()
+                context.setPositions(pos_old)
+                context.setPeriodicBoxVectors(*box_old)
+
+            # openmm.LocalEnergyMinimizer.minimize(context)
             x0 = cw.pos_box_flat
 
             cons = ([{'type': 'ineq', 'fun': constraint1},
                      {'type': 'ineq', 'fun': constraint2},
                      {'type': 'ineq', 'fun': constraint3}])
 
-
+            # Try user-defined minimization method first
             try:
+
+                global min_method
+                min_method = method
+
                 result = optimize.minimize(
                 fun=cw.ene,
                 x0=x0,
@@ -777,20 +810,20 @@ def run_xtal_min(
                     "disp": True,
                 }
                 )
-                global min_method
-                min_method = method
 
-
+            # If failed, try trust-constr minimization method
             except:
                 result = optimize.minimize(
                 fun=cw.ene,
                 x0=x0,
                 method='trust-constr',
                 jac=cw.grad,
+                callback=callback_tr,
                 constraints=cons,
                 options={
                     'verbose': 2,
                     'maxiter': steps,
+                    "gtol": 1.e-5,
                 }
                 )
                 min_method = 'trust-constr'
@@ -1052,11 +1085,11 @@ def main():
                 fopen
             )
 
-    ### Calculate RMSD
+    # Calculate RMSD
     pdb_path_1 = ".." + args.input.strip(".xml") + '.pdb'
     pdb_path_2 = "." + args.prefix + ".pdb"
 
-    # RMSD 20
+    # RMSD calculation
     rmsd_o = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "o")
     rmsd_r = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, "r")
     rmsd20 = get_rmsd_option(pdb_path_1, pdb_path_2, box_vector_old, box_vector_new, 20)
@@ -1077,7 +1110,7 @@ def main():
 
     }]
 
-
+    # Save minimization into csv files
     d = pd.DataFrame(data)
     f = open('./minimization_results.csv', 'a')  # Open file as append mode
     d.to_csv(f, index=False, header=False)
