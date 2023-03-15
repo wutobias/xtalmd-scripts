@@ -17,8 +17,9 @@ from . import analysis_engine
 _KJ_2_KCAL = 1./4.184
 _NM_2_ANG  = 10.
 _RAD_2_DEG = 180./np.pi
+_DEG_2_RAD = np.pi/180.
 _GASCONST_KCAL = 8.31446261815324 * _KJ_2_KCAL / 1000.
-
+_ANG_FACTOR = 0.5
 
 def parse_arguments():
 
@@ -69,6 +70,97 @@ def read_csv(csv_path):
 
     return data_dict
 
+def unwrap_trajectory(query_traj, ref_strc, by_com=True):
+
+    ### See von Bülow et al. doi.org/10.1063/5.0008316
+    ### First position vector (i.e. reference structure) 
+    ### is both wrapped and unwrapped.
+
+    import numpy as np
+    import copy
+
+    query_traj_cp = copy.deepcopy(query_traj)
+
+    r_w_0 = np.copy(ref_strc.xyz[0])
+    r_u_0 = np.copy(r_w_0)
+
+    halfbox = np.ones(3, dtype=float)
+    halfbox[:] = 0.5
+    for i in range(query_traj_cp.n_frames):
+        
+        r_w_1 = query_traj_cp.xyz[i]
+        r_u_1 = np.zeros_like(r_w_1)
+
+        a_1 = query_traj_cp.unitcell_vectors[i].T
+        b_1 = np.linalg.inv(a_1)
+
+        if by_com:
+            for molecule in ref_strc.topology.find_molecules():
+                r_w_1_cog  = np.zeros(3, dtype=float)
+                r_w_0_cog  = np.zeros(3, dtype=float)
+                d_w_1_cog  = np.zeros(3, dtype=float)
+                total_mass = 0.
+                for atom in molecule:
+                    total_mass += atom.element.mass
+                    r_w_1_cog += r_w_1[atom.index] * atom.element.mass
+                    r_w_0_cog += r_w_0[atom.index] * atom.element.mass
+                r_w_1_cog /= total_mass
+                r_w_0_cog /= total_mass
+
+                ### Determine wrapped position
+                r_w_1_cog_fract  = np.matmul(b_1, r_w_1_cog.T).T
+                r_w_1_cog_fract -= np.floor(r_w_1_cog_fract)
+                r_w_1_cog        = np.matmul(a_1, r_w_1_cog_fract.T).T
+
+                d_w_1_cog  = r_w_1_cog - r_w_0_cog
+                
+                fract_offset = np.matmul(b_1, d_w_1_cog.T).T + halfbox
+                fract_offset = np.floor(fract_offset)
+                d_u_1_cog    = d_w_1_cog - np.matmul(a_1, fract_offset.T).T
+
+                for atom in molecule:
+                    r_u_1[atom.index] = r_u_0[atom.index] + d_u_1_cog
+        else:
+            for atom in ref_strc.topology.atoms:
+                r_w_1_cog = np.zeros(3, dtype=float)
+                r_w_0_cog = np.zeros(3, dtype=float)
+                d_w_1_cog = np.zeros(3, dtype=float)
+
+                r_w_1_cog = r_w_1[atom.index]
+                r_w_0_cog = r_w_0[atom.index]
+
+                ### Determine wrapped position
+                r_w_1_cog_fract  = np.matmul(b_1, r_w_1_cog.T).T
+                r_w_1_cog_fract -= np.floor(r_w_1_cog_fract)
+                r_w_1_cog        = np.matmul(a_1, r_w_1_cog_fract.T).T
+
+                d_w_1_cog  = r_w_1_cog - r_w_0_cog
+                
+                fract_offset = np.matmul(b_1, d_w_1_cog.T).T + halfbox
+                fract_offset = np.floor(fract_offset)
+                d_u_1_cog    = d_w_1_cog - np.matmul(a_1, fract_offset.T).T
+
+                r_u_1[atom.index] = r_u_0[atom.index] + d_u_1_cog
+
+        r_w_0 = np.copy(query_traj_cp.xyz[i])
+        r_u_0 = np.copy(r_u_1)
+
+        query_traj_cp.xyz[i] = np.copy(r_u_1)
+
+    ### Finally shift all atom positions
+    ### to get the best-fit RMSD with the reference
+    ### structure just using translation.
+    ref_cog  = np.mean(ref_strc.xyz[0], axis=0)
+    for i in range(query_traj_cp.n_frames):
+        
+        x = query_traj_cp.xyz[i]
+        traj_cog = np.mean(x, axis=0)
+        
+        displ = ref_cog - traj_cog
+        query_traj_cp.xyz[i] += displ
+
+    return query_traj_cp
+
 
 class WorkbookWrapper(object):
 
@@ -82,6 +174,8 @@ class WorkbookWrapper(object):
             "Thermo data",
             # ========== #
             "Sublimation Energy",
+            "Energy Lattice",
+            "Energy Gas",
             "Density",
 
             "Cell parameters",
@@ -92,6 +186,12 @@ class WorkbookWrapper(object):
             "alpha",
             "beta",
             "gamma",
+            "cell error",
+
+            "RMSD noH",
+            # ==================== #
+            "<RMSD>",
+            "Max <RMSD>",
 
             "Interatomic distances",
             # ==================== #
@@ -99,16 +199,15 @@ class WorkbookWrapper(object):
             "<[Δ(d < 4Å)]>",
             "Max <[Δ(d < 4Å)]>",
 
-            "RMSD noH",
+            "Bonded Dihedrals",
             # ==================== #
-            "<RMSD>",
-            "Max <RMSD>",
+            "<Δτ>",
+            "Max <Δτ>",
 
             "H-bond geometry abs",
             # ==================== #
             "<[d(D-H•••A)]>",
             "<[∠(D-H•••A)]>",
-            "Max <[∠(D-H•••A)]>",
 
             "H-bond geometry delta",
             # ==================== #
@@ -192,7 +291,8 @@ class WorkbookWrapper(object):
             "Thermo data",
             "Cell parameters",
             "Interatomic distances",
-            "RMSD noH"
+            "RMSD noH",
+            "Bonded Dihedrals",
             "H-bond geometry abs",
             "H-bond geometry delta",
             "Translation/Rotation",
@@ -639,6 +739,7 @@ def main():
         workbook_wrap.add_xtal(crystal_name)
 
         ref_distances = list()
+        ref_dihedrals = list()
         ref_pc1_neighbors = list()
         ref_pc2_neighbors = list()
         ref_pc3_neighbors = list()
@@ -653,7 +754,10 @@ def main():
             top=input_dict[crystal_name]["experiment"]["supercell-pdb"]
             )
         with open(input_dict[crystal_name]["experiment"]["supercell-rdkit"], "r") as fopen:
-            rdmol = Chem.JSONToMols(fopen.read())[0]
+            if input_dict[crystal_name]["experiment"]["supercell-rdkit"].lower().endswith(".pdb"):
+                rdmol = Chem.MolFromPDBBlock(fopen.read())
+            else:
+                rdmol = Chem.JSONToMols(fopen.read())[0]
 
         ucinfo = read_csv(input_dict[crystal_name]["experiment"]["supercell-ucinfo"])
 
@@ -685,6 +789,13 @@ def main():
         ref_distances = analysis_engine.compute_pairwise_distances(
             ref_strc, 
             dist_pair_list
+            )
+        dihedral_indices, dihedral_ranks = analysis_engine.get_dihedral_indices(
+            rdmol
+            )
+        ref_dihedrals = analysis_engine.compute_dihedrals(
+            ref_strc,
+            dihedral_indices
             )
         ref_pc_neighbors, ref_pc_self = analysis_engine.compute_pc_diff_per_residue(
             ref_strc, 
@@ -810,6 +921,7 @@ def main():
             density_xtal = list()
 
             distances = list()
+            dihedrals = list()
             com_diff  = list()
             rmsd      = list()
             rmsd_per_residue = list()
@@ -864,6 +976,7 @@ def main():
             frame_and_path_list = list()
             ### For each frame (idx) save the frame idx in the original traj
             frame_and_sub_frame_list = list()
+            ref_strc_wrap = ref_strc
             for output_traj in glob.glob(xtal_trajectory):
 
                 basename, _ = os.path.splitext(output_traj)
@@ -874,67 +987,13 @@ def main():
                     output_traj,
                     top=ref_strc.topology
                     )
-
-                ### Unwrap trajectory
-                ### =================
-                ### See von Bülow et al. doi.org/10.1063/5.0008316
-                ### First position vector (i.e. reference structure) 
-                ### is both wrapped and unwrapped.
-                r_w_0 = np.copy(ref_strc.xyz[0])
-                r_u_0 = np.copy(r_w_0)
-
-                halfbox = np.ones(3, dtype=float)
-                halfbox[:] = 0.5
-                for i in range(query_traj.n_frames):
                     
-                    r_w_1 = query_traj.xyz[i]
-                    r_u_1 = np.zeros_like(r_w_1)
-
-                    a_1 = query_traj.unitcell_vectors[i].T
-                    b_1 = np.linalg.inv(a_1)
-
-                    for molecule in ref_strc.topology.find_molecules():
-                        r_w_1_cog = np.zeros(3, dtype=float)
-                        r_w_0_cog = np.zeros(3, dtype=float)
-                        d_w_1_cog = np.zeros(3, dtype=float)
-                        for atom in molecule:
-                            r_w_1_cog += r_w_1[atom.index]
-                            r_w_0_cog += r_w_0[atom.index]
-                        r_w_1_cog /= len(molecule)
-                        r_w_0_cog /= len(molecule)
-
-                        ### Determine wrapped position
-                        r_w_1_cog_fract  = np.matmul(b_1, r_w_1_cog.T).T
-                        r_w_1_cog_fract -= np.floor(r_w_1_cog_fract)
-                        r_w_1_cog        = np.matmul(a_1, r_w_1_cog_fract.T).T
-
-                        d_w_1_cog  = r_w_1_cog - r_w_0_cog
-                        
-                        fract_offset = np.matmul(b_1, d_w_1_cog.T).T + halfbox
-                        fract_offset = np.floor(fract_offset)
-                        d_u_1_cog    = d_w_1_cog - np.matmul(a_1, fract_offset.T).T
-
-                        for atom in molecule:
-                            r_u_1[atom.index] = r_u_0[atom.index] + d_u_1_cog
-
-                    r_w_0 = np.copy(query_traj.xyz[i])
-                    r_u_0 = np.copy(r_u_1)
-
-                    query_traj.xyz[i] = np.copy(r_u_1)
-
-                ### Finally shift all atom positions
-                ### to get the best-fit RMSD with the reference
-                ### structure just using translation.
-                for i in range(query_traj.n_frames):
-                    
-                    x = query_traj.xyz[i]
-                    
-                    ref_cog  = np.mean(ref_strc.xyz[0], axis=0)
-                    traj_cog = np.mean(x, axis=0)
-                    
-                    displ = ref_cog - traj_cog
-                    x    += displ
-                    query_traj.xyz[i] = x
+                query_traj_wrapped = unwrap_trajectory(
+                    query_traj, 
+                    ref_strc_wrap, 
+                    by_com=True
+                    )
+                ref_strc_wrap = query_traj_wrapped[-1]
 
                 frame_and_path_list.extend(
                         [output_traj for _ in range(query_traj.n_frames)]
@@ -966,7 +1025,7 @@ def main():
                 density_xtal.extend(_density)
 
                 _com_diff = analysis_engine.compute_com_diff_per_residue(
-                    query_traj, 
+                    query_traj_wrapped, 
                     ref_strc,
                     rdmol,
                     exclude_water=True
@@ -983,11 +1042,15 @@ def main():
                     dist_pair_list
                     )
                 _rmsd, _rmsd_per_residue = analysis_engine.compute_rmsd(
-                        query_traj,
+                        query_traj_wrapped,
                         ref_strc,
                         rdmol,
                         exclude_hydrogen=True,
                         exclude_water=True,
+                    )
+                _dihedrals = analysis_engine.compute_dihedrals(
+                    query_traj,
+                    dihedral_indices
                     )
 
                 if a_h_d_list.size > 0:
@@ -1005,8 +1068,9 @@ def main():
                 if len(com_diff) == 0:
                     com_diff = _com_diff
                     distances = _distances
-                    rmsd =_rmsd
-                    rmsd_per_residue =_rmsd_per_residue
+                    rmsd = _rmsd
+                    rmsd_per_residue = _rmsd_per_residue
+                    dihedrals = _dihedrals
                     pc1_neighbors = _pc_neighbors[...,0]
                     pc2_neighbors = _pc_neighbors[...,1]
                     pc3_neighbors = _pc_neighbors[...,2]
@@ -1020,8 +1084,9 @@ def main():
                 else:
                     com_diff = np.vstack((com_diff, _com_diff))
                     distances = np.vstack((distances, _distances))
-                    rmsd = np.vstack((rmsd, _rmsd))
+                    rmsd = np.hstack((rmsd, _rmsd))
                     rmsd_per_residue = np.vstack((rmsd_per_residue, _rmsd_per_residue))
+                    dihedrals = np.vstack((dihedrals, _dihedrals))
                     pc1_neighbors = np.vstack((pc1_neighbors, _pc_neighbors[...,0]))
                     pc2_neighbors = np.vstack((pc2_neighbors, _pc_neighbors[...,1]))
                     pc3_neighbors = np.vstack((pc3_neighbors, _pc_neighbors[...,2]))
@@ -1091,22 +1156,44 @@ def main():
             max_avg = 0.
             max_std = 0.
             max_dev = 0.
-            max_frame = None
-            max_pairs = None
-            max_diffs = None
+            N_max_pairs = 50
+            N_max_instances = 10
+            max_tolerance = 0.1
+            max_avg_list = list()
+            max_valids_list = list()
+            max_frame_list = list()
+            max_pair_list = list()
+            max_dist_list = list()
             for unique_rank in np.unique(dist_pair_rank_list):
                 valids   = np.where(unique_rank == dist_pair_rank_list)[0]
                 _max_avg = np.mean(diffs[:,valids])
+                if _max_avg > max_tolerance:
+                    max_avg_list.append(_max_avg)
+                    max_valids_list.append(valids)
                 if _max_avg > max_avg:
                     max_avg = _max_avg
                     max_std = np.std(diffs[:,valids])
                     max_dev = np.mean(diffs[:,valids]/ref_distances[:,valids]) * 100.
-                    mean_per_frame = np.mean(diffs[:,valids], axis=1)
-                    max_frame = np.argmax(mean_per_frame)
-                    ### Sort pairs from highest to lowest deviation
-                    max_pairs_idx = np.argsort(diffs[max_frame,valids])[::-1]
-                    max_pairs = dist_pair_list[valids[max_pairs_idx]]
-                    max_dists = diffs[max_frame,valids[max_pairs_idx]]
+            max_idx_list = np.argsort(max_avg_list)[::-1]
+            if max_idx_list.size > N_max_pairs:
+                max_idx_list = max_idx_list[:N_max_pairs]
+            else:
+                N_max_pairs = max_idx_list.size
+            for max_idx in max_idx_list:
+                valids = max_valids_list[max_idx]
+                mean_per_frame = np.mean(diffs[:,valids], axis=1)
+                max_frame = np.argmax(mean_per_frame)
+                ### Sort pairs from highest to lowest deviation
+                max_pairs_idx = np.argsort(diffs[max_frame,valids])[::-1]
+                if max_pairs_idx.size > N_max_instances:
+                    max_pairs_idx = max_pairs_idx[:N_max_instances]
+                max_pairs = dist_pair_list[valids[max_pairs_idx]]
+                max_dists = diffs[max_frame,valids[max_pairs_idx]]
+
+                max_frame_list.append(max_frame)
+                max_pair_list.append(max_pairs)
+                max_dist_list.append(max_dists)
+
             workbook_wrap.add_data(
                 max_avg,
                 max_std,
@@ -1116,45 +1203,275 @@ def main():
                 crystal_name
                 )
 
-            query_traj = md.load(
-                frame_and_path_list[max_frame],
-                top=ref_strc.topology
-                )
-
-            tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
-            query_traj[frame_and_sub_frame_list[max_frame]].save(
+            tmp_pdbfile = f"/tmp/{crystal_name}-expt.pdb"
+            ref_strc.save(
                 tmp_pdbfile
                 )
             with open(tmp_pdbfile, "r") as fopen:
                 pdbstring = fopen.read()
 
+            uc_ref = ref_strc.unitcell_vectors[0].T
+            frac_pos = np.eye(3, dtype=float)
+            _abc_ref = np.matmul(uc_ref, frac_pos.T).T * 10.
+
             pymolstr = f"""#!/usr/bin/env python3
 
-import pymol
-pymol.cmd.cmd.read_pdbstr(
+from pymol.cgo import cyl_text, CYLINDER
+from pymol import cmd
+from pymol.vfont import plain
+
+obj_expt = [\\
+   CYLINDER, 0., 0., 0., {_abc_ref[0,0]},{_abc_ref[0,1]},{_abc_ref[0,2]}, 0.2, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_ref[1,0]},{_abc_ref[1,1]},{_abc_ref[1,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_ref[2,0]},{_abc_ref[2,1]},{_abc_ref[2,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,\\
+   ]
+
+cyl_text(obj_expt,plain,[{_abc_ref[0,0]},{_abc_ref[0,1]},{_abc_ref[0,2]}],'a',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_expt,plain,[{_abc_ref[1,0]},{_abc_ref[1,1]},{_abc_ref[1,2]}],'b',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_expt,plain,[{_abc_ref[2,0]},{_abc_ref[2,1]},{_abc_ref[2,2]}],'c',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+
+cmd.load_cgo(obj_expt,'abc_expt')
+cmd.cmd.read_pdbstr(
     \"\"\"{pdbstring}\"\"\",
-    \"strc\"
+    \"strc_expt\"
 )
+cmd.group(\"expt\", \"abc_expt\")
+cmd.group(\"expt\", \"strc_expt\")
 """
-            for pair_idx, pair in enumerate(max_pairs):
+            for max_pair_idx in range(N_max_pairs): 
+                
+                max_frame = max_frame_list[max_pair_idx]
+                max_pairs = max_pair_list[max_pair_idx]
+                max_dists = max_dist_list[max_pair_idx]
+
+                query_traj = md.load(
+                    frame_and_path_list[max_frame],
+                    top=ref_strc.topology
+                    )
+                query_traj = unwrap_trajectory(query_traj, ref_strc, by_com=True)
+
+                tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
+                query_traj[frame_and_sub_frame_list[max_frame]].save(
+                    tmp_pdbfile
+                    )
+                with open(tmp_pdbfile, "r") as fopen:
+                    pdbstring = fopen.read()
+
+                uc_ref = ref_strc.unitcell_vectors[0].T
+                uc_md  = query_traj.unitcell_vectors[frame_and_sub_frame_list[max_frame]].T
+                frac_pos = np.eye(3, dtype=float)
+                _abc_ref = np.matmul(uc_ref, frac_pos.T).T * 10.
+                _abc_md  = np.matmul(uc_md, frac_pos.T).T  * 10.
+
                 pymolstr += f"""
-pymol.cmd.distance(
-    name = \"d{pair_idx}-{max_dists[pair_idx]:4.2f}\",
-    selection1 = \"rank {pair[0]}\",
-    selection2 =\"rank {pair[1]}\",
+obj_md_{max_pair_idx} = [\\
+   CYLINDER, 0., 0., 0., {_abc_md[0,0]},{_abc_md[0,1]},{_abc_md[0,2]}, 0.2, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_md[1,0]},{_abc_md[1,1]},{_abc_md[1,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_md[2,0]},{_abc_md[2,1]},{_abc_md[2,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,\\
+   ]
+
+cyl_text(obj_md_{max_pair_idx},plain,[{_abc_md[0,0]},{_abc_md[0,1]},{_abc_md[0,2]}],'a',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_md_{max_pair_idx},plain,[{_abc_md[1,0]},{_abc_md[1,1]},{_abc_md[1,2]}],'b',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_md_{max_pair_idx},plain,[{_abc_md[2,0]},{_abc_md[2,1]},{_abc_md[2,2]}],'c',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+
+cmd.load_cgo(obj_md_{max_pair_idx},  'abc_md_{max_pair_idx}')
+
+cmd.cmd.read_pdbstr(
+    \"\"\"{pdbstring}\"\"\",
+    \"strc_{max_pair_idx}\"
+)
+cmd.group(\"pair-{max_pair_idx}\", \"abc_md_{max_pair_idx}\")
+cmd.group(\"pair-{max_pair_idx}\", \"strc_{max_pair_idx}\")
+"""
+                for pair_idx, pair in enumerate(max_pairs):
+                    name = f"d_{max_pair_idx}_{pair_idx}-{max_dists[pair_idx]:4.2f}"
+                    pymolstr += f"""
+cmd.distance(
+    name = \"{name}\",
+    selection1 = \"rank {pair[0]} and strc_{max_pair_idx}\",
+    selection2 = \"rank {pair[1]} and strc_{max_pair_idx}\",
     cutoff = 999.,
     mode = 0
 )
+cmd.group(\"pair-{max_pair_idx}\", \"{name}\")
 """
             with open(f"{crystal_name}-{forcefield_name}-d-lt4.py", "w") as fopen:
                 fopen.write(pymolstr)
+
+            ### Write dihedral data ###
+            ### =================== ###
+
+            if dihedrals.size > 0:
+                diffs = ref_dihedrals - dihedrals
+                upper = np.where(diffs > 180.)
+                lower = np.where(diffs < -180.)
+                diffs[upper] -= 360.
+                diffs[lower] += 360.
+
+                diffs = np.abs(diffs)
+                avg = np.mean(diffs)
+                std = np.std(diffs)
+                dev = "--"
+                workbook_wrap.add_data(
+                    avg,
+                    std,
+                    dev,
+                    "<Δτ>",
+                    forcefield_name, 
+                    crystal_name
+                    )
+
+                max_avg = 0.
+                max_std = 0.
+                max_dev = 0.
+                N_max_pairs = 50
+                N_max_instances = 10
+                max_tolerance = 15.
+                max_avg_list = list()
+                max_valids_list = list()
+                max_frame_list = list()
+                max_pair_list = list()
+                max_dist_list = list()
+                for unique_rank in np.unique(dihedral_ranks):
+                    valids   = np.where(unique_rank == dihedral_ranks)[0]
+                    _max_avg = np.mean(diffs[:,valids])
+                    if _max_avg > max_tolerance:
+                        max_avg_list.append(_max_avg)
+                        max_valids_list.append(valids)
+                    if _max_avg > max_avg:
+                        max_avg = _max_avg
+                        max_std = np.std(diffs[:,valids])
+                        max_dev = np.mean(diffs[:,valids]/ref_dihedrals[:,valids]) * 100.
+                max_idx_list = np.argsort(max_avg_list)[::-1]
+                if max_idx_list.size > N_max_pairs:
+                    max_idx_list = max_idx_list[:N_max_pairs]
+                else:
+                    N_max_pairs = max_idx_list.size
+                for max_idx in max_idx_list:
+                    valids = max_valids_list[max_idx]
+                    mean_per_frame = np.mean(diffs[:,valids], axis=1)
+                    max_frame = np.argmax(mean_per_frame)
+                    ### Sort pairs from highest to lowest deviation
+                    max_pairs_idx = np.argsort(diffs[max_frame,valids])[::-1]
+                    if max_pairs_idx.size > N_max_instances:
+                        max_pairs_idx = max_pairs_idx[:N_max_instances]
+                    max_pairs = dihedral_indices[valids[max_pairs_idx]]
+                    max_dists = diffs[max_frame,valids[max_pairs_idx]]
+
+                    max_frame_list.append(max_frame)
+                    max_pair_list.append(max_pairs)
+                    max_dist_list.append(max_dists)
+
+                workbook_wrap.add_data(
+                    max_avg,
+                    max_std,
+                    max_dev,
+                    "Max <Δτ>",
+                    forcefield_name, 
+                    crystal_name
+                    )
+
+                tmp_pdbfile = f"/tmp/{crystal_name}-expt.pdb"
+                ref_strc.save(
+                    tmp_pdbfile
+                    )
+                with open(tmp_pdbfile, "r") as fopen:
+                    pdbstring = fopen.read()
+
+                uc_ref = ref_strc.unitcell_vectors[0].T
+                frac_pos = np.eye(3, dtype=float)
+                _abc_ref = np.matmul(uc_ref, frac_pos.T).T * 10.
+
+                pymolstr = f"""#!/usr/bin/env python3
+
+from pymol.cgo import cyl_text, CYLINDER
+from pymol import cmd
+from pymol.vfont import plain
+
+obj_expt = [\\
+   CYLINDER, 0., 0., 0., {_abc_ref[0,0]},{_abc_ref[0,1]},{_abc_ref[0,2]}, 0.2, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_ref[1,0]},{_abc_ref[1,1]},{_abc_ref[1,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_ref[2,0]},{_abc_ref[2,1]},{_abc_ref[2,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,\\
+   ]
+
+cyl_text(obj_expt,plain,[{_abc_ref[0,0]},{_abc_ref[0,1]},{_abc_ref[0,2]}],'a',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_expt,plain,[{_abc_ref[1,0]},{_abc_ref[1,1]},{_abc_ref[1,2]}],'b',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_expt,plain,[{_abc_ref[2,0]},{_abc_ref[2,1]},{_abc_ref[2,2]}],'c',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+
+cmd.load_cgo(obj_expt,'abc_expt')
+cmd.cmd.read_pdbstr(
+    \"\"\"{pdbstring}\"\"\",
+    \"strc_expt\"
+)
+cmd.group(\"expt\", \"abc_expt\")
+cmd.group(\"expt\", \"strc_expt\")
+"""
+                for max_pair_idx in range(N_max_pairs): 
+                    
+                    max_frame = max_frame_list[max_pair_idx]
+                    max_pairs = max_pair_list[max_pair_idx]
+                    max_dists = max_dist_list[max_pair_idx]
+
+                    query_traj = md.load(
+                        frame_and_path_list[max_frame],
+                        top=ref_strc.topology
+                        )
+                    query_traj = unwrap_trajectory(query_traj, ref_strc, by_com=True)
+
+                    tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
+                    query_traj[frame_and_sub_frame_list[max_frame]].save(
+                        tmp_pdbfile
+                        )
+                    with open(tmp_pdbfile, "r") as fopen:
+                        pdbstring = fopen.read()
+
+                    uc_ref = ref_strc.unitcell_vectors[0].T
+                    uc_md  = query_traj.unitcell_vectors[frame_and_sub_frame_list[max_frame]].T
+                    frac_pos = np.eye(3, dtype=float)
+                    _abc_ref = np.matmul(uc_ref, frac_pos.T).T * 10.
+                    _abc_md  = np.matmul(uc_md, frac_pos.T).T  * 10.
+
+                    pymolstr += f"""
+obj_md_{max_pair_idx} = [\\
+   CYLINDER, 0., 0., 0., {_abc_md[0,0]},{_abc_md[0,1]},{_abc_md[0,2]}, 0.2, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_md[1,0]},{_abc_md[1,1]},{_abc_md[1,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_md[2,0]},{_abc_md[2,1]},{_abc_md[2,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,\\
+   ]
+
+cyl_text(obj_md_{max_pair_idx},plain,[{_abc_md[0,0]},{_abc_md[0,1]},{_abc_md[0,2]}],'a',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_md_{max_pair_idx},plain,[{_abc_md[1,0]},{_abc_md[1,1]},{_abc_md[1,2]}],'b',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_md_{max_pair_idx},plain,[{_abc_md[2,0]},{_abc_md[2,1]},{_abc_md[2,2]}],'c',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+
+cmd.load_cgo(obj_md_{max_pair_idx},  'abc_md_{max_pair_idx}')
+
+cmd.cmd.read_pdbstr(
+    \"\"\"{pdbstring}\"\"\",
+    \"strc_{max_pair_idx}\"
+)
+cmd.group(\"dih-{max_pair_idx}\", \"abc_md_{max_pair_idx}\")
+cmd.group(\"dih-{max_pair_idx}\", \"strc_{max_pair_idx}\")
+"""
+                    for pair_idx, pair in enumerate(max_pairs):
+                        name = f"dih_{max_pair_idx}_{pair_idx}-{max_dists[pair_idx]:4.2f}"
+                        pymolstr += f"""
+cmd.dihedral(
+    name = \"{name}\",
+    selection1 = \"rank {pair[0]} and strc_{max_pair_idx}\",
+    selection2 = \"rank {pair[1]} and strc_{max_pair_idx}\",
+    selection3 = \"rank {pair[2]} and strc_{max_pair_idx}\",
+    selection4 = \"rank {pair[3]} and strc_{max_pair_idx}\",
+)
+cmd.group(\"dih-{max_pair_idx}\", \"{name}\")
+"""
+                with open(f"{crystal_name}-{forcefield_name}-dih.py", "w") as fopen:
+                    fopen.write(pymolstr)
 
             ### Write com diff data ###
             ### =================== ###
             diffs = com_diff
             avg   = np.mean(diffs)
             std   = np.std(diffs)
-            dev   = None
+            dev   = "--"
             workbook_wrap.add_data(
                 avg ,
                 std,
@@ -1171,7 +1488,7 @@ pymol.cmd.distance(
                 )
             max_avg = res_avg[max_idx]
             max_std = np.std(diffs[:,max_idx])
-            max_dev = None
+            max_dev = "--"
             workbook_wrap.add_data(
                 max_avg,
                 max_std,
@@ -1195,11 +1512,9 @@ pymol.cmd.distance(
                 crystal_name
                 )
 
-            max_idx = np.unravel_index(
-                np.argmax(rmsd_per_residue),
-                rmsd_per_residue.shape
-                )
-            max_avg = np.mean(rmsd_per_residue[:,max_idx])
+            avg     = np.mean(rmsd_per_residue, axis=0)
+            max_idx = np.argmax(avg)
+            max_avg = avg[max_idx]
             max_std = np.std(rmsd_per_residue[:,max_idx])
             max_dev = None
             workbook_wrap.add_data(
@@ -1424,7 +1739,55 @@ pymol.cmd.distance(
                 crystal_name
                 )
 
-            ### ... Deviation Distances ...
+            ### ... Absolute angles ...
+
+            if len(hbond_angles) > 0:
+                avg   = np.mean(np.abs(hbond_angles))
+                std   = np.std(np.abs(hbond_angles))
+                dev   = "--"
+            else:
+                avg = "--"
+                std = "--"
+                dev = "--"
+            workbook_wrap.add_data(
+                avg,
+                std,
+                dev,
+                "<[∠(D-H•••A)]>",
+                forcefield_name, 
+                crystal_name
+                )
+
+            ### =================== ###
+            ### Write distance data ###
+            ### =================== ###
+
+            ### ... Less then 4 Ang Distances ...
+
+            avg   = np.mean(distances)
+            std   = np.std(distances)
+            dev   = "--"
+            workbook_wrap.add_data(
+                avg,
+                std,
+                dev,
+                "<(d < 4Å)>",
+                forcefield_name, 
+                crystal_name
+                )
+
+            diffs = np.abs(distances - ref_distances)
+            avg   = np.mean(diffs)
+            std   = np.std(diffs)
+            dev   = np.mean(diffs/ref_distances) * 100.
+            workbook_wrap.add_data(
+                avg,
+                std,
+                dev,
+                "<[Δ(d < 4Å)]>",
+                forcefield_name, 
+                crystal_name
+                )
 
             if len(hbond_distances) > 0:
                 diffs = np.abs(
@@ -1433,57 +1796,149 @@ pymol.cmd.distance(
                 avg   = np.mean(diffs)
                 std   = np.std(diffs)
                 dev   = np.mean(diffs/ref_hbond_distances) * 100.
+
                 max_avg = 0.
                 max_std = 0.
                 max_dev = 0.
-                max_frame = None
-                max_pairs = None
-                max_diffs = None
+                N_max_pairs = 50
+                N_max_instances = 10
+                max_tolerance = 0.1
+                max_avg_list = list()
+                max_valids_list = list()
+                max_frame_list = list()
+                max_pair_list = list()
+                max_dist_list = list()
                 for unique_rank in np.unique(hbond_pair_rank_list):
                     valids   = np.where(unique_rank == hbond_pair_rank_list)[0]
                     _max_avg = np.mean(diffs[:,valids])
+                    if _max_avg > max_tolerance:
+                        max_avg_list.append(_max_avg)
+                        max_valids_list.append(valids)
                     if _max_avg > max_avg:
                         max_avg = _max_avg
                         max_std = np.std(diffs[:,valids])
                         max_dev = np.mean(diffs[:,valids]/ref_hbond_distances[:,valids]) * 100.
+                max_idx_list = np.argsort(max_avg_list)[::-1]
+                if max_idx_list.size > N_max_pairs:
+                    max_idx_list = max_idx_list[:N_max_pairs]
+                else:
+                    N_max_pairs = max_idx_list.size
+                for max_idx in max_idx_list:
+                    valids = max_valids_list[max_idx]
+                    mean_per_frame = np.mean(diffs[:,valids], axis=1)
+                    max_frame = np.argmax(mean_per_frame)
+                    ### Sort pairs from highest to lowest deviation
+                    max_pairs_idx = np.argsort(diffs[max_frame,valids])[::-1]
+                    if max_pairs_idx.size > N_max_instances:
+                        max_pairs_idx = max_pairs_idx[:N_max_instances]
+                    max_pairs = a_h_d_list[valids[max_pairs_idx]][:,[1,2]]
+                    max_dists = diffs[max_frame,valids[max_pairs_idx]]
 
-                        mean_per_frame = np.mean(diffs[:,valids], axis=1)
-                        max_frame = np.argmax(mean_per_frame)
-                        ### Sort pairs from highest to lowest deviation
-                        max_pairs_idx = np.argsort(diffs[max_frame,valids])[::-1]
-                        max_pairs = a_h_d_list[valids[max_pairs_idx]][:,[1,2]]
-                        max_dists = diffs[max_frame,valids[max_pairs_idx]]
+                    max_frame_list.append(max_frame)
+                    max_pair_list.append(max_pairs)
+                    max_dist_list.append(max_dists)
 
-                query_traj = md.load(
-                    frame_and_path_list[max_frame],
-                    top=ref_strc.topology
+                workbook_wrap.add_data(
+                    max_avg,
+                    max_std,
+                    max_dev,
+                    "Max <Δ[d(D-H•••A)]>",
+                    forcefield_name, 
+                    crystal_name
                     )
 
-                tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
-                query_traj[frame_and_sub_frame_list[max_frame]].save(
+                tmp_pdbfile = f"/tmp/{crystal_name}-expt.pdb"
+                ref_strc.save(
                     tmp_pdbfile
                     )
                 with open(tmp_pdbfile, "r") as fopen:
                     pdbstring = fopen.read()
 
+                uc_ref = ref_strc.unitcell_vectors[0].T
+                frac_pos = np.eye(3, dtype=float)
+                _abc_ref = np.matmul(uc_ref, frac_pos.T).T * 10.
+
                 pymolstr = f"""#!/usr/bin/env python3
 
-import pymol
-pymol.cmd.cmd.read_pdbstr(
+from pymol.cgo import cyl_text, CYLINDER
+from pymol import cmd
+from pymol.vfont import plain
+
+obj_expt = [\\
+   CYLINDER, 0., 0., 0., {_abc_ref[0,0]},{_abc_ref[0,1]},{_abc_ref[0,2]}, 0.2, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_ref[1,0]},{_abc_ref[1,1]},{_abc_ref[1,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_ref[2,0]},{_abc_ref[2,1]},{_abc_ref[2,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,\\
+   ]
+
+cyl_text(obj_expt,plain,[{_abc_ref[0,0]},{_abc_ref[0,1]},{_abc_ref[0,2]}],'a',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_expt,plain,[{_abc_ref[1,0]},{_abc_ref[1,1]},{_abc_ref[1,2]}],'b',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_expt,plain,[{_abc_ref[2,0]},{_abc_ref[2,1]},{_abc_ref[2,2]}],'c',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+
+cmd.load_cgo(obj_expt,'abc_expt')
+cmd.cmd.read_pdbstr(
     \"\"\"{pdbstring}\"\"\",
-    \"strc\"
+    \"strc_expt\"
 )
-    """
-                for pair_idx, pair in enumerate(max_pairs):
+cmd.group(\"expt\", \"abc_expt\")
+cmd.group(\"expt\", \"strc_expt\")
+"""
+                for max_pair_idx in range(N_max_pairs): 
+                    
+                    max_frame = max_frame_list[max_pair_idx]
+                    max_pairs = max_pair_list[max_pair_idx]
+                    max_dists = max_dist_list[max_pair_idx]
+
+                    query_traj = md.load(
+                        frame_and_path_list[max_frame],
+                        top=ref_strc.topology
+                        )
+                    query_traj = unwrap_trajectory(query_traj, ref_strc)
+
+                    tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
+                    query_traj[frame_and_sub_frame_list[max_frame]].save(
+                        tmp_pdbfile
+                        )
+                    with open(tmp_pdbfile, "r") as fopen:
+                        pdbstring = fopen.read()
+
+                    uc_ref = ref_strc.unitcell_vectors[0].T
+                    uc_md  = query_traj.unitcell_vectors[frame_and_sub_frame_list[max_frame]].T
+                    frac_pos = np.eye(3, dtype=float)
+                    _abc_ref = np.matmul(uc_ref, frac_pos.T).T * 10.
+                    _abc_md  = np.matmul(uc_md, frac_pos.T).T  * 10.
+
                     pymolstr += f"""
-pymol.cmd.distance(
-    name = \"d{pair_idx}-{max_dists[pair_idx]:4.2f}\",
-    selection1 = \"rank {pair[0]}\",
-    selection2 =\"rank {pair[1]}\",
+obj_md_{max_pair_idx} = [\\
+   CYLINDER, 0., 0., 0., {_abc_md[0,0]},{_abc_md[0,1]},{_abc_md[0,2]}, 0.2, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_md[1,0]},{_abc_md[1,1]},{_abc_md[1,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0,\\
+   CYLINDER, 0., 0., 0., {_abc_md[2,0]},{_abc_md[2,1]},{_abc_md[2,2]}, 0.2, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,\\
+   ]
+
+cyl_text(obj_md_{max_pair_idx},plain,[{_abc_md[0,0]},{_abc_md[0,1]},{_abc_md[0,2]}],'a',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_md_{max_pair_idx},plain,[{_abc_md[1,0]},{_abc_md[1,1]},{_abc_md[1,2]}],'b',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+cyl_text(obj_md_{max_pair_idx},plain,[{_abc_md[2,0]},{_abc_md[2,1]},{_abc_md[2,2]}],'c',0.20,axes=[[1,0,0],[0,1,0],[0,0,1]])
+
+cmd.load_cgo(obj_md_{max_pair_idx},  'abc_md_{max_pair_idx}')
+
+cmd.cmd.read_pdbstr(
+    \"\"\"{pdbstring}\"\"\",
+    \"strc_{max_pair_idx}\"
+)
+cmd.group(\"pair-{max_pair_idx}\", \"abc_md_{max_pair_idx}\")
+cmd.group(\"pair-{max_pair_idx}\", \"strc_{max_pair_idx}\")
+"""
+                    for pair_idx, pair in enumerate(max_pairs):
+                        name = f"d_{max_pair_idx}_{pair_idx}-{max_dists[pair_idx]:4.2f}"
+                        pymolstr += f"""
+cmd.distance(
+    name = \"{name}\",
+    selection1 = \"rank {pair[0]} and strc_{max_pair_idx}\",
+    selection2 = \"rank {pair[1]} and strc_{max_pair_idx}\",
     cutoff = 999.,
     mode = 0
 )
-    """
+cmd.group(\"pair-{max_pair_idx}\", \"{name}\")
+"""
                 with open(f"{crystal_name}-{forcefield_name}-hbond.py", "w") as fopen:
                     fopen.write(pymolstr)
 
@@ -1512,44 +1967,6 @@ pymol.cmd.distance(
                 crystal_name
                 )
 
-            ### ... Absolute Angles ...
-
-            if len(hbond_angles) > 0:
-                avg   = np.mean(hbond_angles)
-                std   = np.std(hbond_angles)
-                dev   = "--"
-                max_avg = 0.
-                max_std = 0.
-                max_dev = "--"
-                for unique_rank in np.unique(hbond_pair_rank_list):
-                    valids   = np.where(unique_rank == hbond_pair_rank_list)[0]
-                    _max_avg = np.mean(hbond_angles[:,valids])
-                    if _max_avg > max_avg:
-                        max_avg = _max_avg
-                        max_std = np.std(hbond_angles[:,valids])
-            else:
-                avg = "--"
-                std = "--"
-                dev = "--"
-                max_avg = "--"
-                max_std = "--"
-                max_dev = "--"
-            workbook_wrap.add_data(
-                avg,
-                std,
-                dev,
-                "<[∠(D-H•••A)]>",
-                forcefield_name, 
-                crystal_name
-                )
-            workbook_wrap.add_data(
-                max_avg,
-                max_std,
-                max_dev,
-                "Max <[∠(D-H•••A)]>",
-                forcefield_name, 
-                crystal_name
-                )
 
             ### ... Deviations Angles ...
 
@@ -1630,7 +2047,7 @@ pymol.cmd.distance(
                 forcefield_name, 
                 crystal_name
                 )
-
+            
             ### Write box vector angles ###
             ### ======================= ###
             avg  = np.mean(alpha)
@@ -1665,18 +2082,66 @@ pymol.cmd.distance(
                 forcefield_name, 
                 crystal_name
                 )
+                
+            ### Write combined cell error
+            ### =========================
+            delta_a2 = (a_len - ref_a_len)**2
+            delta_b2 = (b_len - ref_b_len)**2
+            delta_c2 = (c_len - ref_c_len)**2
+
+            delta_alpha = alpha - ref_alpha
+            delta_beta  = beta  - ref_beta
+            delta_gamma = gamma - ref_gamma
+
+            valids_upper = np.where(delta_alpha > 180.)
+            valids_lower = np.where(delta_alpha < -180.)
+            delta_alpha[valids_upper] -= 360.
+            delta_alpha[valids_lower] += 360.
+
+            valids_upper = np.where(delta_beta > 180.)
+            valids_lower = np.where(delta_beta < -180.)
+            delta_beta[valids_upper] -= 360.
+            delta_beta[valids_lower] += 360.
+
+            valids_upper = np.where(delta_gamma > 180.)
+            valids_lower = np.where(delta_gamma < -180.)
+            delta_gamma[valids_upper] -= 360.
+            delta_gamma[valids_lower] += 360.
+
+            delta_alpha2 = delta_alpha**2
+            delta_beta2  = delta_beta**2
+            delta_gamma2 = delta_gamma**2
+
+            cell_error  = delta_a2
+            cell_error += delta_b2
+            cell_error += delta_c2
+            cell_error += _ANG_FACTOR * delta_alpha2
+            cell_error += _ANG_FACTOR * delta_beta2
+            cell_error += _ANG_FACTOR * delta_gamma2
+            cell_error  = np.sqrt(cell_error)
+
+            avg = np.mean(cell_error)
+            std = np.std(cell_error)
+            workbook_wrap.add_data(
+                avg,
+                std,
+                "--",
+                "cell error", 
+                forcefield_name, 
+                crystal_name
+                )
 
             ### Write sublimation enthalpy ###
             ### ========================== ###
             ene_xtal = np.array(ene_xtal)
             ene_gas  = np.array(ene_gas)
             if ene_xtal.size > 1 and ene_gas.size > 1:
-                ene_xtal        /= float(N_molecules)
+                ene_xtal_avg     = ene_xtal / float(N_molecules)
                 ### Lattice energy. This is by definition a negative quantity.
-                ene_lattice      = np.mean(ene_xtal) - np.mean(ene_gas)
+                ene_lattice      = np.mean(ene_xtal_avg) - np.mean(ene_gas)
                 RT               = _GASCONST_KCAL * input_dict[crystal_name]["experiment"]["temperature"]
                 sublimation_avg  = - ene_lattice - 2. * RT
-                sublimation_std  = np.var(ene_xtal) + np.var(ene_gas)
+                sublimation_std  = np.var(ene_xtal_avg) + np.var(ene_gas)
                 sublimation_std  = np.sqrt(sublimation_std)
                 workbook_wrap.add_data(
                     sublimation_avg,
@@ -1692,6 +2157,47 @@ pymol.cmd.distance(
                     "--",
                     "--",
                     "Sublimation Energy", 
+                    forcefield_name, 
+                    crystal_name
+                    )
+            if ene_xtal.size:
+                ene_xtal_avg = ene_xtal / float(N_molecules)
+                ene_avg = np.mean(ene_xtal_avg)
+                ene_std = np.std(ene_xtal_avg)
+                workbook_wrap.add_data(
+                    ene_avg,
+                    ene_std,
+                    "--",
+                    "Energy Lattice", 
+                    forcefield_name, 
+                    crystal_name
+                    )
+            else:
+                workbook_wrap.add_data(
+                    "--",
+                    "--",
+                    "--",
+                    "Energy Lattice", 
+                    forcefield_name, 
+                    crystal_name
+                    )
+            if ene_gas.size:
+                ene_avg = np.mean(ene_gas)
+                ene_std = np.std(ene_gas)
+                workbook_wrap.add_data(
+                    ene_avg,
+                    ene_std,
+                    "--",
+                    "Energy Gas", 
+                    forcefield_name, 
+                    crystal_name
+                    )
+            else:
+                workbook_wrap.add_data(
+                    "--",
+                    "--",
+                    "--",
+                    "Energy Gas", 
                     forcefield_name, 
                     crystal_name
                     )

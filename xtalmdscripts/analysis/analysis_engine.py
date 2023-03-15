@@ -3,6 +3,77 @@ Collection of methods useful for comparing computed xtal structures
 with xtal structures from experiment.
 """
 
+def get_dihedral_indices(
+    rdmol,
+    exclude_hydrogen=True
+    ):
+
+    __doc__ = """
+    Retrieve list of dihedrals and list of dihedral ranks.
+    """
+
+    from rdkit import Chem
+    import numpy as np
+
+    if exclude_hydrogen:
+        smarts = Chem.MolFromSmarts("[!#1:1]~[!#1:2]~[!#1:3]~[!#1:4]")
+    else:
+        smarts = Chem.MolFromSmarts("[*:1]~[*:2]~[*:3]~[*:4]")
+    matches = list(
+        rdmol.GetSubstructMatches(smarts)
+        )
+    ranks = list(
+        Chem.CanonicalRankAtoms(rdmol, breakTies=False)
+        )
+    ### First, assign each dihedral a signature using
+    ### the rank of the atoms
+    signature_list = list()
+    index_list = list()
+    dihedral_rank_list = list()
+    for match in matches:
+        s1 = ranks[match[0]]
+        s2 = ranks[match[1]]
+        s3 = ranks[match[2]]
+        s4 = ranks[match[3]]
+        sig1 = (s1,s2,s3,s4)
+        sig2 = (s4,s3,s2,s1)
+        if sig1 in signature_list:
+            idx = signature_list.index(sig1)
+            dihedral_rank_list.append(idx)
+        elif sig2 in signature_list:
+            idx = signature_list.index(sig2)
+            dihedral_rank_list.append(idx)
+        else:
+            signature_list.append(sig1)
+            idx = signature_list.index(sig1)
+            dihedral_rank_list.append(idx)
+
+        index_list.append(list(match))
+
+    index_list         = np.array(index_list, dtype=int)
+    dihedral_rank_list = np.array(dihedral_rank_list, dtype=int)
+
+    return index_list, dihedral_rank_list
+
+
+def compute_dihedrals(
+    traj,
+    dihedral_indices
+    ):
+
+    __doc__ = """
+    Compute dihedrals for all atoms in dihedral_indices.
+    """
+
+    import mdtraj as md
+    import numpy as np
+
+    dihedrals  = md.compute_dihedrals(traj, dihedral_indices)
+    dihedrals *= 180./np.pi
+
+    return dihedrals
+
+
 def atoms_that_are_n_bonds_apart_dict(
     topology, 
     n=4, 
@@ -378,7 +449,7 @@ def compute_com_diff_per_residue(
     exclude_water=True):
 
     __doc__ = """
-    Find com positions for each molecule in query_traj.
+    Compute displacement of com positions for each molecule in query_traj.
     """
 
     import mdtraj as md
