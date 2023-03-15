@@ -679,6 +679,10 @@ def run_xtal_min(
                     break
                 logfile.write(state)
 
+            logfile.write_footer(
+                f"# Final Energy: {result.fun} kJ/mol"
+                )
+
             pos, box = cw.flat_to_pos_box(best_x)
             system = context.getSystem()
             system.setDefaultPeriodicBoxVectors(
@@ -741,6 +745,9 @@ def run_xtal_min(
                     "gtol"    : 1.e-5,
                 }
             )
+            logfile.write_footer(
+                f"# Final Energy: {result.fun} kJ/mol"
+                )
             pos, box = cw.flat_to_pos_box(result.x)
             system = context.getSystem()
             system.setDefaultPeriodicBoxVectors(

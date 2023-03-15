@@ -21,7 +21,7 @@ class Logger(object):
             self.write_str = False
             self.filehandle = filehandle
         self.write_header()
-            
+
     def write_header(self):
         
         if self.write_str:
@@ -66,3 +66,13 @@ class Logger(object):
             self.filehandle.write(f"{boxvectors[2][0]._value},{boxvectors[2][1]._value},{boxvectors[2][2]._value},")
             self.filehandle.write(f"{vol._value},{dens._value},{temp._value}")
             self.filehandle.write("\n")
+
+    def write_footer(self, text):
+
+        if self.write_str:
+            self.str += str(text)
+            self.str += '\n'
+        else:
+            self.filehandle.write(str(text))
+            self.filehandle.write("\n")
+

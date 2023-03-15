@@ -6,6 +6,8 @@ import numpy as np
 from scipy import optimize
 from .utils import Logger
 
+DEBUG = False
+
 def parse_arguments():
 
     """
@@ -532,6 +534,15 @@ def run_xtal_md(
     write_at = 1000 * 20  # Save every 20 picosends
     N_steps_nanosecond = 1000000
     for i in range(nanoseconds):
+        if DEBUG:
+            filehandle_dcd_vel = open(f"{prefix}_production_v_{i}.dcd", "wb")
+            dcdfile_vel = app.dcdfile.DCDFile(
+                filehandle_dcd_vel, 
+                topology, 
+                time_step, 
+                simulation.currentStep,
+                write_at
+                )
         filehandle_dcd = open(f"{prefix}_production_{i}.dcd", "wb")
         filehandle_logger = open(f"{prefix}_production_{i}.csv", "w")
         dcdfile = app.dcdfile.DCDFile(
@@ -561,10 +572,18 @@ def run_xtal_md(
                 positions=state.getPositions(),
                 periodicBoxVectors=state.getPeriodicBoxVectors(),
             )
+            if DEBUG:
+                vel  = state.getVelocities()._value
+                vel *= unit.nanometer
+                dcdfile_vel.writeModel(
+                    positions=vel,
+                    )
             logfile.write(state)
             simulation.saveState(f"{prefix}_production_latest.xml")
 
         filehandle_dcd.close()
+        if DEBUG:
+            filehandle_dcd_vel.close()
         filehandle_logger.close()
         with open(f"{prefix}_production_{i}.xml", "w") as fopen:
             simulation.saveState(fopen)
