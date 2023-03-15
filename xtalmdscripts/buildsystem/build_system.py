@@ -48,16 +48,24 @@ def parse_arguments():
         '--forcefield', 
         "-ff", 
         type=str, 
-        help="force field name",
+        help="Force field name. If `offxml` is selected, a offxml file must be provided via --offxml flag.",
         choices=[
             "gaff1",
             "gaff2",
             "parsley",
             "sage",
             "cgenff",
-            "oplsaa"
+            "oplsaa",
+            "offxml"
             ],
         required=True
+        )
+
+    parser.add_argument(
+        "--offxml",
+        "-of",
+        type=str,
+        required=False,
         )
 
     parser.add_argument(
@@ -295,6 +303,7 @@ def build_system_off(
     replicated_mol_list,
     pdb_path,
     version="1.3.1",
+    offxml=None,
     use_tip3p=False):
 
     """
@@ -330,9 +339,14 @@ def build_system_off(
         forcefield  = ForceField(tip3p_xml_path)
     else:
         forcefield  = ForceField()
+        
+    if offxml != None:
+        forcefield_name = offxml
+    else:
+        forcefield_name = f"openff-{version}"
     openff      = SMIRNOFFTemplateGenerator(
         molecules=offmol_list, 
-        forcefield=f"openff-{version}"
+        forcefield=forcefield_name,
         )
     forcefield.registerTemplateGenerator(openff.generator)
     pdbfile  = PDBFile(pdb_path)
@@ -895,7 +909,7 @@ def main():
     b_len = np.max(b_min_max) - np.min(b_min_max) + 1.
     c_len = np.max(c_min_max) - np.min(c_min_max) + 1.
 
-    print(f"Building super cell with with {a_len} x {b_len} x {c_len}")
+    print(f"Building super cell with {a_len} x {b_len} x {c_len}")
 
     ### Build the supercell as a list of rdkit molecules
     ### ================================================
@@ -1048,6 +1062,29 @@ def main():
                     [rdmol],
                     f"{prefix}_monomer{rdmol_idx}.pdb",
                     version=args.version,
+                    use_tip3p=args.use_tip3p,
+                    )
+                )
+
+    elif args.forcefield.lower() == "offxml":
+
+        if not args.offxml:
+            raise ValueError(
+                "Must also provide path to offxml file."
+                )
+
+        system = build_system_off(
+            replicated_mol_list,
+            f"{prefix}.pdb",
+            offxml=args.offxml,
+            use_tip3p=args.use_tip3p,
+            )
+        for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
+            monomer_sys_list.append(
+                build_system_off(
+                    [rdmol],
+                    f"{prefix}_monomer{rdmol_idx}.pdb",
+                    offxml=args.offxml,
                     use_tip3p=args.use_tip3p,
                     )
                 )
