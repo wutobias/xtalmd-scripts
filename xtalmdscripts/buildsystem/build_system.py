@@ -69,6 +69,15 @@ def parse_arguments():
         )
 
     parser.add_argument(
+        "--use_openfftk",
+        "-offtk",
+        help="Use OpenFF Toolkit to generate system. Useful for non-standard offxml files.", 
+        action='store_true',
+        default=False,
+        required=False
+        )
+
+    parser.add_argument(
         '--version', 
         "-ve", 
         type=str, 
@@ -83,6 +92,47 @@ def parse_arguments():
         type=float, 
         help="nonbonded cutoff distance in nm", 
         default=0.9,
+        required=False
+        )
+
+    parser.add_argument(
+        '--nolongrange', 
+        "-nolr", 
+        help="Deactivate any analytical treatment of longrange treatment of LJ interactions.",
+        action='store_true',
+        default=False,
+        required=False
+        )
+
+    parser.add_argument(
+        '--longrange', 
+        "-lr", 
+        type=str, 
+        help="Long range method to use in xtal simulation.", 
+        choices=[
+            "Ewald",
+            "PME",
+            "LJPME"
+            ],
+        default="PME",
+        required=False
+        )
+
+    parser.add_argument(
+        '--switching_function', 
+        "-sf", 
+        help="Use switching function to let LJ potential smoothly go to zero at cutoff.", 
+        action='store_true',
+        default=False,
+        required=False
+        )
+
+    parser.add_argument(
+        '--switching_cutoff', 
+        "-sc", 
+        type=float, 
+        help="Switching function cutoff in nm.", 
+        default=0.8,
         required=False
         )
 
@@ -190,21 +240,21 @@ def OPLS_LJ(system, CutoffPeriodic=True):
     forces = {system.getForce(index).__class__.__name__: system.getForce(
         index) for index in range(system.getNumForces())}
     nonbonded_force = forces['NonbondedForce']
-    lorentz = openmm.CustomNonbondedForce(
+    geometric_mixing = openmm.CustomNonbondedForce(
         '4*epsilon*((sigma/r)^12-(sigma/r)^6); sigma=sqrt(sigma1*sigma2); epsilon=sqrt(epsilon1*epsilon2)')
     if CutoffPeriodic:
-        lorentz.setNonbondedMethod(lorentz.CutoffPeriodic)
+        geometric_mixing.setNonbondedMethod(geometric_mixing.CutoffPeriodic)
     else:
-        lorentz.setNonbondedMethod(lorentz.NoCutoff)
-    lorentz.addPerParticleParameter('sigma')
-    lorentz.addPerParticleParameter('epsilon')
-    lorentz.setCutoffDistance(nonbonded_force.getCutoffDistance())
-    lorentz.setUseLongRangeCorrection(True)
+        geometric_mixing.setNonbondedMethod(geometric_mixing.NoCutoff)
+    geometric_mixing.addPerParticleParameter('sigma')
+    geometric_mixing.addPerParticleParameter('epsilon')
+    geometric_mixing.setCutoffDistance(nonbonded_force.getCutoffDistance())
+    geometric_mixing.setUseLongRangeCorrection(True)
     LJset = {}
     for index in range(nonbonded_force.getNumParticles()):
         charge, sigma, epsilon = nonbonded_force.getParticleParameters(index)
         LJset[index] = (sigma, epsilon)
-        lorentz.addParticle([sigma, epsilon])
+        geometric_mixing.addParticle([sigma, epsilon])
         nonbonded_force.setParticleParameters(
             index, charge, sigma, epsilon * 0
         )
@@ -212,12 +262,12 @@ def OPLS_LJ(system, CutoffPeriodic=True):
         (p1, p2, q, sig, eps) = nonbonded_force.getExceptionParameters(i)
         # ALL THE 12,13 and 14 interactions are EXCLUDED FROM CUSTOM NONBONDED
         # FORCE
-        lorentz.addExclusion(p1, p2)
+        geometric_mixing.addExclusion(p1, p2)
         if eps._value != 0.0:
             sig14 = np.sqrt(LJset[p1][0] * LJset[p2][0])
             eps14 = np.sqrt(LJset[p1][1] * LJset[p2][1]) * 0.5
             nonbonded_force.setExceptionParameters(i, p1, p2, q, sig14, eps)
-    system.addForce(lorentz)
+    system.addForce(geometric_mixing)
     return system
 
 
@@ -304,7 +354,8 @@ def build_system_off(
     pdb_path,
     version="1.3.1",
     offxml=None,
-    use_tip3p=False):
+    use_tip3p=False,
+    use_openfftk=False):
 
     """
     Build openmm system for openff force field.
@@ -335,20 +386,6 @@ def build_system_off(
                 Molecule.from_rdkit(rdmol)
                 )
 
-    if use_tip3p and has_water:
-        forcefield  = ForceField(tip3p_xml_path)
-    else:
-        forcefield  = ForceField()
-        
-    if offxml != None:
-        forcefield_name = offxml
-    else:
-        forcefield_name = f"openff-{version}"
-    openff      = SMIRNOFFTemplateGenerator(
-        molecules=offmol_list, 
-        forcefield=forcefield_name,
-        )
-    forcefield.registerTemplateGenerator(openff.generator)
     pdbfile  = PDBFile(pdb_path)
     topology = pdbfile.getTopology()
     positions = pdbfile.getPositions()
@@ -366,17 +403,66 @@ def build_system_off(
                     else:
                         atm.name = "H1"
                         found_one_H = True
-    if boxvectors == None:
-        nonbondedMethod = app.NoCutoff
+
+    if use_tip3p and has_water:
+        forcefield  = ForceField(tip3p_xml_path)
     else:
-        nonbondedMethod = app.PME
-    system = forcefield.createSystem(
-        topology = topology,
-        nonbondedMethod=nonbondedMethod,
-        constraints=None,
-        removeCMMotion=True,
-        rigidWater=use_tip3p and has_water,
-    )
+        forcefield  = ForceField()
+        
+    if offxml != None:
+        forcefield_name = offxml
+    else:
+        forcefield_name = f"openff-{version}"
+
+    if use_openfftk:
+        from openff.toolkit.typing.engines.smirnoff import ForceField
+        from openff.toolkit.topology import Topology
+
+        smi_list = [Chem.MolToSmiles(mol) for mol in replicated_mol_list]
+
+        unique_mol_list = list()
+        unique_smi_list = list()
+        for mol, smi in zip(replicated_mol_list, smi_list):
+            if smi in unique_smi_list:
+                continue
+            else:
+                unique_smi_list.append(smi)
+                unique_mol_list.append(mol)    
+
+        off_topology = Topology.from_openmm(
+            pdbfile.topology,
+            unique_molecules=[Molecule.from_rdkit(mol) for mol in unique_mol_list]
+        )
+        
+        if boxvectors == None:
+            off_topology.box_vectors = [2., 2., 2.] * unit.nanometer
+        else:
+            off_topology.box_vectors = boxvectors
+        forcefield = ForceField(
+            forcefield_name, 
+            load_plugins=True,
+            )
+        system = forcefield.create_interchange(
+            off_topology
+            ).to_openmm(combine_nonbonded_forces=False)
+    else:
+        openff = SMIRNOFFTemplateGenerator(
+            molecules=offmol_list, 
+            forcefield=forcefield_name,
+            )
+        forcefield.registerTemplateGenerator(openff.generator)
+
+        if boxvectors == None:
+            nonbondedMethod = app.NoCutoff
+        else:
+            nonbondedMethod = app.PME
+        system = forcefield.createSystem(
+            topology = topology,
+            nonbondedMethod=nonbondedMethod,
+            constraints=None,
+            removeCMMotion=True,
+            rigidWater=use_tip3p and has_water,
+        )
 
     return system
 
@@ -820,10 +906,10 @@ def build_system_oplsaa(
 
     if boxvectors == None:
         nonbondedMethod  = app.NoCutoff
-        lorentz_periodic = False
+        geometric_mixing_periodic = False
     else:
         nonbondedMethod  = app.PME
-        lorentz_periodic = True
+        geometric_mixing_periodic = True
     system = forcefield.createSystem(
         topology = topology,
         nonbondedMethod=nonbondedMethod,
@@ -832,7 +918,7 @@ def build_system_oplsaa(
         rigidWater=use_tip3p and has_water,
     )
 
-    system = OPLS_LJ(system, lorentz_periodic)
+    system = OPLS_LJ(system, geometric_mixing_periodic)
 
     ### Clean up
     for filename in to_remove_list:
@@ -1029,6 +1115,7 @@ def main():
             f"{prefix}.pdb",
             version=args.version,
             use_tip3p=args.use_tip3p,
+            use_openfftk=args.use_openfftk
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
             monomer_sys_list.append(
@@ -1037,6 +1124,7 @@ def main():
                     f"{prefix}_monomer{rdmol_idx}.pdb",
                     version=args.version,
                     use_tip3p=args.use_tip3p,
+                    use_openfftk=args.use_openfftk
                     )
                 )
 
@@ -1055,6 +1143,7 @@ def main():
             f"{prefix}.pdb",
             version=args.version,
             use_tip3p=args.use_tip3p,
+            use_openfftk=args.use_openfftk,
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
             monomer_sys_list.append(
@@ -1063,6 +1152,7 @@ def main():
                     f"{prefix}_monomer{rdmol_idx}.pdb",
                     version=args.version,
                     use_tip3p=args.use_tip3p,
+                    use_openfftk=args.use_openfftk,
                     )
                 )
 
@@ -1078,6 +1168,7 @@ def main():
             f"{prefix}.pdb",
             offxml=args.offxml,
             use_tip3p=args.use_tip3p,
+            use_openfftk=args.use_openfftk,
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
             monomer_sys_list.append(
@@ -1086,6 +1177,7 @@ def main():
                     f"{prefix}_monomer{rdmol_idx}.pdb",
                     offxml=args.offxml,
                     use_tip3p=args.use_tip3p,
+                    use_openfftk=args.use_openfftk,
                     )
                 )
 
@@ -1153,7 +1245,83 @@ def main():
     forces = {system.getForce(index).__class__.__name__: system.getForce(
         index) for index in range(system.getNumForces())}
     nbforce = forces['NonbondedForce']
-    nbforce.setCutoffDistance(args.nbcutoff * unit.nanometer)
+    
+    ### Sets cutoff distance
+    nbforce.setCutoffDistance(
+        args.nbcutoff * unit.nanometer
+        )
+
+    ### Sets nonbonded method
+    from openmm import app
+    nbmethod_dict = {
+        "Ewald".lower()             : 3, #app.Ewald
+        "PME".lower()               : 4, #app.PME
+        "LJPME".lower()             : 5, #app.LJPME
+    }
+    nbforce.setNonbondedMethod(
+        nbmethod_dict[args.longrange.lower()]
+        )
+    if args.nolongrange:
+        nbforce.setNonbondedMethod(
+            nbmethod_dict["PME".lower()]
+            )
+        nbforce.setUseDispersionCorrection(False)
+        if args.forcefield.lower() == "oplsaa":
+            geometric_mixing = forces["CustomNonbondedForce"]
+            geometric_mixing.setUseLongRangeCorrection(False)
+    else:
+        if args.longrange.lower() == "LJPME".lower():
+            nbforce.setUseDispersionCorrection(False)
+            ### If we are using oplsaa, we must substract out 
+            ### the LB mixing rules interactions.
+            if args.forcefield.lower() == "oplsaa":
+                geometric_mixing = forces["CustomNonbondedForce"]
+                for i in range(geometric_mixing.getNumParticles()):
+                    sig, eps = geometric_mixing.getParticleParameters(i)
+                    q, _, _  = nbforce.getParticleParameters(i)
+                    nbforce.setParticleParameters(
+                        i, 
+                        q,
+                        sig * unit.nanometer, 
+                        eps * unit.kilojoule_per_mole
+                    )
+
+                geometric_mixing.setNonbondedMethod(2)
+                geometric_mixing.setUseLongRangeCorrection(False)
+                geometric_mixing.setEnergyFunction("""
+Ugeo - Ulb;
+
+Ugeo= 4*epsilon*((sigmageo/r)^12-(sigmageo/r)^6);
+Ulb = 4*epsilon*((sigmaari/r)^12-(sigmaari/r)^6);
+
+sigmageo=sqrt(sigma1*sigma2);
+sigmaari=(sigma1+sigma2)*0.5;
+epsilon=sqrt(epsilon1*epsilon2);
+""")
+
+        else:
+            nbforce.setUseDispersionCorrection(True)
+            if args.forcefield.lower() == "oplsaa":
+                geometric_mixing = forces["CustomNonbondedForce"]
+                geometric_mixing.setUseLongRangeCorrection(True)
+
+    ### Sets Switching function
+    if args.switching_function:
+        nbforce.setUseSwitchingFunction(True)
+        nbforce.setSwitchingDistance(
+            args.switching_cutoff * unit.nanometer
+            )
+        if args.forcefield.lower() == "oplsaa":
+            geometric_mixing = forces["CustomNonbondedForce"]
+            geometric_mixing.setUseSwitchingFunction(True)
+            geometric_mixing.setSwitchingDistance(
+                args.switching_cutoff * unit.nanometer
+                )
+    else:
+        nbforce.setUseSwitchingFunction(False)
+        if args.forcefield.lower() == "oplsaa":
+            geometric_mixing = forces["CustomNonbondedForce"]
+            geometric_mixing.setUseSwitchingFunction(False)
 
     ### Change charge method
     if args.charge_method.lower() != "default":
