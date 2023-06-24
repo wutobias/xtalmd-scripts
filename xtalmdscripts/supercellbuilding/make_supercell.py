@@ -118,7 +118,21 @@ If this is a single argument: Minimum length of axis `c` in the supercell. Units
         default=False,
         )
 
+    parser.add_argument(
+        '--label_residues', 
+        "-lc", 
+        action='store_true',
+        help="This labels common amino acid residues to their commonly used name in PDB files.", 
+        required=False,
+        default=False,
+        )
+
     return parser.parse_args()
+
+
+def label_rdmol(rdmol):
+
+    pass
 
 
 def combine_mols(mol_list):
@@ -665,7 +679,7 @@ def make_P1(
         acmatrix_best = acmatrix_new
 
         ### Find the disconnected graphs from the adjacency matrix
-        G           = nx.convert_matrix.from_numpy_matrix(acmatrix_new)
+        G           = nx.convert_matrix.from_numpy_array(acmatrix_new)
         G_node_list = list(nx.connected_components(G))
         ### Translate molecules to neighboring unit cells in + direction
         ### and check if we can form new bonds. If yes, update `atom_crds_ortho`
@@ -702,7 +716,7 @@ def make_P1(
         atom_crds_ortho,
         0,
         )
-    G           = nx.convert_matrix.from_numpy_matrix(acmatrix)
+    G           = nx.convert_matrix.from_numpy_array(acmatrix)
     G_node_list = list(nx.connected_components(G))
     atom_num    = np.array(atom_num, dtype=int)
     atom_crds_ortho = np.array(atom_crds_ortho)
@@ -878,7 +892,7 @@ def make_P1(
                 atom_crds_ortho,
                 0,
                 )
-            G           = nx.convert_matrix.from_numpy_matrix(acmatrix)
+            G           = nx.convert_matrix.from_numpy_array(acmatrix)
             G_node_list = list(nx.connected_components(G))
             atom_num    = np.array(atom_num, dtype=int)
             atom_crds_ortho = np.array(atom_crds_ortho)
