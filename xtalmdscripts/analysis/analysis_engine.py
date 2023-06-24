@@ -3,6 +3,85 @@ Collection of methods useful for comparing computed xtal structures
 with xtal structures from experiment.
 """
 
+def unwrap_trajectory(query_traj, ref_strc):
+
+    import numpy as np
+    import copy
+
+    query_traj_cp = copy.deepcopy(query_traj)
+    ref_strc_cp   = copy.deepcopy(ref_strc)
+
+    ref_strc_cp.center_coordinates()
+
+    uc_ref = ref_strc_cp.unitcell_vectors[0].T
+    ucinv_ref = np.linalg.inv(uc_ref)
+
+    r_ref = ref_strc_cp.xyz[0]
+    r_fract_ref  = np.matmul(ucinv_ref, r_ref.T).T
+
+    molecule_list = list(ref_strc.topology.find_molecules())
+    N_molecules   = len(molecule_list)
+    r_com_ref     = np.zeros((N_molecules, 3), dtype=float)
+    r_fract_com_ref = np.zeros((N_molecules, 3), dtype=float)
+    for mol_idx in range(N_molecules):
+        molecule = molecule_list[mol_idx]
+        total_mass = 0.
+        for atom in molecule:
+            total_mass += atom.element.mass
+            r_com_ref[mol_idx] += r_ref[atom.index] * atom.element.mass
+        r_com_ref[mol_idx] /= total_mass
+        r_fract_com_ref[mol_idx] = np.matmul(ucinv_ref, r_com_ref[mol_idx].T).T
+
+    max_diff = 0.51
+    r_com    = np.zeros(3, dtype=float)
+    for i in range(query_traj_cp.n_frames):
+        for _ in range(10):
+            n_unwrapped = 0
+            r = query_traj_cp.xyz[i]
+            uc = query_traj_cp.unitcell_vectors[i].T
+            ucinv = np.linalg.inv(uc)
+            for mol_idx in range(N_molecules):
+                molecule = molecule_list[mol_idx]
+                for axis in [0,1,2]:
+                    r_com[:] = 0.
+                    total_mass = 0.
+                    for atom in molecule:
+                        total_mass += atom.element.mass
+                        r_com += r[atom.index] * atom.element.mass
+                    r_com /= total_mass
+                    r_fract   = np.matmul(ucinv, r_com.T).T
+                    diff_frac = r_fract - r_fract_com_ref[mol_idx]
+                    sele_upper = diff_frac[axis] > max_diff
+                    sele_lower = diff_frac[axis] < -max_diff
+                    if sele_upper:
+                        r_fract[axis] -= 1.
+                    elif sele_lower:
+                        r_fract[axis] += 1.
+                    if sele_upper or sele_lower:
+                        n_unwrapped += 1
+                        r_com_shift = np.matmul(uc, r_fract.T).T - r_com
+                        for atom in molecule:
+                            query_traj_cp.xyz[i,atom.index] += r_com_shift
+
+            query_traj_cp[i].center_coordinates()
+            if n_unwrapped == 0:
+                break
+
+    ### Finally shift all atom positions
+    ### to get the best-fit RMSD with the reference
+    ### structure just using translation.
+    ref_cog  = np.mean(ref_strc.xyz[0], axis=0)
+    for i in range(query_traj_cp.n_frames):
+        
+        x = query_traj_cp.xyz[i]
+        traj_cog = np.mean(x, axis=0)
+        
+        displ = ref_cog - traj_cog
+        query_traj_cp.xyz[i] += displ
+
+    return query_traj_cp
+
+
 def get_dihedral_indices(
     rdmol,
     exclude_hydrogen=True
@@ -29,7 +108,7 @@ def get_dihedral_indices(
     ### the rank of the atoms
     signature_list = list()
     index_list = list()
-    dihedral_rank_list = list()
+    rank_list = list()
     for match in matches:
         s1 = ranks[match[0]]
         s2 = ranks[match[1]]
@@ -39,21 +118,124 @@ def get_dihedral_indices(
         sig2 = (s4,s3,s2,s1)
         if sig1 in signature_list:
             idx = signature_list.index(sig1)
-            dihedral_rank_list.append(idx)
+            rank_list.append(idx)
         elif sig2 in signature_list:
             idx = signature_list.index(sig2)
-            dihedral_rank_list.append(idx)
+            rank_list.append(idx)
         else:
             signature_list.append(sig1)
             idx = signature_list.index(sig1)
-            dihedral_rank_list.append(idx)
+            rank_list.append(idx)
 
         index_list.append(list(match))
 
-    index_list         = np.array(index_list, dtype=int)
-    dihedral_rank_list = np.array(dihedral_rank_list, dtype=int)
+    index_list = np.array(index_list, dtype=int)
+    rank_list  = np.array(rank_list, dtype=int)
 
-    return index_list, dihedral_rank_list
+    return index_list, rank_list
+
+
+def get_angle_indices(
+    rdmol,
+    exclude_hydrogen=True
+    ):
+
+    __doc__ = """
+    Retrieve list of angles and list of angle ranks.
+    """
+
+    from rdkit import Chem
+    import numpy as np
+
+    if exclude_hydrogen:
+        smarts = Chem.MolFromSmarts("[!#1:1]~[!#1:2]~[!#1:3]")
+    else:
+        smarts = Chem.MolFromSmarts("[*:1]~[*:2]~[*:3]")
+    matches = list(
+        rdmol.GetSubstructMatches(smarts)
+        )
+    ranks = list(
+        Chem.CanonicalRankAtoms(rdmol, breakTies=False)
+        )
+    ### First, assign each angle a signature using
+    ### the rank of the atoms
+    signature_list = list()
+    index_list = list()
+    rank_list = list()
+    for match in matches:
+        s1 = ranks[match[0]]
+        s2 = ranks[match[1]]
+        s3 = ranks[match[2]]
+        sig1 = (s1,s2,s3)
+        sig2 = (s3,s2,s1)
+        if sig1 in signature_list:
+            idx = signature_list.index(sig1)
+            rank_list.append(idx)
+        elif sig2 in signature_list:
+            idx = signature_list.index(sig2)
+            rank_list.append(idx)
+        else:
+            signature_list.append(sig1)
+            idx = signature_list.index(sig1)
+            rank_list.append(idx)
+
+        index_list.append(list(match))
+
+    index_list = np.array(index_list, dtype=int)
+    rank_list  = np.array(rank_list, dtype=int)
+
+    return index_list, rank_list
+
+
+def get_bond_indices(
+    rdmol,
+    exclude_hydrogen=True
+    ):
+
+    __doc__ = """
+    Retrieve list of bonds and list of bond ranks.
+    """
+
+    from rdkit import Chem
+    import numpy as np
+
+    if exclude_hydrogen:
+        smarts = Chem.MolFromSmarts("[!#1:1]~[!#1:2]")
+    else:
+        smarts = Chem.MolFromSmarts("[*:1]~[*:2]")
+    matches = list(
+        rdmol.GetSubstructMatches(smarts)
+        )
+    ranks = list(
+        Chem.CanonicalRankAtoms(rdmol, breakTies=False)
+        )
+    ### First, assign each bond a signature using
+    ### the rank of the atoms
+    signature_list = list()
+    index_list = list()
+    rank_list = list()
+    for match in matches:
+        s1 = ranks[match[0]]
+        s2 = ranks[match[1]]
+        sig1 = (s1,s2)
+        sig2 = (s2,s1)
+        if sig1 in signature_list:
+            idx = signature_list.index(sig1)
+            rank_list.append(idx)
+        elif sig2 in signature_list:
+            idx = signature_list.index(sig2)
+            rank_list.append(idx)
+        else:
+            signature_list.append(sig1)
+            idx = signature_list.index(sig1)
+            rank_list.append(idx)
+
+        index_list.append(list(match))
+
+    index_list = np.array(index_list, dtype=int)
+    rank_list  = np.array(rank_list, dtype=int)
+
+    return index_list, rank_list
 
 
 def compute_dihedrals(
@@ -70,8 +252,45 @@ def compute_dihedrals(
 
     dihedrals  = md.compute_dihedrals(traj, dihedral_indices)
     dihedrals *= 180./np.pi
+    ### Shift dihedrals to range [0,360]
+    dihedrals += 180.
 
     return dihedrals
+
+
+def compute_angles(
+    traj,
+    angle_indices
+    ):
+
+    __doc__ = """
+    Compute angles for all atoms in angle_indices.
+    """
+
+    import mdtraj as md
+    import numpy as np
+
+    angles  = md.compute_angles(traj, angle_indices)
+    angles *= 180./np.pi
+
+    return angles
+
+
+def compute_bonds(
+    traj,
+    bond_indices
+    ):
+
+    __doc__ = """
+    Compute bond lengths for all atoms in bond_indices.
+    """
+
+    import mdtraj as md
+    import numpy as np
+
+    bond_lengths  = md.compute_distances(traj, bond_indices)
+
+    return bond_lengths
 
 
 def atoms_that_are_n_bonds_apart_dict(
