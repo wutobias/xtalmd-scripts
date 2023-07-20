@@ -92,6 +92,15 @@ If this is a single argument: Minimum length of axis `c` in the supercell. Units
         )
 
     parser.add_argument(
+        '--removewater', 
+        "-rw", 
+        action='store_true',
+        help="Remove water molecules. This will be executed prior to water placement.", 
+        required=False,
+        default=False,
+        )
+
+    parser.add_argument(
         '--use_symmetry_operations', 
         "-op", 
         action='store_true',
@@ -120,7 +129,7 @@ If this is a single argument: Minimum length of axis `c` in the supercell. Units
 
     parser.add_argument(
         '--label_residues', 
-        "-lc", 
+        "-lr", 
         action='store_true',
         help="This labels common amino acid residues to their commonly used name in PDB files.", 
         required=False,
@@ -484,7 +493,7 @@ def random_fill(
     cell, 
     mol_list, 
     N_per_unitcell, 
-    radius=1.4, 
+    radius=1.7, 
     smiles="[H]O[H]"):
 
     """
@@ -498,16 +507,23 @@ def random_fill(
     import gemmi
     import copy
 
+    bin_width_real = 0.5
+    vdw_scaling    = 1.2
+
+    solute_solvent_epsilon  = 1.
+    solvent_solvent_epsilon = 1.
+
     vdw_dict = {
-        1  : 1.09, #H
-        6  : 1.7,  #C
-        7  : 1.55, #N
-        8  : 1.52, #O
-        9  : 1.47, #F
-        15 : 1.8,  #P
-        16 : 1.8,  #S
-        17 : 1.75  #Cl
+        1  : vdw_scaling*1.09, #H
+        6  : vdw_scaling*1.70, #C
+        7  : vdw_scaling*1.55, #N
+        8  : vdw_scaling*1.52, #O
+        9  : vdw_scaling*1.47, #F
+        15 : vdw_scaling*1.80, #P
+        16 : vdw_scaling*1.80, #S
+        17 : vdw_scaling*1.75, #Cl
     }
+    radius *= vdw_scaling
 
     mol = Chem.MolFromSmiles(smiles)
     mol = Chem.AddHs(mol)
@@ -519,95 +535,193 @@ def random_fill(
     atom_crds_mol  = conformer.GetPositions()
     atom_crds_mol  = np.array(atom_crds_mol)
 
-    replicated_mol_list, _, _ = make_supercell(
-        cell,
-        mol_list,
-        -1, 1,
-        -1, 1,
-        -1, 1)
-
     atom_crds_xtal = list()
     atom_radii_xtal = list()
-    for mol_r in replicated_mol_list:
-        conf     = mol_r.GetConformer(0)
-        conf_pos = conf.GetPositions()
-        for atom in mol_r.GetAtoms():
-            if atom.GetAtomicNum() == 1:
-                continue
-            atom_radii_xtal.append(
-                vdw_dict[atom.GetAtomicNum()]
-            )
-            atom_crds_xtal.append(
-                conf_pos[atom.GetIdx()]
-                )
-    atom_crds_xtal = np.array(atom_crds_xtal)
-    atom_radii_xtal = np.array(atom_radii_xtal)
-    atom_radii_xtal += radius
+    frac = np.zeros(3, dtype=float)
 
-    print("Generating 50x50x50 vdw grid...")
+    real2frac = np.array(
+        cell.fractionalization_matrix.tolist()
+        )
+    frac2real = np.array(
+        cell.orthogonalization_matrix.tolist()
+        )
+    
+    all_rad_list = list()
+    for mol_r in mol_list:
+        all_rad_list.append(list())
+        for atom in mol_r.GetAtoms():
+            n = atom.GetAtomicNum()
+            if n in vdw_dict:
+                all_rad_list[-1].append(
+                    vdw_dict[n]
+                )
+            else:
+                raise ValueError(
+                    f"Atomic number {n} not found."
+                    )
+
+    for mol_idx, mol_r in enumerate(mol_list):
+        conf     = mol_r.GetConformer(0)
+        sele     = [atom.GetIdx() for atom in mol_r.GetAtoms() if atom.GetAtomicNum() != 1]
+        conf_pos = conf.GetPositions()[sele]
+        rad_list = np.array(all_rad_list[mol_idx])[sele]
+        frac_pos = np.matmul(real2frac, conf_pos.T).T
+        for a in [-1.,0.,1.]:
+            for b in [-1.,0.,1.]:
+                for c in [-1.,0.,1.]:
+                    frac_pos += [a,b,c]
+                    conf_pos[:] = np.matmul(frac2real, frac_pos.T).T
+                    atom_crds_xtal.extend(
+                        conf_pos.tolist()
+                        )
+                    atom_radii_xtal.extend(
+                        rad_list.tolist()
+                        )
+                    frac_pos -= [a,b,c]
+    atom_crds_xtal   = np.array(atom_crds_xtal)
+    atom_radii_xtal  = np.array(atom_radii_xtal)
+
+    _x_extend = np.zeros((27,N_per_unitcell,3), dtype=float)
+    _x = np.zeros((N_per_unitcell,3), dtype=float)
+    radius_comb = np.sqrt(atom_radii_xtal*radius)[:,np.newaxis]
+    r_min = 1.1225*radius_comb
+    def func(x):
+
+        _x[:] = 0.
+        _x_extend[:] = 0.
+
+        _x[:] = x.reshape((-1,3))
+        frac  = np.matmul(real2frac, _x.T).T
+        frac -= np.floor(frac)
+        counts = 0
+        for a in [-1.,0.,1.]:
+            for b in [-1.,0.,1.]:
+                for c in [-1.,0.,1.]:
+                    frac[:] += [a,b,c]
+                    _x_extend[counts] = np.matmul(frac2real, frac.T).T
+                    frac[:] -= [a,b,c]
+                    counts += 1
+
+        x_extend = _x_extend.reshape((-1,3))
+        dists_self = distance.pdist(
+            x_extend,
+            )
+        valids_self = np.less(dists_self, 1.1225*radius)
+        r_sigma_6 = (radius/dists_self[valids_self])**6
+        score_selfclash = np.sum(
+            4.*solvent_solvent_epsilon*(r_sigma_6*r_sigma_6-r_sigma_6)+solvent_solvent_epsilon
+            )
+
+        dists_atoms = distance.cdist(
+            atom_crds_xtal,
+            x_extend,
+            )
+        valids_atoms = np.less(dists_atoms, r_min)
+        r_over_sigma = radius_comb/dists_atoms
+        r_sigma_6 = (r_over_sigma[valids_atoms])**6
+        score_atomclash = np.sum(
+            4.*solute_solvent_epsilon*(r_sigma_6*r_sigma_6-r_sigma_6)+solute_solvent_epsilon
+            )
+
+        score_total = score_selfclash + score_atomclash
+
+        return score_total
+
+    o = cell.orthogonalize(
+        gemmi.Fractional(0.,0.,0.)
+        ).tolist()
+    a1 = cell.orthogonalize(
+        gemmi.Fractional(1.,0.,0.)
+        ).tolist()
+    b1 = cell.orthogonalize(
+        gemmi.Fractional(0.,1.,0.)
+        ).tolist()
+    c1 = cell.orthogonalize(
+        gemmi.Fractional(0.,0.,1.)
+        ).tolist()
+
+    Na = int(abs(a1[0]-o[0])/bin_width_real) + 1
+    Nb = int(abs(b1[1]-o[1])/bin_width_real) + 1
+    Nc = int(abs(c1[2]-o[2])/bin_width_real) + 1
+
+    print(
+        f"Generating {Na}x{Nb}x{Nc} vdw grid..."
+        )
     grid = list()
-    for a in np.linspace(0., 1., 50, True):
-        for b in np.linspace(0., 1., 50, True):
-            for c in np.linspace(0., 1., 50, True):
-                frac  = np.array([a,b,c], dtype=float)
+    frac = np.zeros(3, dtype=float)
+    for a in np.linspace(0., 1., Na, True):
+        for b in np.linspace(0., 1., Nb, True):
+            for c in np.linspace(0., 1., Nc, True):
+                frac[:] = [a,b,c]
                 ortho = cell.orthogonalize(
                     gemmi.Fractional(*frac)
-                            ).tolist()
-                dists      = distance.cdist(atom_crds_xtal, [ortho])
+                    ).tolist()
+                dists = distance.cdist(
+                    atom_crds_xtal, 
+                    [ortho],
+                    )
                 is_outside = np.all(dists[:,0] > atom_radii_xtal)
                 if is_outside:
                     grid.append(ortho)
-
-    overlap = True
-    grid    = np.array(grid)
-    print(f"Found {grid.shape[0]} / {50**3} valid grid points.")
-    print("Scanning overlap...")
-    while overlap:
-        mask           = np.arange(grid.shape[0], dtype=int)
+    grid = np.array(grid)
+    mask = np.arange(grid.shape[0], dtype=int)
+    best_f = 999999999999999999999.
+    best_x = np.zeros(3*N_per_unitcell, dtype=float)
+    print(
+        "Placing and optimizing positions in unit cell."
+        )
+    from scipy import optimize
+    basinhopping = False
+    iter_max = 5
+    for i in range(iter_max):
         mask_selection = np.random.choice(
             mask, 
             size=N_per_unitcell, 
             replace=False
             )
-        grid_selection = grid[mask_selection]
-        grid_selection_query = np.copy(grid_selection).tolist()
-        for crd in grid_selection:
-            frac = cell.fractionalize(
-                gemmi.Position(
-                    *crd
+        x0 = grid[mask_selection].flatten()
+        print(
+            f"Iteration {i+1}/{iter_max}",
+            f"Initial func {func(x0)}"
+            )
+        if basinhopping:
+            result = optimize.basinhopping(
+                func, 
+                x0, 
+                minimizer_kwargs={
+                    "method" : "BFGS"
+                    },
+                )
+        else:
+            result = optimize.minimize(
+                    func, 
+                    x0, 
+                    method="BFGS",
                     )
-                ).tolist()
-            frac  = np.array(frac)
-            for a in [-1.,0.,1.]:
-                for b in [-1.,0.,1.]:
-                    for c in [-1.,0.,1.]:
-                        if (a==0) & (b==0) & (c==0):
-                            continue
-                        frac += [a,b,c]
-                        ortho = cell.orthogonalize(
-                            gemmi.Fractional(*frac)
-                                    ).tolist()
-                        grid_selection_query.append(ortho)
-                        frac -= [a,b,c]
+        print(
+            f"Final func {func(result.x)}"
+            )
+        if result.fun < best_f:
+            best_f = result.fun
+            best_x = result.x
+        if best_f < 1.e-8:
+            break
 
-        grid_selection_query = np.array(grid_selection_query)
-        dists = distance.cdist(grid_selection_query, grid_selection_query)
-        np.fill_diagonal(dists, np.inf)
-        min_dist = np.min(dists)
-        if min_dist > 2.*radius:
-            overlap = False
     print(
-        f"Inserted {len(grid_selection)} molecules {Chem.MolToSmiles(mol)}."
+        f"Inserted {N_per_unitcell} molecules {Chem.MolToSmiles(mol)}."
         )
 
     import copy
     mol_list_new = copy.deepcopy(mol_list)
-    for crds in grid_selection:
+    for crds in best_x.reshape((-1,3)):
+        frac  = np.matmul(real2frac, crds.T).T
+        frac -= np.floor(frac)
+        crds  = np.matmul(frac2real, frac.T).T
         mol_cp         = copy.deepcopy(mol)
-        conformer      = mol_cp.GetConformer()
         atom_crds_mol  = conformer.GetPositions()
         trans          = crds - np.mean(atom_crds_mol, axis=0)
         atom_crds_mol += trans
+        conformer      = mol_cp.GetConformer()
         for atm_idx in range(mol_cp.GetNumAtoms()):
             conformer.SetAtomPosition(
                 atm_idx,
@@ -985,13 +1099,11 @@ def clean_names(mol_list):
     N_mol = len(mol_list)
     for mol_idx in range(N_mol):
         mol = copy.deepcopy(mol_list[mol_idx])
-        
         atom_counts_dict = dict()
         for atom in mol.GetAtoms():
-            mi  = Chem.AtomPDBResidueInfo()
-            mi.SetIsHeteroAtom(True)
-            mi.SetResidueName(f'M{mol_idx}'.ljust(3))
-            mi.SetResidueNumber(mol_idx + 1)
+            mi = atom.GetMonomerInfo()
+            if mi == None:
+                mi  = Chem.AtomPDBResidueInfo()
             mi.SetOccupancy(1.0)
             mi.SetTempFactor(0.0)
             atomic_num = atom.GetAtomicNum()
@@ -1012,7 +1124,7 @@ def clean_names(mol_list):
 
 def get_unique_mapping(
     mol_list, 
-    stereochemistry=True
+    stereochemistry=True,    
     ):
 
     import copy
@@ -1061,7 +1173,7 @@ def get_unique_mapping(
 
 def equalize_rdmols(
     mol_list, 
-    stereochemistry=True
+    stereochemistry=True,
     ):
 
     """
@@ -1095,12 +1207,47 @@ def equalize_rdmols(
             ### Note, we cannot `copy.copy(mi_original)`
             ### or `copy.copy(mol_target.GetAtomWithIdx(atm_idx))`
             mi = mol_info.GetAtomWithIdx(mol_info_atm_idx).GetMonomerInfo()
+            
             mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
             mi.SetResidueNumber(mol_idx + 1)
             mol_info.GetAtomWithIdx(mol_info_atm_idx).SetMonomerInfo(mi)
 
         mol_list_new[mol_idx] = mol_info
 
+    return mol_list_new
+
+
+def remove_water(mol_list):
+
+    from rdkit import Chem
+    import copy
+
+    rdsma_list = [
+        Chem.MolFromSmarts("[#1]-[#8]-[#1]"),
+        Chem.MolFromSmarts("[#8]"),
+        Chem.MolFromSmarts("[#8+1]"),
+        Chem.MolFromSmarts("[#1]"),
+        Chem.MolFromSmarts("[#1+1]"),
+        Chem.MolFromSmarts("[#1]-[#8+1](-[#1])-[#1]"),
+    ]
+    mol_list_new = list()
+    for mol in mol_list:
+        _mol = copy.deepcopy(mol)
+        nowat = 0
+        for rdsma in rdsma_list:
+            nowat += int(rdsma.HasSubstructMatch(_mol))
+            if _mol.HasSubstructMatch(rdsma):
+                matches = _mol.GetSubstructMatches(
+                    rdsma, 
+                    uniquify=False
+                    )
+                match_set = set()
+                for match in matches:
+                    match_set.update(set(match))
+                if len(match_set) == _mol.GetNumAtoms():
+                    nowat += 1
+        if nowat == 0:
+            mol_list_new.append(_mol)
     return mol_list_new
 
 
@@ -1114,8 +1261,10 @@ def generate_replicated_mol_list(
     addhs=False,
     protonate_unitcell=True,
     addwater=0,
+    removewater=False,
     N_iterations_protonation=0,
     use_openeye=False,
+    label_residues=False,
     ):
 
     """
@@ -1124,21 +1273,33 @@ def generate_replicated_mol_list(
     """
 
     mol_list = make_P1(cell, atom_crds_ortho, atom_num, addhs, use_openeye)
+    if removewater:
+        mol_list = remove_water(mol_list)
+
     if N_iterations_protonation > 0: 
         mol_list = assign_protonation_states(
             cell=cell, 
             mol_list=mol_list, 
             N_iterations=N_iterations_protonation
             )
+
     if addwater > 0:
         mol_list = random_fill(
             cell,
             mol_list,
             N_per_unitcell=addwater,
-            radius=0.5,
-            smiles="O"
+            radius=1.7,
+            smiles="[H]O[H]",
             )
-    mol_list = clean_names(mol_list)
+    if label_residues:
+        N_mol = len(mol_list)
+        for mol_idx in range(N_mol):
+            rdmol = mol_list[mol_idx]
+            succes, _rdmol, atomorder = label_amino_acid_residues(rdmol, reorder=True)
+            if succes:
+                mol_list[mol_idx] = _rdmol
+    else:
+        mol_list = clean_names(mol_list)
 
     replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs = make_supercell(
         cell,
@@ -1148,19 +1309,30 @@ def generate_replicated_mol_list(
         c_min_max[0], c_min_max[1],
         )
 
-    replicated_mol_list = equalize_rdmols(replicated_mol_list)
+    if not label_residues:
+        replicated_mol_list = equalize_rdmols(replicated_mol_list)
 
     return replicated_mol_list, mol_identifies, unitcell_in_supercell_fracs
 
 
 def get_pdb_block(
     replicated_mol_list, 
-    strc_write):
+    strc_write=None,
+    header=None):
 
     """
     Get pdb block as str. strc_write is gemmi structure object and must reflect
     the dimensions of the supercell.
     """
+
+    import gemmi
+
+    if isinstance(strc_write, (gemmi.Structure, gemmi.SmallStructure)):
+        header = strc_write.make_pdb_headers()
+    elif not isinstance(header, str):
+        raise ValueError(
+            "Must either provide header or Structure to provide header."
+            )
 
     ### Combine all rdmols in a single big rdmol
     N_mol   = len(replicated_mol_list)
@@ -1168,7 +1340,6 @@ def get_pdb_block(
     for mol_idx in range(N_mol):
         mol = copy.deepcopy(replicated_mol_list[mol_idx])
         mol_new = Chem.CombineMols(mol_new, mol)
-    header = strc_write.make_pdb_headers()
 
     ### With the flavor options, one can control what is written
     ### to the pdb block.
@@ -1182,9 +1353,244 @@ def get_pdb_block(
     ### flavor & 32 : Write TER record
 
     crds_block = Chem.MolToPDBBlock(mol_new, flavor=8|32)
-    pdb_block  = header + crds_block
+    crds_block_new = []
+    atom_ref = 0
+    atom_count = 0
+    for line in crds_block.split("\n"):
+        if line.startswith("ATOM") or line.startswith("HETATM"):
+            if atom_ref != atom_count:
+                path = Chem.GetShortestPath(
+                    mol_new, 
+                    atom_ref, 
+                    atom_count
+                    )
+                if len(path) == 0:
+                    atom_ref = atom_count
+                    crds_block_new.append("TER")
+            atom_count += 1
+        crds_block_new.append(line)
+
+    pdb_block  = header + "\n" + "\n".join(crds_block_new)
 
     return pdb_block
+
+
+def label_amino_acid_residues(rdmol, reorder=True):
+
+    """
+    Label amino acid residues according to standard pdb
+    names. Does not rename atom names. This will also reorder,
+    if `reorder=True`, the atoms in the molecule so that
+    sequentiel residues are obtained.
+    """
+    
+    import rdkit
+    from rdkit import Chem
+    
+    generic = lambda x: f"[$([NX3H2,NX4H3+]),$([NX3H](C)(C)):1][CX4H:2]({x})[CX3:3](=[OX1:5])[OX2H,OX1-,N:4]"
+    
+    aa_dict = {
+        "NME" : "[NX3H:1][CX4H3:4]",
+        "ACE" : "[CX4H3:1][CX3:3](=[OX1:5])[N:4]",
+        "ALA" : "[CH3X4:6]",
+        "ARG" : "[CH2X4:6][CH2X4:7][CH2X4:8][NHX3:9][CH0X3:10](=[NH2X3+,NHX2+0:11])[NH2X3:12]",
+        "ASN" : "[CH2X4:6][CX3:7](=[OX1:8])[NX3H2:9]",
+        "ASP" : "[CH2X4:6][CX3:7](=[OX1:8])[OH0-,OH:9]",
+        "CYS" : "[CH2X4:6][SX2H,SX1H0-:7]",
+        "GLU" : "[CH2X4:6][CH2X4:7][CX3:8](=[OX1:9])[OH0-,OH:10]",
+        "GLN" : "[CH2X4:6][CH2X4:7][CX3:8](=[OX1:9])[NH2X3:10]",
+        "GLY" : "[$([$([NX3H2,NX4H3+]),$([NX3H](C)(C)):1][CX4H2:2][CX3:3](=[OX1:5])[OX2H,OX1-,N:4])]",
+        "HIS" : "[CH2X4:6][#6X3:7]1:[$([#7X3H+,#7X2H0+0]:[#6X3H]:[#7X3H]),$([#7X3H]):8]:[#6X3H:10]:[$([#7X3H+,#7X2H0+0]:[#6X3H]:[#7X3H]),$([#7X3H]):11]:[#6X3H:9]1",
+        "ILE" : "[CHX4:6]([CH3X4:8])[CH2X4:7][CH3X4:9]",
+        "LEU" : "[CH2X4:6][CHX4:7]([CH3X4:8])[CH3X4:9]",
+        "LYS" : "[CH2X4:6][CH2X4:7][CH2X4:8][CH2X4:9][NX4+,NX3+0:10]",
+        "MET" : "[CH2X4:6][CH2X4:7][SX2:8][CH3X4:9]",
+        "PHE" : "[CH2X4:6][cX3:7]1[cX3H:8][cX3H:10][cX3H:12][cX3H:11][cX3H:9]1",
+        "PRO" : "[$([NX3H,NX4H2+]),$([NX3](C)(C)(C)):1]1[CX4H:2]([CH2:6][CH2:7][CH2:8]1)[CX3:3](=[OX1:5])[OX2H,OX1-,N:4]",
+        "SER" : "[CH2X4:6][OX2H:7]",
+        "THR" : "[CHX4:6]([CH3X4:8])[OX2H:7]",
+        "TRP" : "[CH2X4:6][cX3:7]1[cX3H:8][nX3H:10][cX3:11]2[cX3H:13][cX3H:15][cX3H:14][cX3H:12][cX3:9]12",
+        "TYR" : "[CH2X4:6][cX3:7]1[cX3H:8][cX3H:10][cX3:12]([OHX2,OH0X1-:13])[cX3H:11][cX3H:9]1",
+        "VAL" : "[CHX4:6]([CH3X4:7])[CH3X4:8]",
+        "HOH" : "[#1:2]-[#8:1]-[#1:3]"
+        }
+
+    naming_order_dict = {
+        "NME" : {1:"N",   2:"CA", 3:"C", 4:"CH3", 5:"O", },
+        "ACE" : {1:"CH3", 2:"CA", 3:"C", 4:"N",   5:"O", },
+        "ALA" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG"},
+        "ARG" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG", 8:"CD",  9:"NE",   10:"CZ",  11:"NH1", 12:"NH2",},
+        "ASN" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG", 8:"OD1", 9:"ND2",},
+        "ASP" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG", 8:"OD1", 9:"OD2",},
+        "CYS" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"SG"},
+        "GLU" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG", 8:"CD", 9:"OE1",   10:"OE2"},
+        "GLN" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG", 8:"CD", 9:"OE1",   10:"NE2"},
+        "GLY" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", },
+        "HIS" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG",  8:"ND1", 9:"CD2", 10:"CE1", 11:"NE2"},
+        "ILE" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG1", 8:"CG2", 9:"CD1"},
+        "LEU" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG",  8:"CD1", 9:"CD2"},
+        "LYS" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG",  8:"CD",  9:"CE",  10:"NZ"},
+        "MET" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG",  8:"SD",  9:"CE"},
+        "PHE" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG",  8:"CD1", 9:"CD2", 10:"CE1", 11:"CE2", 12:"CZ"},
+        "PRO" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG",  8:"CD"},
+        "SER" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"OG"},
+        "THR" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"OG1", 8:"CG2"},
+        "TRP" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG",  8:"CD1", 9:"CD2", 10:"NE1", 11:"CE2", 12:"CE3", 13:"CZ2", 14:"CZ3", 15:"CH2"},
+        "TYR" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG",  8:"CD1", 9:"CD2", 10:"CE1", 11:"CE2", 12:"CZ",  13:"OH"},
+        "VAL" : {1:"N",   2:"CA", 3:"C", 4:"OXT", 5:"O", 6:"CB", 7:"CG1", 8:"CG2"},
+        "HOH" : {1:"O",   2:"H1", 3:"H2" }
+        }
+    
+    N_atoms    = rdmol.GetNumAtoms()
+    ###             n  c  other
+    names_list = [[-1,-1,-1] for _ in range(N_atoms)]
+    resid_list = [[-1,-1,-1] for _ in range(N_atoms)]
+    ###             n  c
+    tag_list   = [[-1,-1,-1] for _ in range(N_atoms)]
+    hname_list = [None for _ in range(N_atoms)]
+    match_idx  = 0
+    for aa in aa_dict:
+        if aa in ["PRO", "GLY", "NME", "ACE", "HOH"]:
+            smarts = aa_dict[aa]
+        else:
+            smarts = generic(aa_dict[aa])
+        smarts_mol = Chem.MolFromSmarts(smarts)
+        matches = rdmol.GetSubstructMatches(
+            smarts_mol
+        )
+        for match in matches:
+            for aa_idx, idx in enumerate(match):
+                matchatom = smarts_mol.GetAtomWithIdx(aa_idx)
+                tag       = matchatom.GetAtomMapNum()
+                rdmolatom = rdmol.GetAtomWithIdx(idx)
+                symbol    = rdmolatom.GetSymbol()
+                ### n
+                if tag == 1:
+                    tag_list[idx][0]   = match_idx
+                    names_list[idx][0] = aa
+                    resid_list[idx][0] = match_idx
+                ### c
+                elif tag == 4:
+                    tag_list[idx][1]   = match_idx
+                    names_list[idx][1] = aa
+                    resid_list[idx][1] = match_idx
+                else:
+                    tag_list[idx][2]   = tag
+                    names_list[idx][2] = aa
+                    resid_list[idx][2] = match_idx
+                n_neighbors = 0
+                for n in rdmolatom.GetNeighbors():
+                    if n.GetAtomicNum() == 1:
+                        n_neighbors += 1
+                if tag in [1,4]:
+                    hname = f"H{symbol}{n_neighbors}"
+                else:
+                    hname = "H"
+                for n in rdmolatom.GetNeighbors():
+                    if n.GetAtomicNum() == 1:
+                        idx = n.GetIdx()
+                        hname_list[idx]    = hname
+                        tag_list[idx][2]   = tag
+                        names_list[idx][2] = aa
+                        resid_list[idx][2] = match_idx
+            match_idx += 1
+
+    ### Check if we have any unlabeled atoms
+    for name in names_list:
+        if name == [-1,-1,-1]:
+            return False, rdmol, []
+
+    N_resids = match_idx
+    reordered_resid_list = [None for _ in range(N_resids)]
+    ### First figure out n terminus
+    found_n = False
+    for idx, resid_pair in enumerate(tag_list):
+        if resid_pair[0] > -1 and resid_pair[1] == -1:
+            residq = resid_pair[0]
+            reordered_resid_list[residq] = 0
+            found_n = True
+            break
+    ### If not found, we are cyclic
+    if not found_n:
+        residq = 0
+        reordered_resid_list[0] = 0
+    ### Next, figure out everything else
+    ### up to c terminus
+    resid_count = 1
+    found_c = False
+    iter_count = 0
+    while resid_count < N_resids and iter_count < 2*N_resids:
+        for idx, resid_pair in enumerate(tag_list):
+            if resid_pair[0] > -1 and resid_pair[1] == residq:
+                residq = resid_pair[0]
+                reordered_resid_list[residq] = resid_count
+                resid_count += 1
+                break
+        iter_count += 1
+
+    new_atom_order_dict = {i:[] for i in range(N_resids)}
+    for idx in range(N_atoms):
+        atom  = rdmol.GetAtomWithIdx(idx)
+        ### C term
+        if resid_list[idx][0] == -1 and resid_list[idx][1] > -1:
+            name  = names_list[idx][1]
+            resid = resid_list[idx][1]
+            atom_name = "OXT"
+        ### N term
+        elif resid_list[idx][0] > -1:
+            name = names_list[idx][0]
+            resid = resid_list[idx][0]
+            if name == "HOH":
+                atom_name = "O"
+            elif name == "ACE":
+                atom_name = "CH3"
+            else:
+                atom_name = "N"
+        ### C term
+        elif resid_list[idx][1] > -1:
+            name  = names_list[idx][1]
+            resid = resid_list[idx][1]
+            atom_name = "O"
+        else:
+            name = names_list[idx][2]
+            resid = resid_list[idx][2]
+            tag = tag_list[idx][2]
+            symbol = atom.GetSymbol()
+            if tag == -1:
+                atom_name = symbol
+            elif symbol == "H":
+                if (tag in [1,4]) and (name not in ["ACE","NME"]):
+                    atom_name = hname_list[idx]
+                else:
+                    atom_name = symbol
+            else:
+                atom_name = naming_order_dict[name][tag]
+        resid = reordered_resid_list[resid]
+        mi = Chem.AtomPDBResidueInfo()
+        mi.SetIsHeteroAtom(False)
+        mi.SetResidueName(name.ljust(3))
+        mi.SetResidueNumber(resid+1)
+        mi.SetName(atom_name.ljust(4))
+        atom.SetMonomerInfo(mi)
+        new_atom_order_dict[resid].append(idx)
+
+    new_atom_order_list = []
+    if reorder:
+        for resid in range(N_resids):
+            new_atom_order_list.extend(
+                new_atom_order_dict[resid]
+            )
+        _rdmol = Chem.RenumberAtoms(rdmol, new_atom_order_list)
+        import copy
+        for idx_old, idx_new in enumerate(new_atom_order_list):
+            atomold = rdmol.GetAtomWithIdx(idx_new)
+            atomnew = _rdmol.GetAtomWithIdx(idx_old)
+            miold = atomold.GetMonomerInfo()
+            atomnew.SetMonomerInfo(miold)
+    else:
+        _rdmol = rdmol
+
+    return True, _rdmol, new_atom_order_list
 
 
 def get_pdb_str(
@@ -1367,8 +1773,10 @@ def main():
         c_min_max=c_min_max,
         addhs=args.addhs,
         addwater=args.addwater,
+        removewater=args.removewater,
         N_iterations_protonation=args.n_protonation_attempts,
-        use_openeye=args.use_openeye
+        use_openeye=args.use_openeye,
+        label_residues=args.label_residues
         )
 
     ### Write pdb file
@@ -1399,7 +1807,15 @@ def main():
     ### Generate list of unique smiles for unique
     ### molecules in UC
     ### =========================================
-    mol_list = make_P1(strc.cell, atom_crds_ortho, atom_num, args.addhs, args.use_openeye)
+    mol_list = make_P1(
+        strc.cell, 
+        atom_crds_ortho, 
+        atom_num, 
+        args.addhs, 
+        args.use_openeye
+        )
+    if args.removewater:
+        mol_list = remove_water(mol_list)
 
     unitcell_mol_list, _, _ = make_supercell(
         strc.cell,
