@@ -737,7 +737,9 @@ def make_P1(
     atom_crds_ortho, 
     atom_num, 
     addhs=False, 
-    use_openeye=False):
+    use_openeye=False,
+    removewater=False,
+    ):
 
     """
     Generate the P1 cell. Return tuple with atomic coordinates (in Ang) and
@@ -921,6 +923,8 @@ def make_P1(
                 )
             mol_list_new.append(mol)
 
+    if removewater:
+        mol_list_new = remove_water(mol_list_new)
     mol_list = list()
     if addhs:
         if use_openeye:
@@ -1272,7 +1276,8 @@ def generate_replicated_mol_list(
     according input parameters.
     """
 
-    mol_list = make_P1(cell, atom_crds_ortho, atom_num, addhs, use_openeye)
+    mol_list = make_P1(cell, atom_crds_ortho, atom_num, addhs, use_openeye, removewater)
+
     if removewater:
         mol_list = remove_water(mol_list)
 
