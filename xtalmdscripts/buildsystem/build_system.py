@@ -2223,8 +2223,8 @@ def main():
                 f"Water model {args.water_model} unknown for this forcefield."
                 )
 
-        _CHARMM_PROTEIN_FF = [ff.lower() for ff in CHARMM_PROTEIN_FF]
-        if args.version.lower() not in _CHARMM_PROTEIN_FF:
+        _OPLS_PROTEIN_FF = [ff.lower() for ff in OPLS_PROTEIN_FF]
+        if args.version.lower() not in _OPLS_PROTEIN_FF:
             raise ValueError(
                 f"Forcefield version {args.version.lower()} unknown."
                 )
