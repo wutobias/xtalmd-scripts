@@ -498,9 +498,9 @@ def get_cryst1_header(boxvectors):
         a_len = cell_parameters[0] * unit.nanometer
         b_len = cell_parameters[1] * unit.nanometer
         c_len = cell_parameters[2] * unit.nanometer
-        alpha = cell_parameters[3] * unit.degree
-        beta  = cell_parameters[4] * unit.degree
-        gamma = cell_parameters[5] * unit.degree
+        alpha = cell_parameters[3] * unit.radian
+        beta  = cell_parameters[4] * unit.radian
+        gamma = cell_parameters[5] * unit.radian
 
     a_len = a_len.value_in_unit(unit.angstrom)
     b_len = b_len.value_in_unit(unit.angstrom)
