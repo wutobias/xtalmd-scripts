@@ -738,7 +738,7 @@ quit
                     continue
                 else:
                     tleap_pdb += line
-        with open(f"{prefix}-tleap.pdb", "w") as fopen:
+        with open(f"{prefix}.pdb", "w") as fopen:
             fopen.write(cryst1_header + "\n" + tleap_pdb)
 
     prmtop = AmberPrmtopFile(f'{prefix}.prmtop')
