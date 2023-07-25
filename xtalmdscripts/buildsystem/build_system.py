@@ -1471,11 +1471,6 @@ stop
             break
 
     if failed:
-        ### Clean up
-        if cleanup:
-            for filename in to_remove_list:
-                if os.path.exists(filename):
-                    os.remove(filename)
         raise RuntimeError(
             f"Could not build structure with {version}."
             )
