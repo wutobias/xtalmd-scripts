@@ -1145,7 +1145,7 @@ def build_system_charmm(
             already_processed_list.append(
                 unique_idx
                 )
-        basename_monomer = f"mol_{unique_idx}"
+        basename_monomer = f"m{unique_idx}"
 
         rdmol = replicated_mol_list[mol_idx]
 
@@ -1482,29 +1482,29 @@ stop
     crd_pmd = pmd.Structure()
     for mol_idx in range(len(replicated_mol_list)):
         unique_idx = unique_mapping[mol_idx]
-        basename_monomer = f"mol_{unique_idx}"
+        basename_monomer = f"m{unique_idx}"
         crd_pmd += pmd.load_file(
             f"{basename_monomer}-{mol_idx:d}-cpptraj.pdb"
             )
         psf_pmd += pmd_list[unique_idx]
-    psf_pmd.write_psf(f"{prefix}-strc.psf")
-    crd_pmd.save(f"{prefix}-strc.crd", overwrite=True)
-    to_remove_list.append(f"{prefix}-strc.psf")
-    to_remove_list.append(f"{prefix}-strc.crd")
-    to_remove_list.append(f"{prefix}-strc-final.crd")
-    to_remove_list.append(f"{prefix}-strc-final.pdb")
-    to_remove_list.append(f"{prefix}-strc-final.psf")
-    to_remove_list.append(f"{prefix}-make_psf-final.inp")
+    psf_pmd.write_psf(f"strc.psf")
+    crd_pmd.save(f"strc.crd", overwrite=True)
+    to_remove_list.append("strc.psf")
+    to_remove_list.append("strc.crd")
+    to_remove_list.append("strc-final.crd")
+    to_remove_list.append("strc-final.pdb")
+    to_remove_list.append("strc-final.psf")
+    to_remove_list.append("make_psf-final.inp")
 
     charmm_inp = f"""
 bomlev -2
 
 {charmm_inp_header}
 
-open read unit 10 card name {prefix}-strc.psf
+open read unit 10 card name strc.psf
 read psf  unit 10 card
 
-open read unit 10 card name {prefix}-strc.crd
+open read unit 10 card name strc.crd
 read coor unit 10 card
 
 ! The order seems to be important here
@@ -1516,31 +1516,31 @@ hbuild
 
 ic build
 
-open write unit 10 card name {prefix}-strc-final.psf
+open write unit 10 card name strc-final.psf
 write psf  unit 10 card
 
-open write card unit 10 name {prefix}-strc-final.crd
+open write card unit 10 name strc-final.crd
 write coor unit 10 card
 
-open write card unit 10 name {prefix}-strc-final.pdb
+open write card unit 10 name strc-final.pdb
 write coor pdb  unit 10 official
 
 stop
 """
-    with open(f"{prefix}-make_psf-final.inp", "w") as fopen:
+    with open("make_psf-final.inp", "w") as fopen:
         fopen.write(charmm_inp)
 
     ### Obtain psf file using charmm
     subprocess.run([
         "charmm",
         "-i",
-        f"{prefix}-make_psf-final.inp",
+        "make_psf-final.inp",
         "-o",
         "charmm.out"
         ])
 
     psf_pmd.coordinates = pmd.load_file(
-        f"./{prefix}-strc-final.pdb"
+        "./strc-final.pdb"
         ).coordinates
 
     cryst1_header, nonbondedmethod = get_cryst1_header(boxvectors)
@@ -1551,7 +1551,7 @@ stop
             geometric_mixing_periodic = True
 
     ### Build the omm system
-    psffile = CharmmPsfFile(f"{prefix}-strc-final.psf")
+    psffile = CharmmPsfFile("strc-final.psf")
     params  = CharmmParameterSet(*params_path_list)
     psffile.loadParameters(params)
 
