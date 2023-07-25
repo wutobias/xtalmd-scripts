@@ -245,7 +245,7 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def rewrite_oplsaa_xml(inpath, outpath, topology):
+def rewrite_oplsaa_xml(inpath, outpath, topology, suffix):
 
     import xml.etree.ElementTree as ET
     
@@ -306,11 +306,11 @@ def rewrite_oplsaa_xml(inpath, outpath, topology):
 
             for attrib in r2.attrib:
                 if any([attrib.startswith(c) for c in ["class", "name", "type"]]):
-                    r2.attrib[attrib]  += f"_{unique_idx}"
+                    r2.attrib[attrib]  += f"_{suffix}"
             for r3 in r2:
                 for attrib in r3.attrib:
                     if any([attrib.startswith(c) for c in ["class", "name", "type"]]):
-                        r3.attrib[attrib]  += f"_{unique_idx}"
+                        r3.attrib[attrib]  += f"_{suffix}"
 
     with open(outpath, "wb") as fopen:
         fopen.write(
@@ -1726,7 +1726,8 @@ def build_system_oplsaa(
         rewrite_oplsaa_xml(
             f"{resname}.openmm.xml", 
             f"{resname}.openmm.xml",
-            pdbfile_original.topology
+            pdbfile_original.topology,
+            unique_idx
             )
 
     if failed:
@@ -1753,12 +1754,36 @@ def build_system_oplsaa(
 
     if use_water_ff:
         if water_model.lower() == "tip3p":
+            with open("./tip3p_oplsaa.xml", "w") as fopen:
+                fopen.write("""<ForceField>
+ <AtomTypes>
+  <Type name="tip3p-O" class="tip3p-O" element="O" mass="15.99943"/>
+  <Type name="tip3p-H" class="tip3p-H" element="H" mass="1.007947"/>
+ </AtomTypes>
+ <Residues>
+  <Residue name="HOH">
+   <Atom name="O" type="tip3p-O" charge="-0.834"/>
+   <Atom name="H1" type="tip3p-H" charge="0.417"/>
+   <Atom name="H2" type="tip3p-H" charge="0.417"/>
+   <Bond atomName1="O" atomName2="H1"/>
+   <Bond atomName1="O" atomName2="H2"/>
+  </Residue>
+ </Residues>
+ <HarmonicBondForce>
+  <Bond type1="tip3p-O" type2="tip3p-H" length="0.09572" k="462750.4"/>
+ </HarmonicBondForce>
+ <HarmonicAngleForce>
+  <Angle type1="tip3p-H" type2="tip3p-O" type3="tip3p-H" angle="1.82421813418" k="836.8"/>
+ </HarmonicAngleForce>
+ <NonbondedForce coulomb14scale="0.5" lj14scale="0.5">
+  <UseAttributeFromResidue name="charge"/>
+  <Atom type="tip3p-O" sigma="0.31507524065751241" epsilon="0.635968"/>
+  <Atom type="tip3p-H" sigma="1" epsilon="0"/>
+ </NonbondedForce>
+</ForceField>
+""")
             xml_file_list.append(
-                "amber/tip3p_standard.xml"
-                )
-        elif water_model.lower() == "opc":
-            xml_file_list.append(
-                "amber/opc_standard.xml"
+                "./tip3p_oplsaa.xml"
                 )
         else:
             raise ValueError(
