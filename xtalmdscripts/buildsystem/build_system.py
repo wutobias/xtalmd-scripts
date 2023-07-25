@@ -1076,7 +1076,7 @@ def build_system_charmm(
     are already correctly labled.
     """
 
-    cleanup = False
+    cleanup = True
 
     version = version.lower()
 
@@ -1153,74 +1153,81 @@ def build_system_charmm(
 
         rdmol = replicated_mol_list[mol_idx]
 
-        ### We have to check to for presence of ACE or NME first.
-        ### We assume that everything is correctly labled. If we
-        ### find ACE or NME, then we merge it with its adjacent
-        ### residue and apply a patch in charmm.
-        ### Also, we want to figure out if N or C terminal ending
-        ### is protonated. This will also require different patches.
-        has_ACE = False
-        has_NME = False
-        has_CPROT = False
-        has_NPROT2 = False
-        has_NPROT3 = False
-        is_cyclic = False
-        N_term_resname = ""
-        C_term_resname = ""
-        sequence_dict = dict()
-        for atom in rdmol.GetAtoms():
-            mi = atom.GetMonomerInfo()
-            resid = mi.GetResidueNumber()
-            resname = mi.GetResidueName().rstrip().lstrip()
-            atomname = mi.GetName().rstrip().lstrip()
-            if resname == "ACE":
-                has_ACE = True
-            elif resname == "NME":
-                has_NME = True
-
-            if atomname == "HO1":
-                has_CPROT = True
-            elif atomname == "HN2":
-                has_NPROT2 = True
-            elif atomname == "HN3":
-                has_NPROT3 = True
-            sequence_dict[resid] = resname
-
-        if (not has_NPROT2) and (not has_NPROT3) and (not has_CPROT):
-            if (not has_ACE) and (not has_NME):
-                is_cyclic = True
-
-        N_term_resid = 1
-        C_term_resid = len(sequence_dict)
-        if has_ACE or has_NME:
+        if not cgenff:
+            ### We have to check to for presence of ACE or NME first.
+            ### We assume that everything is correctly labled. If we
+            ### find ACE or NME, then we merge it with its adjacent
+            ### residue and apply a patch in charmm.
+            ### Also, we want to figure out if N or C terminal ending
+            ### is protonated. This will also require different patches.
+            has_ACE = False
+            has_NME = False
+            has_CPROT = False
+            has_NPROT2 = False
+            has_NPROT3 = False
+            is_cyclic = False
+            N_term_resname = ""
+            C_term_resname = ""
+            sequence_dict = dict()
             for atom in rdmol.GetAtoms():
                 mi = atom.GetMonomerInfo()
                 resid = mi.GetResidueNumber()
-                resname = mi.GetResidueName()
+                resname = mi.GetResidueName().rstrip().lstrip()
+                atomname = mi.GetName().rstrip().lstrip()
                 if resname == "ACE":
-                    resname = sequence_dict[resid+1]
-                    N_term_resid = 1
+                    has_ACE = True
                 elif resname == "NME":
-                    resname = sequence_dict[resid-1]
-                    resid   = resid - 1
-                    C_term_resid = C_term_resid - 1
-                    if has_ACE:
-                        resid = resid - 1
+                    has_NME = True
+
+                if atomname == "HO1":
+                    has_CPROT = True
+                elif atomname == "HN2":
+                    has_NPROT2 = True
+                elif atomname == "HN3":
+                    has_NPROT3 = True
+                sequence_dict[resid] = resname
+
+            if (not has_NPROT2) and (not has_NPROT3) and (not has_CPROT):
+                if (not has_ACE) and (not has_NME):
+                    is_cyclic = True
+
+            N_term_resid = 1
+            C_term_resid = len(sequence_dict)
+            if has_ACE or has_NME:
+                for atom in rdmol.GetAtoms():
+                    mi = atom.GetMonomerInfo()
+                    resid = mi.GetResidueNumber()
+                    resname = mi.GetResidueName()
+                    if resname == "ACE":
+                        resname = sequence_dict[resid+1]
+                        N_term_resid = 1
+                    elif resname == "NME":
+                        resname = sequence_dict[resid-1]
+                        resid   = resid - 1
                         C_term_resid = C_term_resid - 1
-                else:
-                    if has_ACE:
-                        resid = resid - 1
-                mi.SetResidueNumber(resid)
-                mi.SetResidueName(resname)
-                atom.SetMonomerInfo(mi)
+                        if has_ACE:
+                            resid = resid - 1
+                            C_term_resid = C_term_resid - 1
+                    else:
+                        if has_ACE:
+                            resid = resid - 1
+                    mi.SetResidueNumber(resid)
+                    mi.SetResidueName(resname)
+                    atom.SetMonomerInfo(mi)
 
-        N_term_resname = sequence_dict[N_term_resid]
-        C_term_resname = sequence_dict[C_term_resid]
+            N_term_resname = sequence_dict[N_term_resid]
+            C_term_resname = sequence_dict[C_term_resid]
 
-        rdmol, has_water = label_water(
-            rdmol,
-            charmm=True
-            )
+        if cgenff:
+            _, has_water = label_water(
+                rdmol,
+                charmm=True
+                )
+        else:
+            rdmol, has_water = label_water(
+                rdmol,
+                charmm=True
+                )
         with open(f"{basename_monomer}.pdb", "w") as fopen:
             fopen.write(
                 Chem.MolToPDBBlock(rdmol)
@@ -1403,6 +1410,12 @@ go
                 fopen.write(instr)
 
         to_remove_list.extend([
+             "cpptraj.in",
+             "cpptraj.out",
+             "charmm.out",
+            f"{basename_monomer}.pdb",
+            f"{basename_monomer}.mol2",
+            f"{basename_monomer}.str",
             f"{basename_monomer}-mmtsb.pdb",
             f"{basename_monomer}-cpptraj.pdb",
             f"{basename_monomer}-cpptraj.cor",
