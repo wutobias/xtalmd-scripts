@@ -667,7 +667,7 @@ def build_system_amber(
         replicated_mol_list, 
         header=cryst1_header
         )
-    with open(f"./{prefix}.pdb", "w") as fopen:
+    with open(f"{prefix}.pdb", "w") as fopen:
         fopen.write(pdb_block)
 
     with open("cpptraj.in", "w") as fopen:
@@ -840,7 +840,7 @@ def build_system_gaff(
         replicated_mol_list, 
         header=cryst1_header
         )
-    with open(f"./{prefix}.pdb", "w") as fopen:
+    with open(f"{prefix}.pdb", "w") as fopen:
         fopen.write(pdb_block)
 
     pdbfile  = PDBFile(f"{prefix}.pdb")
@@ -853,7 +853,7 @@ def build_system_gaff(
     modeller.addExtraParticles(forcefield)
     topology  = modeller.getTopology()
     positions = modeller.getPositions()
-    with open(f"./{prefix}.pdb", "w") as fopen:
+    with open(f"{prefix}.pdb", "w") as fopen:
         PDBFile.writeFile(
             topology,
             positions,
@@ -931,7 +931,7 @@ def build_system_off(
         replicated_mol_list, 
         header=cryst1_header
         )
-    with open(f"./{prefix}.pdb", "w") as fopen:
+    with open(f"{prefix}.pdb", "w") as fopen:
         fopen.write(pdb_block)
 
     if offxml != None:
@@ -1045,7 +1045,7 @@ def build_system_off(
             topology
             )
 
-    with open(f"./{prefix}.pdb", "w") as fopen:
+    with open(f"{prefix}.pdb", "w") as fopen:
         PDBFile.writeFile(
             topology,
             positions,
@@ -1584,7 +1584,7 @@ stop
             system, psffile.topology
             )
 
-    with open(f"./{prefix}.pdb", "w") as fopen:
+    with open(f"{prefix}.pdb", "w") as fopen:
         PDBFile.writeFile(
             topology,
             positions,
@@ -1740,7 +1740,7 @@ def build_system_oplsaa(
         replicated_mol_list, 
         header=cryst1_header
         )
-    with open(f"./{prefix}.pdb", "w") as fopen:
+    with open(f"{prefix}.pdb", "w") as fopen:
         fopen.write(pdb_block)
 
     if use_water_ff:
@@ -1789,7 +1789,7 @@ def build_system_oplsaa(
         if os.path.exists(filename):
             os.remove(filename)
 
-    with open(f"./{prefix}.pdb", "w") as fopen:
+    with open(f"{prefix}.pdb", "w") as fopen:
         PDBFile.writeFile(
             topology,
             positions,
