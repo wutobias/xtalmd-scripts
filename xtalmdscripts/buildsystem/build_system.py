@@ -7,7 +7,7 @@ oplsaa_xml_builder_path = resource_filename("xtalmdscripts.data", "oplsaa/build_
 AMBER_PROTEIN_FF  = ["ff14SB", "ff19SB", "fb15", "ff14SBonlysc"]
 CHARMM_PROTEIN_FF = ["charmm36", "charmm36m"]
 OPLS_PROTEIN_FF   = ["OPLS"]
-WATER_FF          = ["TIP3P", "OPC", "NONE"]
+WATER_FF          = ["TIP3P", "TIP3PFB", "OPC", "NONE"]
 
 ALL_PROTEIN_FF = AMBER_PROTEIN_FF[:] + CHARMM_PROTEIN_FF[:] + OPLS_PROTEIN_FF[:]
 
@@ -691,6 +691,8 @@ go
         water_leaprc = "leaprc.water.tip3p"
     elif water_model.lower() == "opc":
         water_leaprc = "leaprc.water.opc"
+    elif water_model.lower() == "tip3pfb":
+        water_leaprc = "leaprc.water.fb3"
     else:
         raise ValueError(
             f"Water model {water_model} not known for this forcefield"
@@ -817,6 +819,8 @@ def build_system_gaff(
             xml_file_path = "amber/tip3p_standard.xml"
         elif water_model.lower() == "opc":
             xml_file_path = "amber/opc_standard.xml"
+        elif water_model.lower() == "tip3pfb":
+            xml_file_path = "amber/tip3pfb_standard.xml"
         else:
             raise ValueError(
                 f"Water model {water_model.lower()} not known."
@@ -2152,7 +2156,7 @@ def main():
 
     elif args.forcefield.lower() == "amber":
 
-        if args.water_model.lower() not in ["tip3p", "opc"]:
+        if args.water_model.lower() not in ["tip3p", "opc", "tip3pfb"]:
             raise ValueError(
                 f"Water model {args.water_model} unknown for this forcefield."
                 )
