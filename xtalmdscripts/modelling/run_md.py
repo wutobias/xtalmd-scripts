@@ -388,6 +388,36 @@ def run_xtal_md(
     ### 2. Pressure equilibration anisotropic
     ### =====================================
     if os.path.exists(f"{prefix}_pressure1.xml") and restart:
+        system = openmm.XmlSerializer.deserialize(xml_str)
+        add_CMMotionRemover(system)
+        system.setDefaultPeriodicBoxVectors(
+            *state.getPeriodicBoxVectors()
+            )
+
+        barostat_aniso = openmm.MonteCarloAnisotropicBarostat(
+            (1., 1., 1.) * unit.bar,
+            temperature.value_in_unit_system(unit.md_unit_system),
+        )
+        ### Default is 25
+        barostat_aniso.setFrequency(25)
+        system.addForce(barostat_aniso)
+
+        integrator = openmm.LangevinMiddleIntegrator(
+            temperature.value_in_unit_system(unit.md_unit_system),
+            friction,
+            time_step.value_in_unit_system(unit.md_unit_system))
+        integrator.setConstraintTolerance(constraint_tolerance)
+
+        platform = openmm.Platform.getPlatformByName(platform_name)
+        for property_name, property_value in property_dict.items():
+            platform.setPropertyDefaultValue(property_name, property_value)
+            
+        simulation = app.Simulation(
+            topology=topology,
+            system=system,
+            integrator=integrator,
+            platform=platform,
+        )
         simulation.loadState(f"{prefix}_pressure1.xml")
     else:
         restart = False
@@ -471,6 +501,38 @@ def run_xtal_md(
     ### 3. Pressure equilibration flexible
     ### ==================================
     if os.path.exists(f"{prefix}_pressure2.xml") and restart:
+        system = openmm.XmlSerializer.deserialize(xml_str)
+        add_CMMotionRemover(system)
+        system.setDefaultPeriodicBoxVectors(
+            *state.getPeriodicBoxVectors()
+            )
+
+        barostat_aniso = openmm.MonteCarloFlexibleBarostat(
+            1.0 * unit.bar,
+            temperature.value_in_unit_system(unit.md_unit_system),
+        )
+        ### Default is 25
+        barostat_aniso.setFrequency(25)
+        ### Default is True
+        barostat_aniso.setScaleMoleculesAsRigid(False)
+        system.addForce(barostat_aniso)
+
+        integrator = openmm.LangevinMiddleIntegrator(
+            temperature.value_in_unit_system(unit.md_unit_system),
+            friction,
+            time_step.value_in_unit_system(unit.md_unit_system))
+        integrator.setConstraintTolerance(constraint_tolerance)
+
+        platform = openmm.Platform.getPlatformByName(platform_name)
+        for property_name, property_value in property_dict.items():
+            platform.setPropertyDefaultValue(property_name, property_value)
+            
+        simulation = app.Simulation(
+            topology=topology,
+            system=system,
+            integrator=integrator,
+            platform=platform,
+        )
         simulation.loadState(f"{prefix}_pressure2.xml")
     else:
         restart = False
