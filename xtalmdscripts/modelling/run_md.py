@@ -39,7 +39,16 @@ def parse_arguments():
         action='store_true',
         default=False,
         required=False,
-        help="Perform md in nvt only."
+        help="Perform md in nvt."
+        )
+
+    xml_parse.add_argument(
+        '--restart', 
+        dest='restart', 
+        action='store_true',
+        default=False,
+        required=False,
+        help="Try to restart md simulation from previously saved xml files."
         )
 
     xml_parse.add_argument(
@@ -634,6 +643,7 @@ def main():
                         "nanoseconds" : args.nanoseconds,
                         "replicates"  : args.replicates,
                         "nvt"         : args.nvt,
+                        "restart"     : args.restart,
                     }
             }
 
@@ -664,6 +674,7 @@ def main():
                     "CudaPrecision" : "mixed"
                 },
                 prefix = "xtal_md",
+                restart = False,
                 ):
                 return run_xtal_md(
                     xml_path = xml_path, 
@@ -673,6 +684,7 @@ def main():
                     platform_name = platform_name,
                     property_dict = property_dict,
                     prefix = prefix,
+                    restart = restart,
                     )
 
             @ray.remote(num_cpus=1, num_gpus=1)
@@ -686,6 +698,7 @@ def main():
                     "CudaPrecision" : "mixed"
                 },
                 prefix = "nvt_md",
+                restart = False,
                 ):
                 return run_nvt_md(
                     xml_path = xml_path, 
@@ -695,6 +708,7 @@ def main():
                     platform_name = platform_name,
                     property_dict = property_dict,
                     prefix = prefix,
+                    restart = restart,
                     )
 
     else:
@@ -742,6 +756,7 @@ def main():
                     "CudaPrecision" : "mixed"
                 },
                 prefix = prefix,
+                restart = bool(input_dict[output_dir]["restart"])
             )
             worker_id_dict[output_dir_replicate] = worker_id
 
