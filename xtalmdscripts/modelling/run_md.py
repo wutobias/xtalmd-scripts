@@ -189,6 +189,7 @@ def run_nvt_md(
     if os.path.exists(f"{prefix}_thermalization.xml") and restart:
         simulation.loadState(f"{prefix}_thermalization.xml")
     else:
+        restart = False
         try:
             simulation.step(1000 * 100)
         except Exception as e:
@@ -236,6 +237,7 @@ def run_nvt_md(
         if os.path.exists(f"{prefix}_production_{i}.xml") and restart:
             simulation.loadState(f"{prefix}_production_{i}.xml")
         else:
+            restart = False
             filehandle_dcd = open(f"{prefix}_production_{i}.dcd", "wb")
             filehandle_logger = open(f"{prefix}_production_{i}.csv", "w")
             dcdfile = app.dcdfile.DCDFile(
@@ -350,6 +352,7 @@ def run_xtal_md(
     if os.path.exists(f"{prefix}_thermalization.xml") and restart:
         simulation.loadState(f"{prefix}_thermalization.xml")
     else:
+        restart = False
         try:
             simulation.step(1000 * 100)
         except Exception as e:
@@ -387,6 +390,7 @@ def run_xtal_md(
     if os.path.exists(f"{prefix}_pressure1.xml") and restart:
         simulation.loadState(f"{prefix}_pressure1.xml")
     else:
+        restart = False
         for _ in range(100):
             system = openmm.XmlSerializer.deserialize(xml_str)
             add_CMMotionRemover(system)
@@ -469,6 +473,7 @@ def run_xtal_md(
     if os.path.exists(f"{prefix}_pressure2.xml") and restart:
         simulation.loadState(f"{prefix}_pressure2.xml")
     else:
+        restart = False
         for _ in range(100):
             system = openmm.XmlSerializer.deserialize(xml_str)
             add_CMMotionRemover(system)
@@ -562,6 +567,7 @@ def run_xtal_md(
                 f"{prefix}_production_{i}.xml"
                 )
         else:
+            restart = False
             if DEBUG:
                 filehandle_dcd_vel = open(f"{prefix}_production_v_{i}.dcd", "wb")
                 dcdfile_vel = app.dcdfile.DCDFile(
