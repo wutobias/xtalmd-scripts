@@ -121,6 +121,7 @@ def run_nvt_md(
         "CudaPrecision" : "mixed"
     },
     prefix = "nvt_md",
+    restart = False,
     ):
     
     import os
@@ -176,11 +177,16 @@ def run_nvt_md(
     ### Run for 100 picoseconds
     ### 1 step is 0.001 picoseconds
     ### 1 picosecond is 1000 steps
-    try:
-        simulation.step(1000 * 100)
-    except Exception as e:
-        return e
-    simulation.saveState(f"{prefix}_thermalization.xml")
+    if os.path.exists(f"{prefix}_thermalization.xml") and restart:
+        simulation.loadState(f"{prefix}_thermalization.xml")
+    else:
+        try:
+            simulation.step(1000 * 100)
+        except Exception as e:
+            return e
+    simulation.saveState(
+        f"{prefix}_thermalization.xml"
+        )
 
     ### 2. Production run
     ### =================
@@ -218,38 +224,40 @@ def run_nvt_md(
     write_at = 1000 * 20  # Save every 20 picosends
     N_steps_nanosecond = 1000000
     for i in range(nanoseconds):
-        filehandle_dcd = open(f"{prefix}_production_{i}.dcd", "wb")
-        filehandle_logger = open(f"{prefix}_production_{i}.csv", "w")
-        dcdfile = app.dcdfile.DCDFile(
-            filehandle_dcd, 
-            topology, 
-            time_step, 
-            simulation.currentStep,
-            write_at
-            )
-        logfile = Logger(system, filehandle_logger)
-        N_iter  = int(N_steps_nanosecond/write_at)
-        for _ in range(N_iter):
-            try:
-                simulation.step(write_at)
-            except Exception as e:
-                filehandle_dcd.close()
-                filehandle_logger.close()
-                return e
-            state = simulation.context.getState(
-                getEnergy=True,
-                getPositions=True,
-                enforcePeriodicBox=False
-            )
-            dcdfile.writeModel(
-                positions=state.getPositions(),
-            )
-            logfile.write(state)
+        if os.path.exists(f"{prefix}_production_{i}.xml") and restart:
+            simulation.loadState(f"{prefix}_production_{i}.xml")
+        else:
+            filehandle_dcd = open(f"{prefix}_production_{i}.dcd", "wb")
+            filehandle_logger = open(f"{prefix}_production_{i}.csv", "w")
+            dcdfile = app.dcdfile.DCDFile(
+                filehandle_dcd, 
+                topology, 
+                time_step, 
+                simulation.currentStep,
+                write_at
+                )
+            logfile = Logger(system, filehandle_logger)
+            N_iter  = int(N_steps_nanosecond/write_at)
+            for _ in range(N_iter):
+                try:
+                    simulation.step(write_at)
+                except Exception as e:
+                    filehandle_dcd.close()
+                    filehandle_logger.close()
+                    return e
+                state = simulation.context.getState(
+                    getEnergy=True,
+                    getPositions=True,
+                    enforcePeriodicBox=False
+                )
+                dcdfile.writeModel(
+                    positions=state.getPositions(),
+                )
+                logfile.write(state)
 
-        filehandle_dcd.close()
-        filehandle_logger.close()
-        with open(f"{prefix}_production_{i}.xml", "w") as fopen:
-            simulation.saveState(fopen)
+            filehandle_dcd.close()
+            filehandle_logger.close()
+        simulation.saveState(f"{prefix}_production_{i}.xml")
 
     return 1
 
@@ -264,6 +272,7 @@ def run_xtal_md(
         "CudaPrecision" : "mixed"
     },
     prefix = "xtal_md",
+    restart = False,
     ):
 
     import os
@@ -329,10 +338,13 @@ def run_xtal_md(
     ### Run for 100 picoseconds
     ### 1 step is 0.001 picoseconds
     ### 1 picosecond is 1000 steps
-    try:
-        simulation.step(1000 * 100)
-    except Exception as e:
-        return e
+    if os.path.exists(f"{prefix}_thermalization.xml") and restart:
+        simulation.loadState(f"{prefix}_thermalization.xml")
+    else:
+        try:
+            simulation.step(1000 * 100)
+        except Exception as e:
+            return e
     state = simulation.context.getState(
         getPositions=True,
         getVelocities=True,
@@ -340,10 +352,9 @@ def run_xtal_md(
         getForces=True,
         enforcePeriodicBox=False
         )
-    with open(f"{prefix}_thermalization.xml", "w") as fopen:
-        fopen.write(
-            openmm.XmlSerializer.serialize(state)
-            )
+    simulation.saveState(
+        f"{prefix}_thermalization.xml"
+        )
     topology.setPeriodicBoxVectors(
         state.getPeriodicBoxVectors()
         )
@@ -364,54 +375,65 @@ def run_xtal_md(
     
     ### 2. Pressure equilibration anisotropic
     ### =====================================
-    for _ in range(100):
-        system = openmm.XmlSerializer.deserialize(xml_str)
-        add_CMMotionRemover(system)
-        system.setDefaultPeriodicBoxVectors(
-            *state.getPeriodicBoxVectors()
+    if os.path.exists(f"{prefix}_pressure1.xml") and restart:
+        simulation.loadState(f"{prefix}_pressure1.xml")
+    else:
+        for _ in range(100):
+            system = openmm.XmlSerializer.deserialize(xml_str)
+            add_CMMotionRemover(system)
+            system.setDefaultPeriodicBoxVectors(
+                *state.getPeriodicBoxVectors()
+                )
+
+            barostat_aniso = openmm.MonteCarloAnisotropicBarostat(
+                (1., 1., 1.) * unit.bar,
+                temperature.value_in_unit_system(unit.md_unit_system),
+            )
+            ### Default is 25
+            barostat_aniso.setFrequency(25)
+            system.addForce(barostat_aniso)
+
+            integrator = openmm.LangevinMiddleIntegrator(
+                temperature.value_in_unit_system(unit.md_unit_system),
+                friction,
+                time_step.value_in_unit_system(unit.md_unit_system))
+            integrator.setConstraintTolerance(constraint_tolerance)
+
+            platform = openmm.Platform.getPlatformByName(platform_name)
+            for property_name, property_value in property_dict.items():
+                platform.setPropertyDefaultValue(property_name, property_value)
+                
+            simulation = app.Simulation(
+                topology=topology,
+                system=system,
+                integrator=integrator,
+                platform=platform,
             )
 
-        barostat_aniso = openmm.MonteCarloAnisotropicBarostat(
-            (1., 1., 1.) * unit.bar,
-            temperature.value_in_unit_system(unit.md_unit_system),
+            simulation.context.setPositions(
+                state.getPositions()
+                )
+            simulation.context.setVelocities(
+                state.getVelocities()
+                )
+            simulation.context.setPeriodicBoxVectors(
+                *state.getPeriodicBoxVectors()
+                )
+            ### Run for 0.01 ns
+            ### 1 step is 0.001 picoseconds
+            ### 1 picosecond is 1000 steps
+            try:
+                simulation.step(1000 * 10)
+            except Exception as e:
+                return e
+            state = simulation.context.getState()
+            topology.setPeriodicBoxVectors(
+                state.getPeriodicBoxVectors()
+                )
+    simulation.saveState(
+        f"{prefix}_pressure1.xml"
         )
-        ### Default is 25
-        barostat_aniso.setFrequency(25)
-        system.addForce(barostat_aniso)
-
-        integrator = openmm.LangevinMiddleIntegrator(
-            temperature.value_in_unit_system(unit.md_unit_system),
-            friction,
-            time_step.value_in_unit_system(unit.md_unit_system))
-        integrator.setConstraintTolerance(constraint_tolerance)
-
-        platform = openmm.Platform.getPlatformByName(platform_name)
-        for property_name, property_value in property_dict.items():
-            platform.setPropertyDefaultValue(property_name, property_value)
-            
-        simulation = app.Simulation(
-            topology=topology,
-            system=system,
-            integrator=integrator,
-            platform=platform,
-        )
-
-        simulation.context.setPositions(
-            state.getPositions()
-            )
-        simulation.context.setVelocities(
-            state.getVelocities()
-            )
-        simulation.context.setPeriodicBoxVectors(
-            *state.getPeriodicBoxVectors()
-            )
-        ### Run for 0.01 ns
-        ### 1 step is 0.001 picoseconds
-        ### 1 picosecond is 1000 steps
-        try:
-            simulation.step(1000 * 10)
-        except Exception as e:
-            return e
+    with open(f"{prefix}_pressure1.pdb", "w") as fopen:
         state = simulation.context.getState(
             getPositions=True,
             getVelocities=True,
@@ -419,17 +441,6 @@ def run_xtal_md(
             getForces=True,
             enforcePeriodicBox=False
             )
-        topology.setPeriodicBoxVectors(
-            state.getPeriodicBoxVectors()
-            )
-    with open(f"{prefix}_pressure1.xml", "w") as fopen:
-        fopen.write(
-            openmm.XmlSerializer.serialize(state)
-            )
-    topology.setPeriodicBoxVectors(
-        state.getPeriodicBoxVectors()
-        )
-    with open(f"{prefix}_pressure1.pdb", "w") as fopen:
         app.PDBFile.writeHeader(
             topology,
             fopen
@@ -446,56 +457,67 @@ def run_xtal_md(
     
     ### 3. Pressure equilibration flexible
     ### ==================================
-    for _ in range(100):
-        system = openmm.XmlSerializer.deserialize(xml_str)
-        add_CMMotionRemover(system)
-        system.setDefaultPeriodicBoxVectors(
-            *state.getPeriodicBoxVectors()
+    if os.path.exists(f"{prefix}_pressure2.xml") and restart:
+        simulation.loadState(f"{prefix}_pressure2.xml")
+    else:
+        for _ in range(100):
+            system = openmm.XmlSerializer.deserialize(xml_str)
+            add_CMMotionRemover(system)
+            system.setDefaultPeriodicBoxVectors(
+                *state.getPeriodicBoxVectors()
+                )
+
+            barostat_aniso = openmm.MonteCarloFlexibleBarostat(
+                1.0 * unit.bar,
+                temperature.value_in_unit_system(unit.md_unit_system),
+            )
+            ### Default is 25
+            barostat_aniso.setFrequency(25)
+            ### Default is True
+            barostat_aniso.setScaleMoleculesAsRigid(False)
+            system.addForce(barostat_aniso)
+
+            integrator = openmm.LangevinMiddleIntegrator(
+                temperature.value_in_unit_system(unit.md_unit_system),
+                friction,
+                time_step.value_in_unit_system(unit.md_unit_system))
+            integrator.setConstraintTolerance(constraint_tolerance)
+
+            platform = openmm.Platform.getPlatformByName(platform_name)
+            for property_name, property_value in property_dict.items():
+                platform.setPropertyDefaultValue(property_name, property_value)
+                
+            simulation = app.Simulation(
+                topology=topology,
+                system=system,
+                integrator=integrator,
+                platform=platform,
             )
 
-        barostat_aniso = openmm.MonteCarloFlexibleBarostat(
-            1.0 * unit.bar,
-            temperature.value_in_unit_system(unit.md_unit_system),
+            simulation.context.setPositions(
+                state.getPositions()
+                )
+            simulation.context.setVelocities(
+                state.getVelocities()
+                )
+            simulation.context.setPeriodicBoxVectors(
+                *state.getPeriodicBoxVectors()
+                )
+            ### Run for 0.01 ns
+            ### 1 step is 0.001 picoseconds
+            ### 1 picosecond is 1000 steps
+            try:
+                simulation.step(1000 * 10)
+            except Exception as e:
+                return e
+            state = simulation.context.getState()
+            topology.setPeriodicBoxVectors(
+                state.getPeriodicBoxVectors()
+                )
+    simulation.saveState(
+        f"{prefix}_pressure2.xml"
         )
-        ### Default is 25
-        barostat_aniso.setFrequency(25)
-        ### Default is True
-        barostat_aniso.setScaleMoleculesAsRigid(False)
-        system.addForce(barostat_aniso)
-
-        integrator = openmm.LangevinMiddleIntegrator(
-            temperature.value_in_unit_system(unit.md_unit_system),
-            friction,
-            time_step.value_in_unit_system(unit.md_unit_system))
-        integrator.setConstraintTolerance(constraint_tolerance)
-
-        platform = openmm.Platform.getPlatformByName(platform_name)
-        for property_name, property_value in property_dict.items():
-            platform.setPropertyDefaultValue(property_name, property_value)
-            
-        simulation = app.Simulation(
-            topology=topology,
-            system=system,
-            integrator=integrator,
-            platform=platform,
-        )
-
-        simulation.context.setPositions(
-            state.getPositions()
-            )
-        simulation.context.setVelocities(
-            state.getVelocities()
-            )
-        simulation.context.setPeriodicBoxVectors(
-            *state.getPeriodicBoxVectors()
-            )
-        ### Run for 0.01 ns
-        ### 1 step is 0.001 picoseconds
-        ### 1 picosecond is 1000 steps
-        try:
-            simulation.step(1000 * 10)
-        except Exception as e:
-            return e
+    with open(f"{prefix}_pressure2.pdb", "w") as fopen:
         state = simulation.context.getState(
             getPositions=True,
             getVelocities=True,
@@ -503,14 +525,6 @@ def run_xtal_md(
             getForces=True,
             enforcePeriodicBox=False
             )
-        topology.setPeriodicBoxVectors(
-            state.getPeriodicBoxVectors()
-            )
-    with open(f"{prefix}_pressure2.xml", "w") as fopen:
-        fopen.write(
-            openmm.XmlSerializer.serialize(state)
-            )
-    with open(f"{prefix}_pressure2.pdb", "w") as fopen:
         app.PDBFile.writeHeader(
             topology,
             fopen
@@ -534,59 +548,67 @@ def run_xtal_md(
     write_at = 1000 * 20  # Save every 20 picosends
     N_steps_nanosecond = 1000000
     for i in range(nanoseconds):
-        if DEBUG:
-            filehandle_dcd_vel = open(f"{prefix}_production_v_{i}.dcd", "wb")
-            dcdfile_vel = app.dcdfile.DCDFile(
-                filehandle_dcd_vel, 
+        if os.path.exists(f"{prefix}_production_{i}.xml") and restart:
+            simulation.loadState(
+                f"{prefix}_production_{i}.xml"
+                )
+        else:
+            if DEBUG:
+                filehandle_dcd_vel = open(f"{prefix}_production_v_{i}.dcd", "wb")
+                dcdfile_vel = app.dcdfile.DCDFile(
+                    filehandle_dcd_vel, 
+                    topology, 
+                    time_step, 
+                    simulation.currentStep,
+                    write_at
+                    )
+            filehandle_dcd = open(f"{prefix}_production_{i}.dcd", "wb")
+            filehandle_logger = open(f"{prefix}_production_{i}.csv", "w")
+            dcdfile = app.dcdfile.DCDFile(
+                filehandle_dcd, 
                 topology, 
                 time_step, 
                 simulation.currentStep,
                 write_at
                 )
-        filehandle_dcd = open(f"{prefix}_production_{i}.dcd", "wb")
-        filehandle_logger = open(f"{prefix}_production_{i}.csv", "w")
-        dcdfile = app.dcdfile.DCDFile(
-            filehandle_dcd, 
-            topology, 
-            time_step, 
-            simulation.currentStep,
-            write_at
-            )
-        logfile = Logger(system, filehandle_logger)
-        N_iter  = int(N_steps_nanosecond/write_at)
-        for _ in range(N_iter):
-            try:
-                simulation.step(write_at)
-            except Exception as e:
-                filehandle_dcd.close()
-                filehandle_logger.close()
-                return e
-            state = simulation.context.getState(
-                getPositions=True,
-                getVelocities=True,
-                getEnergy=True,
-                getForces=True,
-                enforcePeriodicBox=True
-            )
-            dcdfile.writeModel(
-                positions=state.getPositions(),
-                periodicBoxVectors=state.getPeriodicBoxVectors(),
-            )
-            if DEBUG:
-                vel  = state.getVelocities()._value
-                vel *= unit.nanometer
-                dcdfile_vel.writeModel(
-                    positions=vel,
+            logfile = Logger(system, filehandle_logger)
+            N_iter  = int(N_steps_nanosecond/write_at)
+            for _ in range(N_iter):
+                try:
+                    simulation.step(write_at)
+                except Exception as e:
+                    filehandle_dcd.close()
+                    filehandle_logger.close()
+                    return e
+                state = simulation.context.getState(
+                    getPositions=True,
+                    getVelocities=True,
+                    getEnergy=True,
+                    getForces=True,
+                    enforcePeriodicBox=True
+                )
+                dcdfile.writeModel(
+                    positions=state.getPositions(),
+                    periodicBoxVectors=state.getPeriodicBoxVectors(),
+                )
+                if DEBUG:
+                    vel  = state.getVelocities()._value
+                    vel *= unit.nanometer
+                    dcdfile_vel.writeModel(
+                        positions=vel,
+                        )
+                logfile.write(state)
+                simulation.saveState(
+                    f"{prefix}_production_latest.xml"
                     )
-            logfile.write(state)
-            simulation.saveState(f"{prefix}_production_latest.xml")
 
-        filehandle_dcd.close()
-        if DEBUG:
-            filehandle_dcd_vel.close()
-        filehandle_logger.close()
-        with open(f"{prefix}_production_{i}.xml", "w") as fopen:
-            simulation.saveState(fopen)
+            filehandle_dcd.close()
+            if DEBUG:
+                filehandle_dcd_vel.close()
+            filehandle_logger.close()
+        simulation.saveState(
+            f"{prefix}_production_{i}.xml"
+            )
 
     return 1
 
