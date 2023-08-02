@@ -594,6 +594,9 @@ def run_xtal_min(
         with open(xml_path, "r") as fopen:
             xml_str = fopen.read()
         system = openmm.XmlSerializer.deserialize(xml_str)
+        system.setDefaultPeriodicBoxVectors(
+            *topology.getPeriodicBoxVectors()
+            )
 
         integrator = openmm.LangevinMiddleIntegrator(
             300. * unit.kelvin,
