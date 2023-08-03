@@ -732,17 +732,6 @@ quit
             stdout=fopen
             )
 
-    if boxvectors != None:
-        tleap_pdb = ""
-        with open(f"{prefix}-tleap.pdb", "r") as fopen:
-            for line in fopen:
-                if line.startswith("CRYST1"):
-                    continue
-                else:
-                    tleap_pdb += line
-        with open(f"{prefix}.pdb", "w") as fopen:
-            fopen.write(cryst1_header + "\n" + tleap_pdb)
-
     prmtop = AmberPrmtopFile(f'{prefix}.prmtop')
     inpcrd = AmberInpcrdFile(f'{prefix}.inpcrd')
 
@@ -752,6 +741,24 @@ quit
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
+
+    tleap_pdb = ""
+    with open(f"{prefix}-tleap.pdb", "r") as fopen:
+        for line in fopen:
+            if line.startswith("CRYST1"):
+                continue
+            else:
+                tleap_pdb += line
+    with open(f"{prefix}.pdb", "w") as fopen:
+        fopen.write(cryst1_header + "\n" + tleap_pdb)
+
+    if boxvectors != None:
+        prmtop.topology.setPeriodicBoxVectors(
+            boxvectors
+            )
+        system.setDefaultPeriodicBoxVectors(
+            *boxvectors
+            )
 
     replicated_mol_list_new = topology_to_rdmol(
         prmtop.topology, 
@@ -1590,6 +1597,14 @@ stop
     if rigid_water:
         system = remove_water_bonded_forces(
             system, psffile.topology
+            )
+
+    if boxvectors != None:
+        psffile.topology.setPeriodicBoxVectors(
+            boxvectors
+            )
+        system.setDefaultPeriodicBoxVectors(
+            *boxvectors
             )
 
     with open(f"{prefix}.pdb", "w") as fopen:
