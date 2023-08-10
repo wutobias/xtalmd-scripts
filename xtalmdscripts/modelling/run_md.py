@@ -469,7 +469,13 @@ def run_xtal_md(
                 simulation.step(1000 * 10)
             except Exception as e:
                 return e
-            state = simulation.context.getState()
+            state = simulation.context.getState(
+                getPositions=True,
+                getVelocities=True,
+                getEnergy=True,
+                getForces=True,
+                enforcePeriodicBox=False
+            )
             topology.setPeriodicBoxVectors(
                 state.getPeriodicBoxVectors()
                 )
@@ -586,7 +592,13 @@ def run_xtal_md(
                 simulation.step(1000 * 10)
             except Exception as e:
                 return e
-            state = simulation.context.getState()
+            state = simulation.context.getState(
+                getPositions=True,
+                getVelocities=True,
+                getEnergy=True,
+                getForces=True,
+                enforcePeriodicBox=False
+            )
             topology.setPeriodicBoxVectors(
                 state.getPeriodicBoxVectors()
                 )
