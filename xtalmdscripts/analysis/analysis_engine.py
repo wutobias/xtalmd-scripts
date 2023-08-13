@@ -7,6 +7,11 @@ def unwrap_trajectory(query_traj, ref_strc):
 
     import numpy as np
     import copy
+    
+    min_diff = 0.6
+    max_diff = 2.0
+    step_diff = 0.2
+    max_iter = 10
 
     query_traj_cp = copy.deepcopy(query_traj)
     ref_strc_cp   = copy.deepcopy(ref_strc)
@@ -32,40 +37,41 @@ def unwrap_trajectory(query_traj, ref_strc):
         r_com_ref[mol_idx] /= total_mass
         r_fract_com_ref[mol_idx] = np.matmul(ucinv_ref, r_com_ref[mol_idx].T).T
 
-    max_diff = 0.51
+    
     r_com    = np.zeros(3, dtype=float)
     for i in range(query_traj_cp.n_frames):
-        for _ in range(10):
-            n_unwrapped = 0
-            r = query_traj_cp.xyz[i]
-            uc = query_traj_cp.unitcell_vectors[i].T
-            ucinv = np.linalg.inv(uc)
-            for mol_idx in range(N_molecules):
-                molecule = molecule_list[mol_idx]
-                for axis in [0,1,2]:
-                    r_com[:] = 0.
-                    total_mass = 0.
-                    for atom in molecule:
-                        total_mass += atom.element.mass
-                        r_com += r[atom.index] * atom.element.mass
-                    r_com /= total_mass
-                    r_fract   = np.matmul(ucinv, r_com.T).T
-                    diff_frac = r_fract - r_fract_com_ref[mol_idx]
-                    sele_upper = diff_frac[axis] > max_diff
-                    sele_lower = diff_frac[axis] < -max_diff
-                    if sele_upper:
-                        r_fract[axis] -= 1.
-                    elif sele_lower:
-                        r_fract[axis] += 1.
-                    if sele_upper or sele_lower:
-                        n_unwrapped += 1
-                        r_com_shift = np.matmul(uc, r_fract.T).T - r_com
+        for diff in np.arange(max_diff, min_diff, -step_diff):
+            for _ in range(max_iter):
+                n_unwrapped = 0
+                r = query_traj_cp.xyz[i]
+                uc = query_traj_cp.unitcell_vectors[i].T
+                ucinv = np.linalg.inv(uc)
+                for mol_idx in range(N_molecules):
+                    molecule = molecule_list[mol_idx]
+                    for axis in [0,1,2]:
+                        r_com[:] = 0.
+                        total_mass = 0.
                         for atom in molecule:
-                            query_traj_cp.xyz[i,atom.index] += r_com_shift
+                            total_mass += atom.element.mass
+                            r_com += r[atom.index] * atom.element.mass
+                        r_com /= total_mass
+                        r_fract   = np.matmul(ucinv, r_com.T).T
+                        diff_frac = r_fract - r_fract_com_ref[mol_idx]
+                        sele_upper = diff_frac[axis] > diff
+                        sele_lower = diff_frac[axis] < -diff
+                        if sele_upper:
+                            r_fract[axis] -= np.ceil(diff)
+                        elif sele_lower:
+                            r_fract[axis] += np.ceil(diff)
+                        if sele_upper or sele_lower:
+                            n_unwrapped += 1
+                            r_com_shift = np.matmul(uc, r_fract.T).T - r_com
+                            for atom in molecule:
+                                query_traj_cp.xyz[i,atom.index] += r_com_shift
 
-            query_traj_cp[i].center_coordinates()
-            if n_unwrapped == 0:
-                break
+                query_traj_cp[i].center_coordinates()
+                if n_unwrapped == 0:
+                    break
 
     ### Finally shift all atom positions
     ### to get the best-fit RMSD with the reference
