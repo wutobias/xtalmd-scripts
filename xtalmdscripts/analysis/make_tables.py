@@ -921,7 +921,6 @@ def main():
             frame_and_path_list = list()
             ### For each frame (idx) save the frame idx in the original traj
             frame_and_sub_frame_list = list()
-            ref_strc_wrap = ref_strc
             for output_traj in glob.glob(xtal_trajectory):
 
                 basename, _ = os.path.splitext(output_traj)
@@ -935,9 +934,8 @@ def main():
                     
                 query_traj_wrapped = analysis_engine.unwrap_trajectory(
                     query_traj, 
-                    ref_strc_wrap, 
+                    ref_strc, 
                     )
-                ref_strc_wrap = query_traj_wrapped[-1]
 
                 frame_and_path_list.extend(
                         [output_traj for _ in range(query_traj.n_frames)]
