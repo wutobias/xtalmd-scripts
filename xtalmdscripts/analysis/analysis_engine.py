@@ -37,15 +37,17 @@ def unwrap_trajectory(query_traj, ref_strc):
         r_com_ref[mol_idx] /= total_mass
         r_fract_com_ref[mol_idx] = np.matmul(ucinv_ref, r_com_ref[mol_idx].T).T
 
-    
-    r_com    = np.zeros(3, dtype=float)
+    r_com = np.zeros(3, dtype=float)
+    r = np.zeros((query_traj_cp.n_atoms, 3), dtype=float)
+    uc = np.zeros((3,3), dtype=float)
+    ucinv = np.zeros((3,3), dtype=float)
     for i in range(query_traj_cp.n_frames):
-        for diff in np.arange(max_diff, min_diff, -step_diff):
+        for diff in np.arange(min_diff, max_diff, step_diff):
             for _ in range(max_iter):
                 n_unwrapped = 0
-                r = query_traj_cp.xyz[i]
-                uc = query_traj_cp.unitcell_vectors[i].T
-                ucinv = np.linalg.inv(uc)
+                r[:] = np.copy(query_traj_cp.xyz[i])
+                uc[:] = query_traj_cp.unitcell_vectors[i].T
+                ucinv[:] = np.linalg.inv(uc)
                 for mol_idx in range(N_molecules):
                     molecule = molecule_list[mol_idx]
                     for axis in [0,1,2]:
