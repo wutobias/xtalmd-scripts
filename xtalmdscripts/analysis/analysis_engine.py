@@ -3,77 +3,131 @@ Collection of methods useful for comparing computed xtal structures
 with xtal structures from experiment.
 """
 
-def unwrap_trajectory(query_traj, ref_strc):
+def center_frac(traj, frame_idx=None, mol_idx=None):
+
+    """
+    Shifts the traj (with frame `frame_idx` and molecule `mol_idx`)
+    so that the supercell origin is in the origin of the labframe.
+    """
+
+    molecule_list = list(traj.topology.find_molecules())
+    N_molecules   = len(molecule_list)
+    
+    if frame_idx == None:
+        frame_list = np.arange(traj.n_frames, dtype=int)
+    else:
+        frame_list = np.array([frame_idx], dtype=int)
+    if mol_idx == None:
+        mol_list = np.arange(N_molecules, dtype=int)
+    else:
+        mol_list = np.array([mol_idx], dtype=int)
+        
+    _N_frames    = frame_list.size
+    _N_molecules = mol_list.size
+    
+    r_fract_com_traj = np.zeros((_N_frames, _N_molecules, 3), dtype=float)
+    r_com_traj = np.zeros((_N_frames, _N_molecules, 3), dtype=float)
+
+    r_com       = np.zeros((_N_molecules, 3), dtype=float)
+    r_fract_com = np.zeros((_N_molecules, 3), dtype=float)
+    for i, frame_i in enumerate(frame_list):
+        
+        r_com[:] = 0.
+        r_fract_com[:] = 0.
+
+        uc = traj.unitcell_vectors[frame_i].T
+        r  = traj.xyz[frame_i]
+
+        ucinv   = np.linalg.inv(uc)
+        r_fract = np.matmul(ucinv, r.T).T
+
+        for j, mol_j in enumerate(mol_list):
+            molecule = molecule_list[mol_j]
+            total_mass = 0.
+            for atom in molecule:
+                total_mass += atom.element.mass
+                r_com[j] += r[atom.index] * atom.element.mass
+            r_com[j] /= total_mass
+            r_fract_com[j]  = np.matmul(ucinv, r_com[j].T).T
+            r_fract_com[j] -= np.floor(r_fract_com[j])
+            _r_com = np.matmul(uc, r_fract_com[j].T).T
+            shift = _r_com - r_com[j]
+            r_com[j] = _r_com
+            for atom in molecule:
+                r[atom.index] += shift
+        traj.xyz[frame_i] = r[:]
+        r_fract_com_traj[i] = r_fract_com[:]
+        r_com_traj[i]       = r_com[:]
+    return r_fract_com_traj, r_com_traj
+    
+
+def unwrap_trajectory(query_traj, ref_strc, min_real=False):
+
+    """
+    Unwraps the molecules in a xtal trajectory `query_traj` based on the COM positions
+    in the reference structure `ref_strc`. Unwrapping is based on the difference
+    in fractional or real (if `min_real=True`) coordinate w.r.t. the reference structure.
+    """
 
     import numpy as np
     import copy
     
-    min_diff = 0.6
-    max_diff = 2.0
-    step_diff = 0.2
-    max_iter = 10
+    translation_length = 2
 
     query_traj_cp = copy.deepcopy(query_traj)
     ref_strc_cp   = copy.deepcopy(ref_strc)
 
-    ref_strc_cp.center_coordinates()
-
     uc_ref = ref_strc_cp.unitcell_vectors[0].T
-    ucinv_ref = np.linalg.inv(uc_ref)
-
-    r_ref = ref_strc_cp.xyz[0]
-    r_fract_ref  = np.matmul(ucinv_ref, r_ref.T).T
 
     molecule_list = list(ref_strc.topology.find_molecules())
     N_molecules   = len(molecule_list)
-    r_com_ref     = np.zeros((N_molecules, 3), dtype=float)
-    r_fract_com_ref = np.zeros((N_molecules, 3), dtype=float)
-    for mol_idx in range(N_molecules):
-        molecule = molecule_list[mol_idx]
-        total_mass = 0.
-        for atom in molecule:
-            total_mass += atom.element.mass
-            r_com_ref[mol_idx] += r_ref[atom.index] * atom.element.mass
-        r_com_ref[mol_idx] /= total_mass
-        r_fract_com_ref[mol_idx] = np.matmul(ucinv_ref, r_com_ref[mol_idx].T).T
+    
+    r_fract_com_traj, r_com_traj = center_frac(ref_strc_cp, frame_idx=0)
+    r_fract_com_ref = r_fract_com_traj[0]
+    r_com_ref = r_com_traj[0]
 
     r_com = np.zeros(3, dtype=float)
     r = np.zeros((query_traj_cp.n_atoms, 3), dtype=float)
     uc = np.zeros((3,3), dtype=float)
     ucinv = np.zeros((3,3), dtype=float)
     for i in range(query_traj_cp.n_frames):
-        for diff in np.arange(min_diff, max_diff, step_diff):
-            for _ in range(max_iter):
-                n_unwrapped = 0
-                r[:] = np.copy(query_traj_cp.xyz[i])
-                uc[:] = query_traj_cp.unitcell_vectors[i].T
-                ucinv[:] = np.linalg.inv(uc)
-                for mol_idx in range(N_molecules):
-                    molecule = molecule_list[mol_idx]
-                    for axis in [0,1,2]:
-                        r_com[:] = 0.
-                        total_mass = 0.
-                        for atom in molecule:
-                            total_mass += atom.element.mass
-                            r_com += r[atom.index] * atom.element.mass
-                        r_com /= total_mass
-                        r_fract   = np.matmul(ucinv, r_com.T).T
-                        diff_frac = r_fract - r_fract_com_ref[mol_idx]
-                        sele_upper = diff_frac[axis] > diff
-                        sele_lower = diff_frac[axis] < -diff
-                        if sele_upper:
-                            r_fract[axis] -= np.ceil(diff)
-                        elif sele_lower:
-                            r_fract[axis] += np.ceil(diff)
-                        if sele_upper or sele_lower:
-                            n_unwrapped += 1
-                            r_com_shift = np.matmul(uc, r_fract.T).T - r_com
-                            for atom in molecule:
-                                query_traj_cp.xyz[i,atom.index] += r_com_shift
+        r[:]   = np.copy(query_traj_cp.xyz[i])
+        uc[:]  = np.abs(query_traj_cp.unitcell_vectors[i].T)
+        uc[:] *= np.sign(uc_ref)
+        ucinv[:] = np.linalg.inv(uc)
+        for mol_idx in range(N_molecules):
+            molecule = molecule_list[mol_idx]
+            r_com[:] = 0.
+            total_mass = 0.
+            for atom in molecule:
+                total_mass += atom.element.mass
+                r_com += r[atom.index] * atom.element.mass
+            r_com  /= total_mass
+            r_fract = np.matmul(ucinv, r_com.T).T
+            min_diff = np.inf
+            min_r_fract = r_fract
+            for a in np.arange(-translation_length,translation_length+1,1):
+                for b in np.arange(-translation_length,translation_length+1,1):
+                    for c in np.arange(-translation_length,translation_length+1,1):
+                        _r_fract  = r_fract + np.array([a,b,c])
+                        if min_real:
+                            diff = np.linalg.norm(
+                                np.matmul(uc,_r_fract.T).T-
+                                r_com_ref[mol_idx]
+                            )
+                        else:
+                            diff = np.linalg.norm(
+                                _r_fract-
+                                r_fract_com_ref[mol_idx]
+                            )
+                        if diff < min_diff:
+                            min_diff  = diff
+                            min_r_fract = _r_fract
 
-                query_traj_cp[i].center_coordinates()
-                if n_unwrapped == 0:
-                    break
+            _r_com = np.matmul(uc, min_r_fract.T).T
+            r_com_shift = _r_com - r_com
+            for atom in molecule:
+                query_traj_cp.xyz[i,atom.index] += r_com_shift
 
     ### Finally shift all atom positions
     ### to get the best-fit RMSD with the reference
