@@ -10,6 +10,8 @@ def center_frac(traj, frame_idx=None, mol_idx=None):
     so that the supercell origin is in the origin of the labframe.
     """
 
+    import numpy as np
+
     molecule_list = list(traj.topology.find_molecules())
     N_molecules   = len(molecule_list)
     
