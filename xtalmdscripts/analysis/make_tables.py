@@ -990,7 +990,7 @@ def main():
                     )
                 _rmsd, _rmsd_per_residue = analysis_engine.compute_rmsd(
                         query_traj_unwrapped,
-                        ref_strc,
+                        ref_strc_unwrapped,
                         rdmol,
                         exclude_hydrogen=True,
                         exclude_water=True,
