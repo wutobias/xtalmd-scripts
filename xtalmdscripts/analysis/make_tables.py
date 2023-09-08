@@ -921,6 +921,11 @@ def main():
             frame_and_path_list = list()
             ### For each frame (idx) save the frame idx in the original traj
             frame_and_sub_frame_list = list()
+            ### First wrap the reference structure
+            ref_strc_unwrapped = analysis_engine.unwrap_trajectory(
+                ref_strc,
+                ref_strc
+                )
             for output_traj in glob.glob(xtal_trajectory):
 
                 basename, _ = os.path.splitext(output_traj)
@@ -932,9 +937,9 @@ def main():
                     top=ref_strc.topology
                     )
                     
-                query_traj_wrapped = analysis_engine.unwrap_trajectory(
+                query_traj_unwrapped = analysis_engine.unwrap_trajectory(
                     query_traj, 
-                    ref_strc, 
+                    ref_strc_unwrapped, 
                     )
 
                 frame_and_path_list.extend(
@@ -967,13 +972,13 @@ def main():
                 density_xtal.extend(_density)
 
                 _com_diff = analysis_engine.compute_com_diff_per_residue(
-                    query_traj_wrapped, 
+                    query_traj_unwrapped, 
                     ref_strc,
                     rdmol,
                     exclude_water=True
                     )
                 _pc_neighbors, _pc_self = analysis_engine.compute_pc_diff_per_residue(
-                    query_traj_wrapped, 
+                    query_traj_unwrapped, 
                     ref_strc,
                     rdmol,
                     N_closest_molecules=6,
@@ -984,7 +989,7 @@ def main():
                     dist_pair_list
                     )
                 _rmsd, _rmsd_per_residue = analysis_engine.compute_rmsd(
-                        query_traj_wrapped,
+                        query_traj_unwrapped,
                         ref_strc,
                         rdmol,
                         exclude_hydrogen=True,
@@ -1259,7 +1264,7 @@ cmd.group(\"expt\", \"strc_expt\")
                     )
                 query_traj = analysis_engine.unwrap_trajectory(
                     query_traj, 
-                    ref_strc, 
+                    ref_strc_unwrapped, 
                     )
 
                 tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
@@ -1440,7 +1445,7 @@ cmd.group(\"expt\", \"strc_expt\")
                         )
                     query_traj = analysis_engine.unwrap_trajectory(
                         query_traj, 
-                        ref_strc, 
+                        ref_strc_unwrapped, 
                         )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
@@ -1621,7 +1626,7 @@ cmd.group(\"expt\", \"strc_expt\")
                         )
                     query_traj = analysis_engine.unwrap_trajectory(
                         query_traj, 
-                        ref_strc, 
+                        ref_strc_unwrapped, 
                         )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
@@ -1797,7 +1802,7 @@ cmd.group(\"expt\", \"strc_expt\")
                         )
                     query_traj = analysis_engine.unwrap_trajectory(
                         query_traj, 
-                        ref_strc, 
+                        ref_strc_unwrapped, 
                         )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
@@ -2289,7 +2294,7 @@ cmd.group(\"expt\", \"strc_expt\")
                         )
                     query_traj = analysis_engine.unwrap_trajectory(
                         query_traj, 
-                        ref_strc,
+                        ref_strc_unwrapped,
                         )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"

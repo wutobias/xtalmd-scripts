@@ -3,11 +3,37 @@ Collection of methods useful for comparing computed xtal structures
 with xtal structures from experiment.
 """
 
+def center_on_ref(ref_strc, query_traj, frame_idx=None):
+
+    """
+    Center query_traj on ref_strc in-place.
+    """
+
+    import numpy as np
+
+    if frame_idx == None:
+        frame_list = np.arange(query_traj.n_frames, dtype=int)
+    else:
+        frame_list = np.array([frame_idx], dtype=int)
+
+    ref_cog  = np.mean(ref_strc.xyz[0], axis=0)
+    for i in frame_list:
+        
+        x = query_traj.xyz[i]
+        traj_cog = np.mean(x, axis=0)
+        
+        displ = ref_cog - traj_cog
+        query_traj.xyz[i] += displ
+
+    return query_traj
+
+
 def center_frac(traj, frame_idx=None, mol_idx=None):
 
     """
     Shifts the traj (with frame `frame_idx` and molecule `mol_idx`)
-    so that the supercell origin is in the origin of the labframe.
+    *in-place* so that the supercell origin is in the origin of the 
+    labframe.
     """
 
     import numpy as np
@@ -60,6 +86,7 @@ def center_frac(traj, frame_idx=None, mol_idx=None):
         traj.xyz[frame_i] = r[:]
         r_fract_com_traj[i] = r_fract_com[:]
         r_com_traj[i]       = r_com[:]
+
     return r_fract_com_traj, r_com_traj
     
 
@@ -73,15 +100,15 @@ def unwrap_trajectory(query_traj, ref_strc, min_real=False):
 
     import numpy as np
     import copy
-    
-    translation_length = 2
+
+    translation_length = 1
 
     query_traj_cp = copy.deepcopy(query_traj)
     ref_strc_cp   = copy.deepcopy(ref_strc)
 
     uc_ref = ref_strc_cp.unitcell_vectors[0].T
 
-    molecule_list = list(ref_strc.topology.find_molecules())
+    molecule_list = list(ref_strc_cp.topology.find_molecules())
     N_molecules   = len(molecule_list)
     
     r_fract_com_traj, r_com_traj = center_frac(ref_strc_cp, frame_idx=0)
@@ -89,23 +116,30 @@ def unwrap_trajectory(query_traj, ref_strc, min_real=False):
     r_com_ref = r_com_traj[0]
 
     r_com = np.zeros(3, dtype=float)
-    r = np.zeros((query_traj_cp.n_atoms, 3), dtype=float)
+    r_fract = np.zeros(3, dtype=float)
+    r  = np.zeros((query_traj_cp.n_atoms, 3), dtype=float)
     uc = np.zeros((3,3), dtype=float)
     ucinv = np.zeros((3,3), dtype=float)
     for i in range(query_traj_cp.n_frames):
-        r[:]   = np.copy(query_traj_cp.xyz[i])
+
         uc[:]  = np.abs(query_traj_cp.unitcell_vectors[i].T)
         uc[:] *= np.sign(uc_ref)
         ucinv[:] = np.linalg.inv(uc)
+
         for mol_idx in range(N_molecules):
             molecule = molecule_list[mol_idx]
-            r_com[:] = 0.
+
+            center_on_ref(ref_strc_cp, query_traj_cp, i)
+            r[:] = np.copy(query_traj_cp.xyz[i])
+
+            r_com[:]   = 0.
             total_mass = 0.
             for atom in molecule:
                 total_mass += atom.element.mass
                 r_com += r[atom.index] * atom.element.mass
             r_com  /= total_mass
-            r_fract = np.matmul(ucinv, r_com.T).T
+            r_fract[:] = np.matmul(ucinv, r_com.T).T
+
             min_diff = np.inf
             min_r_fract = r_fract
             for a in np.arange(-translation_length,translation_length+1,1):
@@ -114,7 +148,7 @@ def unwrap_trajectory(query_traj, ref_strc, min_real=False):
                         _r_fract  = r_fract + np.array([a,b,c])
                         if min_real:
                             diff = np.linalg.norm(
-                                np.matmul(uc,_r_fract.T).T-
+                                np.matmul(uc, _r_fract.T).T-
                                 r_com_ref[mol_idx]
                             )
                         else:
@@ -131,19 +165,8 @@ def unwrap_trajectory(query_traj, ref_strc, min_real=False):
             for atom in molecule:
                 query_traj_cp.xyz[i,atom.index] += r_com_shift
 
-    ### Finally shift all atom positions
-    ### to get the best-fit RMSD with the reference
-    ### structure just using translation.
-    ref_cog  = np.mean(ref_strc.xyz[0], axis=0)
-    for i in range(query_traj_cp.n_frames):
-        
-        x = query_traj_cp.xyz[i]
-        traj_cog = np.mean(x, axis=0)
-        
-        displ = ref_cog - traj_cog
-        query_traj_cp.xyz[i] += displ
-
     return query_traj_cp
+
 
 
 def get_dihedral_indices(
