@@ -90,7 +90,7 @@ def center_frac(traj, frame_idx=None, mol_idx=None):
     return r_fract_com_traj, r_com_traj
     
 
-def unwrap_trajectory(query_traj, ref_strc, min_real=False):
+def unwrap_trajectory(query_traj, ref_strc, min_real=True):
 
     """
     Unwraps the molecules in a xtal trajectory `query_traj` based on the COM positions
