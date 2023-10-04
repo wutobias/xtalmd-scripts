@@ -1436,6 +1436,11 @@ go
 
         if already_processed:
             continue
+        
+        if cgenff:
+            resid_str = "1"
+        else:
+            resid_str = ""
 
         charmm_inp = f"""
 bomlev -2
@@ -1443,7 +1448,7 @@ bomlev -2
 {charmm_inp_header}
 
 open read card unit 10 name {basename_monomer}-cpptraj.cor
-read sequence coor card unit 10 resid
+read sequence {chain_name} {resid_str} coor card unit 10 resid
 generate {chain_name} setup warn first {patch_name[0]} last {patch_name[1]}
 
 open read unit 10 card name {basename_monomer}-cpptraj.cor
