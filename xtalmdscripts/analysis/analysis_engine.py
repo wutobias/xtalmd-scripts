@@ -519,6 +519,7 @@ def build_pair_list(
     ### This list contains all atom pairs
     pair_list = list()
     ### Loop over all atoms and find pairs
+    pair_list = np.zeros((0,2), dtype=int)
     for atom in traj.topology.atoms:
         if exclude_hydrogen:
             if atom.element.number == 1:
@@ -537,13 +538,15 @@ def build_pair_list(
             haystack_indices = haystack,
             periodic=True
         )[0]
+        
+        if neighbor_list.size == 0:
+            continue
+
         pair_list_for_atom = np.zeros((neighbor_list.size,2), dtype=int)
         pair_list_for_atom[:,0] = neighbor_list
         pair_list_for_atom[:,1] = atom.index
 
-        if atom.index == 0:
-            pair_list           = pair_list_for_atom
-        else:
+        if pair_list.size > 0:
             _pair_list = np.vstack(
                 (
                     pair_list, 
