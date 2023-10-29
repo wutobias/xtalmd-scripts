@@ -336,10 +336,12 @@ def apply_delta_hydrogen(
         else:
             ### Nix.
             pass
-    mol_combo_prot = emol.GetMol()
-    Chem.SanitizeMol(mol_combo_prot)
-    return Chem.GetMolFrags(mol_combo_prot, asMols=True)
-    
+    try:
+        mol_combo_prot = emol.GetMol()
+        Chem.SanitizeMol(mol_combo_prot)
+        return True, Chem.GetMolFrags(mol_combo_prot, asMols=True)
+    except:
+        return False, copy.deepcopy(mol_list)
 
 def minimize_H(
     mol_list,
@@ -354,8 +356,8 @@ def minimize_H(
     mol_combo = combine_mols(mol_list)
     if sanitize:
         Chem.SanitizeMol(mol_combo)
-    ff        = FfWrapper(mol_combo, only_hydrogen=True)
-    x0        = ff.pos
+    ff = FfWrapper(mol_combo, only_hydrogen=True)
+    x0 = ff.pos
     
     result = optimize.minimize(
         fun=ff.ene,
@@ -383,22 +385,56 @@ def assign_protonation_states(
     import copy
 
     mol_combo = combine_mols(mol_list)
-    polar_heavy_atom = Chem.MolFromSmarts("[#7,#8,#16]")
     matches = mol_combo.GetSubstructMatches(
-        polar_heavy_atom, 
-        uniquify=False
+        Chem.MolFromSmarts("[#7,#8,#16]"),
+        uniquify=True
         )
     N_matches = len(matches)
     delta_hydrogen_dict_best = dict()
     for atm_idx in matches:
         atm_idx = int(atm_idx[0])
         delta_hydrogen_dict_best[atm_idx] = 0
-    energy_best = 999999999999999999999.
     mol_list_best = copy.deepcopy(mol_list)
     N_mol_per_unitcell = len(mol_list)
+    while True:
+        charge = Chem.GetFormalCharge(
+            combine_mols(mol_list_best)
+            )
+        if charge == 0:
+            break
+        delta = -1 * charge/abs(charge)
+        i = np.random.randint(0, N_matches)
+        atm_idx_i = int(matches[i][0])
+        delta_hydrogen_dict_best[atm_idx_i] = delta
+        success, mol_list_prot = apply_delta_hydrogen(
+            copy.deepcopy(mol_list_best),
+            delta_hydrogen_dict_best
+            )
 
-    charge0 = Chem.GetFormalCharge(mol_combo)
-
+        try:
+            mol = combine_mols(mol_list_prot)
+            mp  = Chem.MMFFGetMoleculeProperties(mol)
+            r   = Chem.MMFFGetMoleculeForceField(mol, mp)
+            if isinstance(r, type(None)):
+                success = False
+        except:
+            success = False
+        delta_hydrogen_dict_best[atm_idx_i] = 0
+        if success:
+            energy, mol_list_best = minimize_H(mol_list_prot)
+            print(charge, energy)
+        
+    #mol_list_prot, _, _ = make_supercell(
+    #    cell,
+    #    mol_list_best,
+    #    0, 2,
+    #    0, 2,
+    #    0, 2)
+    mol_list_prot = mol_list_best
+    energy_best, mol_list_prot = minimize_H(mol_list_prot)
+    mol_list_best = copy.deepcopy(
+        mol_list_prot[:N_mol_per_unitcell]
+        )
     #with open(f"./best_init.pdb", "w") as fopen:
     #    fopen.write(
     #        Chem.MolToPDBBlock(
@@ -407,48 +443,89 @@ def assign_protonation_states(
     #                )
     #            )
     #        )
-    #count = 0
-    for _ in range(N_iterations):
-        delta_hydrogen_dict = copy.deepcopy(
+    delta_hydrogen_dict = copy.deepcopy(
             delta_hydrogen_dict_best
             )
-        for i in range(N_matches):
-            atm_idx_i = int(matches[i][0])
-            delta0_i  = delta_hydrogen_dict[atm_idx_i]
-            for j in range(i+1, N_matches):
-                atm_idx_j = int(matches[j][0])
-                delta0_j  = delta_hydrogen_dict[atm_idx_j]
-                for dij in [[-1,1],[1,-1]]:
-                    ###  0: Do nothing
-                    ### +1: Add hydrogen
-                    ### -1: Remove hydrogen
-                    delta_hydrogen_dict[atm_idx_i] = dij[0]
-                    delta_hydrogen_dict[atm_idx_j] = dij[1]
-                    mol_list_prot = apply_delta_hydrogen(
-                        copy.deepcopy(mol_list),
-                        delta_hydrogen_dict
-                        )
-                    charge = Chem.GetFormalCharge(
-                        combine_mols(mol_list_prot)
-                        )
-                    if charge == charge0:
-                        mol_list_prot, _, _ = make_supercell(
-                            cell,
-                            mol_list_prot,
-                            0, 2,
-                            0, 2,
-                            0, 2)
-                        energy, mol_list_prot = minimize_H(mol_list_prot)
-                        if energy < energy_best:
-                            energy_best = energy
-                            delta_hydrogen_dict_best = copy.deepcopy(
-                                delta_hydrogen_dict
-                                )
-                            mol_list_best = copy.deepcopy(
-                                mol_list_prot[:N_mol_per_unitcell]
-                                )
-                delta_hydrogen_dict[atm_idx_j] = delta0_j
-            delta_hydrogen_dict[atm_idx_i] = delta0_i
+    for _ in range(N_iterations):
+        matches_plus = mol_combo.GetSubstructMatches(
+            Chem.MolFromSmarts("[#7,#8,#16&+0,+1,+2,+3]"),
+            uniquify=True
+            )
+        matches_minus = mol_combo.GetSubstructMatches(
+            Chem.MolFromSmarts("[#7,#8,#16&-0,-1,-2,-3]"),
+            uniquify=True
+            )
+        matches_neutral = mol_combo.GetSubstructMatches(
+            Chem.MolFromSmarts("[#7,#8,#16&-0]"),
+            uniquify=True
+            )
+            
+        matches_plus = [m[0] for m in matches_plus]
+        matches_minus = [m[0] for m in matches_minus]
+        matches_neutral = [m[0] for m in matches_neutral]
+        
+        N_matches_plus  = len(matches_plus)
+        N_matches_minus = len(matches_minus)
+        i = np.random.randint(0, N_matches_plus)
+        j = np.random.randint(0, N_matches_minus)
+        atm_idx_i = int(matches_plus[i])
+        atm_idx_j = int(matches_minus[j])
+        if atm_idx_i == atm_idx_j:
+            continue
+        if atm_idx_i in matches_neutral and atm_idx_j not in matches_neutral:
+            continue
+        if atm_idx_j in matches_neutral and atm_idx_i not in matches_neutral:
+            continue
+            
+        ###  0: Do nothing
+        ### +1: Add hydrogen
+        ### -1: Remove hydrogen
+        delta_hydrogen_dict[atm_idx_i] = -1
+        delta_hydrogen_dict[atm_idx_j] = +1
+        success, mol_list_prot = apply_delta_hydrogen(
+            copy.deepcopy(mol_list_best),
+            delta_hydrogen_dict
+            )
+        
+        try:
+            mol = combine_mols(mol_list_prot)
+            mp  = Chem.MMFFGetMoleculeProperties(mol)
+            r   = Chem.MMFFGetMoleculeForceField(mol, mp)
+            if isinstance(r, type(None)):
+                success = False
+        except:
+            success = False
+        
+        print(success,energy_best, Chem.GetFormalCharge(combine_mols(mol_list_best)))
+
+        if success:
+            #mol_list_prot, _, _ = make_supercell(
+            #    cell,
+            #    mol_list_prot,
+            #    0, 2,
+            #    0, 2,
+            #    0, 2
+            #    )
+            try:
+                energy, mol_list_prot = minimize_H(mol_list_prot)
+            except:
+                print("min failed")
+                energy = energy_best+9999.
+            print("new energy", energy)
+            if energy < energy_best:
+                energy_best = energy
+                delta_hydrogen_dict[atm_idx_i] = 0
+                delta_hydrogen_dict[atm_idx_j] = 0
+                delta_hydrogen_dict_best = copy.deepcopy(
+                    delta_hydrogen_dict
+                    )
+                mol_list_best = copy.deepcopy(
+                    mol_list_prot[:N_mol_per_unitcell]
+                    )
+            
+        delta_hydrogen_dict[atm_idx_i] = 0
+        delta_hydrogen_dict[atm_idx_j] = 0
+                    
         #print(f"Best energy {energy_best:4.2f}")
         #with open(f"./best_{count}.pdb", "w") as fopen:
         #    fopen.write(
@@ -1300,8 +1377,8 @@ def generate_replicated_mol_list(
         N_mol = len(mol_list)
         for mol_idx in range(N_mol):
             rdmol = mol_list[mol_idx]
-            succes, _rdmol, atomorder = label_amino_acid_residues(rdmol, reorder=True)
-            if succes:
+            success, _rdmol, atomorder = label_amino_acid_residues(rdmol, reorder=True)
+            if success:
                 mol_list[mol_idx] = _rdmol
     else:
         mol_list = clean_names(mol_list)

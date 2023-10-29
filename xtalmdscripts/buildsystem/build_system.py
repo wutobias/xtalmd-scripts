@@ -236,7 +236,9 @@ def parse_arguments():
             "am1bcc", 
             "am1elf10", 
             "am1-mulliken", 
-            "gasteiger"
+            "gasteiger",
+            "am1bcc-openeye",
+            "am1bcc-amber",
             ],
         required=False,
         default="default"
@@ -1156,9 +1158,27 @@ def build_system_charmm(
             already_processed_list.append(
                 unique_idx
                 )
+        if already_processed:
+            continue
+            
         basename_monomer = f"m{unique_idx}"
 
         rdmol = replicated_mol_list[mol_idx]
+        
+        if cgenff:
+            _, has_water = label_water(
+                rdmol,
+                charmm=True
+                )
+        else:
+            rdmol, has_water = label_water(
+                rdmol,
+                charmm=True
+                )
+        with open(f"{basename_monomer}.pdb", "w") as fopen:
+            fopen.write(
+                Chem.MolToPDBBlock(rdmol)
+                )
 
         if not cgenff:
             ### We have to check to for presence of ACE or NME first.
@@ -1224,21 +1244,6 @@ def build_system_charmm(
 
             N_term_resname = sequence_dict[N_term_resid]
             C_term_resname = sequence_dict[C_term_resid]
-
-        if cgenff:
-            _, has_water = label_water(
-                rdmol,
-                charmm=True
-                )
-        else:
-            rdmol, has_water = label_water(
-                rdmol,
-                charmm=True
-                )
-        with open(f"{basename_monomer}.pdb", "w") as fopen:
-            fopen.write(
-                Chem.MolToPDBBlock(rdmol)
-                )
 
         if cgenff and not has_water and not already_processed:
 
@@ -1358,12 +1363,16 @@ trajout {basename_monomer}-{mol_idx:d}-cpptraj.cor segmask :HOH,WAT,TIP3 TIP3
                         patch_name[1] = "pcte"
                 else:
                     patch_name[1] = "cter"
-            chain_name = "PROA"
+            
+            if cgenff:
+                chain_name = f"M{unique_idx}"
+            else:
+                chain_name = "PROA"
             trajout_str = f"""
 trajout {basename_monomer}-cpptraj.pdb
-trajout {basename_monomer}-cpptraj.cor segmask !:HOH,WAT,TIP3 PROA
+trajout {basename_monomer}-cpptraj.cor segmask !:HOH,WAT,TIP3 {chain_name}
 trajout {basename_monomer}-{mol_idx:d}-cpptraj.pdb
-trajout {basename_monomer}-{mol_idx:d}-cpptraj.cor segmask !:HOH,WAT,TIP3 PROA
+trajout {basename_monomer}-{mol_idx:d}-cpptraj.cor segmask !:HOH,WAT,TIP3 {chain_name}
 """
         ### Convert to regular pdb naming to charmm pdb naming
         ### ${MMTSB}/perl/convpdb.pl
@@ -1381,12 +1390,16 @@ trajout {basename_monomer}-{mol_idx:d}-cpptraj.cor segmask !:HOH,WAT,TIP3 PROA
                 ],
                 stdout=fopen
                 )
+                
+        strip_str = ""
+        if not cgenff:
+            strip_str = "strip @H="
 
         with open("cpptraj.in", "w") as fopen:
             fopen.write(f"""
 parm {basename_monomer}-mmtsb.pdb
 trajin {basename_monomer}-mmtsb.pdb
-strip @H=
+{strip_str}
 {trajout_str}
 go
 """)
@@ -1436,19 +1449,16 @@ go
 
         if already_processed:
             continue
+            
+        seq_str = f"{chain_name} -1"
         
-        if cgenff:
-            resid_str = "1"
-        else:
-            resid_str = ""
-
         charmm_inp = f"""
 bomlev -2
 
 {charmm_inp_header}
 
 open read card unit 10 name {basename_monomer}-cpptraj.cor
-read sequence {chain_name} {resid_str} coor card unit 10 resid
+read sequence coor card unit 10 resid
 generate {chain_name} setup warn first {patch_name[0]} last {patch_name[1]}
 
 open read unit 10 card name {basename_monomer}-cpptraj.cor
@@ -1484,9 +1494,12 @@ stop
 
         if os.path.exists(f"{basename_monomer}-charmm.psf"):
             try:
-                p_psf = pmd.load_file(
-                    f"{basename_monomer}-charmm.psf"
+                p_psf = pmd.charmm.psf.CharmmPsfFile(
+                    f"{basename_monomer}-charmm.psf",
                     )
+                p_psf.coordinates = pmd.load_file(
+                    f"{basename_monomer}-charmm.pdb",
+                    ).coordinates
                 pmd_list.append(p_psf)
             except:
                 failed = True
@@ -1496,6 +1509,10 @@ stop
             break
 
     if failed:
+        if cleanup:
+            for filename in to_remove_list:
+                if os.path.exists(filename):
+                    os.remove(filename)
         raise RuntimeError(
             f"Could not build structure with {version}."
             )
@@ -1503,18 +1520,20 @@ stop
     ### This is the parmed.Structure instance that will
     ### store all topology information
     psf_pmd = pmd.Structure()
-    crd_pmd = pmd.Structure()
-    for mol_idx in range(len(replicated_mol_list)):
+    N_new = 0
+    N_old = 0
+    for mol_idx, rdmol in enumerate(replicated_mol_list):
         unique_idx = unique_mapping[mol_idx]
-        basename_monomer = f"m{unique_idx}"
-        crd_pmd += pmd.load_file(
-            f"{basename_monomer}-{mol_idx:d}-cpptraj.pdb"
-            )
+        rdmol    = replicated_mol_list[mol_idx]
+        pos      = rdmol.GetConformer().GetPositions()
+        pmd_list[unique_idx].coordinates = pos
         psf_pmd += pmd_list[unique_idx]
     psf_pmd.write_psf(f"strc.psf")
-    crd_pmd.save(f"strc.crd", overwrite=True)
+    psf_pmd.save(f"strc.crd", overwrite=True)
+    psf_pmd.save(f"strc.pdb", overwrite=True)
     to_remove_list.append("strc.psf")
     to_remove_list.append("strc.crd")
+    to_remove_list.append("strc.pdb")
     to_remove_list.append("strc-final.crd")
     to_remove_list.append("strc-final.pdb")
     to_remove_list.append("strc-final.psf")
@@ -1562,10 +1581,6 @@ stop
         "-o",
         "charmm.out"
         ])
-
-    psf_pmd.coordinates = pmd.load_file(
-        "./strc-final.pdb"
-        ).coordinates
 
     cryst1_header, nonbondedmethod = get_cryst1_header(boxvectors)
     if opls:
@@ -1619,8 +1634,11 @@ stop
             fopen
             )
 
-    replicated_mol_list_new = topology_to_rdmol(topology, positions)
-    assert len(replicated_mol_list) == len(replicated_mol_list_new)
+    if not cgenff:
+        replicated_mol_list_new = topology_to_rdmol(topology, positions)
+        assert len(replicated_mol_list) == len(replicated_mol_list_new)
+    else:
+        replicated_mol_list_new = replicated_mol_list
 
     mapping_dict = get_mapping_dict(
         replicated_mol_list, 
@@ -2438,14 +2456,32 @@ epsilon=sqrt(epsilon1*epsilon2);
     ### Change charge method
     if args.charge_method.lower() != "default":
         from openff.toolkit.topology import Molecule
+        from openff.units.openmm import to_openmm
+        charge_method = args.charge_method.lower()
+        if charge_method.endswith("-openeye"):
+            from openff.toolkit.utils.toolkits import OpenEyeToolkitWrapper, RDKitToolkitWrapper
+            from openff.toolkit.utils.toolkits import ToolkitRegistry
+            toolkit_registry = ToolkitRegistry([OpenEyeToolkitWrapper, RDKitToolkitWrapper])
+            charge_method    = charge_method.replace("-openeye","")
+        elif charge_method.endswith("-amber"):
+            from openff.toolkit.utils.toolkits import AmberToolsToolkitWrapper, RDKitToolkitWrapper
+            from openff.toolkit.utils.toolkits import ToolkitRegistry
+            toolkit_registry = ToolkitRegistry([AmberToolsToolkitWrapper, RDKitToolkitWrapper])
+            charge_method    = charge_method.replace("-amber","")
+        else:
+            from openff.toolkit.utils.toolkits import GLOBAL_TOOLKIT_REGISTRY
+            toolkit_registry = GLOBAL_TOOLKIT_REGISTRY
         partial_charges_list = list()
         for rdmol in rdmol_list_unique:
             offmol = Molecule.from_rdkit(rdmol)
             offmol.assign_partial_charges(
-                partial_charge_method=args.charge_method.lower(),
+                partial_charge_method = charge_method,
+                toolkit_registry = toolkit_registry,
                 )
             partial_charges_list.append(
-                offmol.partial_charges
+                to_openmm(
+                    offmol.partial_charges
+                    )
                 )
 
         atom_count = 0
@@ -2459,7 +2495,7 @@ epsilon=sqrt(epsilon1*epsilon2);
                 q_old, sig, eps = nbforce.getParticleParameters(atom_count)
                 q_new = partial_charges[i]
                 old_q_list.append(q_old)
-                new_q_list.append(q_new)                
+                new_q_list.append(q_new)
                 nbforce.setParticleParameters(
                     atom_count, 
                     q_new, 
