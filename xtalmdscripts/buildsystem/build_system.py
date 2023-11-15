@@ -1733,9 +1733,13 @@ def build_system_oplsaa(
             str(set_lbcc)
             ])
 
-        xml_file_list.append(
-            f"{resname}.openmm.xml"
-            )
+        to_remove_list.extend([
+            f""
+            f"{resname}.openmm.pdb",
+            f"{resname}.openmm.xml",
+            f"{basename_monomer}.pdb",
+            f"{basename_monomer}.mol",
+        ])
 
         try:
             pdbfile_renamed  = PDBFile(f"{resname}.openmm.pdb")
@@ -1746,20 +1750,7 @@ def build_system_oplsaa(
             N_atoms = pdbfile_renamed.topology.getNumAtoms()
         except:
             failed = True
-            to_remove_list.extend([
-                f"{resname}.openmm.pdb",
-                f"{resname}.openmm.xml",
-                f"{basename_monomer}.pdb",
-                f"{basename_monomer}.mol",
-            ])
             break
-
-        to_remove_list.extend([
-            f"{resname}.openmm.pdb",
-            f"{resname}.openmm.xml",
-            f"{basename_monomer}.pdb",
-            f"{basename_monomer}.mol",
-        ])
 
         rewrite_oplsaa_xml(
             f"{resname}.openmm.xml", 

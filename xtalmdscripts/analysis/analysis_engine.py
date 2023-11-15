@@ -546,7 +546,7 @@ def build_pair_list(
         pair_list_for_atom[:,0] = neighbor_list
         pair_list_for_atom[:,1] = atom.index
 
-        if pair_list.size > 0:
+        if pair_list_for_atom.size > 0:
             _pair_list = np.vstack(
                 (
                     pair_list, 
