@@ -943,36 +943,22 @@ def main():
             },
             prefix=prefix
         )
-        worker_id_dict[output_dir] = worker_id
+        worker_id_dict[worker_id] = output_dir
 
-    for output_dir in input_dict:
-        if output_dir == "num_cpus":
-            continue
-        if output_dir == "ray_host":
-            continue
-        if output_dir == "prefix":
-            continue
-        if output_dir == "steps":
-            continue
-        if output_dir == "method":
-            continue
-        if output_dir == "alternating":
-            continue
-        if output_dir == "use_lengths_and_angles":
-            continue
-        if output_dir == "epsilon":
-            continue
-
-        if not output_dir in worker_id_dict:
-            continue
-
+    worker_id_list = list(worker_id_dict.keys())
+    while worker_id_list:
+    
         if HAS_RAY:
-            state, file_str = ray.get(worker_id_dict[output_dir])
+            [worker_id], worker_id_list = ray.wait(worker_id_list)
+            state, file_str = ray.get(worker_id)
         else:
-            state, file_str = worker_id_dict[output_dir]
+            worker_id       = worker_id_list.pop(0)
+            state, file_str = worker_id
         if state == 0:
             warnings.warn(f"No output for {output_dir}. Minimization failed with {file_str}.")
             continue
+            
+        output_dir = worker_id_dict[worker_id]
 
         state = openmm.XmlSerializer.deserialize(state)
 
