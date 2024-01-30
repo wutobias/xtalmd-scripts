@@ -1218,11 +1218,13 @@ def main():
                 )
 
             tmp_pdbfile = f"/tmp/{crystal_name}-expt.pdb"
-            ref_strc.save(
-                tmp_pdbfile
-                )
-            with open(tmp_pdbfile, "r") as fopen:
-                pdbstring = fopen.read()
+            try:
+                ref_strc.save(
+                   tmp_pdbfile)
+                with open(tmp_pdbfile, "r") as fopen:
+                    pdbstring = fopen.read()
+            except:
+                continue
 
             uc_ref = ref_strc.unitcell_vectors[0].T
             frac_pos = np.eye(3, dtype=float)
@@ -1268,11 +1270,13 @@ cmd.group(\"expt\", \"strc_expt\")
                     )
 
                 tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
-                query_traj[frame_and_sub_frame_list[max_frame]].save(
-                    tmp_pdbfile
-                    )
-                with open(tmp_pdbfile, "r") as fopen:
-                    pdbstring = fopen.read()
+                try:
+                    query_traj[frame_and_sub_frame_list[max_frame]].save(
+                        tmp_pdbfile)
+                    with open(tmp_pdbfile, "r") as fopen:
+                        pdbstring = fopen.read()
+                except:
+                    continue
 
                 uc_ref = ref_strc.unitcell_vectors[0].T
                 uc_md  = query_traj.unitcell_vectors[frame_and_sub_frame_list[max_frame]].T
@@ -1399,11 +1403,13 @@ cmd.group(\"pair-{max_pair_idx}\", \"{name}\")
                     )
 
                 tmp_pdbfile = f"/tmp/{crystal_name}-expt.pdb"
-                ref_strc.save(
-                    tmp_pdbfile
-                    )
-                with open(tmp_pdbfile, "r") as fopen:
-                    pdbstring = fopen.read()
+                try:
+                    ref_strc.save(
+                        tmp_pdbfile)
+                    with open(tmp_pdbfile, "r") as fopen:
+                        pdbstring = fopen.read()
+                except:
+                    continue
 
                 uc_ref = ref_strc.unitcell_vectors[0].T
                 frac_pos = np.eye(3, dtype=float)
@@ -1449,11 +1455,13 @@ cmd.group(\"expt\", \"strc_expt\")
                         )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
-                    query_traj[frame_and_sub_frame_list[max_frame]].save(
-                        tmp_pdbfile
-                        )
-                    with open(tmp_pdbfile, "r") as fopen:
-                        pdbstring = fopen.read()
+                    try:
+                        query_traj[frame_and_sub_frame_list[max_frame]].save(
+                            tmp_pdbfile)
+                        with open(tmp_pdbfile, "r") as fopen:
+                            pdbstring = fopen.read()
+                    except:
+                        continue
 
                     uc_ref = ref_strc.unitcell_vectors[0].T
                     uc_md  = query_traj.unitcell_vectors[frame_and_sub_frame_list[max_frame]].T
@@ -1580,11 +1588,13 @@ cmd.group(\"dih-{max_pair_idx}\", \"{name}\")
                     )
 
                 tmp_pdbfile = f"/tmp/{crystal_name}-expt.pdb"
-                ref_strc.save(
-                    tmp_pdbfile
-                    )
-                with open(tmp_pdbfile, "r") as fopen:
-                    pdbstring = fopen.read()
+                try:
+                    ref_strc.save(
+                        tmp_pdbfile)
+                    with open(tmp_pdbfile, "r") as fopen:
+                        pdbstring = fopen.read()
+                except:
+                    continue
 
                 uc_ref = ref_strc.unitcell_vectors[0].T
                 frac_pos = np.eye(3, dtype=float)
@@ -1630,11 +1640,13 @@ cmd.group(\"expt\", \"strc_expt\")
                         )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
-                    query_traj[frame_and_sub_frame_list[max_frame]].save(
-                        tmp_pdbfile
-                        )
-                    with open(tmp_pdbfile, "r") as fopen:
-                        pdbstring = fopen.read()
+                    try:
+                        query_traj[frame_and_sub_frame_list[max_frame]].save(
+                            tmp_pdbfile)
+                        with open(tmp_pdbfile, "r") as fopen:
+                            pdbstring = fopen.read()
+                    except:
+                        continue
 
                     uc_ref = ref_strc.unitcell_vectors[0].T
                     uc_md  = query_traj.unitcell_vectors[frame_and_sub_frame_list[max_frame]].T
@@ -1756,11 +1768,13 @@ cmd.group(\"ang-{max_pair_idx}\", \"{name}\")
                     )
 
                 tmp_pdbfile = f"/tmp/{crystal_name}-expt.pdb"
-                ref_strc.save(
-                    tmp_pdbfile
-                    )
-                with open(tmp_pdbfile, "r") as fopen:
-                    pdbstring = fopen.read()
+                try:
+                    ref_strc.save(
+                        tmp_pdbfile)
+                    with open(tmp_pdbfile, "r") as fopen:
+                        pdbstring = fopen.read()
+                except:
+                    continue
 
                 uc_ref = ref_strc.unitcell_vectors[0].T
                 frac_pos = np.eye(3, dtype=float)
@@ -1806,11 +1820,13 @@ cmd.group(\"expt\", \"strc_expt\")
                         )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
-                    query_traj[frame_and_sub_frame_list[max_frame]].save(
-                        tmp_pdbfile
-                        )
-                    with open(tmp_pdbfile, "r") as fopen:
-                        pdbstring = fopen.read()
+                    try:
+                        query_traj[frame_and_sub_frame_list[max_frame]].save(
+                            tmp_pdbfile)
+                        with open(tmp_pdbfile, "r") as fopen:
+                            pdbstring = fopen.read()
+                    except:
+                        continue
 
                     uc_ref = ref_strc.unitcell_vectors[0].T
                     uc_md  = query_traj.unitcell_vectors[frame_and_sub_frame_list[max_frame]].T
@@ -2248,11 +2264,13 @@ cmd.group(\"bon-{max_pair_idx}\", \"{name}\")
                     )
 
                 tmp_pdbfile = f"/tmp/{crystal_name}-expt.pdb"
-                ref_strc.save(
-                    tmp_pdbfile
-                    )
-                with open(tmp_pdbfile, "r") as fopen:
-                    pdbstring = fopen.read()
+                try:
+                    ref_strc.save(
+                        tmp_pdbfile)
+                    with open(tmp_pdbfile, "r") as fopen:
+                        pdbstring = fopen.read()
+                except:
+                    continue
 
                 uc_ref = ref_strc.unitcell_vectors[0].T
                 frac_pos = np.eye(3, dtype=float)
@@ -2298,11 +2316,13 @@ cmd.group(\"expt\", \"strc_expt\")
                         )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
-                    query_traj[frame_and_sub_frame_list[max_frame]].save(
-                        tmp_pdbfile
-                        )
-                    with open(tmp_pdbfile, "r") as fopen:
-                        pdbstring = fopen.read()
+                    try:
+                        query_traj[frame_and_sub_frame_list[max_frame]].save(
+                            tmp_pdbfile)
+                        with open(tmp_pdbfile, "r") as fopen:
+                            pdbstring = fopen.read()
+                    except:
+                        continue
 
                     uc_ref = ref_strc.unitcell_vectors[0].T
                     uc_md  = query_traj.unitcell_vectors[frame_and_sub_frame_list[max_frame]].T
