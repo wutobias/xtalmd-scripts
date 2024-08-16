@@ -143,7 +143,7 @@ def run_nvt_md(
     ### Initialize system things, create integrator, etc...
 
     ### better not go higher than 1 fs
-    time_step = 1.0 * unit.femtoseconds
+    time_step = 1 * unit.femtoseconds
     ### The default 1.e-5 seems to be too high and will crash
     ### with the flexible barostat.
     constraint_tolerance = 1.e-6
@@ -296,7 +296,7 @@ def run_xtal_md(
     ### Initialize system things, create integrator, etc...
 
     ### better not go higher than 1 fs
-    time_step = 1.0 * unit.femtoseconds
+    time_step = 1 * unit.femtoseconds
     ### The default 1.e-5 seems to be too high and will crash
     ### with the flexible barostat.
     constraint_tolerance = 1.e-6
@@ -309,13 +309,20 @@ def run_xtal_md(
     with open(xml_path, "r") as fopen:
         xml_str = fopen.read()
 
+    ### Pre OpenMM 8.1.2, we have to initialize
+    ### the system with a triclinc box. Otherwise
+    ### the MIC distance calculations are wrong.
+    tric_box = [
+            openmm.Vec3(3,0,0)*unit.nanometer,
+            openmm.Vec3(0,3,0)*unit.nanometer,
+            openmm.Vec3(0,1,3)*unit.nanometer]
+
     ### 1. Temperature equilibration
     ### ============================
     system = openmm.XmlSerializer.deserialize(xml_str)
     add_CMMotionRemover(system)
     system.setDefaultPeriodicBoxVectors(
-        *topology.getPeriodicBoxVectors()
-        )
+        *tric_box)
 
     integrator = openmm.LangevinMiddleIntegrator(
         temperature.value_in_unit_system(unit.md_unit_system),
@@ -338,8 +345,7 @@ def run_xtal_md(
         pdbfile.positions
         )
     simulation.context.setPeriodicBoxVectors(
-        *topology.getPeriodicBoxVectors()
-        )
+        *topology.getPeriodicBoxVectors())
     simulation.context.setVelocitiesToTemperature(
             temperature.value_in_unit_system(
                 unit.md_unit_system
@@ -391,8 +397,7 @@ def run_xtal_md(
         system = openmm.XmlSerializer.deserialize(xml_str)
         add_CMMotionRemover(system)
         system.setDefaultPeriodicBoxVectors(
-            *state.getPeriodicBoxVectors()
-            )
+            *tric_box)
 
         barostat_aniso = openmm.MonteCarloAnisotropicBarostat(
             (1., 1., 1.) * unit.bar,
@@ -425,8 +430,7 @@ def run_xtal_md(
             system = openmm.XmlSerializer.deserialize(xml_str)
             add_CMMotionRemover(system)
             system.setDefaultPeriodicBoxVectors(
-                *state.getPeriodicBoxVectors()
-                )
+                *tric_box)
 
             barostat_aniso = openmm.MonteCarloAnisotropicBarostat(
                 (1., 1., 1.) * unit.bar,
@@ -510,13 +514,13 @@ def run_xtal_md(
         system = openmm.XmlSerializer.deserialize(xml_str)
         add_CMMotionRemover(system)
         system.setDefaultPeriodicBoxVectors(
-            *state.getPeriodicBoxVectors()
-            )
+            *tric_box)
 
         barostat_aniso = openmm.MonteCarloFlexibleBarostat(
             1.0 * unit.bar,
             temperature.value_in_unit_system(unit.md_unit_system),
         )
+
         ### Default is 25
         barostat_aniso.setFrequency(25)
         ### Default is True
@@ -546,13 +550,14 @@ def run_xtal_md(
             system = openmm.XmlSerializer.deserialize(xml_str)
             add_CMMotionRemover(system)
             system.setDefaultPeriodicBoxVectors(
-                *state.getPeriodicBoxVectors()
+                *tric_box
                 )
 
             barostat_aniso = openmm.MonteCarloFlexibleBarostat(
                 1.0 * unit.bar,
                 temperature.value_in_unit_system(unit.md_unit_system),
             )
+
             ### Default is 25
             barostat_aniso.setFrequency(25)
             ### Default is True
@@ -835,6 +840,8 @@ def main():
                 property_dict = {
                     "CudaPrecision" : "mixed"
                 },
+                #platform_name = "CPU",
+                #property_dict = {"Threads" : "2"},
                 prefix = prefix,
                 restart = bool(input_dict[output_dir]["restart"])
             )
