@@ -103,6 +103,15 @@ def parse_arguments():
         default=1.e-5
         )
 
+    xml_parse.add_argument(
+        '--positions_only',
+        '-po',
+        type=str,
+        help="Only optimize positions, not box vectors",
+        required=False,
+        default=False
+        )
+
     return parser.parse_args()
 
 
@@ -568,6 +577,7 @@ def run_xtal_min(
     alternating = False,
     use_lengths_and_angles = False,
     method = "Nelder-Mead",
+    positions_only = False,
     platform_name = "CPU",
     property_dict = {
         "Threads" : "4"
@@ -628,6 +638,21 @@ def run_xtal_min(
         use_lengths_and_angles
         )
     logfile = Logger(system, "")
+
+    ### Only atomic positions
+    if positions_only:
+        try:
+            openmm.LocalEnergyMinimizer.minimize(context)
+            state = context.getState(
+                    getEnergy=True,
+                    getPositions=True)
+            logfile.write(state)
+            logfile.write_footer(
+                    f"# Final Energy: {state.getPotentialEnergy().value_in_unit(unit.kilojoule_per_mole)} kJ/mol")
+        except Exception as e:
+            return 0, e
+
+        return openmm.XmlSerializer.serialize(state), logfile.str
 
     ### Alternate between openmm native minimizer
     ### and xtal cell minimization.
@@ -791,6 +816,7 @@ def main():
                         "alternating" : args.alternating,
                         "use_lengths_and_angles" : args.use_lengths_and_angles,
                         "method"      : args.method,
+                        "positions_only" : args.positions_only
                     }
             }
 
@@ -821,6 +847,7 @@ def main():
                 alternating = False,
                 use_lengths_and_angles = False,
                 method = "Nelder-Mead",
+                positions_only = False,
                 platform_name = "CPU",
                 property_dict = {
                     "Threads" : "4"
@@ -835,6 +862,7 @@ def main():
                     alternating = alternating,
                     use_lengths_and_angles  = use_lengths_and_angles,
                     method = method,
+                    positions_only = positions_only,
                     platform_name = platform_name,
                     property_dict = property_dict,
                     prefix="xtal_min"
@@ -862,6 +890,8 @@ def main():
         if output_dir == "use_lengths_and_angles":
             continue
         if output_dir == "epsilon":
+            continue
+        if output_dir == "positions_only":
             continue
 
         if not os.path.exists(input_dict[output_dir]["input"]):
@@ -929,6 +959,13 @@ def main():
         else:
             epsilon = args.epsilon
 
+        if "positions_only" in input_dict[output_dir]:
+            positions_only = input_dict[output_dir]["positions_only"]
+        elif "positions_only" in input_dict:
+            positions_only = input_dict["positions_only"]
+        else:
+            positions_only = args.positions_only
+
         worker_id = min_func(
             xml_path = input_dict[output_dir]["input"],
             pdb_path = input_dict[output_dir]["pdb"],
@@ -937,6 +974,7 @@ def main():
             alternating = bool(alternating),
             use_lengths_and_angles = bool(use_lengths_and_angles),
             method = method,
+            positions_only = positions_only,
             platform_name = "CPU",
             property_dict = {
                 "Threads" : str(input_dict["num_cpus"])
@@ -963,7 +1001,12 @@ def main():
         state = openmm.XmlSerializer.deserialize(state)
 
         os.makedirs(output_dir, exist_ok=True)
-        prefix = input_dict[output_dir]["prefix"]
+        if "prefix" in input_dict[output_dir]:
+            prefix = input_dict[output_dir]["prefix"]
+        elif "prefix" in input_dict:
+            prefix = input_dict["prefix"]
+        else:
+            prefix = "out"
         prefix = f"{output_dir}/{prefix}"
 
         ### Save state in xml format

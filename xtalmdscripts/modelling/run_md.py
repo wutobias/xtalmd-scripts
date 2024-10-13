@@ -103,6 +103,25 @@ def parse_arguments():
         default=298.15
         )
 
+    xml_parse.add_argument(
+        '--pressure',
+        "-pres",
+        type=float,
+        help="Target pressure in md run.",
+        required=False,
+        default=1.
+        )
+
+    xml_parse.add_argument(
+        '--barostat',
+        "-b",
+        type=str,
+        help="barostat type",
+        required=False,
+        default="flexible",
+        choices=["flexible","anisotropic","isotropic"]
+        )        
+
     return parser.parse_args()
 
 
@@ -276,13 +295,15 @@ def run_nvt_md(
 def run_xtal_md(
     xml_path, 
     pdb_path,
-    temperature,
+    temperature, # in K
     nanoseconds,
     platform_name = "CUDA",
     property_dict = {
         "CudaPrecision" : "mixed"
     },
     prefix = "xtal_md",
+    barostat_name = "flexible",
+    pressure = 1., # in bar
     restart = False,
     ):
 
@@ -292,6 +313,10 @@ def run_xtal_md(
     from openmm import app
     import numpy as np
     from mdtraj import reporters
+
+    if barostat_name.lower() not in ['flexible', 'isotropic', 'anisotropic']:
+        raise ValueError(
+                "barostat_name must be one of 'flexible', 'isotropic', 'anisotropic'")
 
     ### Initialize system things, create integrator, etc...
 
@@ -399,13 +424,19 @@ def run_xtal_md(
         system.setDefaultPeriodicBoxVectors(
             *tric_box)
 
-        barostat_aniso = openmm.MonteCarloAnisotropicBarostat(
-            (1., 1., 1.) * unit.bar,
-            temperature.value_in_unit_system(unit.md_unit_system),
-        )
+        if barostat_name.lower() == "isotropic":
+            barostat = openmm.MonteCarloBarostat(
+                    pressure * unit.bar,
+                    temperature.value_in_unit_system(unit.md_unit_system)
+                    )
+        else:
+            barostat = openmm.MonteCarloAnisotropicBarostat(
+                (pressure, pressure, pressure) * unit.bar,
+                temperature.value_in_unit_system(unit.md_unit_system),
+            )
         ### Default is 25
-        barostat_aniso.setFrequency(25)
-        system.addForce(barostat_aniso)
+        barostat.setFrequency(25)
+        system.addForce(barostat)
 
         integrator = openmm.LangevinMiddleIntegrator(
             temperature.value_in_unit_system(unit.md_unit_system),
@@ -432,13 +463,18 @@ def run_xtal_md(
             system.setDefaultPeriodicBoxVectors(
                 *tric_box)
 
-            barostat_aniso = openmm.MonteCarloAnisotropicBarostat(
-                (1., 1., 1.) * unit.bar,
-                temperature.value_in_unit_system(unit.md_unit_system),
-            )
+            if barostat_name.lower() == "isotropic":
+                barostat = openmm.MonteCarloBarostat(
+                        pressure * unit.bar,
+                        temperature.value_in_unit_system(unit.md_unit_system))
+            else:
+                barostat = openmm.MonteCarloAnisotropicBarostat(
+                    (pressure, pressure, pressure) * unit.bar,
+                    temperature.value_in_unit_system(unit.md_unit_system)
+                    )
             ### Default is 25
-            barostat_aniso.setFrequency(25)
-            system.addForce(barostat_aniso)
+            barostat.setFrequency(25)
+            system.addForce(barostat)
 
             integrator = openmm.LangevinMiddleIntegrator(
                 temperature.value_in_unit_system(unit.md_unit_system),
@@ -516,16 +552,26 @@ def run_xtal_md(
         system.setDefaultPeriodicBoxVectors(
             *tric_box)
 
-        barostat_aniso = openmm.MonteCarloFlexibleBarostat(
-            1.0 * unit.bar,
-            temperature.value_in_unit_system(unit.md_unit_system),
-        )
+        if barostat_name.lower() == "isotropic":
+            barostat = openmm.MonteCarloBarostat(
+                    pressure * unit.bar,
+                    temperature.value_in_unit_system(unit.md_unit_system))
+        elif barostat_name.lower() == "anisotropic":
+            barostat = openmm.MonteCarloAnisotropicBarostat(
+                    (pressure, pressure, pressure) * unit.bar,
+                    temperature.value_in_unit_system(unit.md_unit_system))
+        else:
+            barostat = openmm.MonteCarloFlexibleBarostat(
+                pressure * unit.bar,
+                temperature.value_in_unit_system(unit.md_unit_system),
+            )
 
         ### Default is 25
-        barostat_aniso.setFrequency(25)
+        barostat.setFrequency(25)
         ### Default is True
-        barostat_aniso.setScaleMoleculesAsRigid(False)
-        system.addForce(barostat_aniso)
+        if barostat_name.lower() == "flexible":
+            barostat.setScaleMoleculesAsRigid(False)
+        system.addForce(barostat)
 
         integrator = openmm.LangevinMiddleIntegrator(
             temperature.value_in_unit_system(unit.md_unit_system),
@@ -553,16 +599,26 @@ def run_xtal_md(
                 *tric_box
                 )
 
-            barostat_aniso = openmm.MonteCarloFlexibleBarostat(
-                1.0 * unit.bar,
-                temperature.value_in_unit_system(unit.md_unit_system),
-            )
+            if barostat_name.lower() == "isotropic":
+                barostat = openmm.MonteCarloBarostat(
+                        pressure * unit.bar,
+                        temperature.value_in_unit_system(unit.md_unit_system))
+            elif barostat_name.lower() == "anisotropic":
+                barostat = openmm.MonteCarloAnisotropicBarostat(
+                        (pressure, pressure, pressure) * unit.bar,
+                        temperature.value_in_unit_system(unit.md_unit_system))
+            else:
+                barostat = openmm.MonteCarloFlexibleBarostat(
+                    pressure * unit.bar,
+                    temperature.value_in_unit_system(unit.md_unit_system),
+                )
 
             ### Default is 25
-            barostat_aniso.setFrequency(25)
+            barostat.setFrequency(25)
             ### Default is True
-            barostat_aniso.setScaleMoleculesAsRigid(False)
-            system.addForce(barostat_aniso)
+            if barostat_name.lower() == "flexible":
+                barostat.setScaleMoleculesAsRigid(False)
+            system.addForce(barostat)
 
             integrator = openmm.LangevinMiddleIntegrator(
                 temperature.value_in_unit_system(unit.md_unit_system),
@@ -729,6 +785,8 @@ def main():
                         "replicates"  : args.replicates,
                         "nvt"         : args.nvt,
                         "restart"     : args.restart,
+                        "pressure"    : args.pressure,
+                        "barostat"    : args.barostat,
                     }
             }
 
@@ -760,6 +818,8 @@ def main():
                 },
                 prefix = "xtal_md",
                 restart = False,
+                pressure = 1.,
+                barostat_name = "flexible",
                 ):
                 return run_xtal_md(
                     xml_path = xml_path, 
@@ -770,6 +830,8 @@ def main():
                     property_dict = property_dict,
                     prefix = prefix,
                     restart = restart,
+                    pressure = pressure,
+                    barostat_name = barostat_name,
                     )
 
             @ray.remote(num_cpus=1, num_gpus=1)
@@ -831,6 +893,15 @@ def main():
                 else:
                     md_func = run_xtal_md
 
+            if "pressure" in input_dict[output_dir]:
+                pressure = input_dict[output_dir]["pressure"]
+            else:
+                pressure = 1.
+            if "barostat" in input_dict[output_dir]:
+                barostat_name = input_dict[output_dir]["barostat"]
+            else:
+                barostat_name = "flexible"
+
             worker_id = md_func(
                 xml_path = input_dict[output_dir]["input"],
                 pdb_path = input_dict[output_dir]["pdb"],
@@ -843,7 +914,9 @@ def main():
                 #platform_name = "CPU",
                 #property_dict = {"Threads" : "2"},
                 prefix = prefix,
-                restart = bool(input_dict[output_dir]["restart"])
+                restart = bool(input_dict[output_dir]["restart"]),
+                pressure = pressure,
+                barostat_name = barostat_name
             )
             worker_id_dict[output_dir_replicate] = worker_id
 
