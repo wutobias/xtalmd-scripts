@@ -594,14 +594,7 @@ def xyz2AC_vdW(atoms, xyz, ucmatrix=None):
     AC, xyz_new = get_AC(mol, ucmatrix=ucmatrix)
 
     conf = mol.GetConformer()
-    
-    ### This seems to only work with 2024 ish versions
-    ### of the rdkit library
-    #conf.SetPositions(xyz_new)
-    from rdkit.Geometry import Point3D
-    for i, pos in enumerate(xyz_new):
-        conf.SetAtomPosition(
-                i, Point3D(*pos))
+    conf.SetPositions(xyz_new)
 
     return AC, mol
 
