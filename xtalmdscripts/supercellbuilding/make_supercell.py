@@ -849,24 +849,162 @@ def make_P1(
     atom_crds_ortho = atom_crds_ortho[nonoverlapping_idxs].tolist()
     atom_num = atom_num[nonoverlapping_idxs].tolist()
     N_atoms = len(atom_num)
-    ucmatrix = np.array(cell.orth.mat.tolist())
 
-    acmatrix_new, mol_new = xyz2mol.xyz2AC(
+    found_bond = True
+    ### Terminate if we haven't found any bonds.
+    while found_bond:
+        ### Update the frac coordinates
+        atom_crds_frac = list()
+        for atm_idx in range(N_atoms):
+            frac = cell.fractionalize(
+                gemmi.Position(
+                    *atom_crds_ortho[atm_idx]
+                    )
+                )
+            atom_crds_frac.append(frac.tolist())
+
+        ### Get the "pre-molecules" (adjacency matrix with not much chemistry)
+        acmatrix_new, _ = xyz2mol.xyz2AC(
+            atom_num,
+            atom_crds_ortho,
+            0,
+            )
+        acmatrix_best = acmatrix_new
+
+        ### Find the disconnected graphs from the adjacency matrix
+        G           = nx.convert_matrix.from_numpy_array(acmatrix_new)
+        G_node_list = list(nx.connected_components(G))
+        ### Translate molecules to neighboring unit cells in + direction
+        ### and check if we can form new bonds. If yes, update `atom_crds_ortho`
+        found_bond = False
+        for g in G_node_list:
+            for a in [0,-1]:
+                for b in [0,-1]:
+                    for c in [0,-1]:
+                        atom_crds_ortho_cp = copy.deepcopy(atom_crds_ortho)
+                        for atm_idx in g:
+                            frac = copy.deepcopy(atom_crds_frac[atm_idx])
+                            frac[0] += a
+                            frac[1] += b
+                            frac[2] += c
+                            ortho = cell.orthogonalize(
+                                gemmi.Fractional(*frac)
+                            ).tolist()
+                            if not ortho in atom_crds_ortho_cp:
+                                atom_crds_ortho_cp[atm_idx] = ortho
+                        acmatrix_new, _ = xyz2mol.xyz2AC(
+                            atom_num,
+                            atom_crds_ortho,
+                            0,
+                        )
+                        if not np.all(acmatrix_new == acmatrix_best) and np.sum(acmatrix_new) >= np.sum(acmatrix_best):
+                            nonoverlapping_idxs = get_nonoverlapping_atoms(atom_crds_ortho_cp)
+                            if nonoverlapping_idxs.size == N_atoms:
+                                atom_crds_ortho = copy.deepcopy(atom_crds_ortho_cp)
+                                acmatrix_best = acmatrix_new
+                                found_bond = True
+
+    acmatrix, _ = xyz2mol.xyz2AC(
         atom_num,
         atom_crds_ortho,
         0,
-        use_huckel=False,
-        ucmatrix=ucmatrix
         )
-    with open(f"./test_start.pdb", "w") as fopen:
-        fopen.write(Chem.MolToPDBBlock(mol_new))
-    mol_list_new = Chem.GetMolFrags(
-        mol_new, asMols=True)
+    G           = nx.convert_matrix.from_numpy_array(acmatrix)
+    G_node_list = list(nx.connected_components(G))
+    atom_num    = np.array(atom_num, dtype=int)
+    atom_crds_ortho = np.array(atom_crds_ortho)
+    mol_list    = list()
+    for g in G_node_list:
+        g = list(g)
+        _, mol = xyz2mol.xyz2AC(
+                atom_num[g].tolist(), 
+                atom_crds_ortho[g].tolist(),
+                0)
+        mol_list.append(mol)
+
+    N_mol           = len(mol_list)
+    atom_crds_ortho = list()
+    atom_num        = list()
+    mol_list_new    = list()
+    for mol_idx in range(N_mol):
+        mol  = mol_list[mol_idx]
+        conf = mol.GetConformer()
+        conf_pos = conf.GetPositions()
+        frac_crds = list()
+        for pos in conf_pos:
+            frac_crds.append(
+                cell.fractionalize(
+                    gemmi.Position(
+                        *pos
+                    )
+                ).tolist()
+            )
+        frac_crds   = np.array(frac_crds)
+        valid_atoms = np.where(
+            (frac_crds[:,0] > 0.) * (frac_crds[:,0] < 1.) *\
+            (frac_crds[:,1] > 0.) * (frac_crds[:,1] < 1.) *\
+            (frac_crds[:,2] > 0.) * (frac_crds[:,2] < 1.)
+        )[0]
+        ### If no atom is in uc, bring the molecule into unit cell
+        if valid_atoms.size == 0:
+            is_inside = False
+            for a in [0,-1,1]:
+                for b in [0,-1,1]:
+                    for c in [0,-1,1]:
+                        frac_crds += [a,b,c]
+                        valid_atoms = np.where(
+                            (frac_crds[:,0] > 0.) * (frac_crds[:,0] < 1.) *\
+                            (frac_crds[:,1] > 0.) * (frac_crds[:,1] < 1.) *\
+                            (frac_crds[:,2] > 0.) * (frac_crds[:,2] < 1.)
+                        )[0]
+                        if valid_atoms.size != 0:
+                            is_inside = True
+                        else:
+                            frac_crds -= [a,b,c]
+                        if is_inside:
+                            break
+                    if is_inside:
+                        break
+                if is_inside:
+                    break
+            if not is_inside:
+                continue
+
+        frac_crds_query = np.copy(frac_crds[valid_atoms[0]])
+        ### Check for overlap
+        overlap = False
+        for a in [0,-1,1]:
+            for b in [0,-1,1]:
+                for c in [0,-1,1]:
+                    frac_crds_query += [a,b,c]
+                    ortho = cell.orthogonalize(
+                        gemmi.Fractional(*frac_crds_query)
+                    ).tolist()
+                    if len(atom_crds_ortho) > 0:
+                        dists = distance.cdist([ortho], atom_crds_ortho)
+                        valids = np.where(dists < 0.01)[0]
+                        if valids.size > 0:
+                            overlap = True
+                    frac_crds_query -= [a,b,c]
+        if not overlap:
+            for atm_idx, frac in enumerate(frac_crds):
+                ortho = cell.orthogonalize(
+                    gemmi.Fractional(*frac)
+                ).tolist()
+                atom_crds_ortho.append(ortho)
+                rd_atom = mol.GetAtomWithIdx(atm_idx)
+                atom_num.append(rd_atom.GetAtomicNum())
+                conf.SetAtomPosition(
+                    atm_idx,
+                    Point3D(*ortho)
+                )
+            mol_list_new.append(mol)
 
     if removewater:
         mol_list_new = remove_water(mol_list_new)
-    if addhs or use_openeye:
-        if addhs and not use_openeye:
+    mol_list = list()
+    if addhs:
+        if use_openeye:
             import warnings
             warnings.warn("With addhs=True, we automatically set use_openeye=True.")
         from openeye import oechem
@@ -874,53 +1012,95 @@ def make_P1(
         from xtalmdscripts.supercellbuilding.oe_utils import rdmol_from_oemol
         from xtalmdscripts.supercellbuilding.oe_utils import oemol_from_rdmol
 
+        count = 0
+        for mol in mol_list_new:
+            oemol = oechem.OEMol()
+            oemol.SetDimension(3)
+            conf_pos = mol.GetConformer(0).GetPositions()
+            crds = list()
+            for atm_idx in range(mol.GetNumAtoms()):
+                atom = mol.GetAtomWithIdx(atm_idx)
+                oemol.NewAtom(int(atom.GetAtomicNum()))
+                crds.extend(conf_pos[atm_idx])
+            oemol.SetCoords(crds)
 
-
-        from openeye import oechem
-        from openeye import oequacpac
-        from xtalmdscripts.supercellbuilding.oe_utils import rdmol_from_oemol
-        from xtalmdscripts.supercellbuilding.oe_utils import oemol_from_rdmol
-
-        _mol = combine_mols(mol_list_new)
-        oemol = oechem.OEMol()
-        oemol.SetDimension(3)
-        conf_pos = _mol.GetConformer(0).GetPositions()
-        crds = list()
-        for atm_idx in range(_mol.GetNumAtoms()):
-            atom = _mol.GetAtomWithIdx(atm_idx)
-            oemol.NewAtom(int(atom.GetAtomicNum()))
-            crds.extend(conf_pos[atm_idx])
-        oemol.SetCoords(crds)
-
-        oechem.OEAssignAromaticFlags(oemol)
-        oechem.OEDetermineConnectivity(oemol)
-        oechem.OEFindRingAtomsAndBonds(oemol)
-        oechem.OEPerceiveBondOrders(oemol)
-        oechem.OE3DToInternalStereo(oemol)
-        oechem.OEPerceiveChiral(oemol)
-        if addhs:
+            oechem.OEAssignAromaticFlags(oemol)
+            oechem.OEDetermineConnectivity(oemol)
+            oechem.OEFindRingAtomsAndBonds(oemol)
+            oechem.OEPerceiveBondOrders(oemol)
+            oechem.OE3DToInternalStereo(oemol)
+            oechem.OEPerceiveChiral(oemol)
             oechem.OEAssignImplicitHydrogens(oemol)
-        oechem.OEAssignFormalCharges(oemol)
+            oechem.OEAssignFormalCharges(oemol)
 
-        if addhs:
             oechem.OEAddExplicitHydrogens(oemol)
 
-        oechem.OEAssignAromaticFlags(oemol)
-        _mol = rdmol_from_oemol(oemol)
-        Chem.AssignStereochemistryFrom3D(_mol)
+            oechem.OEAssignAromaticFlags(oemol)
 
-        with open(f"./test_oechem.pdb", "w") as fopen:
-            fopen.write(Chem.MolToPDBBlock(_mol))
+            mol = rdmol_from_oemol(oemol)
+            Chem.AssignStereochemistryFrom3D(mol)
+            mol_list.append(mol)
 
-        mol_list = Chem.GetMolFrags(_mol, asMols=True)
+            #with open(f"./test_{count}.pdb", "w") as fopen:
+            #    fopen.write(Chem.MolToPDBBlock(mol))
+            count += 1
 
     else:
-        [_mol] = xyz2mol.xyz2mol(
-            atom_num,
-            atom_crds_ortho,
-            charge=0,
-            ucmatrix=ucmatrix)
-        mol_list = Chem.GetMolFrags(_mol, asMols=True)
+        if use_openeye:
+            from openeye import oechem
+            from openeye import oequacpac
+            from xtalmdscripts.supercellbuilding.oe_utils import rdmol_from_oemol
+            from xtalmdscripts.supercellbuilding.oe_utils import oemol_from_rdmol
+
+            count = 0
+            for mol in mol_list_new:
+                oemol = oechem.OEMol()
+                oemol.SetDimension(3)
+                conf_pos = mol.GetConformer(0).GetPositions()
+                crds = list()
+                for atm_idx in range(mol.GetNumAtoms()):
+                    atom = mol.GetAtomWithIdx(atm_idx)
+                    oemol.NewAtom(int(atom.GetAtomicNum()))
+                    crds.extend(conf_pos[atm_idx])
+                oemol.SetCoords(crds)
+
+                oechem.OEDetermineConnectivity(oemol)
+                oechem.OEFindRingAtomsAndBonds(oemol)
+                oechem.OEPerceiveBondOrders(oemol)
+                oechem.OE3DToInternalStereo(oemol)
+                oechem.OEPerceiveChiral(oemol)
+                oechem.OEAssignImplicitHydrogens(oemol)
+                oechem.OEAssignFormalCharges(oemol)
+
+                oechem.OEAssignAromaticFlags(oemol)
+                mol = rdmol_from_oemol(oemol)
+                Chem.AssignStereochemistryFrom3D(mol)
+                mol_list.append(mol)
+
+                #with open(f"./test_{count}.pdb", "w") as fopen:
+                #    fopen.write(Chem.MolToPDBBlock(mol))
+                count += 1
+
+        else:
+            acmatrix, _ = xyz2mol.xyz2AC(
+                atom_num,
+                atom_crds_ortho,
+                0,
+                )
+            G           = nx.convert_matrix.from_numpy_array(acmatrix)
+            G_node_list = list(nx.connected_components(G))
+            atom_num    = np.array(atom_num, dtype=int)
+            atom_crds_ortho = np.array(atom_crds_ortho)
+            for g in G_node_list:
+                g = list(g)
+                mol = Chem.GetMolFrags(
+                    xyz2mol.xyz2mol(
+                        atom_num[g].tolist(), 
+                        atom_crds_ortho[g].tolist(),
+                        charge=0)[0], 
+                    asMols=True
+                )[0]
+                mol_list.append(mol)
 
     #strc_write               = gemmi.Structure()
     #strc_write.spacegroup_hm = "P1"

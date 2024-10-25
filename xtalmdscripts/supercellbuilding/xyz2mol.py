@@ -440,7 +440,7 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
         # valence can't be smaller than number of neighbourgs
         possible_valence = [x for x in atomic_valence[atomicNum] if x >= valence]
         if not possible_valence:
-            print('Valence of atom',i,'is',valence,'which is bigger than allowed max',max(atomic_valence[atomicNum]),'. Stopping')
+            print('Valence of atom',i,'is',valence,'which bigger than allowed max',max(atomic_valence[atomicNum]),'. Stopping')
             sys.exit()
         valences_list_of_lists.append(possible_valence)
 
@@ -448,6 +448,7 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
     valences_list = itertools.product(*valences_list_of_lists)
 
     best_BO = AC.copy()
+
     for valences in valences_list:
 
         UA, DU_from_AC = get_UA(valences, AC_valence)
@@ -555,7 +556,7 @@ def read_xyz_file(filename, look_for_charge=True):
     return atoms, charge, xyz_coordinates
 
 
-def xyz2AC(atoms, xyz, charge, use_huckel=False, ucmatrix=None):
+def xyz2AC(atoms, xyz, charge, use_huckel=False):
     """
 
     atoms and coordinates to atom connectivity (AC)
@@ -577,10 +578,10 @@ def xyz2AC(atoms, xyz, charge, use_huckel=False, ucmatrix=None):
     if use_huckel:
         return xyz2AC_huckel(atoms, xyz, charge)
     else:
-        return xyz2AC_vdW(atoms, xyz, ucmatrix=ucmatrix)
+        return xyz2AC_vdW(atoms, xyz)
 
 
-def xyz2AC_vdW(atoms, xyz, ucmatrix=None):
+def xyz2AC_vdW(atoms, xyz):
 
     # Get mol template
     mol = get_proto_mol(atoms)
@@ -591,15 +592,12 @@ def xyz2AC_vdW(atoms, xyz, ucmatrix=None):
         conf.SetAtomPosition(i, (xyz[i][0], xyz[i][1], xyz[i][2]))
     mol.AddConformer(conf)
 
-    AC, xyz_new = get_AC(mol, ucmatrix=ucmatrix)
-
-    conf = mol.GetConformer()
-    conf.SetPositions(xyz_new)
+    AC = get_AC(mol)
 
     return AC, mol
 
 
-def get_AC(mol, covalent_factor=1.3, ucmatrix=None):
+def get_AC(mol, covalent_factor=1.3):
     """
 
     Generate adjacent matrix from atoms and coordinates.
@@ -620,106 +618,24 @@ def get_AC(mol, covalent_factor=1.3, ucmatrix=None):
 
     """
 
+    # Calculate distance matrix
+    dMat = Chem.Get3DDistanceMatrix(mol)
+
     pt = Chem.GetPeriodicTable()
     num_atoms = mol.GetNumAtoms()
     AC = np.zeros((num_atoms, num_atoms), dtype=int)
-    xyz_new = np.zeros((num_atoms, 3), dtype=float)
 
-    Rcov_list = np.zeros(num_atoms, dtype=float)
     for i in range(num_atoms):
         a_i = mol.GetAtomWithIdx(i)
-        Rcov_list[i] = pt.GetRcovalent(a_i.GetAtomicNum())
-    Rcov_list *= covalent_factor
+        Rcov_i = pt.GetRcovalent(a_i.GetAtomicNum()) * covalent_factor
+        for j in range(i + 1, num_atoms):
+            a_j = mol.GetAtomWithIdx(j)
+            Rcov_j = pt.GetRcovalent(a_j.GetAtomicNum()) * covalent_factor
+            if dMat[i, j] <= Rcov_i + Rcov_j:
+                AC[i, j] = 1
+                AC[j, i] = 1
 
-    if isinstance(ucmatrix, type(None)):
-        dMat = Chem.Get3DDistanceMatrix(mol)
-        for i in range(num_atoms):
-            for j in range(i + 1, num_atoms):
-                Rij_cov = Rcov_list[i] + Rcov_list[j]
-                if not (dMat[i, j] > Rij_cov):
-                    AC[i, j] = 1
-                    AC[j, i] = 1
-        conformer  = mol.GetConformer(0)
-        xyz_new[:] = conformer.GetPositions()
-    else:
-        _num_atoms = 27 * num_atoms
-        _AC        = np.zeros((_num_atoms, _num_atoms), dtype=int)
-        xyz_list   = np.zeros((_num_atoms,3), dtype=float)
-        is_central = np.zeros(_num_atoms, dtype=bool)
-        idx_list   = np.zeros(_num_atoms, dtype=int)
-        conformer  = mol.GetConformer(0)
-        conf_xyz   = conformer.GetPositions()
-        ucmatrix_inv = np.linalg.inv(ucmatrix)
-        conf_xyz_inv_list = np.matmul(ucmatrix_inv, conf_xyz.T).T
-        conf_xyz_inv_list_work = np.zeros_like(conf_xyz)
-        shift_vec = np.zeros(3, dtype=float)
-        # generate all 27 images
-        shift_start = 0
-        shift_stop  = 0
-        for a in [-1,0,1]:
-            for b in [-1,0,1]:
-                for c in [-1,0,1]:
-                    shift_start = shift_stop
-                    shift_stop += num_atoms
-                    shift_vec[:] = a,b,c
-                    conf_xyz_inv_list_work[:] = conf_xyz_inv_list + shift_vec
-                    xyz_list[shift_start:shift_stop] = np.matmul(
-                        ucmatrix, conf_xyz_inv_list_work.T).T
-                    idx_list[shift_start:shift_stop] = np.arange(
-                        num_atoms, dtype=int)
-                    if a == b == c == 0:
-                        is_central[shift_start:shift_stop] = True
-
-        from scipy import spatial
-        dists = spatial.distance.pdist(xyz_list)
-        for i in range(_num_atoms):
-            for j in range(i + 1, _num_atoms):
-                idx = _num_atoms * i + j - ((i + 2) * (i + 1)) // 2
-                d   = dists[idx]
-                _i  = idx_list[i]
-                _j  = idx_list[j]
-                Rij_cov = Rcov_list[_i] + Rcov_list[_j]
-                if not (d > Rij_cov):
-                    AC[_i,_j] = 1
-                    AC[_j,_i] = 1
-                    _AC[i,j]  = 1
-                    _AC[j,i]  = 1
-
-        found_bond = True
-        was_moved  = np.zeros(_num_atoms, dtype=bool)
-        while found_bond:
-            found_bond = False
-            for i in range(_num_atoms):
-                for j in range(i + 1, _num_atoms):
-                    _i  = idx_list[i]
-                    _j  = idx_list[j]
-                    if _AC[i,j]:
-                        neighbor_idxs = list()
-                        if not is_central[i] and not is_central[j]:
-                            continue
-                        elif is_central[i] and not is_central[j]:
-                            is_central[_j::num_atoms] = False
-                            is_central[j] = True
-                            found_bond = True
-                            neighbor_idxs = np.where(_AC[j])[0]
-                        elif not is_central[i] and is_central[j]:
-                            is_central[_i::num_atoms] = False
-                            is_central[i] = True
-                            found_bond = True
-                            neighbor_idxs = np.where(_AC[i])[0]
-                        for k in neighbor_idxs:
-                            _k = idx_list[k]
-                            is_central[_k::num_atoms] = False
-                            is_central[k] = True
-                            found_bond = True
-
-        assert np.sum(is_central) == num_atoms
-        for i in range(_num_atoms):
-            if is_central[i]:
-                _i = idx_list[i]
-                xyz_new[_i] = xyz_list[i]
-
-    return AC, xyz_new
+    return AC
 
 
 def xyz2AC_huckel(atomicNumList, xyz, charge):
@@ -780,7 +696,7 @@ def chiral_stereo_check(mol):
 
 def xyz2mol(atoms, coordinates, charge=0, allow_charged_fragments=True,
             use_graph=True, use_huckel=False, embed_chiral=True,
-            use_atom_maps=False, ucmatrix=None):
+            use_atom_maps=False):
     """
     Generate a rdkit molobj from atoms, coordinates and a total_charge.
 
@@ -802,7 +718,7 @@ def xyz2mol(atoms, coordinates, charge=0, allow_charged_fragments=True,
 
     # Get atom connectivity (AC) matrix, list of atomic numbers, molecular charge,
     # and mol object with no connectivity information
-    AC, mol = xyz2AC(atoms, coordinates, charge, use_huckel=use_huckel, ucmatrix=ucmatrix)
+    AC, mol = xyz2AC(atoms, coordinates, charge, use_huckel=use_huckel)
 
     # Convert AC to bond order matrix and add connectivity and charge info to
     # mol object
