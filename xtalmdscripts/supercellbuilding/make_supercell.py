@@ -865,16 +865,19 @@ def make_P1(
 
     if removewater:
         mol_list_new = remove_water(mol_list_new)
-
     if addhs or use_openeye:
-        from openeye import oechem
-        if not oechem.OEChemIsLicensed("python"):
+        if addhs and not use_openeye:
             import warnings
-            warnings.warn("No OEChem python license found. Falling back to modified xyz2mol.")
-            addhs = False
-            use_openeye = False
+            warnings.warn("With addhs=True, we automatically set use_openeye=True.")
+        from openeye import oechem
+        from openeye import oequacpac
+        from xtalmdscripts.supercellbuilding.oe_utils import rdmol_from_oemol
+        from xtalmdscripts.supercellbuilding.oe_utils import oemol_from_rdmol
 
-    if addhs or use_openeye:
+
+
+        from openeye import oechem
+        from openeye import oequacpac
         from xtalmdscripts.supercellbuilding.oe_utils import rdmol_from_oemol
         from xtalmdscripts.supercellbuilding.oe_utils import oemol_from_rdmol
 
