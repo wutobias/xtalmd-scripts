@@ -647,9 +647,17 @@ def main():
 
     workbook_wrap = WorkbookWrapper(args.output)
 
+    if "unwrap" in input_dict:
+        unwrap = input_dict["unwrap"]
+    else:
+        unwrap = True
+
     ### Loop over each xtal and put in new workbook
     ### ===========================================
     for crystal_name in input_dict:
+        if crystal_name == "unwrap":
+            continue
+
         print(f"Pre-Processing {crystal_name}")
 
         workbook_wrap.add_xtal(crystal_name)
@@ -921,11 +929,14 @@ def main():
             frame_and_path_list = list()
             ### For each frame (idx) save the frame idx in the original traj
             frame_and_sub_frame_list = list()
-            ### First wrap the reference structure
-            ref_strc_unwrapped = analysis_engine.unwrap_trajectory(
-                ref_strc,
-                ref_strc
-                )
+            ### First unwrap the reference structure
+            if unwrap:
+                ref_strc_unwrapped = analysis_engine.unwrap_trajectory(
+                    ref_strc,
+                    ref_strc
+                    )
+            else:
+                ref_strc_unwrapped = copy.deepcopy(ref_strc)
             for output_traj in glob.glob(xtal_trajectory):
 
                 basename, _ = os.path.splitext(output_traj)
@@ -937,10 +948,14 @@ def main():
                     top=ref_strc.topology
                     )
                     
-                query_traj_unwrapped = analysis_engine.unwrap_trajectory(
-                    query_traj, 
-                    ref_strc_unwrapped, 
-                    )
+                
+                if unwrap:
+                    query_traj_unwrapped = analysis_engine.unwrap_trajectory(
+                        query_traj, 
+                        ref_strc_unwrapped, 
+                        )
+                else:
+                    query_traj_unwrapped = query_traj
 
                 frame_and_path_list.extend(
                         [output_traj for _ in range(query_traj.n_frames)]
@@ -1264,10 +1279,11 @@ cmd.group(\"expt\", \"strc_expt\")
                     frame_and_path_list[max_frame],
                     top=ref_strc.topology
                     )
-                query_traj = analysis_engine.unwrap_trajectory(
-                    query_traj, 
-                    ref_strc_unwrapped, 
-                    )
+                if unwrap:
+                    query_traj = analysis_engine.unwrap_trajectory(
+                        query_traj, 
+                        ref_strc_unwrapped, 
+                        )
 
                 tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
                 try:
@@ -1449,10 +1465,12 @@ cmd.group(\"expt\", \"strc_expt\")
                         frame_and_path_list[max_frame],
                         top=ref_strc.topology
                         )
-                    query_traj = analysis_engine.unwrap_trajectory(
-                        query_traj, 
-                        ref_strc_unwrapped, 
-                        )
+
+                    if unwrap:
+                        query_traj = analysis_engine.unwrap_trajectory(
+                            query_traj, 
+                            ref_strc_unwrapped, 
+                            )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
                     try:
@@ -1634,10 +1652,12 @@ cmd.group(\"expt\", \"strc_expt\")
                         frame_and_path_list[max_frame],
                         top=ref_strc.topology
                         )
-                    query_traj = analysis_engine.unwrap_trajectory(
-                        query_traj, 
-                        ref_strc_unwrapped, 
-                        )
+                    
+                    if unwrap:
+                        query_traj = analysis_engine.unwrap_trajectory(
+                            query_traj, 
+                            ref_strc_unwrapped, 
+                            )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
                     try:
@@ -1814,10 +1834,12 @@ cmd.group(\"expt\", \"strc_expt\")
                         frame_and_path_list[max_frame],
                         top=ref_strc.topology
                         )
-                    query_traj = analysis_engine.unwrap_trajectory(
-                        query_traj, 
-                        ref_strc_unwrapped, 
-                        )
+                    
+                    if unwrap:
+                        query_traj = analysis_engine.unwrap_trajectory(
+                            query_traj, 
+                            ref_strc_unwrapped, 
+                            )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
                     try:
@@ -2310,10 +2332,12 @@ cmd.group(\"expt\", \"strc_expt\")
                         frame_and_path_list[max_frame],
                         top=ref_strc.topology
                         )
-                    query_traj = analysis_engine.unwrap_trajectory(
-                        query_traj, 
-                        ref_strc_unwrapped,
-                        )
+                    
+                    if unwrap:
+                        query_traj = analysis_engine.unwrap_trajectory(
+                            query_traj, 
+                            ref_strc_unwrapped,
+                            )
 
                     tmp_pdbfile = f"/tmp/{crystal_name}-{forcefield_name}.pdb"
                     try:
