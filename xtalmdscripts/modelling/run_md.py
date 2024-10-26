@@ -846,6 +846,8 @@ def main():
                 },
                 prefix = "nvt_md",
                 restart = False,
+                pressure = None, # Just here so that we can use same arguments for both functions
+                barostat_name = None,
                 ):
                 return run_nvt_md(
                     xml_path = xml_path, 
