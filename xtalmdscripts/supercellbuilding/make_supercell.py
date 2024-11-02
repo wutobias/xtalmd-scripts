@@ -571,7 +571,8 @@ def random_fill(
     mol_list, 
     N_per_unitcell, 
     radius=1.7, 
-    smiles="[H]O[H]"):
+    smiles="[H]O[H]"
+    bin_width_real=0.5):
 
     """
     Randomly fill unit cell with molecules.
@@ -584,7 +585,6 @@ def random_fill(
     import gemmi
     import copy
 
-    bin_width_real = 0.5
     vdw_scaling    = 1.2
 
     solute_solvent_epsilon  = 1.
@@ -1321,10 +1321,11 @@ def label_amino_acid_residues(rdmol, reorder=True):
         "ARG" : "[CH2X4:6][CH2X4:7][CH2X4:8][NHX3:9][CH0X3:10](=[NH2X3+,NHX2+0:11])[NH2X3:12]",
         "ASN" : "[CH2X4:6][CX3:7](=[OX1:8])[NX3H2:9]",
         "ASP" : "[CH2X4:6][CX3:7](=[OX1:8])[OH0-,OH:9]",
-        "CYS" : "[CH2X4:6][SX2H,SX1H0-:7]",
+        "CYS" : "[CH2X4:6][SX2H,SX1H0-,SX2H0:7]",
         "GLU" : "[CH2X4:6][CH2X4:7][CX3:8](=[OX1:9])[OH0-,OH:10]",
         "GLN" : "[CH2X4:6][CH2X4:7][CX3:8](=[OX1:9])[NH2X3:10]",
-        "GLY" : "[$([$([NX3H2,NX4H3+]),$([NX3H](C)(C)):1][CX4H2:2][CX3:3](=[OX1:5])[OX2H,OX1-,N:4])]",
+        #"GLY" : "[$([$([NX3H2,NX4H3+]),$([NX3H](C)(C)):1][CX4H2:2][CX3:3](=[OX1:5])[OX2H,OX1-,N:4])]",
+        "GLY" : "[$([NX3H2,NX4H3+]),$([NX3H](C)(C)):1][CX4H2:2][CX3:3](=[OX1:5])[OX2H,OX1-,N:4]",
         "HIS" : "[CH2X4:6][#6X3:7]1:[$([#7X3H+,#7X2H0+0]:[#6X3H]:[#7X3H]),$([#7X3H]):8]:[#6X3H:10]:[$([#7X3H+,#7X2H0+0]:[#6X3H]:[#7X3H]),$([#7X3H]):11]:[#6X3H:9]1",
         "ILE" : "[CHX4:6]([CH3X4:8])[CH2X4:7][CH3X4:9]",
         "LEU" : "[CH2X4:6][CHX4:7]([CH3X4:8])[CH3X4:9]",
