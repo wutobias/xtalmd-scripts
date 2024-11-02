@@ -571,7 +571,7 @@ def random_fill(
     mol_list, 
     N_per_unitcell, 
     radius=1.7, 
-    smiles="[H]O[H]"
+    smiles="[H]O[H]",
     bin_width_real=0.5):
 
     """
