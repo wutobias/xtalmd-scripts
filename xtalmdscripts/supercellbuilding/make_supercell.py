@@ -914,7 +914,7 @@ def make_P1(
         #with open(f"./test_oechem.pdb", "w") as fopen:
         #    fopen.write(Chem.MolToPDBBlock(_mol))
 
-        mol_list = Chem.GetMolFrags(_mol, asMols=True)
+        mol_list = list(Chem.GetMolFrags(_mol, asMols=True))
     else:
         from rdkit.Chem import rdDetermineBonds
         import itertools
@@ -945,11 +945,11 @@ def make_P1(
         #    ucmatrix=ucmatrix)
         #mol_list = Chem.GetMolFrags(_mol, asMols=True)
 
-    strc_write               = gemmi.Structure()
-    strc_write.spacegroup_hm = "P1"
-    strc_write.cell          = cell
-    with open("./make_p1_test.pdb", "w") as fopen:
-        fopen.write(get_pdb_block(mol_list, strc_write))
+    #strc_write               = gemmi.Structure()
+    #strc_write.spacegroup_hm = "P1"
+    #strc_write.cell          = cell
+    #with open("./make_p1_test.pdb", "w") as fopen:
+    #    fopen.write(get_pdb_block(mol_list, strc_write))
 
     return mol_list
 
