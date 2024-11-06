@@ -572,7 +572,9 @@ def random_fill(
     N_per_unitcell, 
     radius=1.7, 
     smiles="[H]O[H]",
-    bin_width_real=0.5):
+    bin_width_real=0.5,
+    iter_max=5,
+    parallel=False):
 
     """
     Randomly fill unit cell with molecules.
@@ -749,7 +751,21 @@ def random_fill(
         )
     from scipy import optimize
     basinhopping = False
-    iter_max = 5
+    
+    if parallel:
+        import ray
+        @ray.remote
+        def _run(x0):
+            
+            if basinhopping:
+                result = optimize.basinhopping(
+                        func, x0, minimizer_kwargs={"method" : "BFGS"})
+            else:
+                result = optimize.minimize(
+                        func, x0, method="BFGS")
+            return result
+    
+    worker_id_list = list()
     for i in range(iter_max):
         mask_selection = np.random.choice(
             mask, 
@@ -757,6 +773,10 @@ def random_fill(
             replace=False
             )
         x0 = grid[mask_selection].flatten()
+        if parallel:
+            worker_id_list.append(_run.remote(x0))
+            continue
+
         print(
             f"Iteration {i+1}/{iter_max}",
             f"Initial func {func(x0)}"
@@ -783,6 +803,14 @@ def random_fill(
             best_x = result.x
         if best_f < 1.e-8:
             break
+
+    for idx, worker_id in enumerate(worker_id_list):
+        result = ray.get(worker_id)
+        print(
+                f"Iteration {idx}: Final func {result.fun}")
+        if result.fun < best_f:
+            best_f = result.fun
+            best_x = result.x
 
     print(
         f"Inserted {N_per_unitcell} molecules {Chem.MolToSmiles(mol)}."
