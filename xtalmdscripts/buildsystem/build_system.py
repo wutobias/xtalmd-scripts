@@ -1078,14 +1078,14 @@ def build_system_charmm(
     boxvectors=None,
     version="charmm36",
     rigid_water=False,
-    toppar_dir_path="./toppar",):
+    toppar_dir_path="./toppar",
+    cleanup = True,
+    disulfide_list = list()):
 
     """
     Build charmm system. Note: We strictly assume that residues
     are already correctly labled.
     """
-
-    cleanup = True
 
     version = version.lower()
 
@@ -1450,6 +1450,10 @@ go
         if already_processed:
             continue
             
+        patch_str = ""
+        for cys1, cys2 in disulfide_list:
+            patch_str += f"patch disu PROA {cys1} PROA {cys2}\n"
+        
         seq_str = f"{chain_name} -1"
         
         charmm_inp = f"""
@@ -1460,6 +1464,7 @@ bomlev -2
 open read card unit 10 name {basename_monomer}-cpptraj.cor
 read sequence coor card unit 10 resid
 generate {chain_name} setup warn first {patch_name[0]} last {patch_name[1]}
+{patch_str}
 
 open read unit 10 card name {basename_monomer}-cpptraj.cor
 read coor unit 10 card
