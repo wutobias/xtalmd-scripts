@@ -566,22 +566,17 @@ def get_nonoverlapping_atoms(atom_crds_ortho, filter_overlapping=False):
     return valids
 
 
-def random_fill(
+def generate_outside_grid(
     cell, 
     mol_list, 
-    N_per_unitcell, 
     radius=1.7, 
-    smiles="[H]O[H]",
-    bin_width_real=0.5,
-    iter_max=5,
-    parallel=False):
+    bin_width_real=0.5):
 
     """
     Randomly fill unit cell with molecules.
     """
 
     from rdkit.Chem import AllChem as Chem
-    from rdkit.Geometry import Point3D
     import numpy as np
     from scipy.spatial import distance
     import gemmi
@@ -589,30 +584,18 @@ def random_fill(
 
     vdw_scaling    = 1.2
 
-    solute_solvent_epsilon  = 1.
-    solvent_solvent_epsilon = 1.
-
     vdw_dict = {
         1  : vdw_scaling*1.09, #H
         6  : vdw_scaling*1.70, #C
         7  : vdw_scaling*1.55, #N
         8  : vdw_scaling*1.52, #O
         9  : vdw_scaling*1.47, #F
+        11 : vdw_scaling*2.27, #Na
         15 : vdw_scaling*1.80, #P
         16 : vdw_scaling*1.80, #S
         17 : vdw_scaling*1.75, #Cl
     }
     radius *= vdw_scaling
-
-    mol = Chem.MolFromSmiles(smiles)
-    mol = Chem.AddHs(mol)
-
-    Chem.EmbedMolecule(mol)
-    Chem.UFFOptimizeMolecule(mol)
-
-    conformer      = mol.GetConformer()
-    atom_crds_mol  = conformer.GetPositions()
-    atom_crds_mol  = np.array(atom_crds_mol)
 
     atom_crds_xtal = list()
     atom_radii_xtal = list()
@@ -624,7 +607,7 @@ def random_fill(
     frac2real = np.array(
         cell.orthogonalization_matrix.tolist()
         )
-    
+
     all_rad_list = list()
     for mol_r in mol_list:
         all_rad_list.append(list())
@@ -660,52 +643,6 @@ def random_fill(
     atom_crds_xtal   = np.array(atom_crds_xtal)
     atom_radii_xtal  = np.array(atom_radii_xtal)
 
-    _x_extend = np.zeros((27,N_per_unitcell,3), dtype=float)
-    _x = np.zeros((N_per_unitcell,3), dtype=float)
-    radius_comb = np.sqrt(atom_radii_xtal*radius)[:,np.newaxis]
-    r_min = 1.1225*radius_comb
-    def func(x):
-
-        _x[:] = 0.
-        _x_extend[:] = 0.
-
-        _x[:] = x.reshape((-1,3))
-        frac  = np.matmul(real2frac, _x.T).T
-        frac -= np.floor(frac)
-        counts = 0
-        for a in [-1.,0.,1.]:
-            for b in [-1.,0.,1.]:
-                for c in [-1.,0.,1.]:
-                    frac[:] += [a,b,c]
-                    _x_extend[counts] = np.matmul(frac2real, frac.T).T
-                    frac[:] -= [a,b,c]
-                    counts += 1
-
-        x_extend = _x_extend.reshape((-1,3))
-        dists_self = distance.pdist(
-            x_extend,
-            )
-        valids_self = np.less(dists_self, 1.1225*radius)
-        r_sigma_6 = (radius/dists_self[valids_self])**6
-        score_selfclash = np.sum(
-            4.*solvent_solvent_epsilon*(r_sigma_6*r_sigma_6-r_sigma_6)+solvent_solvent_epsilon
-            )
-
-        dists_atoms = distance.cdist(
-            atom_crds_xtal,
-            x_extend,
-            )
-        valids_atoms = np.less(dists_atoms, r_min)
-        r_over_sigma = radius_comb/dists_atoms
-        r_sigma_6 = (r_over_sigma[valids_atoms])**6
-        score_atomclash = np.sum(
-            4.*solute_solvent_epsilon*(r_sigma_6*r_sigma_6-r_sigma_6)+solute_solvent_epsilon
-            )
-
-        score_total = score_selfclash + score_atomclash
-
-        return score_total
-
     o = cell.orthogonalize(
         gemmi.Fractional(0.,0.,0.)
         ).tolist()
@@ -723,118 +660,167 @@ def random_fill(
     Nb = int(abs(b1[1]-o[1])/bin_width_real) + 1
     Nc = int(abs(c1[2]-o[2])/bin_width_real) + 1
 
-    print(
-        f"Generating {Na}x{Nb}x{Nc} vdw grid..."
-        )
     grid = list()
-    frac = np.zeros(3, dtype=float)
-    for a in np.linspace(0., 1., Na, True):
-        for b in np.linspace(0., 1., Nb, True):
-            for c in np.linspace(0., 1., Nc, True):
-                frac[:] = [a,b,c]
-                ortho = cell.orthogonalize(
-                    gemmi.Fractional(*frac)
-                    ).tolist()
-                dists = distance.cdist(
-                    atom_crds_xtal, 
-                    [ortho],
-                    )
-                is_outside = np.all(dists[:,0] > atom_radii_xtal)
-                if is_outside:
-                    grid.append(ortho)
+    aa  = np.linspace(0,1,Na,True)
+    bb  = np.linspace(0,1,Nb,True)
+    cc  = np.linspace(0,1,Nc,True)
+    a,b,c = np.meshgrid(aa,bb,cc)
+    abc = np.zeros((Na*Nb*Nc, 3), dtype=float)
+    abc[:,0] = a.flatten()
+    abc[:,1] = b.flatten()
+    abc[:,2] = c.flatten()
+    pos  = np.matmul(frac2real, abc.T).T
+    grid = list()
+    for idxs in np.array_split(np.arange(Na*Nb*Nc), 100):
+        arr   = abc[idxs]
+        dists = distance.cdist(
+                atom_crds_xtal, arr)
+        is_outside = np.any(
+                dists > atom_radii_xtal[:,np.newaxis], axis=0)
+        grid.extend(pos[idxs][is_outside].tolist())
     grid = np.array(grid)
-    mask = np.arange(grid.shape[0], dtype=int)
-    best_f = 999999999999999999999.
-    best_x = np.zeros(3*N_per_unitcell, dtype=float)
-    print(
-        "Placing and optimizing positions in unit cell."
-        )
-    from scipy import optimize
-    basinhopping = False
-    
-    if parallel:
-        import ray
-        @ray.remote
-        def _run(x0):
-            
-            if basinhopping:
-                result = optimize.basinhopping(
-                        func, x0, minimizer_kwargs={"method" : "BFGS"})
-            else:
-                result = optimize.minimize(
-                        func, x0, method="BFGS")
-            return result
-    
-    worker_id_list = list()
-    for i in range(iter_max):
-        mask_selection = np.random.choice(
-            mask, 
-            size=N_per_unitcell, 
-            replace=False
-            )
-        x0 = grid[mask_selection].flatten()
-        if parallel:
-            worker_id_list.append(_run.remote(x0))
-            continue
+    del abc, pos, arr, dists, is_outside
 
-        print(
-            f"Iteration {i+1}/{iter_max}",
-            f"Initial func {func(x0)}"
-            )
-        if basinhopping:
-            result = optimize.basinhopping(
-                func, 
-                x0, 
-                minimizer_kwargs={
-                    "method" : "BFGS"
-                    },
-                )
-        else:
-            result = optimize.minimize(
-                    func, 
-                    x0, 
-                    method="BFGS",
-                    )
-        print(
-            f"Final func {func(result.x)}"
-            )
-        if result.fun < best_f:
-            best_f = result.fun
-            best_x = result.x
-        if best_f < 1.e-8:
+    return grid
+
+
+def fill_unit_cell(
+    cell, mol_list, N_fill, smiles, grid, platform_name):
+
+    from openff.toolkit.topology import Topology, Molecule
+    from openff.toolkit.typing.engines import smirnoff
+    
+    from pint import UnitRegistry, set_application_registry
+    from pint import set_application_registry
+
+    import openmm
+    from openmm.app.internal.unitcell import reducePeriodicBoxVectors
+    from openmm import unit, app
+
+    import numpy as np
+
+    xtal_mol_list = [Chem.Mol(mol) for mol in mol_list]
+
+    ### ff we'll use for fitting
+    ff = smirnoff.ForceField("openff_unconstrained-2.0.0.offxml")
+    ### Build molecules that are already in the unit cell
+    offmol_list = list()
+    unique_mol_list = list()
+    frozen_idxs = list()
+    for mol in xtal_mol_list:
+        offmol = Molecule.from_rdkit(
+            mol, allow_undefined_stereo=True, hydrogens_are_explicit=True)
+        offmol.assign_partial_charges("zeros")
+        offmol_list.append(offmol)
+        found_isomorphic = False
+        for _offmol in unique_mol_list:
+            if offmol.is_isomorphic_with(_offmol):
+                found_isomorphic = True
+            if found_isomorphic:
+                break
+        if not found_isomorphic:
+            unique_mol_list.append(offmol)
+        for atom in mol.GetAtoms():
+            if atom.GetAtomicNum() > 1:
+                frozen_idxs.append(atom.GetIdx())
+    ### Build the molecules that will be added
+    offmol = Molecule.from_smiles(smiles)
+    offmol.assign_partial_charges("zeros")
+    offmol.generate_conformers(n_conformers=1)
+    for _offmol in unique_mol_list:
+        if offmol.is_isomorphic_with(_offmol):
+            found_isomorphic = True
+        if found_isomorphic:
             break
+    if not found_isomorphic:
+        unique_mol_list.append(offmol)
+    center_conf = offmol.conformers[0] - offmol.conformers[0].mean(axis=0)
+    ureg = offmol.conformers[0]._REGISTRY
+    set_application_registry(ureg)
+    grid_idx_list = np.random.choice(
+        np.arange(grid.shape[0]), N_fill, replace=False)
+    
+    for idx in grid_idx_list:    
+        _offmol = Molecule(offmol)
+        _offmol.conformers[0] = center_conf + grid[idx] * ureg.angstrom
+        offmol_list.append(_offmol)
+        xtal_mol_list.append(_offmol.to_rdkit())
+    ### Generate openmm system object
+    top = Topology.from_molecules(offmol_list)
+    uc = cell.orth.mat.transpose().tolist() * unit.angstrom
+    top.box_vectors = reducePeriodicBoxVectors(uc)
+    system = ff.create_openmm_system(
+        top, charge_from_molecules=unique_mol_list)
+    for i in frozen_idxs:
+        system.setParticleMass(i, 0*unit.dalton)
+    for f in system.getForces():
+        if isinstance(f, openmm.NonbondedForce):
+            f.setNonbondedMethod(f.CutoffPeriodic)
+            f.setUseSwitchingFunction(True)
 
-    for idx, worker_id in enumerate(worker_id_list):
-        result = ray.get(worker_id)
-        print(
-                f"Iteration {idx}: Final func {result.fun}")
-        if result.fun < best_f:
-            best_f = result.fun
-            best_x = result.x
+    platform = openmm.Platform.getPlatformByName(
+        platform_name)
+    if platform_name == "CPU":
+        platform.setPropertyDefaultValue("Threads", "1")    
+    simulation = app.Simulation(
+        topology=top,
+        system=system,
+        integrator=openmm.LangevinMiddleIntegrator(
+            100 * unit.kelvin, 1/unit.picosecond, 0.1*unit.femtosecond))
+    simulation.context.setPositions(
+        top.get_positions().to_openmm())
+    try:
+        for _ in range(100):
+            simulation.minimizeEnergy()
+            simulation.step(5)
+        state = simulation.context.getState(
+            getEnergy=True, getPositions=True)
+        energy = state.getPotentialEnergy()
+        energy = energy.value_in_unit(unit.kilojoule_per_mole)
+        pos = state.getPositions(asNumpy=True)
+        pos = pos.value_in_unit(unit.angstrom)
+        counter = 0
+        for mol in xtal_mol_list:
+            N_atoms = mol.GetNumAtoms()
+            conf = Chem.Conformer(N_atoms)
+            conf.SetPositions(
+                pos[counter:counter+N_atoms])
+            mol.RemoveAllConformers()
+            mol.AddConformer(conf)
+            counter += N_atoms
+    except:
+        energy = np.inf
 
-    print(
-        f"Inserted {N_per_unitcell} molecules {Chem.MolToSmiles(mol)}."
-        )
+    del simulation, system, top, offmol_list
 
-    import copy
-    mol_list_new = copy.deepcopy(mol_list)
-    for crds in best_x.reshape((-1,3)):
-        frac  = np.matmul(real2frac, crds.T).T
-        frac -= np.floor(frac)
-        crds  = np.matmul(frac2real, frac.T).T
-        mol_cp         = copy.deepcopy(mol)
-        atom_crds_mol  = conformer.GetPositions()
-        trans          = crds - np.mean(atom_crds_mol, axis=0)
-        atom_crds_mol += trans
-        conformer      = mol_cp.GetConformer()
-        for atm_idx in range(mol_cp.GetNumAtoms()):
-            conformer.SetAtomPosition(
-                atm_idx,
-                Point3D(*atom_crds_mol[atm_idx])
-            )
-        mol_list_new.append(mol_cp)
+    return xtal_mol_list, energy
 
-    return mol_list_new
+
+def random_fill(
+    cell, 
+    mol_list, 
+    N_per_unitcell, 
+    radius = 1.7, 
+    bin_width_real = 0.5,
+    N_trials = 10,
+    platform_name = "CPU",
+    smiles = "[H]O[H]"):
+
+    import numpy as np
+    from rdkit import Chem
+
+    grid = generate_outside_grid(
+        cell, mol_list, radius, bin_width_real)
+    best_mol_list = [Chem.Mol(mol) for mol in mol_list]
+    best_energy   = np.inf
+    for _ in range(N_trials):
+        _mol_list, _energy = fill_unit_cell(
+            cell, mol_list, N_per_unitcell, smiles, grid, platform_name)
+        if _energy < best_energy:
+            best_energy = _energy
+            best_mol_list = _mol_list
+
+    return best_mol_list
 
 
 def make_P1(
