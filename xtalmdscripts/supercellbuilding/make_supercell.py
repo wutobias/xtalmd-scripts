@@ -710,7 +710,10 @@ def fill_unit_cell(
     for mol in xtal_mol_list:
         offmol = Molecule.from_rdkit(
             mol, allow_undefined_stereo=True, hydrogens_are_explicit=True)
+        ureg = offmol.conformers[0]._REGISTRY
+        set_application_registry(ureg) 
         offmol.assign_partial_charges("zeros")
+        offmol.partial_charges += 0.5 * ureg.elementary_charge
         offmol_list.append(offmol)
         found_isomorphic = False
         for _offmol in unique_mol_list:
@@ -725,8 +728,11 @@ def fill_unit_cell(
                 frozen_idxs.append(atom.GetIdx())
     ### Build the molecules that will be added
     offmol = Molecule.from_smiles(smiles)
-    offmol.assign_partial_charges("zeros")
     offmol.generate_conformers(n_conformers=1)
+    ureg = offmol.conformers[0]._REGISTRY
+    set_application_registry(ureg)
+    offmol.assign_partial_charges("zeros")
+    offmol.partial_charges += 0.5 * ureg.elementary_charge
     for _offmol in unique_mol_list:
         if offmol.is_isomorphic_with(_offmol):
             found_isomorphic = True
@@ -735,8 +741,6 @@ def fill_unit_cell(
     if not found_isomorphic:
         unique_mol_list.append(offmol)
     center_conf = offmol.conformers[0] - offmol.conformers[0].mean(axis=0)
-    ureg = offmol.conformers[0]._REGISTRY
-    set_application_registry(ureg)
     grid_idx_list = np.random.choice(
         np.arange(grid.shape[0]), N_fill, replace=False)
     
@@ -750,7 +754,7 @@ def fill_unit_cell(
     uc = cell.orth.mat.transpose().tolist() * unit.angstrom
     top.box_vectors = reducePeriodicBoxVectors(uc)
     system = ff.create_openmm_system(
-        top, charge_from_molecules=unique_mol_list)
+        top, charge_from_molecules=unique_mol_list, allow_nonintegral_charges=True)
     for i in frozen_idxs:
         system.setParticleMass(i, 0*unit.dalton)
     for f in system.getForces():
@@ -1123,6 +1127,40 @@ def equalize_rdmols(
 
     unique_mapping, rdmol_list_unique = get_unique_mapping(mol_list, stereochemistry)
     N_unique_mols = len(rdmol_list_unique)
+    import string
+    NAME_LIST = string.ascii_uppercase + "".join([str(i) for i in range(10)])
+    N_NAME = len(NAME_LIST)
+    for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
+        element_count_dict = dict()
+        for atom in rdmol.GetAtoms():
+            ele = atom.GetSymbol()
+            if ele in element_count_dict:
+                element_count_dict[ele] += 1
+            else:
+                element_count_dict[ele] = 1
+            res_count = [0,0,0]
+            count = 0
+            while True:
+                if count == element_count_dict[ele]:
+                    break
+                if res_count[2] == N_NAME:
+                    res_count[2]  = 0
+                    res_count[1] += 1
+                if res_count[1] == N_NAME:
+                    res_count[1]  = 0
+                    res_count[0] += 1
+                res_count[2] += 1
+                count += 1
+            atom_name  = ele
+            atom_name += NAME_LIST[res_count[0]]
+            atom_name += NAME_LIST[res_count[1]]
+            atom_name += NAME_LIST[res_count[2]]
+            mi = Chem.AtomPDBResidueInfo()
+            mi.SetIsHeteroAtom(True)
+            mi.SetResidueName(f"M{rdmol_idx:d}".ljust(3))
+            mi.SetResidueNumber(rdmol_idx)
+            mi.SetName(atom_name.ljust(4))
+            atom.SetMonomerInfo(mi)
 
     mol_list_new = copy.deepcopy(mol_list)
     for mol_idx in unique_mapping:
@@ -1143,8 +1181,7 @@ def equalize_rdmols(
             )
             ### Note, we cannot `copy.copy(mi_original)`
             ### or `copy.copy(mol_target.GetAtomWithIdx(atm_idx))`
-            mi = mol_info.GetAtomWithIdx(mol_info_atm_idx).GetMonomerInfo()
-            
+            mi = mol_info.GetAtomWithIdx(mol_info_atm_idx).GetPDBResidueInfo()
             mi.SetResidueName(f'M{unique_mapping[mol_idx]}'.ljust(3))
             mi.SetResidueNumber(mol_idx + 1)
             mol_info.GetAtomWithIdx(mol_info_atm_idx).SetMonomerInfo(mi)
