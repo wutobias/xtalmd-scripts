@@ -644,6 +644,7 @@ def build_system_amber(
     version="ff14SB",
     water_model="tip3p",
     rigid_water=False,
+    constraints=False,
     ):
 
     import subprocess
@@ -676,7 +677,7 @@ def build_system_amber(
         fopen.write(f"""
 parm {prefix}.pdb
 loadcrd {prefix}.pdb name CRD
-prepareforleap crdset CRD name Final pdbout {prefix}-cpptraj.pdb terbymol noh
+prepareforleap crdset CRD name Final pdbout {prefix}-cpptraj.pdb terbymol noh solventresname HOH
 go
 """)
 
@@ -737,9 +738,12 @@ quit
     prmtop = AmberPrmtopFile(f'{prefix}.prmtop')
     inpcrd = AmberInpcrdFile(f'{prefix}.inpcrd')
 
+    _constraints = None
+    if constraints:
+        constraints = app.HBonds
     system = prmtop.createSystem(
         nonbondedMethod=nonbondedmethod,
-        constraints=None,
+        constraints=_constraints,
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
@@ -773,11 +777,11 @@ quit
         replicated_mol_list_new
         )
 
-    if rigid_water:
-        system = remove_water_bonded_forces(
-            system, 
-            prmtop.topology
-            )
+    #if rigid_water:
+    #    system = remove_water_bonded_forces(
+    #        system, 
+    #        prmtop.topology
+    #        )
 
     return system, mapping_dict, replicated_mol_list_new
 
@@ -788,7 +792,8 @@ def build_system_gaff(
     boxvectors=None,
     version="2.11",
     water_model="tip3p",
-    rigid_water=False):
+    rigid_water=False,
+    constraints=False):
 
     """
     Build openmm system for gaff force field.
@@ -877,19 +882,23 @@ def build_system_gaff(
         replicated_mol_list_new
         )
 
+    _constraints = None
+    if constraints:
+        _constraints=app.HBonds
+
     system = forcefield.createSystem(
         topology = topology,
         nonbondedMethod=nonbondedmethod,
-        constraints=None,
+        constraints=_constraints,
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
 
-    if rigid_water:
-        system = remove_water_bonded_forces(
-            system, 
-            topology
-            )
+    #if rigid_water:
+    #    system = remove_water_bonded_forces(
+    #        system, 
+    #        topology
+    #        )
 
     return system, mapping_dict, replicated_mol_list_new
 
@@ -902,6 +911,7 @@ def build_system_off(
     offxml=None,
     water_model="tip3p",
     rigid_water=False,
+    constraints=False,
     use_openfftk=False):
 
     """
@@ -1040,19 +1050,22 @@ def build_system_off(
         topology  = modeller.getTopology()
         positions = modeller.getPositions()
 
+        _constraints = None
+        if constraints:
+            _constraints = app.HBonds
         system = forcefield.createSystem(
             topology = topology,
             nonbondedMethod=nonbondedmethod,
-            constraints=None,
+            constraints=_constraints,
             removeCMMotion=True,
             rigidWater=rigid_water
         )
 
-    if rigid_water:
-        system = remove_water_bonded_forces(
-            system, 
-            topology
-            )
+    #if rigid_water:
+    #    system = remove_water_bonded_forces(
+    #        system, 
+    #        topology
+    #        )
 
     with open(f"{prefix}.pdb", "w") as fopen:
         PDBFile.writeFile(
@@ -1078,6 +1091,7 @@ def build_system_charmm(
     boxvectors=None,
     version="charmm36",
     rigid_water=False,
+    constraints=False,
     toppar_dir_path="./toppar",
     cleanup = True,
     disulfide_list = list()):
@@ -1602,10 +1616,13 @@ stop
     topology = psffile.topology
     positions = psf_pmd.coordinates[:]
 
+    _constraints = None
+    if constraints:
+        _constraints = app.HBonds
     system = psffile.createSystem(
         params,
         nonbondedMethod=nonbondedmethod, 
-        constraints=None,
+        constraints=_constraints,
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
@@ -1619,10 +1636,10 @@ stop
             if os.path.exists(filename):
                 os.remove(filename)
 
-    if rigid_water:
-        system = remove_water_bonded_forces(
-            system, psffile.topology
-            )
+    #if rigid_water:
+    #    system = remove_water_bonded_forces(
+    #        system, psffile.topology
+    #        )
 
     if boxvectors != None:
         psffile.topology.setPeriodicBoxVectors(
@@ -1659,7 +1676,8 @@ def build_system_oplsaa(
     boxvectors=None,
     version="CM1A",
     water_model="tip3p",
-    rigid_water=False,):
+    rigid_water=False,
+    constraints=False):
 
     """
     Build openmm system for opls aa force field.
@@ -1835,19 +1853,22 @@ def build_system_oplsaa(
     topology  = modeller.getTopology()
     positions = modeller.getPositions()
 
+    _constraints = None
+    if constraints:
+        _constraints = app.HBonds
     system = forcefield.createSystem(
         topology = topology,
         nonbondedMethod=nonbondedmethod,
-        constraints=None,
+        constraints=_constraints,
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
 
-    if rigid_water and has_water:
-        system = remove_water_bonded_forces(
-            system, 
-            topology
-            )
+    #if rigid_water and has_water:
+    #    system = remove_water_bonded_forces(
+    #        system, 
+    #        topology
+    #        )
 
     system = OPLS_LJ(system, geometric_mixing_periodic)
 
