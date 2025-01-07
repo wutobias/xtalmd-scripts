@@ -9,7 +9,7 @@ CHARMM_PROTEIN_FF = ["charmm36", "charmm36m"]
 OPLS_PROTEIN_FF   = ["OPLS"]
 WATER_FF          = ["TIP3P", "TIP3PFB", "OPC", "NONE"]
 
-ALL_PROTEIN_FF = AMBER_PROTEIN_FF[:] + CHARMM_PROTEIN_FF[:] + OPLS_PROTEIN_FF[:]
+ALL_PROTEIN_FF = AMBER_PROTEIN_FF + CHARMM_PROTEIN_FF + OPLS_PROTEIN_FF
 
 
 def parse_arguments():
@@ -523,11 +523,13 @@ def get_mapping_dict(replicated_mol_list, replicated_mol_list_new):
 
     min_trans_len_cutoff = 0.5
 
+    assert len(replicated_mol_list) == len(replicated_mol_list_new)
+
     mapping_dict = dict()
     replicated_mol_list_new_crds_dict = dict()
     for mol_original_idx, mol_original in enumerate(replicated_mol_list):
         min_trans_len = 999999999999.
-        pos = mol_original.GetConformer(0).GetPositions()
+        pos = mol_original.GetConformer().GetPositions()
         _crds_o = list()
         for atom in mol_original.GetAtoms():
             if atom.GetAtomicNum() > 1:
@@ -543,7 +545,7 @@ def get_mapping_dict(replicated_mol_list, replicated_mol_list_new):
             if mol_new_idx in replicated_mol_list_new_crds_dict:
                 com_n = replicated_mol_list_new_crds_dict[mol_new_idx]
             else:
-                pos = mol_new.GetConformer(0).GetPositions()
+                pos = mol_new.GetConformer().GetPositions()
                 _crds_n= list()
                 for atom in mol_new.GetAtoms():
                     if atom.GetAtomicNum() > 1:
@@ -551,7 +553,7 @@ def get_mapping_dict(replicated_mol_list, replicated_mol_list_new):
                             pos[atom.GetIdx()].tolist()
                             )
                 _crds_n = np.array(_crds_n)
-                if _crds_o.ndim > 1:
+                if _crds_n.ndim > 1:
                     com_n = np.mean(_crds_n, axis=0)
                 else:
                     com_n = _crds_n
@@ -630,9 +632,10 @@ def topology_to_rdmol(topology, positions=None):
                 map_dict[atom.index], 
                 Geometry.Point3D(*xyz)
             )
-        rdmol.AddConformer(conformer)
+        rdmol.AddConformer(conformer, assignId=True)
 
-    rdmol_list = Chem.GetMolFrags(rdmol, asMols=True)
+    rdmol_list = Chem.GetMolFrags(
+            rdmol, asMols=True, sanitizeFrags=False)
         
     return rdmol_list        
 
@@ -644,6 +647,7 @@ def build_system_amber(
     version="ff14SB",
     water_model="tip3p",
     rigid_water=False,
+    constraints=False,
     ):
 
     import subprocess
@@ -676,7 +680,7 @@ def build_system_amber(
         fopen.write(f"""
 parm {prefix}.pdb
 loadcrd {prefix}.pdb name CRD
-prepareforleap crdset CRD name Final pdbout {prefix}-cpptraj.pdb terbymol noh
+prepareforleap crdset CRD name Final pdbout {prefix}-cpptraj.pdb terbymol noh solventresname HOH
 go
 """)
 
@@ -737,9 +741,12 @@ quit
     prmtop = AmberPrmtopFile(f'{prefix}.prmtop')
     inpcrd = AmberInpcrdFile(f'{prefix}.inpcrd')
 
+    _constraints = None
+    if constraints:
+        constraints = app.HBonds
     system = prmtop.createSystem(
         nonbondedMethod=nonbondedmethod,
-        constraints=None,
+        constraints=_constraints,
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
@@ -773,11 +780,11 @@ quit
         replicated_mol_list_new
         )
 
-    if rigid_water:
-        system = remove_water_bonded_forces(
-            system, 
-            prmtop.topology
-            )
+    #if rigid_water:
+    #    system = remove_water_bonded_forces(
+    #        system, 
+    #        prmtop.topology
+    #        )
 
     return system, mapping_dict, replicated_mol_list_new
 
@@ -788,7 +795,8 @@ def build_system_gaff(
     boxvectors=None,
     version="2.11",
     water_model="tip3p",
-    rigid_water=False):
+    rigid_water=False,
+    constraints=False):
 
     """
     Build openmm system for gaff force field.
@@ -877,19 +885,23 @@ def build_system_gaff(
         replicated_mol_list_new
         )
 
+    _constraints = None
+    if constraints:
+        _constraints=app.HBonds
+
     system = forcefield.createSystem(
         topology = topology,
         nonbondedMethod=nonbondedmethod,
-        constraints=None,
+        constraints=_constraints,
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
 
-    if rigid_water:
-        system = remove_water_bonded_forces(
-            system, 
-            topology
-            )
+    #if rigid_water:
+    #    system = remove_water_bonded_forces(
+    #        system, 
+    #        topology
+    #        )
 
     return system, mapping_dict, replicated_mol_list_new
 
@@ -902,6 +914,7 @@ def build_system_off(
     offxml=None,
     water_model="tip3p",
     rigid_water=False,
+    constraints=False,
     use_openfftk=False):
 
     """
@@ -1040,19 +1053,22 @@ def build_system_off(
         topology  = modeller.getTopology()
         positions = modeller.getPositions()
 
+        _constraints = None
+        if constraints:
+            _constraints = app.HBonds
         system = forcefield.createSystem(
             topology = topology,
             nonbondedMethod=nonbondedmethod,
-            constraints=None,
+            constraints=_constraints,
             removeCMMotion=True,
             rigidWater=rigid_water
         )
 
-    if rigid_water:
-        system = remove_water_bonded_forces(
-            system, 
-            topology
-            )
+    #if rigid_water:
+    #    system = remove_water_bonded_forces(
+    #        system, 
+    #        topology
+    #        )
 
     with open(f"{prefix}.pdb", "w") as fopen:
         PDBFile.writeFile(
@@ -1078,18 +1094,20 @@ def build_system_charmm(
     boxvectors=None,
     version="charmm36",
     rigid_water=False,
-    toppar_dir_path="./toppar",):
+    constraints=False,
+    toppar_dir_path="./toppar",
+    cleanup = True,
+    use_cgenff_code = False,
+    disulfide_list = None):
 
     """
     Build charmm system. Note: We strictly assume that residues
     are already correctly labled.
     """
 
-    cleanup = True
-
     version = version.lower()
 
-    valid_versions = CHARMM_PROTEIN_FF[:]
+    valid_versions = CHARMM_PROTEIN_FF
     valid_versions.append("cgenff")
     valid_versions.append("opls")
 
@@ -1097,6 +1115,10 @@ def build_system_charmm(
         raise ValueError(
             f"Version with name {version} not supported."
             )
+
+    AA_LIST = [
+            "NME","ACE","ALA","ARG","ASN","ASP","CYS","GLU","GLN","GLY","HIS","ILE","LEU","LYS","MET","PHE","PRO","SER","THR","TRP","TYR","VAL","HOH"
+            ]
 
     import os
     import subprocess
@@ -1149,6 +1171,9 @@ def build_system_charmm(
     pmd_list = list()
     failed   = False
     already_processed_list = list()
+    if isinstance(disulfide_list, type(None)):
+        disulfide_list = [[] for _ in unique_mapping]
+    assert len(disulfide_list) == len(unique_mapping)
     for mol_idx in unique_mapping:
         unique_idx = unique_mapping[mol_idx]
         already_processed = False
@@ -1180,6 +1205,21 @@ def build_system_charmm(
                 Chem.MolToPDBBlock(rdmol)
                 )
 
+        IS_PROTEIN_LIST = list()
+        for atom in rdmol.GetAtoms():
+            mi = atom.GetMonomerInfo()
+            resname = mi.GetResidueName().rstrip().lstrip()
+            IS_PROTEIN_LIST.append(resname in AA_LIST)
+        if all(IS_PROTEIN_LIST):
+            _cgenff = False
+        else:
+            _cgenff = True
+        if cgenff != _cgenff:
+            import warnings
+            warnings.warn(
+                    f"Changing `cgenff` from {cgenff} to {_cgenff}")
+        cgenff = _cgenff
+
         if not cgenff:
             ### We have to check to for presence of ACE or NME first.
             ### We assume that everything is correctly labled. If we
@@ -1196,6 +1236,7 @@ def build_system_charmm(
             N_term_resname = ""
             C_term_resname = ""
             sequence_dict = dict()
+            offset = 0
             for atom in rdmol.GetAtoms():
                 mi = atom.GetMonomerInfo()
                 resid = mi.GetResidueNumber()
@@ -1213,6 +1254,12 @@ def build_system_charmm(
                 elif atomname == "HN3":
                     has_NPROT3 = True
                 sequence_dict[resid] = resname
+                if resid == 0:
+                    offset = 1
+            _sequence_dict = dict()
+            for resid in sequence_dict:
+                _sequence_dict[resid+offset] = sequence_dict[resid]
+            sequence_dict = _sequence_dict
 
             if (not has_NPROT2) and (not has_NPROT3) and (not has_CPROT):
                 if (not has_ACE) and (not has_NME):
@@ -1245,7 +1292,7 @@ def build_system_charmm(
             N_term_resname = sequence_dict[N_term_resid]
             C_term_resname = sequence_dict[C_term_resid]
 
-        if cgenff and not has_water and not already_processed:
+        if cgenff and not has_water and not already_processed and use_cgenff_code:
 
             mi = rdmol.GetAtomWithIdx(0).GetMonomerInfo()
             resname = mi.GetResidueName()
@@ -1364,7 +1411,7 @@ trajout {basename_monomer}-{mol_idx:d}-cpptraj.cor segmask :HOH,WAT,TIP3 TIP3
                 else:
                     patch_name[1] = "cter"
             
-            if cgenff:
+            if cgenff and use_cgenff_code:
                 chain_name = f"M{unique_idx}"
             else:
                 chain_name = "PROA"
@@ -1392,7 +1439,7 @@ trajout {basename_monomer}-{mol_idx:d}-cpptraj.cor segmask !:HOH,WAT,TIP3 {chain
                 )
                 
         strip_str = ""
-        if not cgenff:
+        if not cgenff and not use_cgenff_code:
             strip_str = "strip @H="
 
         with open("cpptraj.in", "w") as fopen:
@@ -1450,6 +1497,10 @@ go
         if already_processed:
             continue
             
+        patch_str = ""
+        for cys1, cys2 in disulfide_list[mol_idx]:
+            patch_str += f"patch disu PROA {cys1} PROA {cys2}\n"
+        
         seq_str = f"{chain_name} -1"
         
         charmm_inp = f"""
@@ -1460,6 +1511,7 @@ bomlev -2
 open read card unit 10 name {basename_monomer}-cpptraj.cor
 read sequence coor card unit 10 resid
 generate {chain_name} setup warn first {patch_name[0]} last {patch_name[1]}
+{patch_str}
 
 open read unit 10 card name {basename_monomer}-cpptraj.cor
 read coor unit 10 card
@@ -1522,11 +1574,27 @@ stop
     psf_pmd = pmd.Structure()
     N_new = 0
     N_old = 0
+    params = Chem.AdjustQueryParameters.NoAdjustments()
+    params.makeBondsGeneric = True
     for mol_idx, rdmol in enumerate(replicated_mol_list):
-        unique_idx = unique_mapping[mol_idx]
-        rdmol    = replicated_mol_list[mol_idx]
-        pos      = rdmol.GetConformer().GetPositions()
-        pmd_list[unique_idx].coordinates = pos
+        unique_idx   = unique_mapping[mol_idx]
+        ### We want to ignore bond types for this search
+        rdmol_old    = Chem.AdjustQueryProperties(rdmol, params)
+        ### The atom ordering may be different.
+        ### We must match the original rdkit to the new one
+        [rdmol_new]   = topology_to_rdmol(
+            pmd_list[unique_idx].topology)
+        rdmol_new    = Chem.AdjustQueryProperties(rdmol_new, params)
+        ### From the rdkit doc for GetSubstructMatch:
+        ### the ordering of the indices corresponds to the atom ordering
+        ### in the query. For example, the first index is for the atom in 
+        ### this molecule that matches the first atom in the query.
+        match        = rdmol_old.GetSubstructMatch(rdmol_new)
+        pos          = rdmol.GetConformer().GetPositions().copy()
+        pos_new      = pos.copy()
+        for idx_new, idx_old in enumerate(match):
+            pos_new[idx_new] = pos[idx_old]
+        pmd_list[unique_idx].coordinates = pos_new.copy()
         psf_pmd += pmd_list[unique_idx]
     psf_pmd.write_psf(f"strc.psf")
     psf_pmd.save(f"strc.crd", overwrite=True)
@@ -1594,13 +1662,16 @@ stop
     params  = CharmmParameterSet(*params_path_list)
     psffile.loadParameters(params)
 
-    topology = psffile.topology
-    positions = psf_pmd.coordinates[:]
+    topology  = psffile.topology
+    positions = psf_pmd.coordinates.copy()
 
+    _constraints = None
+    if constraints:
+        _constraints = app.HBonds
     system = psffile.createSystem(
         params,
         nonbondedMethod=nonbondedmethod, 
-        constraints=None,
+        constraints=_constraints,
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
@@ -1614,10 +1685,10 @@ stop
             if os.path.exists(filename):
                 os.remove(filename)
 
-    if rigid_water:
-        system = remove_water_bonded_forces(
-            system, psffile.topology
-            )
+    #if rigid_water:
+    #    system = remove_water_bonded_forces(
+    #        system, psffile.topology
+    #        )
 
     if boxvectors != None:
         psffile.topology.setPeriodicBoxVectors(
@@ -1634,7 +1705,7 @@ stop
             fopen
             )
 
-    if not cgenff:
+    if not cgenff and not use_cgenff_code:
         replicated_mol_list_new = topology_to_rdmol(topology, positions)
         assert len(replicated_mol_list) == len(replicated_mol_list_new)
     else:
@@ -1654,7 +1725,8 @@ def build_system_oplsaa(
     boxvectors=None,
     version="CM1A",
     water_model="tip3p",
-    rigid_water=False,):
+    rigid_water=False,
+    constraints=False):
 
     """
     Build openmm system for opls aa force field.
@@ -1830,19 +1902,22 @@ def build_system_oplsaa(
     topology  = modeller.getTopology()
     positions = modeller.getPositions()
 
+    _constraints = None
+    if constraints:
+        _constraints = app.HBonds
     system = forcefield.createSystem(
         topology = topology,
         nonbondedMethod=nonbondedmethod,
-        constraints=None,
+        constraints=_constraints,
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
 
-    if rigid_water and has_water:
-        system = remove_water_bonded_forces(
-            system, 
-            topology
-            )
+    #if rigid_water and has_water:
+    #    system = remove_water_bonded_forces(
+    #        system, 
+    #        topology
+    #        )
 
     system = OPLS_LJ(system, geometric_mixing_periodic)
 
@@ -1889,7 +1964,7 @@ def main():
     CHARMM_PROTEIN_FF = ["charmm36", "charmm36m"]
     OPLS_PROTEIN_FF   = ["OPLS"]
 
-    ALL_PROTEIN_FF = AMBER_PROTEIN_FF[:] + CHARMM_PROTEIN_FF[:] + OPLS_PROTEIN_FF[:]
+    ALL_PROTEIN_FF = AMBER_PROTEIN_FF + CHARMM_PROTEIN_FF + OPLS_PROTEIN_FF
 
     ALL_PROTEIN_FF    = [ff.lower() for ff in ALL_PROTEIN_FF]
     AMBER_PROTEIN_FF  = [ff.lower() for ff in AMBER_PROTEIN_FF]
