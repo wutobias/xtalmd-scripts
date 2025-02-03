@@ -112,6 +112,17 @@ def parse_arguments():
         default=False
         )
 
+    xml_parse.add_argument(
+        '--platform_name',
+        '-pl',
+        type=str,
+        help="Platform name",
+        required=False,
+        default="CPU",
+        choices=["CPU", "CUDA", "OpenCL"],
+        )
+
+
     return parser.parse_args()
 
 
@@ -808,15 +819,16 @@ def main():
         input_dict = {
             "./" : 
                     {
-                        "input"       : args.input,
-                        "pdb"         : args.pdb,
-                        "prefix"      : args.prefix,
-                        "steps"       : args.steps,
-                        "epsilon"     : args.epsilon,
-                        "alternating" : args.alternating,
+                        "input"                  : args.input,
+                        "pdb"                    : args.pdb,
+                        "prefix"                 : args.prefix,
+                        "steps"                  : args.steps,
+                        "epsilon"                : args.epsilon,
+                        "alternating"            : args.alternating,
                         "use_lengths_and_angles" : args.use_lengths_and_angles,
-                        "method"      : args.method,
-                        "positions_only" : args.positions_only
+                        "method"                 : args.method,
+                        "positions_only"         : args.positions_only,
+                        "platform_name"          : args.platform_name,
                     }
             }
 
@@ -837,8 +849,21 @@ def main():
             else:
                 ray.init()
 
+            if platform_name == "CPU":
+                ray_args = {
+                        "num_cpus" : input_dict["num_cpus"],
+                        "num_gpus" : 0
+                        }
+            elif platform_name in ["CUDA", "OpenCL"]:
+                ray_dict = {
+                        "num_cpus" : 1,
+                        "num_gpus" : 1
+                        }
+            else:
+                ray_dict = {}
+
             ### Wrapper around `run_xtal_min` function for ray
-            @ray.remote(num_cpus=input_dict["num_cpus"], num_gpus=0)
+            @ray.remote(**ray_dict)
             def run_xtal_min_remote(
                 xml_path, 
                 pdb_path,
@@ -849,10 +874,8 @@ def main():
                 method = "Nelder-Mead",
                 positions_only = False,
                 platform_name = "CPU",
-                property_dict = {
-                    "Threads" : "4"
-                },
-                prefix="xtal_min"):
+                property_dict = {"Threads" : "4"},
+                prefix = "xtal_min"):
 
                 return run_xtal_min(
                     xml_path = xml_path, 
@@ -892,6 +915,8 @@ def main():
         if output_dir == "epsilon":
             continue
         if output_dir == "positions_only":
+            continue
+        if output_dir == "platform_name":
             continue
 
         if not os.path.exists(input_dict[output_dir]["input"]):
@@ -966,6 +991,20 @@ def main():
         else:
             positions_only = args.positions_only
 
+        if "platform_name" in input_dict[output_dir]:
+            platform_name = input_dict[output_dir]["platform_name"]
+        elif "platform_name" in input_dict:
+            platform_name = input_dict["platform_name"]
+        else:
+            platform_name = args.platform_name
+
+        if platform_name == "CPU":
+            property_dict = {"Threads" : "4"}
+        elif platform_name in ["CUDA", "OpenCL"]:
+            property_dict = {}
+        else:
+            property_dict = {}
+
         worker_id = min_func(
             xml_path = input_dict[output_dir]["input"],
             pdb_path = input_dict[output_dir]["pdb"],
@@ -975,10 +1014,8 @@ def main():
             use_lengths_and_angles = bool(use_lengths_and_angles),
             method = method,
             positions_only = positions_only,
-            platform_name = "CPU",
-            property_dict = {
-                "Threads" : str(input_dict["num_cpus"])
-            },
+            platform_name = platform_name,
+            property_dict = property_dict,
             prefix=prefix
         )
         worker_id_dict[worker_id] = output_dir
