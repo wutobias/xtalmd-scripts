@@ -570,7 +570,7 @@ def run_xtal_md(
         barostat.setFrequency(25)
         ### Default is True
         if barostat_name.lower() == "flexible":
-            barostat.setScaleMoleculesAsRigid(False)
+            barostat.setScaleMoleculesAsRigid(True)
         system.addForce(barostat)
 
         integrator = openmm.LangevinMiddleIntegrator(
@@ -617,7 +617,7 @@ def run_xtal_md(
             barostat.setFrequency(25)
             ### Default is True
             if barostat_name.lower() == "flexible":
-                barostat.setScaleMoleculesAsRigid(False)
+                barostat.setScaleMoleculesAsRigid(True)
             system.addForce(barostat)
 
             integrator = openmm.LangevinMiddleIntegrator(
