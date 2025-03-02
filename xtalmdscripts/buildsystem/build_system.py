@@ -81,6 +81,15 @@ def parse_arguments():
         )
 
     parser.add_argument(
+        "--constraints",
+        "-co",
+        help="Apply constraints to all bonds involving hydrogen.",
+        action="store_true",
+        default=False,
+        required=False,
+        )
+
+    parser.add_argument(
         "--offxml",
         "-of",
         type=str,
@@ -743,7 +752,7 @@ quit
 
     _constraints = None
     if constraints:
-        constraints = app.HBonds
+        _constraints = app.HBonds
     system = prmtop.createSystem(
         nonbondedMethod=nonbondedmethod,
         constraints=_constraints,
@@ -2094,7 +2103,8 @@ def main():
             boxvectors=boxvectors,
             version=args.version,
             water_model=args.water_model,
-            rigid_water=args.rigid_water
+            rigid_water=args.rigid_water,
+            constraints=args.constraints,
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
             system_monomer, _, _ = build_system_gaff(
@@ -2103,7 +2113,8 @@ def main():
                 boxvectors=None,
                 version=args.version,
                 water_model=args.water_model,
-                rigid_water=args.rigid_water
+                rigid_water=args.rigid_water,
+                constraints=args.constraints,
                 )
             monomer_sys_list.append(system_monomer)
 
@@ -2123,7 +2134,8 @@ def main():
             boxvectors=boxvectors,
             version=args.version,
             water_model=args.water_model,
-            rigid_water=args.rigid_water
+            rigid_water=args.rigid_water,
+            constraints=args.constraints,
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
             system_monomer, _, _ = build_system_gaff(
@@ -2132,7 +2144,8 @@ def main():
                 boxvectors=None,
                 version=args.version,
                 water_model=args.water_model,
-                rigid_water=args.rigid_water
+                rigid_water=args.rigid_water,
+                constraints=args.constraints,
                 )
             monomer_sys_list.append(system_monomer)
 
@@ -2153,6 +2166,7 @@ def main():
             version=args.version,
             water_model=args.water_model,
             rigid_water=args.rigid_water,
+            constraints=args.constraints,
             use_openfftk=args.use_openfftk
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
@@ -2163,6 +2177,7 @@ def main():
                 version=args.version,
                 water_model=args.water_model,
                 rigid_water=args.rigid_water,
+                constraints=args.constraints,
                 use_openfftk=args.use_openfftk
                 )
             monomer_sys_list.append(system_monomer)
@@ -2172,7 +2187,7 @@ def main():
         if args.version == "":
             args.version="2.0.0"
         else:
-            if not args.version in ["2.0.0"]:
+            if not args.version in ["2.0.0", "2.1.0", "2.1.1", "2.2.0", "2.2.1"]:
                 raise ValueError(
                     "Version not understood."
                     )
@@ -2184,6 +2199,7 @@ def main():
             version=args.version,
             water_model=args.water_model,
             rigid_water=args.rigid_water,
+            constraints=args.constraints,
             use_openfftk=args.use_openfftk
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
@@ -2194,6 +2210,7 @@ def main():
                 version=args.version,
                 water_model=args.water_model,
                 rigid_water=args.rigid_water,
+                constraints=args.constraints,
                 use_openfftk=args.use_openfftk
                 )
             monomer_sys_list.append(system_monomer)
@@ -2212,6 +2229,7 @@ def main():
             offxml=args.offxml,
             water_model=args.water_model,
             rigid_water=args.rigid_water,
+            constraints=args.constraints,
             use_openfftk=args.use_openfftk
             )
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
@@ -2222,6 +2240,7 @@ def main():
                 offxml=args.offxml,
                 water_model=args.water_model,
                 rigid_water=args.rigid_water,
+                constraints=args.constraints,
                 use_openfftk=args.use_openfftk
                 )
             monomer_sys_list.append(monomer_system)
@@ -2242,6 +2261,7 @@ def main():
             boxvectors=boxvectors,
             version="cgenff",
             rigid_water=args.rigid_water,
+            constraints=args.constraints,
             toppar_dir_path=args.toppar,
             )
 
@@ -2252,6 +2272,7 @@ def main():
                 boxvectors=boxvectors,
                 version="cgenff",
                 rigid_water=args.rigid_water,
+                constraints=args.constraints,
                 toppar_dir_path=args.toppar,
                 )
             monomer_sys_list.append(monomer_system)
@@ -2273,7 +2294,8 @@ def main():
             boxvectors=boxvectors,
             version=args.version,
             water_model=args.water_model,
-            rigid_water=args.rigid_water
+            rigid_water=args.rigid_water,
+            constraints=args.constraints,
             )
         ### Set nonbonded cutoff special for oplsaa
         forces = {system.getForce(index).__class__.__name__: system.getForce(
@@ -2287,7 +2309,8 @@ def main():
                 boxvectors=None,
                 version=args.version,
                 water_model=args.water_model,
-                rigid_water=args.rigid_water
+                rigid_water=args.rigid_water,
+                constraints=args.constraints,
                 )
             monomer_sys_list.append(monomer_system)
 
@@ -2311,6 +2334,7 @@ def main():
             version=args.version,
             water_model=args.water_model,
             rigid_water=args.rigid_water,
+            constraints=args.constraints,
             )
         
         for rdmol_idx, rdmol in enumerate(rdmol_list_unique):
@@ -2321,6 +2345,7 @@ def main():
                 version=args.version,
                 water_model=args.water_model,
                 rigid_water=args.rigid_water,
+                constraints=args.constraints,
                 )
             monomer_sys_list.append(
                 monomer_system
@@ -2345,6 +2370,7 @@ def main():
             boxvectors=boxvectors,
             version=args.version,
             rigid_water=args.rigid_water,
+            constraints=args.constraints,
             toppar_dir_path=args.toppar,
             )
 
@@ -2355,6 +2381,7 @@ def main():
                 boxvectors=None,
                 version=args.version,
                 rigid_water=args.rigid_water,
+                constraints=args.constraints,
                 toppar_dir_path=args.toppar,
                 )
             monomer_sys_list.append(monomer_system)
@@ -2378,6 +2405,7 @@ def main():
             boxvectors=boxvectors,
             version="opls",
             rigid_water=args.rigid_water,
+            constraints=args.constraints,
             toppar_dir_path=args.toppar,
             )
 
@@ -2388,6 +2416,7 @@ def main():
                 boxvectors=None,
                 version="opls",
                 rigid_water=args.rigid_water,
+                constraints=args.constraints,
                 toppar_dir_path=args.toppar,
                 )
             monomer_sys_list.append(monomer_system)
