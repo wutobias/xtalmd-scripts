@@ -2478,18 +2478,12 @@ def main():
         opls_ff = True
 
     from openmm import app
-    nbmethod_dict = {
-        "Ewald".lower()             : 3, #app.Ewald
-        "PME".lower()               : 4, #app.PME
-        "LJPME".lower()             : 5, #app.LJPME
-    }
     nbforce.setNonbondedMethod(
-        nbmethod_dict[args.longrange.lower()]
-        )
+            getattr(nbforce, "args.longrange")))
+    ### Only affects LJ longrange forces
     if args.nolongrange:
         nbforce.setNonbondedMethod(
-            nbmethod_dict["PME".lower()]
-            )
+            nbforce.PME)
         nbforce.setUseDispersionCorrection(False)
         if opls_ff:
             geometric_mixing = forces["CustomNonbondedForce"]
@@ -2511,7 +2505,7 @@ def main():
                         eps * unit.kilojoule_per_mole
                     )
 
-                geometric_mixing.setNonbondedMethod(2)
+                geometric_mixing.setNonbondedMethod(geometric_mixing.CutoffPeriodic)
                 geometric_mixing.setUseLongRangeCorrection(False)
                 geometric_mixing.setEnergyFunction("""
 Ugeo - Ulb;
