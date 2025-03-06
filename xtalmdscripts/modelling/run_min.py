@@ -849,16 +849,23 @@ def main():
             else:
                 ray.init()
 
-            if platform_name == "CPU":
-                ray_args = {
-                        "num_cpus" : input_dict["num_cpus"],
-                        "num_gpus" : 0
-                        }
-            elif platform_name in ["CUDA", "OpenCL"]:
-                ray_dict = {
-                        "num_cpus" : 1,
-                        "num_gpus" : 1
-                        }
+            if "platform_name" in input_dict:
+                platform_name = input_dict["platform_name"]
+                if platform_name == "CPU":
+                    ray_dict = {
+                            "num_cpus" : input_dict["num_cpus"],
+                            "num_gpus" : 0
+                            }
+                elif platform_name in ["CUDA", "OpenCL"]:
+                    ray_dict = {
+                            "num_cpus" : 1,
+                            "num_gpus" : 1
+                            }
+                else:
+                    import warnings
+                    warnings.warn(
+                            f"Platform name {platform_name} not known.")
+                    ray_dict = {}
             else:
                 ray_dict = {}
 
