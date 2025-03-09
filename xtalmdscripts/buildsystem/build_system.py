@@ -256,6 +256,94 @@ def parse_arguments():
     return parser.parse_args()
 
 
+def remove_double_entries(system):
+
+    """
+    Remove double entries in constraints and forces.
+    """
+
+    import openmm
+    import warnings
+
+    constraint_list = list()
+    to_delete = list()
+    for i in range(system.getNumConstraints()):
+        p1, p2, _ = system.getConstraintParameters(i)
+        key = sorted([p1, p2])
+        if key in constraint_list:
+            warnings.warn(
+                    f"Removing duplicate constraint for atoms {(p1,p2)} at index {i}")
+            to_delete.append(i)
+        else:
+            constraint_list.append(key)
+    for i in sorted(to_delete, reverse=True):
+        system.removeConstraint(i)
+
+    for f in system.getForces():
+        params_list = list()
+        if isinstance(f, openmm.HarmonicBondForce):
+            for i in range(f.getNumBonds()):
+                p1, p2, l, k = f.getBondParameters(i)
+                key          = sorted([p1,p2])+[l,k]
+                key          = tuple(key)
+                if key in params_list:
+                    warnings.warn(
+                            f"Removing duplicate parameters for {(p1, p2, l, k)} at index {i}")
+                    f.setBondParameters(i, p1, p2, l, 0)
+                else:
+                    params_list.append(key)
+
+        elif isinstance(f, openmm.HarmonicAngleForce):
+            for i in range(f.getNumAngles()):
+                p1, p2, p3, a, k = f.getAngleParameters(i)
+                key = sorted([p1,p3])+[p2,a,k]
+                if key in params_list:
+                    warnings.warn(
+                            f"Removing duplicate parameters for {(p1, p2, p3, a, k)} at index {i}")
+                    f.setAngleParameters(i, p1, p2, p3, a, 0)
+                else:
+                    params_list.append(key)
+
+        elif isinstance(f, openmm.PeriodicTorsionForce):
+            for i in range(f.getNumTorsions()):
+                p1, p2, p3, p4, N, p, k = f.getTorsionParameters(i)
+                if p1 > p4:
+                    key = tuple([p4, p3, p2, p1, N, p, k])
+                else:
+                    key = tuple([p1, p2, p3, p4, N, p, k])
+                if key in params_list:
+                    warnings.warn(
+                            f"Removing duplicate parameters for {(p1, p2, p3, p4, N, p, k)} at index {i}")
+                    f.setTorsionParameters(i, p1, p2, p3, p4, N, p, 0)
+                else:
+                    params_list.append(key)
+
+        elif isinstance(f, openmm.CMAPTorsionForce):
+            for i in range(f.getNumTorsions()):
+                j, a1, a2, a3, a4, b1, b2, b3, b4 = f.getTorsionParameters()
+                if a1 > a4:
+                    key1 = tuple([a4, a3, a2, a1])
+                else:
+                    key1 = tuple([a1, a2, a3, a4])
+                if b1 > b4:
+                    key2 = tuple([b4, b3, b2, b1])
+                else:
+                    key2 = tuple([b1, b2, b3, b4])
+                if key1[0] > key2[0]:
+                    key = key2 + key1
+                else:
+                    key = key1 + key2
+                if key in params_list:
+                    warnings.warn(
+                            f"Found dubplicate CMAP torsion with parameters {j, a1, a2, a3, a4, b1, b2, b3, b4} at index {i}")
+                else:
+                    params_list.append(key)
+        else:
+            warnings.warn(
+                    f"Could not check force {f.__class__.__name__} for duplicate entries.")
+
+
+
 def rewrite_oplsaa_xml(inpath, outpath, topology, suffix):
 
     import xml.etree.ElementTree as ET
@@ -327,54 +415,6 @@ def rewrite_oplsaa_xml(inpath, outpath, topology, suffix):
         fopen.write(
             ET.tostring(root)
             )
-
-
-def remove_water_bonded_forces(system, topology):
-
-    import openmm
-
-    for f_idx, force in enumerate(system.getForces()):
-        if isinstance(force, openmm.HarmonicBondForce):
-            bond_force = force
-            bond_force_idx = f_idx
-        elif isinstance(force, openmm.HarmonicAngleForce):
-            angle_force = force
-            angle_force_idx = f_idx
-    atom_list   = list(topology.atoms())
-    new_bond_force = openmm.HarmonicBondForce()
-    new_angle_force = openmm.HarmonicAngleForce()
-
-    new_bond_force.setForceGroup(bond_force.getForceGroup())
-    new_angle_force.setForceGroup(angle_force.getForceGroup())
-    for idx in range(bond_force.getNumBonds()):
-        parms = bond_force.getBondParameters(idx)
-        p1,p2 = parms[:2]
-        is_water = False
-        for _pidx in [p1,p2]:
-            if atom_list[_pidx].residue.name in ["HOH", "WAT", "TIP", "TIP3"]:
-                is_water = True
-                break
-        if not is_water:
-            new_bond_force.addBond(*parms)
-
-    for idx in range(angle_force.getNumAngles()):
-        parms = angle_force.getAngleParameters(idx)
-        p1,p2,p3 = parms[:3]
-        is_water = False
-        for _pidx in [p1,p2,p3]:
-            if atom_list[_pidx].residue.name in ["HOH", "WAT", "TIP", "TIP3"]:
-                is_water = True
-                break
-        if not is_water:
-            new_angle_force.addAngle(*parms)
-
-    for force_idx in sorted([bond_force_idx, angle_force_idx], reverse=True):
-        system.removeForce(force_idx)
-    system.addForce(new_bond_force)
-    system.addForce(new_angle_force)
-
-    return system
-
 
 def label_water(rdmol=None, charmm=False):
 
@@ -789,12 +829,6 @@ quit
         replicated_mol_list_new
         )
 
-    #if rigid_water:
-    #    system = remove_water_bonded_forces(
-    #        system, 
-    #        prmtop.topology
-    #        )
-
     return system, mapping_dict, replicated_mol_list_new
 
 
@@ -905,12 +939,6 @@ def build_system_gaff(
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
-
-    #if rigid_water:
-    #    system = remove_water_bonded_forces(
-    #        system, 
-    #        topology
-    #        )
 
     return system, mapping_dict, replicated_mol_list_new
 
@@ -1073,12 +1101,6 @@ def build_system_off(
             rigidWater=rigid_water
         )
 
-    #if rigid_water:
-    #    system = remove_water_bonded_forces(
-    #        system, 
-    #        topology
-    #        )
-
     with open(f"{prefix}.pdb", "w") as fopen:
         PDBFile.writeFile(
             topology,
@@ -1126,7 +1148,7 @@ def build_system_charmm(
             )
 
     AA_LIST = [
-            "NME","ACE","ALA","ARG","ASN","ASP","CYS","GLU","GLN","GLY","HIS","ILE","LEU","LYS","MET","PHE","PRO","SER","THR","TRP","TYR","VAL","HOH"
+            "NME","ACE","ALA","ARG","ASN","ASP","CYS","GLU","GLN","GLY","HIS","ILE","LEU","LYS","MET","PHE","PRO","SER","THR","TRP","TYR","VAL","HOH","TIP"
             ]
 
     import os
@@ -1198,27 +1220,24 @@ def build_system_charmm(
         basename_monomer = f"m{unique_idx}"
 
         rdmol = replicated_mol_list[mol_idx]
-        
-        if cgenff:
-            _, has_water = label_water(
-                rdmol,
-                charmm=True
-                )
-        else:
-            rdmol, has_water = label_water(
-                rdmol,
-                charmm=True
-                )
+        _rdmol, has_water = label_water(rdmol, charmm=True)
+
         with open(f"{basename_monomer}.pdb", "w") as fopen:
             fopen.write(
                 Chem.MolToPDBBlock(rdmol)
                 )
 
         IS_PROTEIN_LIST = list()
-        for atom in rdmol.GetAtoms():
-            mi = atom.GetMonomerInfo()
-            resname = mi.GetResidueName().rstrip().lstrip()
-            IS_PROTEIN_LIST.append(resname in AA_LIST)
+        if has_water:
+            IS_PROTEIN_LIST.append("TIP")
+            rdmol = _rdmol
+        else:
+            for atom in rdmol.GetAtoms():
+                mi = atom.GetMonomerInfo()
+                resname = mi.GetResidueName()
+                if isinstance(resname, str):
+                    resname = resname.rstrip().lstrip()
+                IS_PROTEIN_LIST.append(resname in AA_LIST)
         if all(IS_PROTEIN_LIST):
             _cgenff = False
         else:
@@ -1229,6 +1248,7 @@ def build_system_charmm(
                     f"Changing `cgenff` from {cgenff} to {_cgenff}")
         cgenff = _cgenff
 
+        pres_patch_str = ""
         if not cgenff:
             ### We have to check to for presence of ACE or NME first.
             ### We assume that everything is correctly labled. If we
@@ -1241,6 +1261,8 @@ def build_system_charmm(
             has_CPROT = False
             has_NPROT2 = False
             has_NPROT3 = False
+            has_SCOPROT = False
+            has_SCNPROT = False
             is_cyclic = False
             N_term_resname = ""
             C_term_resname = ""
@@ -1265,6 +1287,17 @@ def build_system_charmm(
                 sequence_dict[resid] = resname
                 if resid == 0:
                     offset = 1
+                if resname == "GLU" and (atomname == "OE1" or atomname == "OE2"):
+                    for n in atom.GetNeighbors():
+                        if n.GetAtomicNum() == 1:
+                            pres_patch_str  = f"patch GLUP PROA {resid}\n"
+                            pres_patch_str += "AUTOgenerate ANGLes DIHEdrals"
+                if resname == "ASP" and (atomname == "OE1" or atomname == "OE2"):
+                    for n in atom.GetNeighbors():
+                        if n.GetAtomicNum() == 1:
+                            pres_patch_str  = f"patch ASPP PROA {resid}"
+                            pres_patch_str += "AUTOgenerate ANGLes DIHEdrals"
+
             _sequence_dict = dict()
             for resid in sequence_dict:
                 _sequence_dict[resid+offset] = sequence_dict[resid]
@@ -1453,8 +1486,16 @@ trajout {basename_monomer}-{mol_idx:d}-cpptraj.cor segmask !:HOH,WAT,TIP3 {chain
 
         with open("cpptraj.in", "w") as fopen:
             fopen.write(f"""
-parm {basename_monomer}-mmtsb.pdb
-trajin {basename_monomer}-mmtsb.pdb
+parm {basename_monomer}.pdb
+loadcrd {basename_monomer}.pdb name CRD
+prepareforleap crdset CRD name Final pdbout {basename_monomer}-prep.pdb terbymol noh solventresname TIP3 hiename HSE hidname HSD hipname HSP nd1 ND1 ne2 NE2
+go
+
+clear all
+
+parm {basename_monomer}-prep.pdb
+trajin {basename_monomer}-prep.pdb
+
 {strip_str}
 {trajout_str}
 go
@@ -1524,6 +1565,8 @@ generate {chain_name} setup warn first {patch_name[0]} last {patch_name[1]}
 
 open read unit 10 card name {basename_monomer}-cpptraj.cor
 read coor unit 10 card
+
+{pres_patch_str}
 
 ! The order seems to be important here
 ic params
@@ -1632,8 +1675,8 @@ read coor unit 10 card
 ic generate
 ic params
 ic build
-hbuild
 
+hbuild
 ic build
 
 open write unit 10 card name strc-final.psf
@@ -1693,11 +1736,6 @@ stop
         for filename in to_remove_list:
             if os.path.exists(filename):
                 os.remove(filename)
-
-    #if rigid_water:
-    #    system = remove_water_bonded_forces(
-    #        system, psffile.topology
-    #        )
 
     if boxvectors != None:
         psffile.topology.setPeriodicBoxVectors(
@@ -1921,12 +1959,6 @@ def build_system_oplsaa(
         removeCMMotion=True,
         rigidWater=rigid_water,
     )
-
-    #if rigid_water and has_water:
-    #    system = remove_water_bonded_forces(
-    #        system, 
-    #        topology
-    #        )
 
     system = OPLS_LJ(system, geometric_mixing_periodic)
 
@@ -2425,6 +2457,10 @@ def main():
         raise ValueError(
             f"force field {args.forcefield} not understood")
 
+    ### Sometimes constraints and some force entries are duplicated.
+    ### Find and remove these duplicate entries.
+    remove_double_entries(system)
+
     ### Write supercell info and rdkit json here after all the
     ### processing is done. This is necessary since some build system
     ### routines will alter the atom and/or residue order and we
@@ -2479,7 +2515,7 @@ def main():
 
     from openmm import app
     nbforce.setNonbondedMethod(
-            getattr(nbforce, "args.longrange")))
+            getattr(nbforce, args.longrange))
     ### Only affects LJ longrange forces
     if args.nolongrange:
         nbforce.setNonbondedMethod(
