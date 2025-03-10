@@ -1297,6 +1297,23 @@ def build_system_charmm(
                         if n.GetAtomicNum() == 1:
                             pres_patch_str  = f"patch ASPP PROA {resid}"
                             pres_patch_str += "AUTOgenerate ANGLes DIHEdrals"
+                if atomname == "OXT" or atomname == "O":
+                    for n in atom.GetNeighbors():
+                        if n.GetAtomicNum() == 1:
+                            has_CPROT = True
+                if atomname == "N":
+                    N_count = 0
+                    for n in atom.GetNeighbors():
+                        if n.GetAtomicNum() == 1:
+                            N_count += 1
+                    if N_count == 2:
+                        has_NPROT2 = True
+                    elif N_count == 3:
+                        has_NPROT3 = True
+
+            with open(f"{basename_monomer}.pdb", "w") as fopen:
+                fopen.write(
+                        Chem.MolToPDBBlock(rdmol))
 
             _sequence_dict = dict()
             for resid in sequence_dict:
@@ -1330,6 +1347,13 @@ def build_system_charmm(
                     mi.SetResidueNumber(resid)
                     mi.SetResidueName(resname)
                     atom.SetMonomerInfo(mi)
+
+            ### If the we found ACE/NME, we must rewrite the pdb with the new
+            ### residue id numbering.
+            ### ACE/NME will be patches (PRES) and not residues.
+            with open(f"{basename_monomer}.pdb", "w") as fopen:
+                fopen.write(
+                        Chem.MolToPDBBlock(rdmol))
 
             N_term_resname = sequence_dict[N_term_resid]
             C_term_resname = sequence_dict[C_term_resid]
@@ -1417,7 +1441,7 @@ trajout {basename_monomer}-{mol_idx:d}-cpptraj.cor segmask :HOH,WAT,TIP3 TIP3
                 ### N terminal
                 if has_ACE:
                     ### Dipeptide
-                    if len(sequence_dict) < 4:
+                    if len(sequence_dict) < 3:
                         if N_term_resname == "PRO":
                             patch_name[0] = "acpd"
                         else:
@@ -1534,6 +1558,7 @@ go
             f"{basename_monomer}.mol2",
             f"{basename_monomer}.str",
             f"{basename_monomer}-mmtsb.pdb",
+            f"{basename_monomer}-prep.pdb",
             f"{basename_monomer}-cpptraj.pdb",
             f"{basename_monomer}-cpptraj.cor",
             f"{basename_monomer}-{mol_idx:d}-cpptraj.pdb",
