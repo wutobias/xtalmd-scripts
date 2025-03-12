@@ -320,7 +320,7 @@ def remove_double_entries(system):
 
         elif isinstance(f, openmm.CMAPTorsionForce):
             for i in range(f.getNumTorsions()):
-                j, a1, a2, a3, a4, b1, b2, b3, b4 = f.getTorsionParameters()
+                j, a1, a2, a3, a4, b1, b2, b3, b4 = f.getTorsionParameters(i)
                 if a1 > a4:
                     key1 = tuple([a4, a3, a2, a1])
                 else:
