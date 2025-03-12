@@ -50,6 +50,15 @@ def parse_arguments():
         )
 
     xml_parse.add_argument(
+        "--overwrite",
+        "-o",
+        action="store_true",
+        help="Ignore existing files and overwrite. Do not skip existing minimizations.",
+        required=False,
+        default=False
+        )
+
+    xml_parse.add_argument(
         '--prefix', 
         "-pre", 
         type=str, 
@@ -829,6 +838,7 @@ def main():
                         "method"                 : args.method,
                         "positions_only"         : args.positions_only,
                         "platform_name"          : args.platform_name,
+                        "overwrite"              : args.overwrite
                     }
             }
 
@@ -904,6 +914,9 @@ def main():
     import os
     import warnings
     worker_id_dict = dict()
+    OVERWRITE = False
+    if "overwrite" in input_dict:
+        OVERWRITE = input_dict["overwrite"]
     for output_dir in input_dict:
         if output_dir == "num_cpus":
             continue
@@ -924,6 +937,8 @@ def main():
         if output_dir == "positions_only":
             continue
         if output_dir == "platform_name":
+            continue
+        if output_dir == "overwrite":
             continue
 
         if not os.path.exists(input_dict[output_dir]["input"]):
@@ -946,13 +961,13 @@ def main():
         else:
             prefix = args.prefix
 
-        if os.path.exists(f"{output_dir}/{prefix}.xml"):
+        if os.path.exists(f"{output_dir}/{prefix}.xml") and not OVERWRITE:
             warnings.warn(f"{output_dir}/{prefix}.xml already exists. Skipping.")
             continue
-        if os.path.exists(f"{output_dir}/{prefix}.pdb"):
+        if os.path.exists(f"{output_dir}/{prefix}.pdb") and not OVERWRITE:
             warnings.warn(f"{output_dir}/{prefix}.pdb already exists. Skipping.")
             continue
-        if os.path.exists(f"{output_dir}/{prefix}.csv"):
+        if os.path.exists(f"{output_dir}/{prefix}.csv") and not OVERWRITE:
             warnings.warn(f"{output_dir}/{prefix}.csv already exists. Skipping.")
             continue
 
