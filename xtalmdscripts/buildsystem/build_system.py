@@ -2484,7 +2484,7 @@ def main():
 
     ### Sometimes constraints and some force entries are duplicated.
     ### Find and remove these duplicate entries.
-    remove_double_entries(system)
+    system = remove_double_entries(system)
 
     ### Write supercell info and rdkit json here after all the
     ### processing is done. This is necessary since some build system
