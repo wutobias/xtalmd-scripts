@@ -342,6 +342,8 @@ def remove_double_entries(system):
             warnings.warn(
                     f"Could not check force {f.__class__.__name__} for duplicate entries.")
 
+    return system
+
 
 
 def rewrite_oplsaa_xml(inpath, outpath, topology, suffix):
