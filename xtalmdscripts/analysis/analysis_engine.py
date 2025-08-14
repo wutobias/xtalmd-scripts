@@ -186,7 +186,7 @@ def get_dihedral_indices(
     else:
         smarts = Chem.MolFromSmarts("[*:1]~[*:2]~[*:3]~[*:4]")
     matches = list(
-        rdmol.GetSubstructMatches(smarts)
+        rdmol.GetSubstructMatches(smarts, maxMatches=100000000)
         )
     ranks = list(
         Chem.CanonicalRankAtoms(rdmol, breakTies=False)
@@ -239,7 +239,7 @@ def get_angle_indices(
     else:
         smarts = Chem.MolFromSmarts("[*:1]~[*:2]~[*:3]")
     matches = list(
-        rdmol.GetSubstructMatches(smarts)
+        rdmol.GetSubstructMatches(smarts, maxMatches=100000000)
         )
     ranks = list(
         Chem.CanonicalRankAtoms(rdmol, breakTies=False)
@@ -291,7 +291,7 @@ def get_bond_indices(
     else:
         smarts = Chem.MolFromSmarts("[*:1]~[*:2]")
     matches = list(
-        rdmol.GetSubstructMatches(smarts)
+        rdmol.GetSubstructMatches(smarts, maxMatches=100000000)
         )
     ranks = list(
         Chem.CanonicalRankAtoms(rdmol, breakTies=False)
@@ -620,7 +620,7 @@ def get_all_matches(rdmol, query_mol):
     frag_idxs  = Chem.GetMolFrags(rdmol, asMols=False)
     for frag, idxs in zip(frag_mols, frag_idxs):
         idxs = np.array(idxs)
-        for match in frag.GetSubstructMatches(query_mol):
+        for match in frag.GetSubstructMatches(query_mol, maxMatches=100000000):
             match = np.array(match)
             match_list.extend(idxs[match].tolist())
     match_list = np.array(match_list, dtype=int)
